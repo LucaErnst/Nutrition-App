@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MEAL_TYPES } from '../db/types';
 import { groupByMeal, setTrainingDay, useDayEntries, useGoals, useIsTrainingDay } from '../db/hooks';
 import { sumMacros } from '../lib/nutrition';
@@ -14,6 +14,10 @@ interface Props {
 
 export function DayView({ initialDate, onOpenGoals }: Props) {
   const [date, setDate] = useState(initialDate ?? todayISO());
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [date]);
   const entries = useDayEntries(date) ?? [];
   const groups = groupByMeal(entries);
   const totals = sumMacros(entries.map((e) => e.macros));

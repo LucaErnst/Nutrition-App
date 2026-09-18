@@ -1,3 +1,4 @@
+import { useScrollLock } from '../lib/useScrollLock';
 import { useEffect, type ReactNode } from 'react';
 
 interface Props {
@@ -7,6 +8,8 @@ interface Props {
 }
 
 export function Modal({ title, onClose, children }: Props) {
+  useScrollLock();
+
   useEffect(() => {
     function onKey(ev: KeyboardEvent) {
       if (ev.key === 'Escape') onClose();

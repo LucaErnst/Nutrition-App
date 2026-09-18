@@ -372,7 +372,9 @@ button {
   inset: 0;
   background: rgb(0 0 0 / 0.45);
   display: flex;
-  align-items: flex-end;
+  /* Auf dem Handy oben andocken: so bleiben Eingabefelder über der Tastatur
+     und iOS muss die Seite nicht nach unten scrollen. */
+  align-items: flex-start;
   justify-content: center;
   z-index: 10;
   padding: 0;
@@ -391,8 +393,9 @@ button {
   max-width: 520px;
   max-height: 92vh;
   overflow-y: auto;
-  border-radius: 16px 16px 0 0;
-  padding: 16px 20px 24px;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 0 0 16px 16px;
+  padding: calc(12px + env(safe-area-inset-top)) 20px 24px;
 }
 
 @media (min-width: 600px) {
@@ -1437,8 +1440,8 @@ button {
   }
 
   .modal {
-    max-height: 85vh;
-    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    max-height: 92vh;
+    padding-bottom: 24px;
   }
 }
 

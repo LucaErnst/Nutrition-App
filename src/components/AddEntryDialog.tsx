@@ -1,3 +1,4 @@
+import { useScrollLock } from '../lib/useScrollLock';
 import { useEffect, useState } from 'react';
 import { MEAL_LABELS, type MealType } from '../db/types';
 import { ManualEntryForm } from './ManualEntryForm';
@@ -15,6 +16,8 @@ type Tab = 'search' | 'scan' | 'templates' | 'manual';
 
 export function AddEntryDialog({ date, mealType, onClose }: Props) {
   const [tab, setTab] = useState<Tab>('search');
+
+  useScrollLock();
 
   useEffect(() => {
     function onKey(ev: KeyboardEvent) {

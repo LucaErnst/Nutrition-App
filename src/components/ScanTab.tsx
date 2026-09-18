@@ -93,6 +93,11 @@ export function ScanTab({ date, mealType, onDone }: Props) {
       <button type="button" className="btn-link" onClick={() => setShowCamera((v) => !v)}>
         {showCamera ? 'Kamera ausblenden' : 'Kamera einblenden'}
       </button>
+      {isIosStandalone() && (
+        <p className="search-hint">
+          Fragt iOS bei jedem Start nach der Kamera? In Safari die App-Adresse öffnen → „aA“ → Website-Einstellungen → Kamera: Erlauben.
+        </p>
+      )}
 
       <form className="scan-code-form" onSubmit={submitCode}>
         <input
@@ -137,6 +142,11 @@ export function ScanTab({ date, mealType, onDone }: Props) {
       )}
     </div>
   );
+}
+
+/** true, wenn die App auf iOS vom Home-Bildschirm läuft. */
+function isIosStandalone(): boolean {
+  return (navigator as Navigator & { standalone?: boolean }).standalone === true;
 }
 
 interface ResultProps {

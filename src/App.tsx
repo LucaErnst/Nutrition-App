@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DayView } from './components/DayView';
 import { FoodDatabase } from './components/FoodDatabase';
 import { MoreView } from './components/MoreView';
@@ -18,6 +18,11 @@ const VIEWS: { id: View; label: string }[] = [
 export default function App() {
   const [view, setView] = useState<View>('diary');
   const [diaryDate, setDiaryDate] = useState<string | undefined>(undefined);
+
+  // Jede Ansicht beginnt oben – nicht dort, wo die vorherige aufgehört hat.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [view]);
 
   return (
     <div className="app">
