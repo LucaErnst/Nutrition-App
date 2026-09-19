@@ -1,7 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
-import type { DailyGoal, FoodItem, MealEntry, MealTemplate, MealType, Settings, Unit, WeightEntry } from './types';
-import { macrosFor, sumMacros, type EntryWithFood } from '../lib/nutrition';
+import { snapshotOf, type DailyGoal, type FoodItem, type MealEntry, type MealTemplate, type MealType, type Settings, type Unit, type WeightEntry } from './types';
+import { macrosFor, resolveSource, sumMacros, type EntryWithFood } from '../lib/nutrition';
 import { activeGoalFor, targetsFor } from '../lib/goals';
 import type { DaySummary } from '../lib/week';
 
@@ -13,15 +13,17 @@ export function useDayEntries(date: string): EntryWithFood[] | undefined {
     const foods = await db.foodItems.bulkGet(ids);
     const foodById = new Map(foods.filter(Boolean).map((f) => [f!.id!, f!]));
     return entries.flatMap((entry) => {
-      const food = foodById.get(entry.food_item_id);
+      const item = foodById.get(entry.food_item_id);
+      const food = resolveSource(entry, item);
       if (!food) return [];
-      return [{ entry, food, macros: macrosFor(food, entry.amount, entry.unit) }];
+      return [{ entry, food, item, macros: macrosFor(food, entry.amount, entry.unit) }];
     });
   }, [date]);
 }
 
-export async function addMealEntry(entry: Omit<MealEntry, 'id' | 'created_at'>) {
-  return db.mealEntries.add({ ...entry, created_at: Date.now() });
+/** Legt einen Eintrag an und friert die Nährwerte des Lebensmittels darin ein. */
+export async function addMealEntry(entry: Omit<MealEntry, 'id' | 'created_at' | 'snapshot'>, food: FoodItem) {
+  return db.mealEntries.add({ ...entry, snapshot: snapshotOf(food), created_at: Date.now() });
 }
 
 export async function updateMealEntryAmount(id: number, amount: number) {
@@ -133,7 +135,7 @@ export function useDaySummaries(dates: string[]): DaySummary[] | undefined {
       const dayEntries = entries.filter((e) => e.date === date);
       const totals = sumMacros(
         dayEntries.flatMap((e) => {
-          const food = foodById.get(e.food_item_id);
+          const food = resolveSource(e, foodById.get(e.food_item_id));
           return food ? [macrosFor(food, e.amount, e.unit)] : [];
         }),
       );
@@ -184,11 +186,28 @@ export async function deleteTemplate(id: number) {
 export async function applyTemplate(template: MealTemplate, date: string, meal_type: MealType): Promise<number> {
   const foods = await db.foodItems.bulkGet(template.items.map((i) => i.food_item_id));
   const now = Date.now();
-  const rows: Omit<MealEntry, 'id'>[] = template.items.flatMap((item, i) =>
-    foods[i]
-      ? [{ date, meal_type, food_item_id: item.food_item_id, amount: item.amount, unit: item.unit as Unit, created_at: now + i }]
-      : [],
-  );
+  const rows: Omit<MealEntry, 'id'>[] = template.items.flatMap((item, i) => {
+    const food = foods[i];
+    if (!food) return [];
+    return [{ date, meal_type, food_item_id: item.food_item_id, amount: item.amount, unit: item.unit as Unit, snapshot: snapshotOf(food), created_at: now + i }];
+  });
   if (rows.length) await db.mealEntries.bulkAdd(rows);
   return rows.length;
+}
+
+/** Befüllt fehlende Snapshots (z.B. nach Import eines älteren Backups). */
+export async function backfillSnapshots(): Promise<number> {
+  const foods = await db.foodItems.toArray();
+  const byId = new Map(foods.map((f) => [f.id!, f]));
+  let n = 0;
+  await db.mealEntries
+    .filter((e) => !e.snapshot)
+    .modify((e) => {
+      const food = byId.get(e.food_item_id);
+      if (food) {
+        e.snapshot = snapshotOf(food);
+        n++;
+      }
+    });
+  return n;
 }

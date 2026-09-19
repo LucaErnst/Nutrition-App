@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { FoodItem } from '../../db/types';
-import { amountToGrams, macrosFor, sumMacros } from '../nutrition';
+import { amountToGrams, macrosFor, resolveSource, sumMacros } from '../nutrition';
 
 const quark: FoodItem = {
   name: 'Magerquark', kcal_per_100g: 67.2, protein_per_100g: 12, fat_per_100g: 0.4, carbs_per_100g: 4,
@@ -37,5 +37,23 @@ describe('sumMacros', () => {
     expect(sumMacros([])).toEqual({ kcal: 0, protein: 0, fat: 0, carbs: 0 });
     const s = sumMacros([macrosFor(quark, 100, 'g'), macrosFor(quark, 100, 'g')]);
     expect(s.protein).toBeCloseTo(24, 5);
+  });
+});
+
+describe('resolveSource (Snapshot)', () => {
+  const entry = { date: '2026-09-19', meal_type: 'lunch' as const, food_item_id: 1, amount: 100, unit: 'g' as const, created_at: 0 };
+
+  it('nutzt den Snapshot auch wenn das Lebensmittel inzwischen geändert wurde', () => {
+    const snap = { ...quark, kcal_per_100g: 60 };
+    const src = resolveSource({ ...entry, snapshot: snap }, { ...quark, kcal_per_100g: 999 });
+    expect(macrosFor(src!, 100, 'g').kcal).toBe(60);
+  });
+
+  it('fällt ohne Snapshot auf das Lebensmittel zurück', () => {
+    expect(resolveSource(entry, quark)?.kcal_per_100g).toBe(67.2);
+  });
+
+  it('liefert undefined, wenn weder Snapshot noch Lebensmittel existieren', () => {
+    expect(resolveSource(entry, undefined)).toBeUndefined();
   });
 });

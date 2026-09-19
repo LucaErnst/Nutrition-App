@@ -1,4 +1,5 @@
 import { db } from '../db/db';
+import { backfillSnapshots } from '../db/hooks';
 import type { DailyGoal, DayInfo, FoodItem, MealEntry, MealTemplate, Settings, WeightEntry } from '../db/types';
 
 export const BACKUP_VERSION = 1;
@@ -131,4 +132,6 @@ export async function restoreBackup(b: Backup): Promise<void> {
     await db.settings.bulkAdd(b.settings);
     await db.templates.bulkAdd(b.templates);
   });
+  // Backups aus Versionen vor 0.4 haben keine Snapshots
+  await backfillSnapshots();
 }

@@ -68,7 +68,7 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
     };
 
     const foodId = (await db.foodItems.add(item)) as number;
-    await addMealEntry({ date, meal_type: mealType, food_item_id: foodId, amount: amt, unit });
+    await addMealEntry({ date, meal_type: mealType, food_item_id: foodId, amount: amt, unit }, { ...item, id: foodId });
     onDone();
   }
 

@@ -41,7 +41,6 @@ Alle Akzeptanzkriterien der Spec:
 
 | Thema | Verhalten | Einschätzung |
 |---|---|---|
-| Rückwirkende Änderungen | Werte eines Lebensmittels ändern → alte Tage ändern sich mit | Wie MyFitnessPal; für Version 2 Nährwerte in den Eintrag kopieren (Snapshot) |
 | Kamera-Freigabe iOS | Home-Bildschirm-App fragt je nach iOS-Version bei jedem Start | WebKit-Limit; nur nativ (Capacitor) sicher lösbar |
 | Daten nur lokal | Kein Sync, Backup manuell | Für einen Nutzer ok; Risiko bei Geräteverlust |
 | Laufender Tag im Wochenschnitt | zählt mit, Hinweis im Fazit | Alternative: ausschliessen bis Tagesende |
@@ -79,10 +78,14 @@ Qualitätsgewinn; „Optional“ = nice-to-have.
 
 ### C. Empfohlen (Produktqualität)
 
-1. **Nährwert-Snapshot im Eintrag** – Werte beim Eintragen kopieren, damit Historie stabil bleibt
-   und die Referenzdatenbank frei editierbar wird. Migration: bestehende Einträge einmalig befüllen.
-2. **Textsuche in Open Food Facts** – heute nur Barcode. Die Such-API (`/cgi/search.pl`) erlaubt
-   „Skyr“ tippen → Produkte wählen. Grosser Komfortgewinn für Produkte ohne Barcode zur Hand.
+1. **Nährwert-Snapshot im Eintrag** ✓ (0.4.0) – jeder Eintrag friert Name und Werte pro 100 g ein
+   (`MealEntry.snapshot`). Schema v4 befüllt bestehende Einträge, Backup-Import ebenfalls.
+   Die Referenzdatenbank ist damit frei editierbar; Änderungen gelten nur für neue Einträge.
+2. **Textsuche in Open Food Facts** ✓ (0.4.0) – im Such-Tab „… bei Open Food Facts suchen“, Standard
+   auf Schweizer Produkte gefiltert, umschaltbar auf weltweit. Bewusst per Knopf statt beim Tippen:
+   das Such-Limit liegt bei ~10 Anfragen/Minute (Client-Drosselung 6 s, 503/429 werden erklärt).
+   Hinweis: der neue Suchdienst `search.openfoodfacts.org` sendet keine CORS-Header und ist aus dem
+   Browser nicht nutzbar; deshalb der klassische Endpunkt `cgi/search.pl`.
 3. **Schnellfunktionen** – „Gestern kopieren“, „Mahlzeit kopieren“, Schnell-Eintrag nur kcal,
    Undo nach Löschen (Snackbar), Favoriten-Stern.
 4. **Eingabe-Ergonomie** – Mengen-Stepper (+10 g / −10 g), zuletzt verwendete Menge pro Lebensmittel merken,
@@ -109,7 +112,7 @@ Qualitätsgewinn; „Optional“ = nice-to-have.
 - `confirm()`/Inline-Formulare vereinheitlichen: ein eigener Bestätigungsdialog.
 - Dexie-Schema hat Version 3; Migrationen sind additiv – gut. Bei Snapshot (C1) braucht es eine
   `upgrade()`-Funktion, die bestehende Einträge befüllt.
-- Rate-Limit OFF (100/min) ist für Barcode-Scans irrelevant, bei Textsuche (C2) aber zu drosseln (Debounce).
+- Rate-Limit OFF: Produktabfragen 100/min (unkritisch), Suche 10/min (client-seitig gedrosselt).
 
 ## 4. Empfohlene Reihenfolge
 

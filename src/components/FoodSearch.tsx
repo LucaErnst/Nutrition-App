@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react';
+import { db } from '../db/db';
 import type { FoodItem, MealType, Unit } from '../db/types';
 import { addMealEntry, useFoodUsage, useSavedFoods } from '../db/hooks';
 import { defaultUnit, fmt, macrosFor } from '../lib/nutrition';
+import { offProductToFoodItem, searchProducts, type OffProduct } from '../lib/openfoodfacts';
+import { ProductResult } from './ProductResult';
 
 interface Props {
   date: string;
@@ -13,11 +16,34 @@ export function normalize(s: string): string {
   return s.toLowerCase().replace(/ß/g, 'ss').normalize('NFD').replace(/[̀-ͯ]/g, '');
 }
 
+type OffState =
+  | { kind: 'idle' }
+  | { kind: 'loading'; query: string }
+  | { kind: 'results'; query: string; products: OffProduct[]; total: number }
+  | { kind: 'error'; message: string };
+
 export function FoodSearch({ date, mealType, onAdded }: Props) {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<FoodItem | null>(null);
+  const [offProduct, setOffProduct] = useState<FoodItem | null>(null);
+  const [off, setOff] = useState<OffState>({ kind: 'idle' });
+  const [worldwide, setWorldwide] = useState(false);
   const foods = useSavedFoods() ?? [];
   const usage = useFoodUsage();
+
+  async function searchOff() {
+    const q = query.trim();
+    setOff({ kind: 'loading', query: q });
+    const res = await searchProducts(q, { country: worldwide ? null : 'switzerland' });
+    if (res.status === 'found') setOff({ kind: 'results', query: q, products: res.products, total: res.total });
+    else setOff({ kind: 'error', message: res.message });
+  }
+
+  async function pickOff(p: OffProduct) {
+    // Bereits gespeichert (z.B. früher gescannt)? Dann das lokale Item nehmen.
+    const local = await db.foodItems.where('barcode').equals(p.barcode).first();
+    setOffProduct(local ?? offProductToFoodItem(p, true));
+  }
 
   const results = useMemo(() => {
     const q = normalize(query.trim());
@@ -37,13 +63,33 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
     });
   }, [foods, query, usage]);
 
+  if (offProduct) {
+    return (
+      <ProductResult
+        item={offProduct}
+        fromLocal={!!offProduct.id}
+        backLabel="‹ Zurück zu den Ergebnissen"
+        onBack={() => setOffProduct(null)}
+        onConfirm={async (amount, unit, save) => {
+          let food = offProduct;
+          if (!food.id) {
+            const id = (await db.foodItems.add({ ...food, saved: save ? 1 : 0 })) as number;
+            food = { ...food, id };
+          }
+          await addMealEntry({ date, meal_type: mealType, food_item_id: food.id!, amount, unit }, food);
+          onAdded();
+        }}
+      />
+    );
+  }
+
   if (selected) {
     return (
       <AmountPicker
         food={selected}
         onBack={() => setSelected(null)}
         onConfirm={async (amount, unit) => {
-          await addMealEntry({ date, meal_type: mealType, food_item_id: selected.id!, amount, unit });
+          await addMealEntry({ date, meal_type: mealType, food_item_id: selected.id!, amount, unit }, selected);
           onAdded();
         }}
       />
@@ -66,7 +112,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
       )}
       {results.length === 0 ? (
         <p className="search-empty">
-          {foods.length === 0 ? 'Datenbank ist leer.' : `Nichts gefunden für „${query}“.`}
+          {foods.length === 0 ? 'Datenbank ist leer.' : `Nichts in deiner Datenbank für „${query}“.`}
         </p>
       ) : (
         <ul className="search-list">
@@ -90,6 +136,65 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
             );
           })}
         </ul>
+      )}
+
+      {query.trim().length >= 2 && (
+        <div className="off-search">
+          {off.kind === 'idle' && (
+            <div className="off-search-row">
+              <button type="button" className="btn-secondary" onClick={() => void searchOff()}>
+                „{query.trim()}“ bei Open Food Facts suchen
+              </button>
+              <label className="checkbox">
+                <input type="checkbox" checked={worldwide} onChange={(e) => setWorldwide(e.target.checked)} />
+                weltweit statt nur Schweiz
+              </label>
+            </div>
+          )}
+          {off.kind === 'loading' && <p className="search-hint">Suche „{off.query}“ bei Open Food Facts…</p>}
+          {off.kind === 'error' && (
+            <p className="form-error" role="alert">
+              {off.message}
+            </p>
+          )}
+          {off.kind === 'results' && (
+            <>
+              <p className="search-hint">
+                Open Food Facts{worldwide ? '' : ' (Schweiz)'}:{' '}
+                {off.products.length === 0 ? 'nichts gefunden' : `${off.products.length} von ${fmt(off.total)} Treffern`}
+                {off.query !== query.trim() && ' (für „' + off.query + '“)'}
+              </p>
+              {off.products.length === 0 && !worldwide && (
+                <button
+                  type="button"
+                  className="btn-link"
+                  onClick={() => {
+                    setWorldwide(true);
+                    setOff({ kind: 'idle' });
+                  }}
+                >
+                  Weltweit suchen
+                </button>
+              )}
+              <ul className="search-list">
+                {off.products.map((p) => (
+                  <li key={p.barcode}>
+                    <button className="search-item" onClick={() => void pickOff(p)}>
+                      <span className="search-item-main">
+                        <span className="search-item-name">{p.name}</span>
+                        <span className="search-item-portion">
+                          {p.brand && `${p.brand} · `}pro 100 {p.is_liquid ? 'ml' : 'g'} · P {fmt(p.protein_per_100g)} · F {fmt(p.fat_per_100g)} · KH {fmt(p.carbs_per_100g)}
+                          {p.incomplete && ' · unvollständig'}
+                        </span>
+                      </span>
+                      <span className="search-item-kcal">{fmt(p.kcal_per_100g)} kcal</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
       )}
     </div>
   );

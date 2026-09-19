@@ -74,7 +74,7 @@ export function MealSlot({ date, mealType, entries }: Props) {
                   if (!name) return;
                   void saveTemplate(
                     name,
-                    entries.map((e) => ({ food_item_id: e.food.id!, amount: e.entry.amount, unit: e.entry.unit })),
+                    entries.map((e) => ({ food_item_id: e.entry.food_item_id, amount: e.entry.amount, unit: e.entry.unit })),
                   );
                   setTemplateName(null);
                 }}

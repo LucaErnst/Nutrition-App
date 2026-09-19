@@ -45,6 +45,21 @@ export interface FoodItem {
   created_at: number;
 }
 
+/**
+ * Nährwerte zum Zeitpunkt des Eintrags. Damit bleiben alte Tage stabil, auch
+ * wenn das Lebensmittel in der Datenbank später korrigiert oder gelöscht wird.
+ */
+export interface NutritionSnapshot {
+  name: string;
+  brand?: string;
+  kcal_per_100g: number;
+  protein_per_100g: number;
+  fat_per_100g: number;
+  carbs_per_100g: number;
+  unit_type: UnitType;
+  piece_weight_g?: number;
+}
+
 export interface MealEntry {
   id?: number;
   date: string; // YYYY-MM-DD
@@ -53,6 +68,21 @@ export interface MealEntry {
   amount: number;
   unit: Unit;
   created_at: number;
+  /** Fehlt nur bei Einträgen aus Backups vor Version 0.4 – dann gilt das FoodItem */
+  snapshot?: NutritionSnapshot;
+}
+
+export function snapshotOf(food: FoodItem): NutritionSnapshot {
+  return {
+    name: food.name,
+    brand: food.brand,
+    kcal_per_100g: food.kcal_per_100g,
+    protein_per_100g: food.protein_per_100g,
+    fat_per_100g: food.fat_per_100g,
+    carbs_per_100g: food.carbs_per_100g,
+    unit_type: food.unit_type,
+    piece_weight_g: food.piece_weight_g,
+  };
 }
 
 export interface DailyGoal {

@@ -45,7 +45,7 @@ export function FoodDatabase() {
         </button>
       </div>
       <p className="search-hint">
-        {foods ? `${results.length} von ${foods.length} Einträgen` : 'Lade…'} · Werte pro 100 g / ml
+        {foods ? `${results.length} von ${foods.length} Einträgen` : 'Lade…'} · Werte pro 100 g / ml · Änderungen gelten für neue Einträge, bereits eingetragene Tage bleiben unverändert.
       </p>
       <ul className="db-list card">
         {results.map((f) => (

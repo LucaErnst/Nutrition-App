@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
-import type { DailyGoal, DayInfo, FoodItem, MealEntry, MealTemplate, Settings, WeightEntry } from './types';
+import { snapshotOf, type DailyGoal, type DayInfo, type FoodItem, type MealEntry, type MealTemplate, type Settings, type WeightEntry } from './types';
 
 class NutritionDB extends Dexie {
   foodItems!: EntityTable<FoodItem, 'id'>;
@@ -25,6 +25,20 @@ class NutritionDB extends Dexie {
     this.version(3).stores({
       templates: '++id, name',
     });
+    // v4: Nährwert-Snapshot pro Eintrag; bestehende Einträge werden befüllt.
+    this.version(4)
+      .stores({})
+      .upgrade(async (tx) => {
+        const foods = await tx.table<FoodItem>('foodItems').toArray();
+        const byId = new Map(foods.map((f) => [f.id!, f]));
+        await tx
+          .table<MealEntry>('mealEntries')
+          .toCollection()
+          .modify((entry) => {
+            const food = byId.get(entry.food_item_id);
+            if (!entry.snapshot && food) entry.snapshot = snapshotOf(food);
+          });
+      });
   }
 }
 
