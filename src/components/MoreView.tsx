@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import { useI18n, useT, type Language } from '../i18n';
+import { fmt } from '../lib/nutrition';
 import { saveSettings, useSettings } from '../db/hooks';
 import { GoalsView } from './GoalsView';
 import { BackupSection } from './BackupSection';
@@ -14,6 +16,16 @@ export function MoreView() {
   const { lang, setLanguage } = useI18n();
   const settings = useSettings();
   const waterGoal = settings?.water_goal_ml ?? 3000;
+  // Lokaler Eingabezustand: gespeichert wird erst beim Verlassen des Felds,
+  // sonst springt das Feld beim Tippen auf den alten Wert zurück.
+  const [goalInput, setGoalInput] = useState(String(waterGoal));
+  useEffect(() => setGoalInput(String(waterGoal)), [waterGoal]);
+
+  function commitGoal(v: number) {
+    const clamped = Math.min(10000, Math.max(500, Math.round(v / 50) * 50));
+    setGoalInput(String(clamped));
+    if (clamped !== waterGoal) void saveSettings({ water_goal_ml: clamped });
+  }
 
   return (
     <div className="goals">
@@ -34,21 +46,42 @@ export function MoreView() {
 
       <section className="card section">
         <h2>{t('more.water')}</h2>
-        <label className="field" style={{ maxWidth: 220, marginTop: 8 }}>
+        <div className="field" style={{ maxWidth: 260, marginTop: 8 }}>
           <span>{t('more.waterGoal')}</span>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={500}
-            max={10000}
-            step={250}
-            value={waterGoal}
-            onChange={(e) => {
-              const v = Number(e.target.value);
-              if (Number.isFinite(v) && v >= 500) void saveSettings({ water_goal_ml: v });
-            }}
-          />
-        </label>
+          <div className="stepper">
+            <button type="button" className="stepper-btn" onClick={() => commitGoal(waterGoal - 250)} aria-label={t('picker.decrease')} disabled={waterGoal <= 500}>
+              −
+            </button>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={500}
+              max={10000}
+              step={50}
+              value={goalInput}
+              onChange={(e) => setGoalInput(e.target.value)}
+              onBlur={() => {
+                const v = Number(goalInput);
+                if (Number.isFinite(v) && v > 0) commitGoal(v);
+                else setGoalInput(String(waterGoal));
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+              }}
+              aria-label={t('more.waterGoal')}
+            />
+            <button type="button" className="stepper-btn" onClick={() => commitGoal(waterGoal + 250)} aria-label={t('picker.increase')} disabled={waterGoal >= 10000}>
+              +
+            </button>
+          </div>
+        </div>
+        <div className="chips" style={{ marginTop: 10 }} role="group" aria-label={t('more.waterGoal')}>
+          {[2000, 2500, 3000, 3500, 4000].map((ml) => (
+            <button key={ml} type="button" className={`chip ${waterGoal === ml ? 'active' : ''}`} onClick={() => commitGoal(ml)}>
+              {fmt(ml / 1000, 1)} l
+            </button>
+          ))}
+        </div>
       </section>
 
       <GoalsView />

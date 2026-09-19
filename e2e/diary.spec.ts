@@ -73,6 +73,18 @@ test('water: add, undo, goal', async ({ page }) => {
   await expect(water.getByText('0.5 / 3.0 l')).toBeVisible();
 });
 
+test('water goal can be typed and picked', async ({ page }) => {
+  await page.getByRole('button', { name: 'More' }).click();
+  const goal = page.getByRole('spinbutton', { name: 'Daily water goal (ml)' });
+  await goal.fill('2200');
+  await goal.blur();
+  await expect(goal).toHaveValue('2200');
+  await page.getByRole('button', { name: '3.5 l' }).click();
+  await expect(goal).toHaveValue('3500');
+  await page.getByRole('button', { name: 'Diary' }).click();
+  await expect(page.getByRole('region', { name: 'Water' }).getByText('0 / 3.5 l')).toBeVisible();
+});
+
 test('language switch to German and back', async ({ page }) => {
   await page.getByRole('button', { name: 'More' }).click();
   await page.getByLabel('Language').getByText('Deutsch').click();
