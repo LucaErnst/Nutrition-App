@@ -24,11 +24,15 @@ export function useDayEntries(date: string): EntryWithFood[] | undefined {
 
 /** Legt einen Eintrag an und friert die Nährwerte des Lebensmittels darin ein. */
 export async function addMealEntry(entry: Omit<MealEntry, 'id' | 'created_at' | 'snapshot'>, food: FoodItem) {
-  return db.mealEntries.add({ ...entry, snapshot: snapshotOf(food), created_at: Date.now() });
+  const id = await db.mealEntries.add({ ...entry, snapshot: snapshotOf(food), created_at: Date.now() });
+  if (food.id) await db.foodItems.update(food.id, { last_amount: entry.amount, last_unit: entry.unit });
+  return id;
 }
 
 export async function updateMealEntryAmount(id: number, amount: number) {
-  return db.mealEntries.update(id, { amount });
+  const entry = await db.mealEntries.get(id);
+  await db.mealEntries.update(id, { amount });
+  if (entry) await db.foodItems.update(entry.food_item_id, { last_amount: amount, last_unit: entry.unit });
 }
 
 export async function deleteMealEntry(id: number) {

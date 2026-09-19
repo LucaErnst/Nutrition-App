@@ -1641,3 +1641,141 @@ button {
   border-top: none;
   padding-top: 4px;
 }
+
+/* Mengen-Stepper */
+.stepper {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.stepper input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  padding: 9px 4px;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.stepper input::-webkit-outer-spin-button,
+.stepper input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.stepper input:focus {
+  outline: none;
+}
+
+.stepper:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.stepper-btn {
+  width: 40px;
+  font-size: 20px;
+  color: var(--accent);
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+.stepper-btn:first-child {
+  border-left: none;
+}
+
+.stepper-btn:last-child {
+  border-right: none;
+}
+
+.stepper-btn:disabled {
+  color: var(--text-2);
+  opacity: 0.5;
+}
+
+.stepper-btn:active {
+  background: var(--surface-2);
+}
+
+.stepper-compact {
+  width: 150px;
+}
+
+.stepper-compact input {
+  padding: 4px 2px;
+}
+
+.stepper-compact .stepper-btn {
+  width: 32px;
+  font-size: 18px;
+}
+
+/* Chips */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.chip.active {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* Portions-Editor */
+.portion-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.portion-row {
+  display: grid;
+  grid-template-columns: 1fr 90px auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.portion-row input {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  width: 100%;
+}
+
+.entry-edit {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.btn-sm {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 8px;
+}

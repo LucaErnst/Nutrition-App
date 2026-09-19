@@ -5,6 +5,8 @@ import { addMealEntry, toggleFavorite, useFoodUsage, useSavedFoods } from '../db
 import { defaultUnit, fmt, macrosFor } from '../lib/nutrition';
 import { offProductToFoodItem, searchProducts, type OffProduct } from '../lib/openfoodfacts';
 import { ProductResult } from './ProductResult';
+import { AmountStepper } from './AmountStepper';
+import { PortionChips } from './PortionChips';
 
 interface Props {
   date: string;
@@ -220,8 +222,10 @@ interface PickerProps {
 
 function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
   const baseUnit = defaultUnit(food);
-  const [unit, setUnit] = useState<Unit>(baseUnit);
-  const [amount, setAmount] = useState(String(food.default_amount ?? (baseUnit === 'Stück' ? 1 : 100)));
+  // Vorschlag: zuletzt verwendete Menge, sonst übliche Portion
+  const initialUnit = food.last_unit ?? baseUnit;
+  const [unit, setUnit] = useState<Unit>(initialUnit);
+  const [amount, setAmount] = useState(String(food.last_amount ?? food.default_amount ?? (baseUnit === 'Stück' ? 1 : 100)));
   const n = Number(amount.replace(',', '.'));
   const valid = Number.isFinite(n) && n > 0;
   const m = macrosFor(food, valid ? n : 0, unit);
@@ -245,19 +249,10 @@ function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
         {food.brand && <div className="search-item-brand">{food.brand}</div>}
       </div>
       <div className="field-row">
-        <label className="field">
+        <div className="field" style={{ flex: 2 }}>
           <span>Menge</span>
-          <input
-            type="number"
-            inputMode="decimal"
-            min={0}
-            step="any"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-
-            onFocus={(e) => e.target.select()}
-          />
-        </label>
+          <AmountStepper value={amount} onChange={setAmount} unit={unit} />
+        </div>
         <label className="field">
           <span>Einheit</span>
           <select value={unit} onChange={(e) => setUnit(e.target.value as Unit)} disabled={units.length === 1}>
@@ -269,6 +264,15 @@ function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
           </select>
         </label>
       </div>
+      <PortionChips
+        food={food}
+        baseUnit={baseUnit}
+        current={{ amount: n, unit }}
+        onPick={(a, u) => {
+          setAmount(String(a));
+          if (units.includes(u)) setUnit(u);
+        }}
+      />
       <div className="picker-preview">
         <span className="picker-kcal">{fmt(m.kcal)} kcal</span>
         <span>P {fmt(m.protein)} g</span>

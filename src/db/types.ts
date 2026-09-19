@@ -24,6 +24,12 @@ export const MEAL_LABELS: Record<MealType, string> = {
   dinner: 'Abendessen',
 };
 
+export interface Portion {
+  label: string;
+  /** Gewicht in g bzw. ml */
+  grams: number;
+}
+
 /** Nährwerte sind immer pro 100 g (bzw. 100 ml) gespeichert. */
 export interface FoodItem {
   id?: number;
@@ -44,6 +50,11 @@ export interface FoodItem {
   saved: 0 | 1;
   /** Favorit: in der Suche ganz oben */
   favorite?: 0 | 1;
+  /** Eigene Portionsgrössen, z.B. „1 EL“ = 14 g, „1 Handvoll“ = 30 g */
+  portions?: Portion[];
+  /** Zuletzt eingetragene Menge – wird beim nächsten Mal vorgeschlagen */
+  last_amount?: number;
+  last_unit?: Unit;
   created_at: number;
 }
 

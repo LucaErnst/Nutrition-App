@@ -89,8 +89,10 @@ Qualitätsgewinn; „Optional“ = nice-to-have.
 3. **Schnellfunktionen** ✓ (0.5.0) – „Von gestern kopieren“ in leeren Mahlzeiten, „Kopieren von“
    (heute/gestern, alle Mahlzeiten) im Vorlagen-Tab, Schnell-Eintrag ohne Namen (nur Werte, landet nicht
    in der Datenbank), Undo nach Löschen (Toast, 5 s), Favoriten-Stern in Suche und Datenbank.
-4. **Eingabe-Ergonomie** – Mengen-Stepper (+10 g / −10 g), zuletzt verwendete Menge pro Lebensmittel merken,
-   Portionsgrössen pro Lebensmittel (1 EL, 1 Handvoll).
+4. **Eingabe-Ergonomie** ✓ (0.6.0) – Mengen-Stepper (±10 g/ml, ±5 unter 20 g, ±1 Stück) in Picker,
+   Produkt-Karte und Inline-Editor; zuletzt verwendete Menge wird pro Lebensmittel gemerkt und vorgeschlagen;
+   Schnellwahl-Chips (Zuletzt / Üblich / eigene Portionsgrössen wie „1 Handvoll = 30 g“, editierbar in der
+   Datenbank).
 5. **Wochenziel-Modus** – Wochen-kcal als Budget (Trainings-/Ruhetag-Verteilung flexibel), passt zu
    deinem Coaching-Ansatz „Kalorien im Rahmen“ statt jeden Tag exakt.
 6. **E2E-Tests** – Playwright für die Kernflüsse (Eintragen, Scannen mit Mock, Backup-Rundlauf),

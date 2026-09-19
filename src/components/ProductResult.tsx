@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { FoodItem, Unit } from '../db/types';
 import { fmt, macrosFor } from '../lib/nutrition';
+import { AmountStepper } from './AmountStepper';
+import { PortionChips } from './PortionChips';
 
 /** Ergebniskarte für ein Open-Food-Facts-Produkt (Scan oder Textsuche): Menge wählen, speichern. */
 interface ResultProps {
@@ -13,7 +15,7 @@ interface ResultProps {
 
 export function ProductResult({ item, fromLocal, backLabel, onBack, onConfirm }: ResultProps) {
   const unit: Unit = item.unit_type === 'volume' ? 'ml' : 'g';
-  const [amount, setAmount] = useState(String(item.default_amount ?? 100));
+  const [amount, setAmount] = useState(String(item.last_amount ?? item.default_amount ?? 100));
   const [save, setSave] = useState(true);
   const n = Number(amount.replace(',', '.'));
   const valid = Number.isFinite(n) && n > 0;
@@ -45,19 +47,10 @@ export function ProductResult({ item, fromLocal, backLabel, onBack, onConfirm }:
         <p className="form-error">Für dieses Produkt sind keine Kalorien hinterlegt – Werte bitte in der Datenbank prüfen.</p>
       )}
       <div className="field-row">
-        <label className="field">
+        <div className="field" style={{ flex: 2 }}>
           <span>Menge</span>
-          <input
-            type="number"
-            inputMode="decimal"
-            min={0}
-            step="any"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-
-            onFocus={(e) => e.target.select()}
-          />
-        </label>
+          <AmountStepper value={amount} onChange={setAmount} unit={unit} />
+        </div>
         <label className="field">
           <span>Einheit</span>
           <select value={unit} disabled>
@@ -65,6 +58,7 @@ export function ProductResult({ item, fromLocal, backLabel, onBack, onConfirm }:
           </select>
         </label>
       </div>
+      <PortionChips food={item} baseUnit={unit} current={{ amount: n, unit }} onPick={(a) => setAmount(String(a))} />
       <div className="picker-preview">
         <span className="picker-kcal">{fmt(m.kcal)} kcal</span>
         <span>P {fmt(m.protein)} g</span>

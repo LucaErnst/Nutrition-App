@@ -3,6 +3,7 @@ import { MEAL_LABELS, type MealType } from '../db/types';
 import { copyMeal, deleteMealEntry, restoreMealEntry, saveTemplate, updateMealEntryAmount, useCopySources } from '../db/hooks';
 import { addDays } from '../lib/date';
 import { useToast } from './Toast';
+import { AmountStepper } from './AmountStepper';
 import { fmt, sumMacros, type EntryWithFood } from '../lib/nutrition';
 import { AddEntryDialog } from './AddEntryDialog';
 
@@ -161,25 +162,25 @@ function EntryRow({ item }: { item: EntryWithFood }) {
         </span>
         <span className="entry-amount">
           {editing ? (
-            <input
-              className="input-inline"
-              type="number"
-              inputMode="decimal"
-              min={0}
-              step="any"
-              value={amount}
-              autoFocus
-              onChange={(ev) => setAmount(ev.target.value)}
-              onBlur={commit}
-              onKeyDown={(ev) => {
-                if (ev.key === 'Enter') commit();
-                if (ev.key === 'Escape') {
-                  setAmount(String(entry.amount));
-                  setEditing(false);
-                }
-              }}
-              aria-label="Menge"
-            />
+            <span className="entry-edit">
+              <AmountStepper
+                value={amount}
+                onChange={setAmount}
+                unit={entry.unit}
+                compact
+                autoFocus
+                onKeyDown={(ev) => {
+                  if (ev.key === 'Enter') commit();
+                  if (ev.key === 'Escape') {
+                    setAmount(String(entry.amount));
+                    setEditing(false);
+                  }
+                }}
+              />
+              <button type="button" className="btn-primary btn-sm" onClick={commit}>
+                OK
+              </button>
+            </span>
           ) : (
             <button className="btn-link" onClick={() => setEditing(true)} title="Menge ändern">
               {fmt(entry.amount, entry.amount % 1 === 0 ? 0 : 1)} {entry.unit}
