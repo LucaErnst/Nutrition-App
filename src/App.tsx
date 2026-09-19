@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { DayView } from './components/DayView';
 import { FoodDatabase } from './components/FoodDatabase';
 import { MoreView } from './components/MoreView';
+import { UpdateBanner } from './components/UpdateBanner';
 import { WeekView } from './components/WeekView';
 const WeightView = lazy(() => import('./components/WeightView').then((m) => ({ default: m.WeightView })));
 
@@ -55,6 +56,7 @@ export default function App() {
         {view === 'database' && <FoodDatabase />}
         {view === 'more' && <MoreView />}
       </main>
+      <UpdateBanner />
     </div>
   );
 }

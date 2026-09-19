@@ -1,11 +1,13 @@
 import { useRef, useState } from 'react';
 import { exportBackup, parseBackup, restoreBackup, type Backup } from '../lib/backup';
+import { useSettings } from '../db/hooks';
 
 export function BackupSection() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
   const [pending, setPending] = useState<Backup | null>(null);
   const [busy, setBusy] = useState(false);
+  const settings = useSettings();
 
   async function doExport() {
     setMessage(null);
@@ -54,6 +56,12 @@ export function BackupSection() {
       <h2>Backup</h2>
       <p className="search-hint">
         Alle Daten liegen nur auf diesem Gerät. Exportiere regelmässig ein Backup (z.B. in iCloud Drive) – damit kannst du auch auf ein anderes Gerät umziehen.
+      </p>
+      <p className="search-hint">
+        Letztes Backup:{' '}
+        {settings?.last_backup_at
+          ? new Date(settings.last_backup_at).toLocaleString('de-CH', { dateStyle: 'medium', timeStyle: 'short' })
+          : 'noch nie'}
       </p>
       <div className="form-actions" style={{ justifyContent: 'flex-start', marginTop: 12 }}>
         <button className="btn-primary" onClick={() => void doExport()} disabled={busy}>

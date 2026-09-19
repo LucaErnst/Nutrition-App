@@ -6,6 +6,7 @@ import { addDays, formatDateLabel, todayISO } from '../lib/date';
 import { activeGoalFor, targetsFor } from '../lib/goals';
 import { DailySummary } from './DailySummary';
 import { MealSlot } from './MealSlot';
+import { BackupReminder } from './BackupReminder';
 
 interface Props {
   initialDate?: string;
@@ -46,6 +47,8 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
           ›
         </button>
       </nav>
+
+      <BackupReminder />
 
       <DailySummary
         totals={totals}

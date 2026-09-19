@@ -52,14 +52,15 @@ Alle Akzeptanzkriterien der Spec:
 Nach Priorität. „Pflicht“ = ohne das würde ich es nicht als App bezeichnen; „Empfohlen“ = deutlicher
 Qualitätsgewinn; „Optional“ = nice-to-have.
 
-### A. Pflicht, wenn nur du sie nutzt
+### A. Pflicht, wenn nur du sie nutzt – umgesetzt in 0.3.0
 
-1. **Datensicherheit** – Backup ist manuell. Mindestens: Erinnerung in der App („letztes Backup vor 14 Tagen“),
-   besser automatischer Export nach iCloud Drive (nur nativ möglich) oder Cloud-Sync (siehe C1).
-2. **Update-Hinweis** – der Service Worker aktualisiert still; ein Banner „Neue Version – neu laden“
-   verhindert, dass zwei Geräte mit verschiedenen Versionen laufen.
-3. **Fehler-Reporting** – aktuell nur `console.error`. Ein leichter Dienst (Sentry, kostenloser Tarif)
-   zeigt dir Abstürze auf dem iPhone, die du sonst nie siehst.
+1. **Datensicherheit** ✓ Backup-Erinnerung im Tagebuch (ohne Backup bzw. älter als 14 Tage, „Später“ = 3 Tage
+   Pause), Zeitpunkt des letzten Backups unter „Mehr → Backup“. Offen: automatischer Export nach iCloud Drive
+   (nur nativ möglich) oder Cloud-Sync (siehe B2).
+2. **Update-Hinweis** ✓ Banner „Neue Version verfügbar – Neu laden“; die App prüft stündlich auf Updates.
+3. **Fehler-Reporting** ✓ lokal: Laufzeitfehler, unbehandelte Promises und React-Abstürze landen in
+   „Mehr → Diagnose“ (max. 20, teilbar per Share-Sheet). Offen: externer Dienst (Sentry) – braucht ein Konto
+   und einen DSN; Anbindung ist in `src/lib/errorLog.ts` an einer Stelle möglich.
 
 ### B. Pflicht, wenn andere sie nutzen sollen (Coaching-Klienten, App Store)
 

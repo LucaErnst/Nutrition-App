@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { logError } from '../lib/errorLog';
 
 interface State {
   error: Error | null;
@@ -14,6 +15,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('Unerwarteter Fehler', error, info.componentStack);
+    logError('react', error);
   }
 
   render() {

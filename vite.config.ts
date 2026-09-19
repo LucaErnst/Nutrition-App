@@ -17,7 +17,7 @@ export default defineConfig({
     react(),
     ...(phone ? [basicSsl()] : []),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'Ernährung',

@@ -78,6 +78,8 @@ export interface Settings {
   id: 1;
   /** Wochentage (0 = So … 6 = Sa), die standardmässig Trainingstage sind */
   training_weekdays: number[];
+  /** Zeitpunkt des letzten erfolgreichen Backup-Exports */
+  last_backup_at?: number;
 }
 
 /** Mahlzeiten-Vorlage, z.B. "Standard-Frühstück": mehrere Posten auf einmal eintragen. */

@@ -48,6 +48,17 @@ export function backupFilename(): string {
 
 /** Bietet die Datei per Share-Sheet (iOS) oder als Download an. */
 export async function exportBackup(): Promise<'shared' | 'downloaded'> {
+  const how = await doExport();
+  await markBackupDone();
+  return how;
+}
+
+async function markBackupDone() {
+  const cur = (await db.settings.get(1)) ?? { id: 1 as const, training_weekdays: [1, 2, 4, 5] };
+  await db.settings.put({ ...cur, last_backup_at: Date.now() });
+}
+
+async function doExport(): Promise<'shared' | 'downloaded'> {
   const backup = await createBackup();
   const json = JSON.stringify(backup, null, 2);
   const file = new File([json], backupFilename(), { type: 'application/json' });

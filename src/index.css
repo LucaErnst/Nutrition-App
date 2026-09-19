@@ -1488,3 +1488,73 @@ button {
 .template-form .search-input {
   flex: 1 1 160px;
 }
+
+/* Banner (Backup-Erinnerung, Update) */
+.banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--c-fat) 14%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--c-fat) 40%, transparent);
+  font-size: 14px;
+}
+
+.banner-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.banner .btn-primary {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.banner-update {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 6;
+  background: var(--surface);
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.2);
+  max-width: 688px;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .banner-update {
+    bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+}
+
+.error-list {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.error-list li {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+}
+
+.error-time {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.error-msg {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  word-break: break-word;
+}
