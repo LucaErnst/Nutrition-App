@@ -67,10 +67,10 @@ kopiert den neuen Web-Build in beide Projekte. Xcode/Android Studio danach neu b
 
 ## Assets
 
-`assets/icon.svg` ist die Quelle. Neu erzeugen:
+Quelle ist das BS-Logo `assets/brand/bs-logo.png`. `store/brand-assets.mjs` rendert daraus Icon (dunkler Hintergrund,
+Variante A), Android-Vorder-/Hintergrund, Splash und PWA-Icons; danach erzeugt @capacitor/assets alle Grössen:
 ```bash
-npx @capacitor/assets generate --iconBackgroundColor '#2563eb' --iconBackgroundColorDark '#0f1115' --splashBackgroundColor '#2563eb' --splashBackgroundColorDark '#0f1115'
-rm -rf icons public/manifest.webmanifest   # PWA-Dateien kommen von vite-plugin-pwa
+npm run brand
 ```
 
 ## Berechtigungen

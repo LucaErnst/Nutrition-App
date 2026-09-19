@@ -18,15 +18,15 @@ export default defineConfig({
     ...(phone ? [basicSsl()] : []),
     VitePWA({
       registerType: 'prompt',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
+      includeAssets: ['apple-touch-icon.png', 'icon-192.png'],
       manifest: {
         name: 'Serious Nutrition',
         short_name: 'Serious Nutrition',
         description: 'Calorie & macro tracker – no account, all data on your device',
         lang: 'de',
         display: 'standalone',
-        background_color: '#f4f5f7',
-        theme_color: '#2563eb',
+        background_color: '#0f1115',
+        theme_color: '#0f1115',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
