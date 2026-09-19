@@ -69,8 +69,8 @@ Regel: Nie etwas hinter die Paywall legen, was der Nutzer in den ersten fünf Mi
 
 ### C. Recht
 - [x] Datenschutzerklärung DE + EN (0.11.0) unter `/legal/` der Web-Adresse, in der App unter „Mehr → Rechtliches“
-      verlinkt. **Offen: Platzhalter ausfüllen** (Name, Adresse, Kontakt-E-Mail, Gerichtsstand) – gelb markiert.
-- [x] Nutzungsbedingungen DE + EN, Support-Seite DE + EN (0.11.0). Gleiche Platzhalter.
+      verlinkt. Anbieterangaben und Kontakt (beseriouscalisthenics@gmail.com) eingetragen.
+- [x] Nutzungsbedingungen DE + EN, Support-Seite DE + EN (0.11.0), Gerichtsstand Basel.
 - [ ] Juristische Durchsicht der Texte (Vorlage, keine Rechtsberatung).
 - [ ] Apple „App Privacy“ und Google „Data safety“ ausfüllen.
 - [ ] Keine medizinischen Aussagen; Gewicht/Ernährung als Tracking, nicht als Therapie beschreiben.
