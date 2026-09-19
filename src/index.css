@@ -2191,3 +2191,10 @@ input[type='date']::-webkit-date-and-time-value {
 .onboarding .segmented label {
   white-space: normal;
 }
+
+.legal-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 8px 0 0;
+}

@@ -6,6 +6,9 @@ import { GoalsView } from './GoalsView';
 import { BackupSection } from './BackupSection';
 import { DiagnosticsSection } from './DiagnosticsSection';
 
+/** Rechtstexte liegen auf der Web-Adresse – auch die native App verlinkt dorthin. */
+const LEGAL_BASE = 'https://lucaernst.github.io/Nutrition-App/legal/';
+
 const LANGS: { id: Language; label: string }[] = [
   { id: 'en', label: 'English' },
   { id: 'de', label: 'Deutsch' },
@@ -87,6 +90,20 @@ export function MoreView() {
       <GoalsView />
       <BackupSection />
       <DiagnosticsSection />
+      <section className="card section">
+        <h2>{t('more.legal')}</h2>
+        <p className="legal-links">
+          <a href={`${LEGAL_BASE}privacy-${lang}.html`} target="_blank" rel="noopener">
+            {t('more.privacy')}
+          </a>
+          <a href={`${LEGAL_BASE}terms-${lang}.html`} target="_blank" rel="noopener">
+            {t('more.terms')}
+          </a>
+          <a href={`${LEGAL_BASE}support-${lang}.html`} target="_blank" rel="noopener">
+            {t('more.support')}
+          </a>
+        </p>
+      </section>
       <p className="about">{t('more.about', { app: t('app.title'), version: __APP_VERSION__ })}</p>
     </div>
   );

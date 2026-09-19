@@ -238,6 +238,10 @@ export const de: Record<MessageKey, string> = {
   'more.languageHint': 'Deine eigenen Lebensmittelnamen und Vorlagen bleiben so, wie du sie eingegeben hast.',
   'more.water': 'Wasser',
   'more.waterGoal': 'Tagesziel Wasser (ml)',
+  'more.legal': 'Rechtliches',
+  'more.privacy': 'Datenschutzerklärung',
+  'more.terms': 'Nutzungsbedingungen',
+  'more.support': 'Support',
   'more.about': '{app} · Version {version} · Daten: lokal (IndexedDB) · Produktdaten: Open Food Facts',
 
   'backup.title': 'Backup',

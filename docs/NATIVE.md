@@ -36,6 +36,10 @@ Mindest-iOS ist **16.0** (ML Kit 8 verlangt es). iOS-Simulator-Runtime bei Bedar
 xcodebuild -downloadPlatform iOS
 ```
 
+**Simulator-Einschränkung:** Googles ML Kit liefert für den iOS-Simulator nur x86_64-Binaries; auf Apple-Silicon-Macs
+mit Xcode 27 (keine Rosetta-Simulatoren mehr) lässt sich die App deshalb nicht im Simulator starten. Der Build für
+echte Geräte (arm64) ist davon nicht betroffen – **auf dem iPhone testen**.
+
 ## iOS bauen und auf dem iPhone testen
 
 ```bash

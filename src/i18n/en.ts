@@ -253,6 +253,10 @@ export const en = {
   'more.languageHint': 'Your own food names and templates stay as you entered them.',
   'more.water': 'Water',
   'more.waterGoal': 'Daily water goal (ml)',
+  'more.legal': 'Legal',
+  'more.privacy': 'Privacy policy',
+  'more.terms': 'Terms of use',
+  'more.support': 'Support',
   'more.about': '{app} · Version {version} · Data: local (IndexedDB) · Product data: Open Food Facts',
 
   // Backup

@@ -68,9 +68,10 @@ Regel: Nie etwas hinter die Paywall legen, was der Nutzer in den ersten fünf Mi
 - [ ] RevenueCat-Konto, Produkte in App Store Connect und Play Console anlegen.
 
 ### C. Recht
-- [ ] Datenschutzerklärung (öffentliche URL, DE + EN). Heute wahr: keine Datenerhebung, alles lokal,
-      OFF-Abfragen nur mit Barcode/Suchbegriff. Mit Sync ändert sich das.
-- [ ] Nutzungsbedingungen, Impressum (CH).
+- [x] Datenschutzerklärung DE + EN (0.11.0) unter `/legal/` der Web-Adresse, in der App unter „Mehr → Rechtliches“
+      verlinkt. **Offen: Platzhalter ausfüllen** (Name, Adresse, Kontakt-E-Mail, Gerichtsstand) – gelb markiert.
+- [x] Nutzungsbedingungen DE + EN, Support-Seite DE + EN (0.11.0). Gleiche Platzhalter.
+- [ ] Juristische Durchsicht der Texte (Vorlage, keine Rechtsberatung).
 - [ ] Apple „App Privacy“ und Google „Data safety“ ausfüllen.
 - [ ] Keine medizinischen Aussagen; Gewicht/Ernährung als Tracking, nicht als Therapie beschreiben.
 - [ ] Open-Food-Facts-Nennung (ODbL) – vorhanden, im Store-Text erwähnen.
