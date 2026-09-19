@@ -98,3 +98,14 @@ test('language switch to German and back', async ({ page }) => {
   await page.getByRole('button', { name: 'Diary' }).click();
   await expect(page.getByRole('heading', { name: 'Breakfast' })).toBeVisible();
 });
+
+test('default phase name and number format follow the language', async ({ page }) => {
+  // Phase „Bulk“ aus dem Helper: Standardname → wird übersetzt angezeigt
+  await expect(page.locator('.summary-phase')).toHaveText('· Bulk');
+  await expect(page.locator('.summary-remaining')).toContainText('2,350 kcal left');
+  await page.getByRole('button', { name: 'More' }).click();
+  await page.getByLabel('Language').getByText('Deutsch').click();
+  await page.getByRole('button', { name: 'Tagebuch' }).click();
+  await expect(page.locator('.summary-phase')).toHaveText('· Aufbau');
+  await expect(page.locator('.summary-remaining')).toContainText("noch 2'350 kcal");
+});

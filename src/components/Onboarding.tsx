@@ -49,6 +49,7 @@ export function Onboarding({ onDone }: Props) {
       const name = phaseName.trim() || phaseLabel(phase);
       await db.goals.add({
         phase_name: name,
+        phase_type: phase,
         start_date: todayISO(),
         training_day_kcal: num(trainKcal),
         rest_day_kcal: num(restKcal),

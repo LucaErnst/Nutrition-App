@@ -1,4 +1,5 @@
 import type { DailyGoal, Macros } from '../db/types';
+import { phaseDisplayName } from '../i18n';
 
 /** Zielwerte für einen konkreten Tag, abgeleitet aus Phase + Trainingstag. */
 export interface DayTargets {
@@ -29,7 +30,7 @@ export function targetsFor(goal: DailyGoal, isTraining: boolean): DayTargets {
     fat_max: goal.fat_max_g,
     carbs,
     is_training: isTraining,
-    phase_name: goal.phase_name,
+    phase_name: phaseDisplayName(goal),
   };
 }
 

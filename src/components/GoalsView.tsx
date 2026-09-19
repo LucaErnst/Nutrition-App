@@ -1,11 +1,11 @@
 import { useState, type FormEvent } from 'react';
 import { db } from '../db/db';
-import type { DailyGoal } from '../db/types';
+import type { DailyGoal, PhaseType } from '../db/types';
 import { saveSettings, useGoals, useSettings } from '../db/hooks';
 import { formatDate, todayISO } from '../lib/date';
 import { fmt } from '../lib/nutrition';
 import { targetsFor } from '../lib/goals';
-import { getLocale, useT } from '../i18n';
+import { getLocale, phaseDisplayName, useT } from '../i18n';
 import { Modal } from './Modal';
 
 const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0];
@@ -31,7 +31,7 @@ export function GoalsView() {
   }
 
   async function remove(g: DailyGoal) {
-    if (!confirm(t('goals.confirmDelete', { name: g.phase_name }))) return;
+    if (!confirm(t('goals.confirmDelete', { name: phaseDisplayName(g) }))) return;
     await db.goals.delete(g.id!);
   }
 
@@ -69,7 +69,7 @@ export function GoalsView() {
               <li key={g.id} className={`phase ${active ? 'phase-active' : ''}`}>
                 <div className="phase-head">
                   <span className="phase-name">
-                    {g.phase_name}
+                    {phaseDisplayName(g)}
                     {active && <span className="badge">{t('goals.active')}</span>}
                   </span>
                   <span className="phase-dates">
@@ -126,6 +126,7 @@ export function GoalsView() {
 function GoalForm({ goal, onDone }: { goal?: DailyGoal; onDone: () => void }) {
   const t = useT();
   const [name, setName] = useState(goal?.phase_name ?? '');
+  const [type, setType] = useState<PhaseType | ''>(goal?.phase_type ?? '');
   const [start, setStart] = useState(goal?.start_date ?? todayISO());
   const [end, setEnd] = useState(goal?.end_date ?? '');
   const [trainKcal, setTrainKcal] = useState(String(goal?.training_day_kcal ?? 2700));
@@ -142,6 +143,7 @@ function GoalForm({ goal, onDone }: { goal?: DailyGoal; onDone: () => void }) {
     if (Number(fatMin) > Number(fatMax)) return setError(t('goals.errFat'));
     const data: Omit<DailyGoal, 'id'> = {
       phase_name: name.trim(),
+      phase_type: type || undefined,
       start_date: start,
       end_date: end || undefined,
       training_day_kcal: Number(trainKcal),
@@ -168,6 +170,25 @@ function GoalForm({ goal, onDone }: { goal?: DailyGoal; onDone: () => void }) {
 
   return (
     <form className="form" onSubmit={submit}>
+      <div className="field">
+        <span>{t('ob.phase')}</span>
+        <div className="segmented" role="radiogroup" aria-label={t('ob.phase')}>
+          {(['cut', 'maintain', 'bulk'] as PhaseType[]).map((p) => (
+            <label key={p} className={type === p ? 'active' : ''}>
+              <input
+                type="radio"
+                name="phase-type"
+                checked={type === p}
+                onChange={() => {
+                  setType(p);
+                  setName(t(p === 'cut' ? 'ob.phaseCut' : p === 'maintain' ? 'ob.phaseMaintain' : 'ob.phaseBulk'));
+                }}
+              />
+              {p === 'cut' ? t('ob.phaseCut') : p === 'maintain' ? t('ob.phaseMaintain') : t('ob.phaseBulk')}
+            </label>
+          ))}
+        </div>
+      </div>
       <label className="field">
         <span>{t('goals.phaseName')}</span>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('goals.phasePlaceholder')} required />

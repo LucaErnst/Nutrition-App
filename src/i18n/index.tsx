@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { db } from '../db/db';
-import type { MealType } from '../db/types';
+import type { DailyGoal, MealType, PhaseType } from '../db/types';
 import { en, type MessageKey } from './en';
 import { de } from './de';
 
@@ -42,6 +42,22 @@ function interpolate(template: string, params?: Params): string {
 /** Übersetzung ohne Hook – für Libs und Nicht-Komponenten. */
 export function t(key: MessageKey, params?: Params): string {
   return interpolate(DICTS[current][key] ?? en[key] ?? key, params);
+}
+
+/** Standardnamen je Phasentyp in allen Sprachen – ein so benannter Eintrag wird übersetzt angezeigt. */
+const PHASE_DEFAULTS: Record<PhaseType, string[]> = {
+  cut: ['Cut', 'Defizit', 'Defizitphase'],
+  maintain: ['Maintenance', 'Erhalt', 'Erhaltungsphase'],
+  bulk: ['Bulk', 'Aufbau', 'Aufbauphase'],
+};
+
+/** Phasenname zur Anzeige: Standardnamen werden übersetzt, eigene Namen bleiben. */
+export function phaseDisplayName(goal: Pick<DailyGoal, 'phase_name' | 'phase_type'>): string {
+  const type = goal.phase_type ?? (Object.keys(PHASE_DEFAULTS) as PhaseType[]).find((k) => PHASE_DEFAULTS[k].includes(goal.phase_name.trim()));
+  if (type && PHASE_DEFAULTS[type].includes(goal.phase_name.trim())) {
+    return t(type === 'cut' ? 'ob.phaseCut' : type === 'maintain' ? 'ob.phaseMaintain' : 'ob.phaseBulk');
+  }
+  return goal.phase_name;
 }
 
 export function mealLabel(type: MealType): string {

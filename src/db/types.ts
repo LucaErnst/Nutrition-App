@@ -90,9 +90,13 @@ export function snapshotOf(food: FoodItem): NutritionSnapshot {
   };
 }
 
+export type PhaseType = 'cut' | 'maintain' | 'bulk';
+
 export interface DailyGoal {
   id?: number;
   phase_name: string;
+  /** Typ der Phase; erlaubt eine übersetzte Anzeige des Standardnamens */
+  phase_type?: PhaseType;
   start_date: string;
   end_date?: string;
   training_day_kcal: number;
