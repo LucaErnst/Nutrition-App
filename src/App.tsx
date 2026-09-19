@@ -2,7 +2,8 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { DayView } from './components/DayView';
 import { FoodDatabase } from './components/FoodDatabase';
 import { MoreView } from './components/MoreView';
-import { UpdateBanner } from './components/UpdateBanner';
+import { isNative } from './lib/native';
+const UpdateBanner = lazy(() => import('./components/UpdateBanner').then((m) => ({ default: m.UpdateBanner })));
 import { ToastProvider } from './components/Toast';
 import { IconDiary, IconFood, IconMore, IconWeek, IconWeight } from './components/Icons';
 import type { ComponentType, SVGProps } from 'react';
@@ -74,7 +75,11 @@ export default function App() {
           {view === 'database' && <FoodDatabase />}
           {view === 'more' && <MoreView />}
         </main>
-        <UpdateBanner />
+        {!isNative && (
+          <Suspense fallback={null}>
+            <UpdateBanner />
+          </Suspense>
+        )}
       </div>
     </ToastProvider>
   );

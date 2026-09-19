@@ -7,6 +7,8 @@ const BarcodeScanner = lazy(() => import('./BarcodeScanner').then((m) => ({ defa
 import { ManualEntryForm } from './ManualEntryForm';
 import { ProductResult } from './ProductResult';
 import { useT } from '../i18n';
+import { isNative } from '../lib/native';
+import { NativeScanner } from './NativeScanner';
 
 interface Props {
   date: string;
@@ -91,16 +93,20 @@ export function ScanTab({ date, mealType, onDone }: Props) {
 
   return (
     <div className="scan">
-      {showCamera ? (
-        <Suspense fallback={<div className="scanner skeleton-card"><p className="scanner-status">{t('scan.loading')}</p></div>}>
-          <BarcodeScanner onDetected={(code) => void handleCode(code)} paused={busy} />
-        </Suspense>
-      ) : null}
-      <button type="button" className="btn-link" onClick={() => setShowCamera((v) => !v)}>
-        {showCamera ? t('scan.hideCamera') : t('scan.showCamera')}
-      </button>
-      {isIosStandalone() && (
-        <p className="search-hint">{t('scan.iosHint')}</p>
+      {isNative ? (
+        <NativeScanner onDetected={(code) => void handleCode(code)} />
+      ) : (
+        <>
+          {showCamera ? (
+            <Suspense fallback={<div className="scanner skeleton-card"><p className="scanner-status">{t('scan.loading')}</p></div>}>
+              <BarcodeScanner onDetected={(code) => void handleCode(code)} paused={busy} />
+            </Suspense>
+          ) : null}
+          <button type="button" className="btn-link" onClick={() => setShowCamera((v) => !v)}>
+            {showCamera ? t('scan.hideCamera') : t('scan.showCamera')}
+          </button>
+          {isIosStandalone() && <p className="search-hint">{t('scan.iosHint')}</p>}
+        </>
       )}
 
       <form className="scan-code-form" onSubmit={submitCode}>

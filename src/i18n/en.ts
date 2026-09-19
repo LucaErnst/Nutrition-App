@@ -167,6 +167,8 @@ export const en = {
   'scan.errNoCamera': 'No camera available (browser does not support getUserMedia or the page is not secure/HTTPS).',
   'scan.errDenied': 'Camera access was denied.',
   'scan.errNotFound': 'No camera found.',
+  'scan.open': 'Open scanner',
+  'scan.openSettings': 'Allow camera in Settings',
   'scan.errStart': 'Could not start the camera.',
 
   // OFF errors

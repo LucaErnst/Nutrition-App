@@ -47,9 +47,9 @@ Regel: Nie etwas hinter die Paywall legen, was der Nutzer in den ersten fünf Mi
 ## 3. Was fehlt – Checkliste
 
 ### A. Technik
-- [ ] **Capacitor-Hülle** (iOS + Android aus demselben Code). Plugins: Camera/ML-Kit-Barcode (nativer Scanner,
-      Kamera-Freigabe wird gespeichert), Share + Filesystem (Backup), Haptics, StatusBar, SplashScreen, App (Deep Links).
-- [ ] **Bundle-ID, Icons, Splash** für beide Plattformen (Icon 1024 px, adaptive Icon Android).
+- [x] **Capacitor-Hülle** (0.9.0) – iOS + Android, ML-Kit-Scanner, Share/Filesystem, Haptics, StatusBar,
+      SplashScreen, Zurück-Taste. Siehe `docs/NATIVE.md`. Offen: erster Build braucht Xcode/Android Studio auf dem Mac.
+- [x] **Bundle-ID `ch.beserious.nutrition`, Icons, Splash** für beide Plattformen erzeugt (`assets/`).
 - [ ] **Onboarding**: Ziele-Assistent (Gewicht, Grösse, Aktivität → kcal-Vorschlag), Sprache, Wasserziel.
 - [ ] **Cloud-Backup automatisch** (iCloud Drive / Google Drive) – Gerätewechsel ohne Datenverlust.
 - [ ] **Käufe**: RevenueCat (`@revenuecat/purchases-capacitor`), Produkt `pro_lifetime`, Paywall-Screen,

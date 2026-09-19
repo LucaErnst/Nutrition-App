@@ -157,6 +157,8 @@ export const de: Record<MessageKey, string> = {
   'scan.errNoCamera': 'Keine Kamera verfügbar (Browser unterstützt getUserMedia nicht oder Seite ist nicht sicher/HTTPS).',
   'scan.errDenied': 'Kamerazugriff wurde abgelehnt.',
   'scan.errNotFound': 'Keine Kamera gefunden.',
+  'scan.open': 'Scanner öffnen',
+  'scan.openSettings': 'Kamera in den Einstellungen erlauben',
   'scan.errStart': 'Kamera konnte nicht gestartet werden.',
 
   'off.errInvalid': 'Ungültiger Barcode.',

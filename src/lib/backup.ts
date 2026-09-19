@@ -1,6 +1,7 @@
 import { db } from '../db/db';
 import { backfillSnapshots } from '../db/hooks';
 import { t } from '../i18n';
+import { shareFile } from './native';
 import type { DailyGoal, DayInfo, FoodItem, MealEntry, MealTemplate, Settings, WaterEntry, WeightEntry } from '../db/types';
 
 export const BACKUP_VERSION = 1;
@@ -67,26 +68,7 @@ async function doExport(): Promise<'shared' | 'downloaded'> {
   const backup = await createBackup();
   const json = JSON.stringify(backup, null, 2);
   const file = new File([json], backupFilename(), { type: 'application/json' });
-
-  if (navigator.canShare?.({ files: [file] })) {
-    try {
-      await navigator.share({ files: [file], title: `${t('app.title')} Backup` });
-      return 'shared';
-    } catch (e) {
-      // Abbruch durch Nutzer → nichts tun; anderer Fehler → Download versuchen
-      if (e instanceof Error && e.name === 'AbortError') throw e;
-    }
-  }
-
-  const url = URL.createObjectURL(file);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = file.name;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 10_000);
-  return 'downloaded';
+  return shareFile(file);
 }
 
 export function parseBackup(text: string): Backup {
