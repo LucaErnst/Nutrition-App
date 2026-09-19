@@ -1990,3 +1990,54 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ===== iOS: Datumsfelder ===== */
+/* Safari gibt input[type=date] eine feste Eigenbreite und ignoriert Flex-Breiten –
+   dadurch überlappen nebeneinanderliegende Felder. Eigenbreite abschalten. */
+input[type='date'] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
+  width: 100%;
+  min-height: 42px;
+  display: block;
+  box-sizing: border-box;
+}
+
+input[type='date']::-webkit-date-and-time-value {
+  text-align: left;
+  min-height: 1.2em;
+}
+
+.field {
+  min-width: 0;
+}
+
+/* Gewichts-Formular: auf dem Handy als Raster, Speichern in voller Breite */
+.weight-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.weight-form .field {
+  flex: none;
+}
+
+@media (max-width: 480px) {
+  .weight-form {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .weight-form .btn-primary {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Phasen-Formular: Start/Ende auf dem Handy untereinander */
+@media (max-width: 480px) {
+  .field-row:has(input[type='date']) {
+    flex-direction: column;
+  }
+}
