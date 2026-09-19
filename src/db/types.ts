@@ -42,6 +42,8 @@ export interface FoodItem {
   barcode?: string;
   /** 1 = erscheint in der Referenzdatenbank / Suche, 0 = nur einmalig verwendet */
   saved: 0 | 1;
+  /** Favorit: in der Suche ganz oben */
+  favorite?: 0 | 1;
   created_at: number;
 }
 

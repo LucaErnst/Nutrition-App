@@ -41,8 +41,10 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
   async function submit(ev: FormEvent) {
     ev.preventDefault();
     const amt = num(amount);
-    if (!name.trim()) return setError('Name fehlt.');
     if (amt <= 0) return setError('Menge muss grösser als 0 sein.');
+    if (num(kcal) <= 0 && num(protein) <= 0 && num(fat) <= 0 && num(carbs) <= 0) return setError('Mindestens kcal angeben.');
+    // Ohne Namen: Schnell-Eintrag, landet nicht in der Datenbank.
+    const quick = !name.trim();
 
     // Gewicht pro Stück: falls nicht angegeben, 100 g annehmen, damit
     // "pro Stück" und "pro 100 g" identisch sind.
@@ -53,7 +55,7 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
     const factor = effectiveBasis === 'per100' ? 1 : 100 / grams;
 
     const item: FoodItem = {
-      name: name.trim(),
+      name: quick ? 'Schnell-Eintrag' : name.trim(),
       kcal_per_100g: num(kcal) * factor,
       protein_per_100g: num(protein) * factor,
       fat_per_100g: num(fat) * factor,
@@ -63,7 +65,7 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
       default_amount: amt,
       source: 'manual',
       barcode,
-      saved: save ? 1 : 0,
+      saved: save && !quick ? 1 : 0,
       created_at: Date.now(),
     };
 
@@ -151,7 +153,7 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
         <div className="field-row macros-row">
           <label className="field">
             <span>kcal</span>
-            <input type="number" inputMode="decimal" min={0} step="any" value={kcal} onChange={(e) => setKcal(e.target.value)} required />
+            <input type="number" inputMode="decimal" min={0} step="any" value={kcal} onChange={(e) => setKcal(e.target.value)} />
           </label>
           <label className="field">
             <span>Protein g</span>
@@ -169,8 +171,8 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
       </fieldset>
 
       <label className="checkbox">
-        <input type="checkbox" checked={save} onChange={(e) => setSave(e.target.checked)} />
-        In meiner Referenzdatenbank speichern
+        <input type="checkbox" checked={save && !!name.trim()} disabled={!name.trim()} onChange={(e) => setSave(e.target.checked)} />
+        In meiner Referenzdatenbank speichern{!name.trim() && ' (braucht einen Namen)'}
       </label>
 
       {error && <p className="form-error" role="alert">{error}</p>}

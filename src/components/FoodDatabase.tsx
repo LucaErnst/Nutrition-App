@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { FoodItem } from '../db/types';
-import { deleteFoodItem, useSavedFoods } from '../db/hooks';
+import { deleteFoodItem, toggleFavorite, useSavedFoods } from '../db/hooks';
 import { fmt } from '../lib/nutrition';
 import { FoodItemForm } from './FoodItemForm';
 import { Modal } from './Modal';
@@ -65,6 +65,9 @@ export function FoodDatabase() {
               <span>KH {fmt(f.carbs_per_100g, 1)}</span>
             </div>
             <div className="db-item-actions">
+              <button className={`btn-link star-text ${f.favorite ? 'on' : ''}`} onClick={() => void toggleFavorite(f)} aria-pressed={!!f.favorite}>
+                {f.favorite ? '★ Favorit' : '☆ Favorit'}
+              </button>
               <button className="btn-link" onClick={() => setEditing(f)}>
                 Bearbeiten
               </button>

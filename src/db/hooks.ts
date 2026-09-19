@@ -1,6 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
-import { snapshotOf, type DailyGoal, type FoodItem, type MealEntry, type MealTemplate, type MealType, type Settings, type Unit, type WeightEntry } from './types';
+import { MEAL_TYPES, ZERO_MACROS, snapshotOf, type DailyGoal, type FoodItem, type Macros, type MealEntry, type MealTemplate, type MealType, type Settings, type Unit, type WeightEntry } from './types';
+import { addDays } from '../lib/date';
 import { macrosFor, resolveSource, sumMacros, type EntryWithFood } from '../lib/nutrition';
 import { activeGoalFor, targetsFor } from '../lib/goals';
 import type { DaySummary } from '../lib/week';
@@ -210,4 +211,63 @@ export async function backfillSnapshots(): Promise<number> {
       }
     });
   return n;
+}
+
+// --- Schnellfunktionen ---------------------------------------------------------
+
+/** Stellt einen gelöschten Eintrag mit derselben ID wieder her (Undo). */
+export async function restoreMealEntry(entry: MealEntry) {
+  return db.mealEntries.add(entry);
+}
+
+export async function toggleFavorite(item: FoodItem) {
+  return db.foodItems.update(item.id!, { favorite: item.favorite ? 0 : 1 });
+}
+
+export interface MealCopySource {
+  date: string;
+  meal_type: MealType;
+  entries: MealEntry[];
+  totals: Macros;
+}
+
+/** Mahlzeiten von heute und gestern, die Posten enthalten – als Kopiervorlage. */
+export function useCopySources(date: string): MealCopySource[] | undefined {
+  return useLiveQuery(async () => {
+    const yesterday = addDays(date, -1);
+    const entries = await db.mealEntries.where('date').anyOf([date, yesterday]).toArray();
+    if (entries.length === 0) return [];
+    const foodIds = [...new Set(entries.map((e) => e.food_item_id))];
+    const foods = await db.foodItems.bulkGet(foodIds);
+    const foodById = new Map(foods.filter(Boolean).map((f) => [f!.id!, f!]));
+    const groups = new Map<string, MealCopySource>();
+    for (const e of entries) {
+      const key = `${e.date}|${e.meal_type}`;
+      const g = groups.get(key) ?? { date: e.date, meal_type: e.meal_type, entries: [], totals: { ...ZERO_MACROS } };
+      const src = resolveSource(e, foodById.get(e.food_item_id));
+      if (!src) continue;
+      g.entries.push(e);
+      g.totals = sumMacros([g.totals, macrosFor(src, e.amount, e.unit)]);
+      groups.set(key, g);
+    }
+    // gestern zuerst, dann heute; innerhalb in Mahlzeiten-Reihenfolge
+    const order = (m: MealType) => MEAL_TYPES.indexOf(m);
+    return [...groups.values()].sort((a, b) => a.date.localeCompare(b.date) || order(a.meal_type) - order(b.meal_type));
+  }, [date]);
+}
+
+/** Kopiert alle Posten einer Mahlzeit (inkl. Snapshot) in eine andere Mahlzeit/Tag. */
+export async function copyMeal(source: MealCopySource, date: string, meal_type: MealType): Promise<number> {
+  const now = Date.now();
+  const rows: Omit<MealEntry, 'id'>[] = source.entries.map((e, i) => ({
+    date,
+    meal_type,
+    food_item_id: e.food_item_id,
+    amount: e.amount,
+    unit: e.unit,
+    snapshot: e.snapshot,
+    created_at: now + i,
+  }));
+  if (rows.length) await db.mealEntries.bulkAdd(rows);
+  return rows.length;
 }

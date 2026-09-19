@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { db } from '../db/db';
 import type { FoodItem, MealType, Unit } from '../db/types';
-import { addMealEntry, useFoodUsage, useSavedFoods } from '../db/hooks';
+import { addMealEntry, toggleFavorite, useFoodUsage, useSavedFoods } from '../db/hooks';
 import { defaultUnit, fmt, macrosFor } from '../lib/nutrition';
 import { offProductToFoodItem, searchProducts, type OffProduct } from '../lib/openfoodfacts';
 import { ProductResult } from './ProductResult';
@@ -54,8 +54,11 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
         return terms.every((t) => hay.includes(t));
       });
     }
-    // Ohne Suchbegriff: häufig genutzte zuerst, dann alphabetisch.
+    // Ohne Suchbegriff: Favoriten, dann häufig genutzte, dann alphabetisch.
     return [...foods].sort((a, b) => {
+      const fa = a.favorite ?? 0;
+      const fb = b.favorite ?? 0;
+      if (fa !== fb) return fb - fa;
       const ua = usage?.get(a.id!)?.count ?? 0;
       const ub = usage?.get(b.id!)?.count ?? 0;
       if (ua !== ub) return ub - ua;
@@ -108,7 +111,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
         aria-label="Lebensmittel suchen"
       />
       {!query && foods.length > 0 && (
-        <p className="search-hint">Häufig verwendet zuerst</p>
+        <p className="search-hint">Favoriten und häufig verwendete zuerst</p>
       )}
       {results.length === 0 ? (
         <p className="search-empty">
@@ -121,7 +124,16 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
             const amount = f.default_amount ?? (unit === 'Stück' ? 1 : 100);
             const m = macrosFor(f, amount, unit);
             return (
-              <li key={f.id}>
+              <li key={f.id} className="search-row">
+                <button
+                  className={`btn-icon star ${f.favorite ? 'on' : ''}`}
+                  onClick={() => void toggleFavorite(f)}
+                  aria-label={f.favorite ? `${f.name} aus Favoriten entfernen` : `${f.name} als Favorit markieren`}
+                  aria-pressed={!!f.favorite}
+                  title="Favorit"
+                >
+                  {f.favorite ? '★' : '☆'}
+                </button>
                 <button className="search-item" onClick={() => setSelected(f)}>
                   <span className="search-item-main">
                     <span className="search-item-name">{f.name}</span>

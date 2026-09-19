@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import type { MealTemplate, MealType } from '../db/types';
-import { applyTemplate, deleteTemplate, useTemplates } from '../db/hooks';
+import { MEAL_LABELS, type MealTemplate, type MealType } from '../db/types';
+import { applyTemplate, copyMeal, deleteTemplate, useCopySources, useTemplates } from '../db/hooks';
+import { addDays } from '../lib/date';
 import { fmt, macrosFor, sumMacros } from '../lib/nutrition';
 import { db } from '../db/db';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -13,18 +14,48 @@ interface Props {
 
 export function TemplatesTab({ date, mealType, onDone }: Props) {
   const templates = useTemplates();
+  const sources = (useCopySources(date) ?? []).filter((s) => !(s.date === date && s.meal_type === mealType));
   const [busy, setBusy] = useState<number | null>(null);
 
   if (!templates) return null;
-  if (templates.length === 0) {
-    return (
-      <p className="search-empty">
-        Noch keine Vorlagen. Öffne eine Mahlzeit mit Posten im Tagebuch und tippe auf „Als Vorlage speichern“.
-      </p>
-    );
-  }
 
   return (
+    <div className="search">
+      {sources.length > 0 && (
+        <>
+          <p className="search-hint">Kopieren von</p>
+          <ul className="search-list">
+            {sources.map((src) => (
+              <li key={`${src.date}|${src.meal_type}`}>
+                <button
+                  className="search-item"
+                  onClick={async () => {
+                    await copyMeal(src, date, mealType);
+                    onDone();
+                  }}
+                >
+                  <span className="search-item-main">
+                    <span className="search-item-name">
+                      {src.date === date ? 'Heute' : src.date === addDays(date, -1) ? 'Gestern' : src.date} · {MEAL_LABELS[src.meal_type]}
+                    </span>
+                    <span className="search-item-portion">
+                      {src.entries.length} Posten · P {fmt(src.totals.protein)} · F {fmt(src.totals.fat)} · KH {fmt(src.totals.carbs)}
+                    </span>
+                  </span>
+                  <span className="search-item-kcal">{fmt(src.totals.kcal)} kcal</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      <p className="search-hint">Vorlagen</p>
+      {templates.length === 0 && (
+        <p className="search-empty">
+          Noch keine Vorlagen. Öffne eine Mahlzeit mit Posten im Tagebuch und tippe auf „Als Vorlage speichern“.
+        </p>
+      )}
     <ul className="search-list">
       {templates.map((t) => (
         <TemplateRow
@@ -42,6 +73,7 @@ export function TemplatesTab({ date, mealType, onDone }: Props) {
         />
       ))}
     </ul>
+    </div>
   );
 }
 

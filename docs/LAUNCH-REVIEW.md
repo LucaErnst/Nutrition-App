@@ -44,7 +44,7 @@ Alle Akzeptanzkriterien der Spec:
 | Kamera-Freigabe iOS | Home-Bildschirm-App fragt je nach iOS-Version bei jedem Start | WebKit-Limit; nur nativ (Capacitor) sicher lösbar |
 | Daten nur lokal | Kein Sync, Backup manuell | Für einen Nutzer ok; Risiko bei Geräteverlust |
 | Laufender Tag im Wochenschnitt | zählt mit, Hinweis im Fazit | Alternative: ausschliessen bis Tagesende |
-| `confirm()`-Dialoge beim Löschen | Systemdialog | Funktioniert, wirkt aber nicht „app-like“ |
+| `confirm()`-Dialoge beim Löschen von Lebensmitteln/Phasen/Vorlagen | Systemdialog | Posten haben Undo statt Nachfrage; Rest könnte folgen |
 
 ## 2. Empfehlungen für einen echten Launch
 
@@ -86,8 +86,9 @@ Qualitätsgewinn; „Optional“ = nice-to-have.
    das Such-Limit liegt bei ~10 Anfragen/Minute (Client-Drosselung 6 s, 503/429 werden erklärt).
    Hinweis: der neue Suchdienst `search.openfoodfacts.org` sendet keine CORS-Header und ist aus dem
    Browser nicht nutzbar; deshalb der klassische Endpunkt `cgi/search.pl`.
-3. **Schnellfunktionen** – „Gestern kopieren“, „Mahlzeit kopieren“, Schnell-Eintrag nur kcal,
-   Undo nach Löschen (Snackbar), Favoriten-Stern.
+3. **Schnellfunktionen** ✓ (0.5.0) – „Von gestern kopieren“ in leeren Mahlzeiten, „Kopieren von“
+   (heute/gestern, alle Mahlzeiten) im Vorlagen-Tab, Schnell-Eintrag ohne Namen (nur Werte, landet nicht
+   in der Datenbank), Undo nach Löschen (Toast, 5 s), Favoriten-Stern in Suche und Datenbank.
 4. **Eingabe-Ergonomie** – Mengen-Stepper (+10 g / −10 g), zuletzt verwendete Menge pro Lebensmittel merken,
    Portionsgrössen pro Lebensmittel (1 EL, 1 Handvoll).
 5. **Wochenziel-Modus** – Wochen-kcal als Budget (Trainings-/Ruhetag-Verteilung flexibel), passt zu

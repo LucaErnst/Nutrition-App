@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { MEAL_LABELS, type MealType } from '../db/types';
-import { deleteMealEntry, saveTemplate, updateMealEntryAmount } from '../db/hooks';
+import { copyMeal, deleteMealEntry, restoreMealEntry, saveTemplate, updateMealEntryAmount, useCopySources } from '../db/hooks';
+import { addDays } from '../lib/date';
+import { useToast } from './Toast';
 import { fmt, sumMacros, type EntryWithFood } from '../lib/nutrition';
 import { AddEntryDialog } from './AddEntryDialog';
 
@@ -18,6 +20,9 @@ export function MealSlot({ date, mealType, entries }: Props) {
   const totals = sumMacros(entries.map((e) => e.macros));
   const hasEntries = entries.length > 0;
   const listId = `meal-list-${mealType}`;
+  const toast = useToast();
+  const sources = useCopySources(date);
+  const yesterday = sources?.find((s) => s.date === addDays(date, -1) && s.meal_type === mealType);
 
   return (
     <section className="card meal" aria-labelledby={`meal-${mealType}`}>
@@ -52,6 +57,20 @@ export function MealSlot({ date, mealType, entries }: Props) {
           )}
         </div>
       </header>
+
+      {!hasEntries && yesterday && (
+        <div className="meal-footer meal-footer-empty">
+          <button
+            className="btn-link"
+            onClick={async () => {
+              const n = await copyMeal(yesterday, date, mealType);
+              toast.show({ message: `${n} Posten von gestern kopiert.` });
+            }}
+          >
+            Von gestern kopieren ({yesterday.entries.length} Posten · {fmt(yesterday.totals.kcal)} kcal)
+          </button>
+        </div>
+      )}
 
       {hasEntries && expanded && (
         <>
@@ -109,6 +128,19 @@ function EntryRow({ item }: { item: EntryWithFood }) {
   const { entry, food, macros } = item;
   const [editing, setEditing] = useState(false);
   const [amount, setAmount] = useState(String(entry.amount));
+  const toast = useToast();
+
+  async function remove() {
+    const snapshot = { ...entry };
+    await deleteMealEntry(entry.id!);
+    toast.show({
+      message: `${food.name} entfernt.`,
+      actionLabel: 'Rückgängig',
+      onAction: async () => {
+        await restoreMealEntry(snapshot);
+      },
+    });
+  }
 
   function commit() {
     const n = Number(amount.replace(',', '.'));
@@ -162,7 +194,7 @@ function EntryRow({ item }: { item: EntryWithFood }) {
         <span>KH {fmt(macros.carbs)}</span>
         <button
           className="btn-icon"
-          onClick={() => void deleteMealEntry(entry.id!)}
+          onClick={() => void remove()}
           aria-label={`${food.name} entfernen`}
           title="Entfernen"
         >

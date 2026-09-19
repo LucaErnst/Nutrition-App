@@ -3,6 +3,7 @@ import { DayView } from './components/DayView';
 import { FoodDatabase } from './components/FoodDatabase';
 import { MoreView } from './components/MoreView';
 import { UpdateBanner } from './components/UpdateBanner';
+import { ToastProvider } from './components/Toast';
 import { WeekView } from './components/WeekView';
 const WeightView = lazy(() => import('./components/WeightView').then((m) => ({ default: m.WeightView })));
 
@@ -26,37 +27,39 @@ export default function App() {
   }, [view]);
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>Ernährung</h1>
-        <nav className="app-nav" aria-label="Hauptnavigation">
-          {VIEWS.map((v) => (
-            <button
-              key={v.id}
-              className={view === v.id ? 'active' : ''}
-              aria-current={view === v.id ? 'page' : undefined}
-              onClick={() => {
-                setDiaryDate(undefined);
-                setView(v.id);
-              }}
-            >
-              {v.label}
-            </button>
-          ))}
-        </nav>
-      </header>
-      <main className="app-main">
-        {view === 'diary' && <DayView initialDate={diaryDate} onOpenGoals={() => setView('more')} />}
-        {view === 'week' && <WeekView onOpenDay={(d) => { setDiaryDate(d); setView('diary'); }} />}
-        {view === 'weight' && (
-          <Suspense fallback={<p className="search-hint">Lade…</p>}>
-            <WeightView />
-          </Suspense>
-        )}
-        {view === 'database' && <FoodDatabase />}
-        {view === 'more' && <MoreView />}
-      </main>
-      <UpdateBanner />
-    </div>
+    <ToastProvider>
+      <div className="app">
+        <header className="app-header">
+          <h1>Ernährung</h1>
+          <nav className="app-nav" aria-label="Hauptnavigation">
+            {VIEWS.map((v) => (
+              <button
+                key={v.id}
+                className={view === v.id ? 'active' : ''}
+                aria-current={view === v.id ? 'page' : undefined}
+                onClick={() => {
+                  setDiaryDate(undefined);
+                  setView(v.id);
+                }}
+              >
+                {v.label}
+              </button>
+            ))}
+          </nav>
+        </header>
+        <main className="app-main">
+          {view === 'diary' && <DayView initialDate={diaryDate} onOpenGoals={() => setView('more')} />}
+          {view === 'week' && <WeekView onOpenDay={(d) => { setDiaryDate(d); setView('diary'); }} />}
+          {view === 'weight' && (
+            <Suspense fallback={<p className="search-hint">Lade…</p>}>
+              <WeightView />
+            </Suspense>
+          )}
+          {view === 'database' && <FoodDatabase />}
+          {view === 'more' && <MoreView />}
+        </main>
+        <UpdateBanner />
+      </div>
+    </ToastProvider>
   );
 }
