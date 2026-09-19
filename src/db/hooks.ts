@@ -2,6 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
 import { MEAL_TYPES, ZERO_MACROS, snapshotOf, type DailyGoal, type FoodItem, type Macros, type MealEntry, type MealTemplate, type MealType, type Settings, type Unit, type WeightEntry } from './types';
 import { addDays } from '../lib/date';
+import { scheduleReminderSync } from '../lib/remindersNative';
 import { macrosFor, resolveSource, sumMacros, type EntryWithFood } from '../lib/nutrition';
 import { activeGoalFor, targetsFor } from '../lib/goals';
 import type { DaySummary } from '../lib/week';
@@ -26,6 +27,7 @@ export function useDayEntries(date: string): EntryWithFood[] | undefined {
 export async function addMealEntry(entry: Omit<MealEntry, 'id' | 'created_at' | 'snapshot'>, food: FoodItem) {
   const id = await db.mealEntries.add({ ...entry, snapshot: snapshotOf(food), created_at: Date.now() });
   if (food.id) await db.foodItems.update(food.id, { last_amount: entry.amount, last_unit: entry.unit });
+  scheduleReminderSync();
   return id;
 }
 
@@ -36,7 +38,8 @@ export async function updateMealEntryAmount(id: number, amount: number) {
 }
 
 export async function deleteMealEntry(id: number) {
-  return db.mealEntries.delete(id);
+  await db.mealEntries.delete(id);
+  scheduleReminderSync();
 }
 
 export function groupByMeal(entries: EntryWithFood[]): Record<MealType, EntryWithFood[]> {
@@ -165,6 +168,7 @@ export function useWeights(): WeightEntry[] | undefined {
 /** Speichert das Gewicht für ein Datum (überschreibt einen bestehenden Eintrag). */
 export async function upsertWeight(date: string, weight_kg: number) {
   const existing = await db.weights.where('date').equals(date).first();
+  scheduleReminderSync();
   if (existing) return db.weights.update(existing.id!, { weight_kg });
   return db.weights.add({ date, weight_kg });
 }
@@ -197,6 +201,7 @@ export async function applyTemplate(template: MealTemplate, date: string, meal_t
     return [{ date, meal_type, food_item_id: item.food_item_id, amount: item.amount, unit: item.unit as Unit, snapshot: snapshotOf(food), created_at: now + i }];
   });
   if (rows.length) await db.mealEntries.bulkAdd(rows);
+  scheduleReminderSync();
   return rows.length;
 }
 
@@ -273,6 +278,7 @@ export async function copyMeal(source: MealCopySource, date: string, meal_type: 
     created_at: now + i,
   }));
   if (rows.length) await db.mealEntries.bulkAdd(rows);
+  scheduleReminderSync();
   return rows.length;
 }
 
@@ -300,7 +306,9 @@ export function useWaterByDate(dates: string[]): Map<string, number> | undefined
 }
 
 export async function addWater(date: string, ml: number) {
-  return db.water.add({ date, ml, created_at: Date.now() });
+  const id = await db.water.add({ date, ml, created_at: Date.now() });
+  scheduleReminderSync();
+  return id;
 }
 
 /** Entfernt den zuletzt eingetragenen Schluck des Tages (Undo). */

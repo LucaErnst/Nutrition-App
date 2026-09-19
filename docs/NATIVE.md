@@ -14,6 +14,7 @@ Projekte (im Repo, ohne Build-Artefakte).
 | Statusleiste/Splash | – | `@capacitor/status-bar`, `@capacitor/splash-screen` |
 | Android-Zurück-Taste | – | schliesst Dialoge, sonst App in den Hintergrund |
 | Service Worker / Update-Banner | ja | nein (Updates kommen über den Store) |
+| Erinnerungen | – | **lokale Mitteilungen** (`@capacitor/local-notifications`): Frühstück/Mittag/Abend, Wasser-Takt, Wiegen, Wochenrückblick, Protein-Rest; max. 3/Tag, 64 Textvarianten je Anlass (`src/lib/reminderTexts.ts`), Planung in `src/lib/reminders.ts`, Terminierung in `src/lib/remindersNative.ts` – wird bei Start, Resume und nach jedem Eintrag neu geplant |
 
 Die Weiche ist `isNative` in `src/lib/native.ts`; alle Plugins werden dynamisch importiert, damit das
 Web-Bundle nichts davon lädt.

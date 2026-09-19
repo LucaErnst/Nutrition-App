@@ -1,3 +1,4 @@
+import type { ReminderSettings } from '../lib/reminders';
 export type UnitType = 'weight' | 'volume' | 'piece';
 export type Unit = 'g' | 'ml' | 'Stück';
 export type MealType =
@@ -127,6 +128,10 @@ export interface Settings {
   onboarding_done?: boolean;
   /** Zeitpunkt des letzten automatischen Backups (nativ) */
   last_auto_backup_at?: number;
+  /** Erinnerungen (nur native App) */
+  reminders?: ReminderSettings;
+  /** Zufalls-Versatz für die Text-Rotation der Erinnerungen */
+  reminder_salt?: number;
 }
 
 /** Mahlzeiten-Vorlage, z.B. "Standard-Frühstück": mehrere Posten auf einmal eintragen. */
