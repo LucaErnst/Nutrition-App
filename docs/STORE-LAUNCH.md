@@ -78,9 +78,10 @@ Regel: Nie etwas hinter die Paywall legen, was der Nutzer in den ersten fünf Mi
 - [ ] Export-Compliance: nur HTTPS → befreit (in App Store Connect angeben).
 
 ### D. Store-Einträge
-- [ ] Name, Untertitel, Keywords, Beschreibung (DE/EN), Kategorie „Gesundheit & Fitness“.
-- [ ] Screenshots: iPhone 6,7" und 6,5"; Android Phone; je 5–6 Bilder mit kurzen Titeln.
-- [ ] Support-URL, Marketing-URL, Alterseinstufung (4+ / Everyone).
+- [x] Name, Untertitel, Keywords, Beschreibung (DE/EN), Kategorie – fertig in `store/LISTING.md` (0.12.0).
+- [x] Screenshots: iPhone 6,7" (1290×2796) EN + DE, automatisch aus Beispieldaten (`npm run screenshots`,
+      `store/screenshots/`). Optional: Titel-Overlays/Rahmen mit einem Screenshot-Tool ergänzen.
+- [x] Support-URL, Marketing-URL, Alterseinstufung – in `store/LISTING.md`.
 - [ ] Testkonto/Anleitung für den Review (nicht nötig, solange kein Login).
 
 ### E. Qualität vor Launch

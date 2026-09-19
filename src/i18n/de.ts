@@ -1,7 +1,7 @@
 import type { MessageKey } from './en';
 
 export const de: Record<MessageKey, string> = {
-  'app.title': 'Ernährung',
+  'app.title': 'Serious Nutrition',
   'nav.diary': 'Tagebuch',
   'nav.week': 'Woche',
   'nav.weight': 'Gewicht',

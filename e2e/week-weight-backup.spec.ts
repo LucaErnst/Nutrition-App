@@ -43,7 +43,7 @@ test('backup export produces a JSON file incl. water', async ({ page }) => {
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export backup' }).click();
   const file = await download;
-  expect(file.suggestedFilename()).toMatch(/^ernaehrung-backup-\d{4}-\d{2}-\d{2}\.json$/);
+  expect(file.suggestedFilename()).toMatch(/^serious-nutrition-backup-\d{4}-\d{2}-\d{2}\.json$/);
   const path = await file.path();
   const { readFileSync } = await import('node:fs');
   const json = JSON.parse(readFileSync(path!, 'utf8'));

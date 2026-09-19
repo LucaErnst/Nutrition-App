@@ -20,9 +20,9 @@ export default defineConfig({
       registerType: 'prompt',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Ernährung',
-        short_name: 'Ernährung',
-        description: 'Kalorien- und Makro-Tracking',
+        name: 'Serious Nutrition',
+        short_name: 'Serious Nutrition',
+        description: 'Calorie & macro tracker – no account, all data on your device',
         lang: 'de',
         display: 'standalone',
         background_color: '#f4f5f7',

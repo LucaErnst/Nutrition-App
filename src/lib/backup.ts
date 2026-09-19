@@ -49,7 +49,7 @@ export async function createBackup(): Promise<Backup> {
 export function backupFilename(): string {
   const d = new Date();
   const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  return `ernaehrung-backup-${iso}.json`;
+  return `serious-nutrition-backup-${iso}.json`;
 }
 
 /** Bietet die Datei per Share-Sheet (iOS) oder als Download an. */
@@ -159,7 +159,7 @@ export async function autoBackupIfDue(): Promise<boolean> {
     const list = await Filesystem.readdir({ path: AUTO_BACKUP_DIR, directory: Directory.Documents });
     const files = list.files
       .map((f) => f.name)
-      .filter((n) => n.startsWith('ernaehrung-backup-') && n.endsWith('.json'))
+      .filter((n) => (n.startsWith('serious-nutrition-backup-') || n.startsWith('ernaehrung-backup-')) && n.endsWith('.json'))
       .sort();
     for (const name of files.slice(0, Math.max(0, files.length - AUTO_BACKUP_KEEP))) {
       await Filesystem.deleteFile({ path: `${AUTO_BACKUP_DIR}/${name}`, directory: Directory.Documents });

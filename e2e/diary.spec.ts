@@ -88,7 +88,6 @@ test('water goal can be typed and picked', async ({ page }) => {
 test('language switch to German and back', async ({ page }) => {
   await page.getByRole('button', { name: 'More' }).click();
   await page.getByLabel('Language').getByText('Deutsch').click();
-  await expect(page.getByRole('heading', { name: 'Ernährung' })).toBeVisible();
   await page.getByRole('button', { name: 'Tagebuch' }).click();
   await expect(page.getByRole('heading', { name: 'Frühstück' })).toBeVisible();
   // Einstellung überlebt einen Reload

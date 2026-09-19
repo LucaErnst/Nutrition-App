@@ -1,7 +1,7 @@
 /** English (default). Keys are stable identifiers; German lives in de.ts. */
 export const en = {
   // App / navigation
-  'app.title': 'Nutrition',
+  'app.title': 'Serious Nutrition',
   'nav.diary': 'Diary',
   'nav.week': 'Week',
   'nav.weight': 'Weight',
