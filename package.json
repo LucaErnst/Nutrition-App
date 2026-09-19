@@ -1,7 +1,7 @@
 {
   "name": "fitness-nutrition-tracker",
   "private": true,
-  "version": "0.6.0",
+  "version": "0.7.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "dev:phone": "PHONE=1 vite --port 5181 --strictPort",
     "phone": "PHONE=1 vite build && PHONE=1 vite preview --port 5181 --strictPort",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@zxing/browser": "^0.2.1",
@@ -22,6 +23,7 @@
     "recharts": "^3.10.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",

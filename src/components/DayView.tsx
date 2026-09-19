@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { MEAL_TYPES } from '../db/types';
-import { groupByMeal, setTrainingDay, useDayEntries, useGoals, useIsTrainingDay } from '../db/hooks';
+import { groupByMeal, setTrainingDay, useDayEntries, useDaySummaries, useGoals, useIsTrainingDay } from '../db/hooks';
 import { sumMacros } from '../lib/nutrition';
-import { addDays, formatDateLabel, todayISO } from '../lib/date';
+import { addDays, formatDateLabel, todayISO, weekDates, weekStartOf } from '../lib/date';
+import { weekBudget } from '../lib/week';
+import { WeekBudgetCard } from './WeekBudgetCard';
 import { activeGoalFor, targetsFor } from '../lib/goals';
 import { DailySummary } from './DailySummary';
 import { MealSlot } from './MealSlot';
@@ -26,6 +28,9 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
   const isTraining = useIsTrainingDay(date) ?? false;
   const goal = goals ? activeGoalFor(goals, date) : undefined;
   const targets = goal ? targetsFor(goal, isTraining) : undefined;
+  const today = todayISO();
+  const weekDays = useDaySummaries(weekDates(weekStartOf(date)));
+  const budget = weekDays && date === today ? weekBudget(weekDays, today) : undefined;
 
   return (
     <div className="day">
@@ -57,6 +62,8 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
         onToggleTraining={(v) => void setTrainingDay(date, v)}
         onOpenGoals={goals && !goal ? onOpenGoals : undefined}
       />
+
+      {budget && <WeekBudgetCard budget={budget} isCurrent compact />}
 
       {MEAL_TYPES.map((mt) => (
         <MealSlot key={`${date}-${mt}`} date={date} mealType={mt} entries={groups[mt]} />

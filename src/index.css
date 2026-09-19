@@ -1779,3 +1779,214 @@ button {
   font-size: 13px;
   border-radius: 8px;
 }
+
+/* Wochenbudget */
+.budget-track {
+  margin: 10px 0 14px;
+  height: 10px;
+}
+
+.budget-stats {
+  margin-bottom: 4px;
+}
+
+.budget-drift {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.budget-hint {
+  margin-top: 8px;
+}
+
+.budget-line {
+  margin: -4px 0 0;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-2);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.budget-line-label {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.budget-line strong {
+  color: var(--text);
+}
+
+.budget-line .status-over {
+  color: var(--c-over);
+}
+
+/* ===== Feinschliff (C7) ===== */
+
+/* Tab-Icons */
+.app-nav button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+@media (max-width: 600px) {
+  .app-nav button {
+    flex-direction: column;
+    gap: 3px;
+    padding: 6px 2px 4px;
+    font-size: 11px;
+  }
+
+  .nav-icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* Auf-/Zuklappen der Mahlzeiten */
+.collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.22s ease;
+}
+
+.collapse.open {
+  grid-template-rows: 1fr;
+}
+
+.collapse-inner {
+  min-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0s linear 0.22s;
+}
+
+.collapse.open .collapse-inner {
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* Einblenden von Toast, Bannern, Dialogen */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.toast,
+.banner-update {
+  animation: slide-up 0.22s ease-out;
+}
+
+.banner:not(.banner-update) {
+  animation: fade-in 0.25s ease-out;
+}
+
+.modal-backdrop {
+  animation: fade-in 0.15s ease-out;
+}
+
+.modal {
+  animation: sheet-in 0.2s ease-out;
+}
+
+/* Tastbare Rückmeldung bei Buttons */
+.btn-primary,
+.btn-secondary,
+.btn-add,
+.chip,
+.search-item,
+.weekday,
+.stepper-btn {
+  transition: transform 0.08s ease, background-color 0.15s ease;
+}
+
+.btn-primary:active,
+.btn-secondary:active,
+.btn-add:active,
+.chip:active,
+.weekday:active {
+  transform: scale(0.97);
+}
+
+.search-item:active {
+  background: var(--surface-2);
+}
+
+/* Fortschrittsbalken weich */
+.day-bar-fill {
+  transition: width 0.3s ease;
+}
+
+/* Skeleton */
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-card {
+  border-radius: var(--radius);
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite linear;
+  border: 1px solid var(--border);
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* Bewegung reduzieren */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

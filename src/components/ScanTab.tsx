@@ -90,7 +90,7 @@ export function ScanTab({ date, mealType, onDone }: Props) {
   return (
     <div className="scan">
       {showCamera ? (
-        <Suspense fallback={<div className="scanner"><p className="scanner-status">Scanner wird geladen…</p></div>}>
+        <Suspense fallback={<div className="scanner skeleton-card"><p className="scanner-status">Scanner wird geladen…</p></div>}>
           <BarcodeScanner onDetected={(code) => void handleCode(code)} paused={busy} />
         </Suspense>
       ) : null}

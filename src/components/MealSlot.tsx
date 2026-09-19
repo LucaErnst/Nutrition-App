@@ -73,8 +73,9 @@ export function MealSlot({ date, mealType, entries }: Props) {
         </div>
       )}
 
-      {hasEntries && expanded && (
-        <>
+      {hasEntries && (
+        <div className={`collapse ${expanded ? 'open' : ''}`} aria-hidden={!expanded}>
+        <div className="collapse-inner">
           <ul className="entry-list" id={listId}>
             {entries.map((e) => (
               <EntryRow key={e.entry.id} item={e} />
@@ -115,7 +116,8 @@ export function MealSlot({ date, mealType, entries }: Props) {
               </form>
             )}
           </div>
-        </>
+        </div>
+        </div>
       )}
 
       {adding && (

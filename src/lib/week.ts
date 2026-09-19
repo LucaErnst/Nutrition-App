@@ -122,3 +122,57 @@ function conclude(n: number, elapsed: number, avg: Macros, t: WeekSummary['avgTa
   }
   return out;
 }
+
+// --- Wochen-Budget -------------------------------------------------------------
+
+export interface WeekBudget {
+  /** Summe der Tagesziele aller 7 Tage */
+  budget: number;
+  /** Verbraucht an vergangenen Tagen (nicht erfasste Tage zählen mit ihrem Ziel) */
+  spentBefore: number;
+  /** Heute bisher */
+  today: number;
+  /** Budget − vergangene Tage: was ab heute noch übrig ist */
+  remainingFromToday: number;
+  /** Verbleibende Tage inkl. heute (0, wenn die Woche vorbei ist) */
+  daysLeft: number;
+  /** Ø pro verbleibendem Tag */
+  perDay: number;
+  /** Was heute noch übrig ist, wenn man das Ø einhält */
+  todayLeft: number;
+  /** Abweichung der vergangenen Tage gegenüber ihren Zielen (+ = über Ziel) */
+  driftBefore: number;
+  /** Ganze Woche abgeschlossen: Summe aller Tage */
+  totalSpent: number;
+}
+
+/**
+ * Wochen-Budget: Die Kalorien der Woche als Topf. Tage über Ziel müssen an
+ * anderen Tagen ausgeglichen werden, Tage unter Ziel geben Spielraum.
+ * Nicht erfasste vergangene Tage gelten als „nach Plan gegessen“ (= Ziel),
+ * damit ein vergessener Tag das Budget nicht künstlich vergrössert.
+ */
+export function weekBudget(days: DaySummary[], today: string): WeekBudget | undefined {
+  if (days.some((d) => !d.targets)) return undefined;
+  const budget = days.reduce((s, d) => s + d.targets!.kcal, 0);
+  const before = days.filter((d) => d.date < today);
+  const spentBefore = before.reduce((s, d) => s + (d.tracked ? d.totals.kcal : d.targets!.kcal), 0);
+  const driftBefore = before.reduce((s, d) => s + (d.tracked ? d.totals.kcal - d.targets!.kcal : 0), 0);
+  const todayDay = days.find((d) => d.date === today);
+  const todayKcal = todayDay?.totals.kcal ?? 0;
+  const daysLeft = days.filter((d) => d.date >= today).length;
+  const remainingFromToday = budget - spentBefore;
+  const perDay = daysLeft > 0 ? remainingFromToday / daysLeft : 0;
+  const totalSpent = days.reduce((s, d) => s + (d.tracked ? d.totals.kcal : d.date <= today ? d.targets!.kcal : 0), 0);
+  return {
+    budget,
+    spentBefore,
+    today: todayKcal,
+    remainingFromToday,
+    daysLeft,
+    perDay,
+    todayLeft: perDay - todayKcal,
+    driftBefore,
+    totalSpent,
+  };
+}

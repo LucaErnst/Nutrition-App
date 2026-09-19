@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useDaySummaries } from '../db/hooks';
 import { addDays, formatShortDate, todayISO, weekDates, weekStartOf, weekdayShort } from '../lib/date';
 import { fmt } from '../lib/nutrition';
-import { summarizeWeek, type DaySummary } from '../lib/week';
+import { summarizeWeek, weekBudget, type DaySummary } from '../lib/week';
+import { WeekBudgetCard } from './WeekBudgetCard';
 
 interface Props {
   onOpenDay?: (date: string) => void;
@@ -14,6 +15,7 @@ export function WeekView({ onOpenDay }: Props) {
   const dates = weekDates(start);
   const days = useDaySummaries(dates);
   const week = days ? summarizeWeek(days, today) : undefined;
+  const budget = days ? weekBudget(days, today) : undefined;
   const isCurrent = start === weekStartOf(today);
 
   return (
@@ -63,6 +65,8 @@ export function WeekView({ onOpenDay }: Props) {
               </p>
             )}
           </section>
+
+          {budget && <WeekBudgetCard budget={budget} isCurrent={isCurrent} />}
 
           <section className="card section" aria-label="Fazit">
             <h2>Fazit</h2>

@@ -80,14 +80,8 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
     <form className="form" onSubmit={submit}>
       {barcode && <p className="search-hint">Barcode {barcode} wird mitgespeichert.</p>}
       <label className="field">
-        <span>Name</span>
-        <input
-
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="z.B. Magerquark"
-          required
-        />
+        <span>Name (leer lassen für Schnell-Eintrag nur mit Werten)</span>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="z.B. Magerquark – oder leer" />
       </label>
 
       <div className="field-row">

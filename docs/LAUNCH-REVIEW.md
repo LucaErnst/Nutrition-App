@@ -93,12 +93,16 @@ Qualitätsgewinn; „Optional“ = nice-to-have.
    Produkt-Karte und Inline-Editor; zuletzt verwendete Menge wird pro Lebensmittel gemerkt und vorgeschlagen;
    Schnellwahl-Chips (Zuletzt / Üblich / eigene Portionsgrössen wie „1 Handvoll = 30 g“, editierbar in der
    Datenbank).
-5. **Wochenziel-Modus** – Wochen-kcal als Budget (Trainings-/Ruhetag-Verteilung flexibel), passt zu
-   deinem Coaching-Ansatz „Kalorien im Rahmen“ statt jeden Tag exakt.
-6. **E2E-Tests** – Playwright für die Kernflüsse (Eintragen, Scannen mit Mock, Backup-Rundlauf),
-   damit Änderungen nicht unbemerkt etwas brechen.
-7. **Design-Feinschliff** – Icons in der Tab-Leiste, Skeleton-Loader statt „Lade…“, Animationen beim
-   Auf-/Zuklappen, Haptik (nativ).
+5. **Wochenziel-Modus** ✓ (0.7.0) – „Wochenbudget“ in der Wochenansicht (Topf = Summe der Tagesziele,
+   Verbraucht, Ø pro Resttag, heute noch, Abweichung der bisherigen Tage) und als Kompaktzeile im Tagebuch.
+   Nicht erfasste vergangene Tage zählen mit ihrem Ziel, damit ein vergessener Tag das Budget nicht aufbläht.
+6. **E2E-Tests** ✓ (0.7.0) – Playwright (`npm run test:e2e`, iPhone-Viewport, gegen den Produktions-Build):
+   10 Tests für Eintragen/Ändern/Undo, Tagesziel-Umschaltung, Stepper/Chips, Schnell-Eintrag, Barcode-Flow
+   mit gemockter OFF-API (gefunden / nicht gefunden / lokaler Cache), Woche, Gewicht, Vorlagen, Backup-Export.
+   Laufen in CI vor jedem Deploy. Der erste Lauf fand direkt einen Bug (Name im Schnell-Eintrag war noch Pflicht).
+7. **Design-Feinschliff** ✓ (0.7.0) – Icons in der Tab-Leiste, animiertes Auf-/Zuklappen, Einblenden von
+   Dialog/Toast/Banner, Druck-Feedback auf Buttons, Skeleton statt „Lade…“, `prefers-reduced-motion`.
+   Haptik bleibt nativ (Capacitor).
 
 ### D. Optional
 
@@ -117,9 +121,11 @@ Qualitätsgewinn; „Optional“ = nice-to-have.
   `upgrade()`-Funktion, die bestehende Einträge befüllt.
 - Rate-Limit OFF: Produktabfragen 100/min (unkritisch), Suche 10/min (client-seitig gedrosselt).
 
-## 4. Empfohlene Reihenfolge
+## 4. Stand und nächste Schritte
 
-1. A1–A3 (1 Tag) – Sicherheit für den Alltag.
-2. C1 + C2 (2 Tage) – stabile Historie, Textsuche.
-3. Entscheidung: PWA behalten oder B1 (Capacitor). Wenn Kamera-Prompt und Store-Präsenz wichtig sind: B1.
-4. B2/B3 nur, wenn Klienten die App nutzen sollen.
+Umgesetzt: A1–A3, C1–C7. Damit ist die Liste „Empfohlen“ vollständig.
+
+Offen:
+1. Entscheidung: PWA behalten oder B1 (Capacitor). Wenn Kamera-Prompt und Store-Präsenz wichtig sind: B1.
+2. B2/B3 (Accounts, Sync, Coach-Ansicht) nur, wenn Klienten die App nutzen sollen.
+3. Punkte aus „Optional“ (Apple Health, Rezepte, Mikronährstoffe, CSV/PDF-Export) nach Bedarf.
