@@ -27,4 +27,12 @@ end
 
 post_install do |installer|
   assertDeploymentTarget(installer)
+  # Google-Pods (ML Kit, GTMSessionFetcher, GoogleUtilities) nutzen quoted Includes in
+  # Framework-Headern; Xcode 27 wertet das im Debug-Build als Fehler. Warnung abschalten.
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0' if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 16.0
+    end
+  end
 end
