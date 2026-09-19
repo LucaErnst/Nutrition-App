@@ -17,7 +17,36 @@ export async function freshApp(page: Page) {
     );
   });
   await page.reload();
+  await page.getByRole('button', { name: 'Skip, set targets later' }).click();
   await expect(page.getByRole('heading', { name: 'Breakfast' })).toBeVisible();
+  // Standard-Phase (2700/2350, 150 g Protein, 75–90 g Fett) über das Formular anlegen
+  await page.getByRole('button', { name: 'More' }).click();
+  await page.getByRole('button', { name: '+ New phase' }).click();
+  await page.getByRole('dialog').getByLabel('Phase name').fill('Bulk');
+  // Phase soll die ganze aktuelle Woche abdecken (Wochenbudget braucht Ziele für alle 7 Tage)
+  await page.getByRole('dialog').getByLabel('Start').fill('2026-01-01');
+  await page.getByRole('dialog').getByRole('button', { name: 'Create' }).click();
+  await page.getByRole('button', { name: 'Diary' }).click();
+  await expect(page.getByRole('heading', { name: 'Breakfast' })).toBeVisible();
+}
+
+/** Frische App ohne Phase – landet im Onboarding. */
+export async function freshAppRaw(page: Page) {
+  await page.goto('/');
+  await page.evaluate(async () => {
+    localStorage.clear();
+    const dbs = await indexedDB.databases();
+    await Promise.all(
+      dbs.map(
+        (d) =>
+          new Promise<void>((res) => {
+            const r = indexedDB.deleteDatabase(d.name!);
+            r.onsuccess = r.onerror = r.onblocked = () => res();
+          }),
+      ),
+    );
+  });
+  await page.reload();
 }
 
 export async function openAddDialog(page: Page, meal: string) {

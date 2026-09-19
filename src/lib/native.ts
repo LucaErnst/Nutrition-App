@@ -34,7 +34,10 @@ export async function initNative() {
     /* ignorieren */
   }
   try {
+    const { autoBackupIfDue } = await import('./backup');
+    void autoBackupIfDue();
     const { App } = await import('@capacitor/app');
+    await App.addListener('resume', () => void autoBackupIfDue());
     // Android: Zurück-Taste schliesst offene Dialoge (Escape), sonst App in den Hintergrund
     await App.addListener('backButton', () => {
       const dialog = document.querySelector('.modal-backdrop');

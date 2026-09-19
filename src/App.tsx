@@ -3,6 +3,8 @@ import { DayView } from './components/DayView';
 import { FoodDatabase } from './components/FoodDatabase';
 import { MoreView } from './components/MoreView';
 import { isNative } from './lib/native';
+import { Onboarding } from './components/Onboarding';
+import { useGoals, useSettings, saveSettings } from './db/hooks';
 const UpdateBanner = lazy(() => import('./components/UpdateBanner').then((m) => ({ default: m.UpdateBanner })));
 import { ToastProvider } from './components/Toast';
 import { IconDiary, IconFood, IconMore, IconWeek, IconWeight } from './components/Icons';
@@ -34,7 +36,15 @@ function Skeleton() {
 
 export default function App() {
   const t = useT();
+  const settings = useSettings();
+  const goals = useGoals();
   const [view, setView] = useState<View>('diary');
+
+  // Bestehende Nutzer mit Phase brauchen kein Onboarding – einmalig als erledigt markieren.
+  useEffect(() => {
+    if (settings && goals && !settings.onboarding_done && goals.length > 0) void saveSettings({ onboarding_done: true });
+  }, [settings, goals]);
+  const showOnboarding = !!settings && !!goals && !settings.onboarding_done && goals.length === 0;
   const [diaryDate, setDiaryDate] = useState<string | undefined>(undefined);
 
   // Jede Ansicht beginnt oben – nicht dort, wo die vorherige aufgehört hat.
@@ -44,6 +54,7 @@ export default function App() {
 
   return (
     <ToastProvider>
+      {showOnboarding && <Onboarding onDone={() => window.scrollTo(0, 0)} />}
       <div className="app">
         <header className="app-header">
           <h1>{t('app.title')}</h1>

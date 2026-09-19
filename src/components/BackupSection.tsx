@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { exportBackup, parseBackup, restoreBackup, type Backup } from '../lib/backup';
 import { useSettings } from '../db/hooks';
 import { getLocale, useT } from '../i18n';
+import { isNative } from '../lib/native';
 
 export function BackupSection() {
   const t = useT();
@@ -64,6 +65,11 @@ export function BackupSection() {
       <h2>{t('backup.title')}</h2>
       <p className="search-hint">{t('backup.hint')}</p>
       <p className="search-hint">{t('backup.last', { when: settings?.last_backup_at ? formatWhen(settings.last_backup_at) : t('backup.never') })}</p>
+      {isNative && (
+        <p className="search-hint">
+          {t('backup.auto', { when: settings?.last_auto_backup_at ? formatWhen(settings.last_auto_backup_at) : t('backup.never') })}
+        </p>
+      )}
       <div className="form-actions" style={{ justifyContent: 'flex-start', marginTop: 12 }}>
         <button className="btn-primary" onClick={() => void doExport()} disabled={busy}>
           {t('backup.export')}

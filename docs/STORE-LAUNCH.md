@@ -50,8 +50,11 @@ Regel: Nie etwas hinter die Paywall legen, was der Nutzer in den ersten fünf Mi
 - [x] **Capacitor-Hülle** (0.9.0) – iOS + Android, ML-Kit-Scanner, Share/Filesystem, Haptics, StatusBar,
       SplashScreen, Zurück-Taste. Siehe `docs/NATIVE.md`. Offen: erster Build braucht Xcode/Android Studio auf dem Mac.
 - [x] **Bundle-ID `ch.beserious.nutrition`, Icons, Splash** für beide Plattformen erzeugt (`assets/`).
-- [ ] **Onboarding**: Ziele-Assistent (Gewicht, Grösse, Aktivität → kcal-Vorschlag), Sprache, Wasserziel.
-- [ ] **Cloud-Backup automatisch** (iCloud Drive / Google Drive) – Gerätewechsel ohne Datenverlust.
+- [x] **Onboarding** (0.10.0): Sprache → Körperdaten (Mifflin-St Jeor, Aktivität, Phase, Trainingstage) →
+      editierbarer Zielvorschlag → legt Phase, Gewicht, Trainingstage und Wasserziel an. Überspringbar.
+- [x] **Backup automatisch** (0.10.0, nativ): täglich in den Dokumente-Ordner (Dateien-App → „Serious Nutrition
+      Backups“, 7 Stände), wird vom iCloud-/Google-Geräte-Backup mitgesichert; zusätzlich sichern beide Systeme
+      die App-Daten selbst (iOS App-Container, Android Auto Backup). Offen: echter Cloud-Sync über Geräte (B2).
 - [ ] **Käufe**: RevenueCat (`@revenuecat/purchases-capacitor`), Produkt `pro_lifetime`, Paywall-Screen,
       „Käufe wiederherstellen“, Entitlement-Prüfung im Code (Feature-Flags).
 - [ ] **Absturz-Reporting** (Sentry) und datensparsame Nutzungsstatistik, Opt-in.

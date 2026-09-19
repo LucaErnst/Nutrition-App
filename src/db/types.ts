@@ -119,6 +119,10 @@ export interface Settings {
   language?: 'en' | 'de';
   /** Tagesziel Wasser in ml */
   water_goal_ml?: number;
+  /** Onboarding abgeschlossen oder übersprungen */
+  onboarding_done?: boolean;
+  /** Zeitpunkt des letzten automatischen Backups (nativ) */
+  last_auto_backup_at?: number;
 }
 
 /** Mahlzeiten-Vorlage, z.B. "Standard-Frühstück": mehrere Posten auf einmal eintragen. */

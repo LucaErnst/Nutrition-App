@@ -1,7 +1,7 @@
 import { db } from '../db/db';
 import { backfillSnapshots } from '../db/hooks';
 import { t } from '../i18n';
-import { shareFile } from './native';
+import { isNative, shareFile } from './native';
 import type { DailyGoal, DayInfo, FoodItem, MealEntry, MealTemplate, Settings, WaterEntry, WeightEntry } from '../db/types';
 
 export const BACKUP_VERSION = 1;
@@ -123,4 +123,51 @@ export async function restoreBackup(b: Backup): Promise<void> {
   });
   // Backups aus Versionen vor 0.4 haben keine Snapshots
   await backfillSnapshots();
+}
+
+// --- Automatisches Backup (nur nativ) ------------------------------------------
+
+export const AUTO_BACKUP_DIR = 'Serious Nutrition Backups';
+const AUTO_BACKUP_KEEP = 7;
+const AUTO_BACKUP_INTERVAL_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Schreibt höchstens einmal täglich ein Backup in den Dokumente-Ordner der App
+ * (iOS: Dateien-App → „Auf meinem iPhone“ → Serious Nutrition; wird mit dem
+ * iCloud-Geräte-Backup gesichert). Behält die letzten 7 Dateien.
+ */
+export async function autoBackupIfDue(): Promise<boolean> {
+  if (!isNative) return false;
+  const settings = await db.settings.get(1);
+  const last = settings?.last_auto_backup_at ?? 0;
+  if (Date.now() - last < AUTO_BACKUP_INTERVAL_MS) return false;
+  if ((await db.mealEntries.count()) === 0 && (await db.weights.count()) === 0) return false;
+
+  const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem');
+  const backup = await createBackup();
+  const json = JSON.stringify(backup);
+  await Filesystem.mkdir({ path: AUTO_BACKUP_DIR, directory: Directory.Documents, recursive: true }).catch(() => undefined);
+  await Filesystem.writeFile({
+    path: `${AUTO_BACKUP_DIR}/${backupFilename()}`,
+    data: json,
+    directory: Directory.Documents,
+    encoding: Encoding.UTF8,
+  });
+
+  // Alte Backups aufräumen
+  try {
+    const list = await Filesystem.readdir({ path: AUTO_BACKUP_DIR, directory: Directory.Documents });
+    const files = list.files
+      .map((f) => f.name)
+      .filter((n) => n.startsWith('ernaehrung-backup-') && n.endsWith('.json'))
+      .sort();
+    for (const name of files.slice(0, Math.max(0, files.length - AUTO_BACKUP_KEEP))) {
+      await Filesystem.deleteFile({ path: `${AUTO_BACKUP_DIR}/${name}`, directory: Directory.Documents });
+    }
+  } catch {
+    /* Aufräumen ist optional */
+  }
+
+  await db.settings.put({ ...(settings ?? { id: 1 as const, training_weekdays: [1, 2, 4, 5] }), last_auto_backup_at: Date.now() });
+  return true;
 }

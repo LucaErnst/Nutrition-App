@@ -66,16 +66,5 @@ export async function seedIfEmpty(): Promise<void> {
     await db.foodItems.bulkAdd(SEED.map((r, i) => toFoodItem(r, now + i)));
   }
 
-  // Zielwerte aus der Spec (Aufbauphase, Woche 1 ab 14.09.2026)
-  if ((await db.goals.count()) === 0) {
-    await db.goals.add({
-      phase_name: getLanguage() === 'de' ? 'Aufbauphase' : 'Bulk',
-      start_date: '2026-09-14',
-      training_day_kcal: 2700,
-      rest_day_kcal: 2350,
-      protein_g: 150,
-      fat_min_g: 75,
-      fat_max_g: 90,
-    });
-  }
+  // Die erste Phase entsteht im Onboarding (Zielvorschlag aus Körperdaten).
 }
