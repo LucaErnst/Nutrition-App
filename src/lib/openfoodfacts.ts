@@ -52,8 +52,14 @@ export async function lookupBarcode(barcode: string): Promise<OffResult> {
 
   let res: Response;
   try {
-    res = await fetch(url.toString(), { headers: { Accept: 'application/json' } });
-  } catch {
+    res = await fetch(url.toString(), {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(10_000),
+    });
+  } catch (e) {
+    if (e instanceof Error && e.name === 'TimeoutError') {
+      return { status: 'error', message: 'Open Food Facts antwortet nicht (Zeitüberschreitung).' };
+    }
     return { status: 'error', message: 'Keine Verbindung zu Open Food Facts.' };
   }
 

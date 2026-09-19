@@ -80,7 +80,7 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
       <label className="field">
         <span>Name</span>
         <input
-          autoFocus
+
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="z.B. Magerquark"

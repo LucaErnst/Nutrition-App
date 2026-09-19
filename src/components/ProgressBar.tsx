@@ -49,8 +49,11 @@ export function ProgressBar({ label, value, target, range, unit, color, status }
       </div>
       <div className="progress-foot">
         {status === 'over' && <span>{fmt(Math.abs(remaining))} {unit} über Ziel</span>}
-        {status !== 'over' && remaining > 0 && <span>noch {fmt(remaining)} {unit}</span>}
-        {status !== 'over' && remaining <= 0 && <span>Ziel erreicht</span>}
+        {status === 'ok' && range && <span>im Zielbereich</span>}
+        {status === 'ok' && !range && remaining > 0 && <span>Ziel erreicht · noch {fmt(remaining)} {unit} bis zur Grenze</span>}
+        {status === 'ok' && !range && remaining <= 0 && <span>Ziel erreicht</span>}
+        {status === 'under' && remaining > 0 && <span>noch {fmt(remaining)} {unit}</span>}
+        {status === 'under' && remaining <= 0 && <span>Ziel erreicht</span>}
       </div>
     </div>
   );

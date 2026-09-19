@@ -67,7 +67,7 @@ export function DailySummary({ totals, targets, isTraining, onToggleTraining, on
         <ProgressBar label="Kalorien" value={totals.kcal} target={targets.kcal} unit="kcal" color="var(--c-kcal)" status={st.kcal} />
         <ProgressBar label="Protein" value={totals.protein} target={targets.protein} unit="g" color="var(--c-protein)" status={st.protein} />
         <ProgressBar label="Fett" value={totals.fat} target={targets.fat_max} range={[targets.fat_min, targets.fat_max]} unit="g" color="var(--c-fat)" status={st.fat} />
-        <ProgressBar label="Kohlenhydrate" value={totals.carbs} target={targets.carbs} unit="g" color="var(--c-carbs)" status={totals.carbs > targets.carbs * 1.15 ? 'over' : 'under'} />
+        <ProgressBar label="Kohlenhydrate" value={totals.carbs} target={targets.carbs} unit="g" color="var(--c-carbs)" status={totals.carbs > targets.carbs * 1.15 ? 'over' : totals.carbs >= targets.carbs * 0.9 ? 'ok' : 'under'} />
       </div>
     </section>
   );

@@ -168,7 +168,7 @@ function GoalForm({ goal, onDone }: { goal?: DailyGoal; onDone: () => void }) {
     <form className="form" onSubmit={submit}>
       <label className="field">
         <span>Name der Phase</span>
-        <input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="z.B. Aufbauphase" required />
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="z.B. Aufbauphase" required />
       </label>
       <div className="field-row">
         <label className="field">

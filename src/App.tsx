@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { DayView } from './components/DayView';
 import { FoodDatabase } from './components/FoodDatabase';
 import { MoreView } from './components/MoreView';
 import { WeekView } from './components/WeekView';
-import { WeightView } from './components/WeightView';
+const WeightView = lazy(() => import('./components/WeightView').then((m) => ({ default: m.WeightView })));
 
 type View = 'diary' | 'week' | 'weight' | 'database' | 'more';
 
@@ -47,7 +47,11 @@ export default function App() {
       <main className="app-main">
         {view === 'diary' && <DayView initialDate={diaryDate} onOpenGoals={() => setView('more')} />}
         {view === 'week' && <WeekView onOpenDay={(d) => { setDiaryDate(d); setView('diary'); }} />}
-        {view === 'weight' && <WeightView />}
+        {view === 'weight' && (
+          <Suspense fallback={<p className="search-hint">Lade…</p>}>
+            <WeightView />
+          </Suspense>
+        )}
         {view === 'database' && <FoodDatabase />}
         {view === 'more' && <MoreView />}
       </main>

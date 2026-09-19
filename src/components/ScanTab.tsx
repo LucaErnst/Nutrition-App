@@ -1,10 +1,10 @@
-import { useState, type FormEvent } from 'react';
+import { lazy, Suspense, useState, type FormEvent } from 'react';
 import { db } from '../db/db';
 import { addMealEntry } from '../db/hooks';
 import type { FoodItem, MealType, Unit } from '../db/types';
 import { fmt, macrosFor } from '../lib/nutrition';
 import { lookupBarcode, offProductToFoodItem } from '../lib/openfoodfacts';
-import { BarcodeScanner } from './BarcodeScanner';
+const BarcodeScanner = lazy(() => import('./BarcodeScanner').then((m) => ({ default: m.BarcodeScanner })));
 import { ManualEntryForm } from './ManualEntryForm';
 
 interface Props {
@@ -88,7 +88,9 @@ export function ScanTab({ date, mealType, onDone }: Props) {
   return (
     <div className="scan">
       {showCamera ? (
-        <BarcodeScanner onDetected={(code) => void handleCode(code)} paused={busy} />
+        <Suspense fallback={<div className="scanner"><p className="scanner-status">Scanner wird geladen…</p></div>}>
+          <BarcodeScanner onDetected={(code) => void handleCode(code)} paused={busy} />
+        </Suspense>
       ) : null}
       <button type="button" className="btn-link" onClick={() => setShowCamera((v) => !v)}>
         {showCamera ? 'Kamera ausblenden' : 'Kamera einblenden'}
@@ -199,7 +201,7 @@ function ProductResult({ item, fromLocal, onBack, onConfirm }: ResultProps) {
             step="any"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            autoFocus
+
             onFocus={(e) => e.target.select()}
           />
         </label>

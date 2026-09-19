@@ -57,7 +57,7 @@ export function FoodItemForm({ item, onDone }: Props) {
     <form className="form" onSubmit={submit}>
       <label className="field">
         <span>Name</span>
-        <input autoFocus value={name} onChange={(e) => setName(e.target.value)} required />
+        <input value={name} onChange={(e) => setName(e.target.value)} required />
       </label>
       <label className="field">
         <span>Marke (optional)</span>

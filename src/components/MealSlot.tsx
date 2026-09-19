@@ -14,6 +14,7 @@ export function MealSlot({ date, mealType, entries }: Props) {
   const [adding, setAdding] = useState(false);
   // Standardmässig eingeklappt: nur Titel, kcal und "+ Add" sichtbar.
   const [expanded, setExpanded] = useState(false);
+  const [templateName, setTemplateName] = useState<string | null>(null);
   const totals = sumMacros(entries.map((e) => e.macros));
   const hasEntries = entries.length > 0;
   const listId = `meal-list-${mealType}`;
@@ -60,19 +61,39 @@ export function MealSlot({ date, mealType, entries }: Props) {
             ))}
           </ul>
           <div className="meal-footer">
-            <button
-              className="btn-link"
-              onClick={() => {
-                const name = prompt('Name der Vorlage', `${MEAL_LABELS[mealType]}-Standard`);
-                if (!name?.trim()) return;
-                void saveTemplate(
-                  name.trim(),
-                  entries.map((e) => ({ food_item_id: e.food.id!, amount: e.entry.amount, unit: e.entry.unit })),
-                );
-              }}
-            >
-              Als Vorlage speichern
-            </button>
+            {templateName === null ? (
+              <button className="btn-link" onClick={() => setTemplateName(`${MEAL_LABELS[mealType]}-Standard`)}>
+                Als Vorlage speichern
+              </button>
+            ) : (
+              <form
+                className="template-form"
+                onSubmit={(ev) => {
+                  ev.preventDefault();
+                  const name = templateName.trim();
+                  if (!name) return;
+                  void saveTemplate(
+                    name,
+                    entries.map((e) => ({ food_item_id: e.food.id!, amount: e.entry.amount, unit: e.entry.unit })),
+                  );
+                  setTemplateName(null);
+                }}
+              >
+                <input
+                  className="search-input"
+                  value={templateName}
+                  onChange={(ev) => setTemplateName(ev.target.value)}
+                  placeholder="Name der Vorlage"
+                  aria-label="Name der Vorlage"
+                />
+                <button type="submit" className="btn-primary" disabled={!templateName.trim()}>
+                  Speichern
+                </button>
+                <button type="button" className="btn-secondary" onClick={() => setTemplateName(null)}>
+                  Abbrechen
+                </button>
+              </form>
+            )}
           </div>
         </>
       )}

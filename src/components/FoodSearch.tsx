@@ -58,7 +58,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
         placeholder="Lebensmittel suchen…"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        autoFocus
+
         aria-label="Lebensmittel suchen"
       />
       {!query && foods.length > 0 && (
@@ -137,7 +137,7 @@ function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
             step="any"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            autoFocus
+
             onFocus={(e) => e.target.select()}
           />
         </label>
