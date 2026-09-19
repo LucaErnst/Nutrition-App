@@ -275,3 +275,39 @@ export async function copyMeal(source: MealCopySource, date: string, meal_type: 
   if (rows.length) await db.mealEntries.bulkAdd(rows);
   return rows.length;
 }
+
+// --- Wasser ------------------------------------------------------------------
+
+export const DEFAULT_WATER_GOAL_ML = 3000;
+
+/** Tagesmenge Wasser in ml. */
+export function useWaterForDay(date: string): number | undefined {
+  return useLiveQuery(async () => {
+    const rows = await db.water.where('date').equals(date).toArray();
+    return rows.reduce((s, r) => s + r.ml, 0);
+  }, [date]);
+}
+
+/** Wasser pro Datum (ml) für mehrere Tage, z.B. eine Woche. */
+export function useWaterByDate(dates: string[]): Map<string, number> | undefined {
+  const key = dates.join(',');
+  return useLiveQuery(async () => {
+    const rows = dates.length ? await db.water.where('date').anyOf(dates).toArray() : [];
+    const map = new Map<string, number>(dates.map((d) => [d, 0]));
+    for (const r of rows) map.set(r.date, (map.get(r.date) ?? 0) + r.ml);
+    return map;
+  }, [key]);
+}
+
+export async function addWater(date: string, ml: number) {
+  return db.water.add({ date, ml, created_at: Date.now() });
+}
+
+/** Entfernt den zuletzt eingetragenen Schluck des Tages (Undo). */
+export async function removeLastWater(date: string): Promise<number | undefined> {
+  const last = await db.water.where('date').equals(date).reverse().sortBy('created_at');
+  const entry = last[0];
+  if (!entry) return undefined;
+  await db.water.delete(entry.id!);
+  return entry.ml;
+}

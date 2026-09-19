@@ -2041,3 +2041,70 @@ input[type='date']::-webkit-date-and-time-value {
     flex-direction: column;
   }
 }
+
+/* ===== Wasser ===== */
+:root {
+  --c-water: #0ea5e9;
+}
+
+.water {
+  padding: 10px 14px 12px;
+}
+
+.water-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.water-title {
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.water-icon {
+  font-size: 14px;
+}
+
+.water-amount {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2);
+}
+
+.water-track {
+  margin: 8px 0;
+}
+
+.water-full {
+  background: var(--c-ok) !important;
+}
+
+.water-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.water-left {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.water-buttons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.water-chip {
+  color: var(--c-water);
+  border-color: color-mix(in srgb, var(--c-water) 40%, transparent);
+  background: color-mix(in srgb, var(--c-water) 10%, transparent);
+  font-weight: 600;
+}

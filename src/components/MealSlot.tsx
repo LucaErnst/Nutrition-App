@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { MEAL_LABELS, type MealType } from '../db/types';
+import type { MealType } from '../db/types';
 import { copyMeal, deleteMealEntry, restoreMealEntry, saveTemplate, updateMealEntryAmount, useCopySources } from '../db/hooks';
 import { addDays } from '../lib/date';
-import { useToast } from './Toast';
-import { AmountStepper } from './AmountStepper';
 import { fmt, sumMacros, type EntryWithFood } from '../lib/nutrition';
+import { mealLabel, useT } from '../i18n';
 import { AddEntryDialog } from './AddEntryDialog';
+import { AmountStepper } from './AmountStepper';
+import { useToast } from './Toast';
 
 interface Props {
   date: string;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function MealSlot({ date, mealType, entries }: Props) {
+  const t = useT();
   const [adding, setAdding] = useState(false);
   // Standardmässig eingeklappt: nur Titel, kcal und "+ Add" sichtbar.
   const [expanded, setExpanded] = useState(false);
@@ -24,6 +26,7 @@ export function MealSlot({ date, mealType, entries }: Props) {
   const toast = useToast();
   const sources = useCopySources(date);
   const yesterday = sources?.find((s) => s.date === addDays(date, -1) && s.meal_type === mealType);
+  const label = mealLabel(mealType);
 
   return (
     <section className="card meal" aria-labelledby={`meal-${mealType}`}>
@@ -35,23 +38,23 @@ export function MealSlot({ date, mealType, entries }: Props) {
           aria-controls={hasEntries ? listId : undefined}
           disabled={!hasEntries}
         >
-          <h2 id={`meal-${mealType}`}>{MEAL_LABELS[mealType]}</h2>
+          <h2 id={`meal-${mealType}`}>{label}</h2>
           {hasEntries && (
             <span className="meal-meta">
-              {entries.length} {entries.length === 1 ? 'Posten' : 'Posten'} · P {fmt(totals.protein)} · F {fmt(totals.fat)} · KH {fmt(totals.carbs)}
+              {entries.length} {entries.length === 1 ? t('common.item') : t('common.items')} · {t('macro.p')} {fmt(totals.protein)} · {t('macro.f')} {fmt(totals.fat)} · {t('macro.c')} {fmt(totals.carbs)}
             </span>
           )}
         </button>
         <div className="meal-header-right">
           <span className="meal-kcal">{fmt(totals.kcal)} kcal</span>
-          <button className="btn-add" onClick={() => setAdding(true)} aria-label={`Posten zu ${MEAL_LABELS[mealType]} hinzufügen`}>
-            + Add
+          <button className="btn-add" onClick={() => setAdding(true)} aria-label={t('slot.addTo', { meal: label })}>
+            + {t('common.add')}
           </button>
           {hasEntries && (
             <button
               className={`btn-icon meal-chevron ${expanded ? 'open' : ''}`}
               onClick={() => setExpanded((v) => !v)}
-              aria-label={expanded ? 'Einklappen' : 'Ausklappen'}
+              aria-label={expanded ? t('slot.collapse') : t('slot.expand')}
             >
               ›
             </button>
@@ -65,69 +68,72 @@ export function MealSlot({ date, mealType, entries }: Props) {
             className="btn-link"
             onClick={async () => {
               const n = await copyMeal(yesterday, date, mealType);
-              toast.show({ message: `${n} Posten von gestern kopiert.` });
+              toast.show({ message: t('slot.copied', { n }) });
             }}
           >
-            Von gestern kopieren ({yesterday.entries.length} Posten · {fmt(yesterday.totals.kcal)} kcal)
+            {t('slot.copyYesterday', {
+              n: yesterday.entries.length,
+              items: yesterday.entries.length === 1 ? t('common.item') : t('common.items'),
+              kcal: fmt(yesterday.totals.kcal),
+            })}
           </button>
         </div>
       )}
 
       {hasEntries && (
         <div className={`collapse ${expanded ? 'open' : ''}`} aria-hidden={!expanded}>
-        <div className="collapse-inner">
-          <ul className="entry-list" id={listId}>
-            {entries.map((e) => (
-              <EntryRow key={e.entry.id} item={e} />
-            ))}
-          </ul>
-          <div className="meal-footer">
-            {templateName === null ? (
-              <button className="btn-link" onClick={() => setTemplateName(`${MEAL_LABELS[mealType]}-Standard`)}>
-                Als Vorlage speichern
-              </button>
-            ) : (
-              <form
-                className="template-form"
-                onSubmit={(ev) => {
-                  ev.preventDefault();
-                  const name = templateName.trim();
-                  if (!name) return;
-                  void saveTemplate(
-                    name,
-                    entries.map((e) => ({ food_item_id: e.entry.food_item_id, amount: e.entry.amount, unit: e.entry.unit })),
-                  );
-                  setTemplateName(null);
-                }}
-              >
-                <input
-                  className="search-input"
-                  value={templateName}
-                  onChange={(ev) => setTemplateName(ev.target.value)}
-                  placeholder="Name der Vorlage"
-                  aria-label="Name der Vorlage"
-                />
-                <button type="submit" className="btn-primary" disabled={!templateName.trim()}>
-                  Speichern
+          <div className="collapse-inner">
+            <ul className="entry-list" id={listId}>
+              {entries.map((e) => (
+                <EntryRow key={e.entry.id} item={e} />
+              ))}
+            </ul>
+            <div className="meal-footer">
+              {templateName === null ? (
+                <button className="btn-link" onClick={() => setTemplateName(t('slot.templateDefault', { meal: label }))}>
+                  {t('slot.saveTemplate')}
                 </button>
-                <button type="button" className="btn-secondary" onClick={() => setTemplateName(null)}>
-                  Abbrechen
-                </button>
-              </form>
-            )}
+              ) : (
+                <form
+                  className="template-form"
+                  onSubmit={(ev) => {
+                    ev.preventDefault();
+                    const name = templateName.trim();
+                    if (!name) return;
+                    void saveTemplate(
+                      name,
+                      entries.map((e) => ({ food_item_id: e.entry.food_item_id, amount: e.entry.amount, unit: e.entry.unit })),
+                    );
+                    setTemplateName(null);
+                  }}
+                >
+                  <input
+                    className="search-input"
+                    value={templateName}
+                    onChange={(ev) => setTemplateName(ev.target.value)}
+                    placeholder={t('slot.templateName')}
+                    aria-label={t('slot.templateName')}
+                  />
+                  <button type="submit" className="btn-primary" disabled={!templateName.trim()}>
+                    {t('common.save')}
+                  </button>
+                  <button type="button" className="btn-secondary" onClick={() => setTemplateName(null)}>
+                    {t('common.cancel')}
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
-        </div>
         </div>
       )}
 
-      {adding && (
-        <AddEntryDialog date={date} mealType={mealType} onClose={() => setAdding(false)} />
-      )}
+      {adding && <AddEntryDialog date={date} mealType={mealType} onClose={() => setAdding(false)} />}
     </section>
   );
 }
 
 function EntryRow({ item }: { item: EntryWithFood }) {
+  const t = useT();
   const { entry, food, macros } = item;
   const [editing, setEditing] = useState(false);
   const [amount, setAmount] = useState(String(entry.amount));
@@ -137,8 +143,8 @@ function EntryRow({ item }: { item: EntryWithFood }) {
     const snapshot = { ...entry };
     await deleteMealEntry(entry.id!);
     toast.show({
-      message: `${food.name} entfernt.`,
-      actionLabel: 'Rückgängig',
+      message: t('slot.removed', { name: food.name }),
+      actionLabel: t('common.undo'),
       onAction: async () => {
         await restoreMealEntry(snapshot);
       },
@@ -154,6 +160,8 @@ function EntryRow({ item }: { item: EntryWithFood }) {
     }
     setEditing(false);
   }
+
+  const unitLabel = entry.unit === 'Stück' ? t('unit.piece') : entry.unit;
 
   return (
     <li className="entry">
@@ -180,27 +188,22 @@ function EntryRow({ item }: { item: EntryWithFood }) {
                 }}
               />
               <button type="button" className="btn-primary btn-sm" onClick={commit}>
-                OK
+                {t('common.ok')}
               </button>
             </span>
           ) : (
-            <button className="btn-link" onClick={() => setEditing(true)} title="Menge ändern">
-              {fmt(entry.amount, entry.amount % 1 === 0 ? 0 : 1)} {entry.unit}
+            <button className="btn-link" onClick={() => setEditing(true)} title={t('slot.changeAmount')}>
+              {fmt(entry.amount, entry.amount % 1 === 0 ? 0 : 1)} {unitLabel}
             </button>
           )}
         </span>
       </div>
       <div className="entry-macros">
         <span className="entry-kcal">{fmt(macros.kcal)} kcal</span>
-        <span>P {fmt(macros.protein)}</span>
-        <span>F {fmt(macros.fat)}</span>
-        <span>KH {fmt(macros.carbs)}</span>
-        <button
-          className="btn-icon"
-          onClick={() => void remove()}
-          aria-label={`${food.name} entfernen`}
-          title="Entfernen"
-        >
+        <span>{t('macro.p')} {fmt(macros.protein)}</span>
+        <span>{t('macro.f')} {fmt(macros.fat)}</span>
+        <span>{t('macro.c')} {fmt(macros.carbs)}</span>
+        <button className="btn-icon" onClick={() => void remove()} aria-label={t('slot.removeItem', { name: food.name })} title={t('common.remove')}>
           ×
         </button>
       </div>

@@ -1,4 +1,5 @@
 import type { Unit } from '../db/types';
+import { useT } from '../i18n';
 
 interface Props {
   value: string;
@@ -24,6 +25,7 @@ function parse(v: string): number {
 }
 
 export function AmountStepper({ value, onChange, unit, compact, autoFocus, onBlur, onKeyDown, ariaLabel }: Props) {
+  const t = useT();
   const n = parse(value);
 
   function bump(dir: 1 | -1) {
@@ -34,7 +36,7 @@ export function AmountStepper({ value, onChange, unit, compact, autoFocus, onBlu
 
   return (
     <div className={`stepper ${compact ? 'stepper-compact' : ''}`}>
-      <button type="button" className="stepper-btn" onClick={() => bump(-1)} aria-label="Menge verringern" disabled={n <= 0}>
+      <button type="button" className="stepper-btn" onClick={() => bump(-1)} aria-label={t('picker.decrease')} disabled={n <= 0}>
         −
       </button>
       <input
@@ -48,9 +50,9 @@ export function AmountStepper({ value, onChange, unit, compact, autoFocus, onBlu
         autoFocus={autoFocus}
         onBlur={onBlur}
         onKeyDown={onKeyDown}
-        aria-label={ariaLabel ?? 'Menge'}
+        aria-label={ariaLabel ?? t('common.amount')}
       />
-      <button type="button" className="stepper-btn" onClick={() => bump(1)} aria-label="Menge erhöhen">
+      <button type="button" className="stepper-btn" onClick={() => bump(1)} aria-label={t('picker.increase')}>
         +
       </button>
     </div>

@@ -1,5 +1,6 @@
 import { useScrollLock } from '../lib/useScrollLock';
 import { useEffect, type ReactNode } from 'react';
+import { useT } from '../i18n';
 
 interface Props {
   title: string;
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export function Modal({ title, onClose, children }: Props) {
+  const t = useT();
   useScrollLock();
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export function Modal({ title, onClose, children }: Props) {
       <div className="modal" role="dialog" aria-modal="true" aria-label={title} onClick={(ev) => ev.stopPropagation()}>
         <header className="modal-header">
           <h3>{title}</h3>
-          <button className="btn-icon" onClick={onClose} aria-label="Schliessen">
+          <button className="btn-icon" onClick={onClose} aria-label={t('common.close')}>
             ×
           </button>
         </header>

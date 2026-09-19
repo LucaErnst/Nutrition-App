@@ -1,6 +1,6 @@
-# Ernährung – Kalorien- & Makro-Tracker
+# Nutrition – calorie & macro tracker (Ernährung)
 
-Persönliche Tracking-App (React + Vite + TypeScript, Daten lokal in IndexedDB, PWA).
+Persönliche Tracking-App (React + Vite + TypeScript, Daten lokal in IndexedDB, PWA). Oberfläche Englisch (Standard) oder Deutsch, umschaltbar unter „More/Mehr“.
 Spec: `ernaehrung-app-spec.md`.
 
 ## Entwickeln

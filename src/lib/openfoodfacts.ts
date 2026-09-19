@@ -1,4 +1,5 @@
 import type { FoodItem } from '../db/types';
+import { getLanguage, t } from '../i18n';
 
 const APP_NAME = 'LucaNutritionTracker';
 const APP_VERSION = __APP_VERSION__;
@@ -8,6 +9,7 @@ const FIELDS = [
   'code',
   'product_name',
   'product_name_de',
+  'product_name_en',
   'brands',
   'quantity',
   'serving_quantity',
@@ -43,7 +45,7 @@ export type OffResult =
  */
 export async function lookupBarcode(barcode: string): Promise<OffResult> {
   const code = barcode.replace(/\D/g, '');
-  if (!code) return { status: 'error', message: 'Ungültiger Barcode.' };
+  if (!code) return { status: 'error', message: t('off.errInvalid') };
 
   const url = new URL(`https://world.openfoodfacts.org/api/v2/product/${code}.json`);
   url.searchParams.set('fields', FIELDS);
@@ -58,14 +60,14 @@ export async function lookupBarcode(barcode: string): Promise<OffResult> {
     });
   } catch (e) {
     if (e instanceof Error && e.name === 'TimeoutError') {
-      return { status: 'error', message: 'Open Food Facts antwortet nicht (Zeitüberschreitung).' };
+      return { status: 'error', message: t('off.errTimeout') };
     }
-    return { status: 'error', message: 'Keine Verbindung zu Open Food Facts.' };
+    return { status: 'error', message: t('off.errOffline') };
   }
 
   if (res.status === 404) return { status: 'not_found' };
-  if (res.status === 429) return { status: 'error', message: 'Zu viele Anfragen – kurz warten.' };
-  if (!res.ok) return { status: 'error', message: `Open Food Facts antwortet mit ${res.status}.` };
+  if (res.status === 429) return { status: 'error', message: t('off.errRate') };
+  if (!res.ok) return { status: 'error', message: t('off.errStatus', { status: res.status }) };
 
   const json = await res.json();
   if (json.status === 0 || !json.product) return { status: 'not_found' };
@@ -95,9 +97,9 @@ export function searchCooldownMs(): number {
  */
 export async function searchProducts(query: string, opts: { country?: 'switzerland' | null } = {}): Promise<OffSearchResult> {
   const q = query.trim();
-  if (q.length < 2) return { status: 'error', message: 'Mindestens zwei Zeichen eingeben.' };
+  if (q.length < 2) return { status: 'error', message: t('off.errShort') };
   const wait = searchCooldownMs();
-  if (wait > 0) return { status: 'error', message: `Bitte ${Math.ceil(wait / 1000)} s warten (Rate-Limit von Open Food Facts).` };
+  if (wait > 0) return { status: 'error', message: t('off.errCooldown', { s: Math.ceil(wait / 1000) }) };
   lastSearchAt = Date.now();
 
   const url = new URL('https://world.openfoodfacts.org/cgi/search.pl');
@@ -105,7 +107,7 @@ export async function searchProducts(query: string, opts: { country?: 'switzerla
   url.searchParams.set('search_simple', '1');
   url.searchParams.set('action', 'process');
   url.searchParams.set('json', '1');
-  url.searchParams.set('lc', 'de');
+  url.searchParams.set('lc', getLanguage());
   url.searchParams.set('page_size', '20');
   url.searchParams.set('fields', FIELDS);
   if (opts.country) {
@@ -120,20 +122,20 @@ export async function searchProducts(query: string, opts: { country?: 'switzerla
   try {
     res = await fetch(url.toString(), { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15_000) });
   } catch (e) {
-    if (e instanceof Error && e.name === 'TimeoutError') return { status: 'error', message: 'Die Suche antwortet nicht (Zeitüberschreitung).' };
-    return { status: 'error', message: 'Keine Verbindung zu Open Food Facts.' };
+    if (e instanceof Error && e.name === 'TimeoutError') return { status: 'error', message: t('off.errSearchTimeout') };
+    return { status: 'error', message: t('off.errOffline') };
   }
   if (res.status === 429 || res.status === 503) {
-    return { status: 'error', message: 'Open Food Facts ist gerade ausgelastet oder das Limit ist erreicht – in einer Minute nochmals versuchen.' };
+    return { status: 'error', message: t('off.errBusy') };
   }
-  if (!res.ok) return { status: 'error', message: `Open Food Facts antwortet mit ${res.status}.` };
+  if (!res.ok) return { status: 'error', message: t('off.errStatus', { status: res.status }) };
 
   const json = await res.json();
   const list: unknown[] = Array.isArray(json.products) ? json.products : [];
   const products = list
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((h: any) => parseProduct(String(h.code ?? ''), h))
-    .filter((p) => p.barcode && p.name !== 'Unbekanntes Produkt')
+    .filter((p) => p.barcode && p.name !== t('off.unknownProduct'))
     // Produkte mit vollständigen Nährwerten zuerst, Reihenfolge (Beliebtheit) sonst beibehalten
     .sort((a, b) => Number(a.incomplete) - Number(b.incomplete));
   return { status: 'found', products, total: Number(json.count ?? products.length) };
@@ -162,7 +164,7 @@ function parseProduct(code: string, p: any): OffProduct {
 
   return {
     barcode: code,
-    name: (p.product_name_de || p.product_name || 'Unbekanntes Produkt').trim(),
+    name: (localizedName(p) || t('off.unknownProduct')).trim(),
     brand: parseBrand(p.brands),
     kcal_per_100g: kcal ?? 0,
     protein_per_100g: protein ?? 0,
@@ -172,6 +174,12 @@ function parseProduct(code: string, p: any): OffProduct {
     is_liquid,
     incomplete: kcal === undefined || protein === undefined || fat === undefined || carbs === undefined,
   };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function localizedName(p: any): string {
+  const lang = getLanguage();
+  return p[`product_name_${lang}`] || p.product_name_de || p.product_name_en || p.product_name || '';
 }
 
 function parseBrand(v: unknown): string | undefined {

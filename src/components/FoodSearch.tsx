@@ -4,6 +4,7 @@ import type { FoodItem, MealType, Unit } from '../db/types';
 import { addMealEntry, toggleFavorite, useFoodUsage, useSavedFoods } from '../db/hooks';
 import { defaultUnit, fmt, macrosFor } from '../lib/nutrition';
 import { offProductToFoodItem, searchProducts, type OffProduct } from '../lib/openfoodfacts';
+import { useT } from '../i18n';
 import { ProductResult } from './ProductResult';
 import { AmountStepper } from './AmountStepper';
 import { PortionChips } from './PortionChips';
@@ -18,6 +19,11 @@ export function normalize(s: string): string {
   return s.toLowerCase().replace(/ß/g, 'ss').normalize('NFD').replace(/[̀-ͯ]/g, '');
 }
 
+/** Anzeige-Einheit (Stück wird übersetzt, g/ml bleiben) */
+export function unitLabel(t: ReturnType<typeof useT>, unit: Unit): string {
+  return unit === 'Stück' ? t('unit.piece') : unit;
+}
+
 type OffState =
   | { kind: 'idle' }
   | { kind: 'loading'; query: string }
@@ -25,6 +31,7 @@ type OffState =
   | { kind: 'error'; message: string };
 
 export function FoodSearch({ date, mealType, onAdded }: Props) {
+  const t = useT();
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<FoodItem | null>(null);
   const [offProduct, setOffProduct] = useState<FoodItem | null>(null);
@@ -53,7 +60,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
       const terms = q.split(/\s+/);
       return foods.filter((f) => {
         const hay = normalize(`${f.name} ${f.brand ?? ''}`);
-        return terms.every((t) => hay.includes(t));
+        return terms.every((tm) => hay.includes(tm));
       });
     }
     // Ohne Suchbegriff: Favoriten, dann häufig genutzte, dann alphabetisch.
@@ -64,7 +71,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
       const ua = usage?.get(a.id!)?.count ?? 0;
       const ub = usage?.get(b.id!)?.count ?? 0;
       if (ua !== ub) return ub - ua;
-      return a.name.localeCompare(b.name, 'de');
+      return a.name.localeCompare(b.name);
     });
   }, [foods, query, usage]);
 
@@ -73,7 +80,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
       <ProductResult
         item={offProduct}
         fromLocal={!!offProduct.id}
-        backLabel="‹ Zurück zu den Ergebnissen"
+        backLabel={t('product.backResults')}
         onBack={() => setOffProduct(null)}
         onConfirm={async (amount, unit, save) => {
           let food = offProduct;
@@ -101,24 +108,32 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
     );
   }
 
+  const q = query.trim();
+
   return (
     <div className="search">
-      <input
-        className="search-input"
-        type="search"
-        placeholder="Lebensmittel suchen…"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-
-        aria-label="Lebensmittel suchen"
-      />
-      {!query && foods.length > 0 && (
-        <p className="search-hint">Favoriten und häufig verwendete zuerst</p>
-      )}
+      <form
+        className="scan-code-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (q.length >= 2) void searchOff();
+        }}
+      >
+        <input
+          className="search-input"
+          type="search"
+          placeholder={t('search.placeholder')}
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            if (off.kind !== 'idle') setOff({ kind: 'idle' });
+          }}
+          aria-label={t('search.label')}
+        />
+      </form>
+      {!query && foods.length > 0 && <p className="search-hint">{t('search.hint')}</p>}
       {results.length === 0 ? (
-        <p className="search-empty">
-          {foods.length === 0 ? 'Datenbank ist leer.' : `Nichts in deiner Datenbank für „${query}“.`}
-        </p>
+        <p className="search-empty">{foods.length === 0 ? t('search.empty') : t('search.noneFor', { q })}</p>
       ) : (
         <ul className="search-list">
           {results.map((f) => {
@@ -130,9 +145,9 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
                 <button
                   className={`btn-icon star ${f.favorite ? 'on' : ''}`}
                   onClick={() => void toggleFavorite(f)}
-                  aria-label={f.favorite ? `${f.name} aus Favoriten entfernen` : `${f.name} als Favorit markieren`}
+                  aria-label={f.favorite ? t('search.favRemove', { name: f.name }) : t('search.favAdd', { name: f.name })}
                   aria-pressed={!!f.favorite}
-                  title="Favorit"
+                  title={t('db.favorite')}
                 >
                   {f.favorite ? '★' : '☆'}
                 </button>
@@ -141,7 +156,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
                     <span className="search-item-name">{f.name}</span>
                     {f.brand && <span className="search-item-brand">{f.brand}</span>}
                     <span className="search-item-portion">
-                      {fmt(amount, amount % 1 ? 1 : 0)} {unit} · P {fmt(m.protein)} · F {fmt(m.fat)} · KH {fmt(m.carbs)}
+                      {fmt(amount, amount % 1 ? 1 : 0)} {unitLabel(t, unit)} · {t('macro.p')} {fmt(m.protein)} · {t('macro.f')} {fmt(m.fat)} · {t('macro.c')} {fmt(m.carbs)}
                     </span>
                   </span>
                   <span className="search-item-kcal">{fmt(m.kcal)} kcal</span>
@@ -152,20 +167,20 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
         </ul>
       )}
 
-      {query.trim().length >= 2 && (
+      {q.length >= 2 && (
         <div className="off-search">
           {off.kind === 'idle' && (
             <div className="off-search-row">
               <button type="button" className="btn-secondary" onClick={() => void searchOff()}>
-                „{query.trim()}“ bei Open Food Facts suchen
+                {t('search.offButton', { q })}
               </button>
               <label className="checkbox">
                 <input type="checkbox" checked={worldwide} onChange={(e) => setWorldwide(e.target.checked)} />
-                weltweit statt nur Schweiz
+                {t('search.offWorldwide')}
               </label>
             </div>
           )}
-          {off.kind === 'loading' && <p className="search-hint">Suche „{off.query}“ bei Open Food Facts…</p>}
+          {off.kind === 'loading' && <p className="search-hint">{t('search.offSearching', { q: off.query })}</p>}
           {off.kind === 'error' && (
             <p className="form-error" role="alert">
               {off.message}
@@ -174,9 +189,10 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
           {off.kind === 'results' && (
             <>
               <p className="search-hint">
-                Open Food Facts{worldwide ? '' : ' (Schweiz)'}:{' '}
-                {off.products.length === 0 ? 'nichts gefunden' : `${off.products.length} von ${fmt(off.total)} Treffern`}
-                {off.query !== query.trim() && ' (für „' + off.query + '“)'}
+                {off.products.length === 0
+                  ? t('search.offNone', { scope: worldwide ? '' : t('search.offScopeCH') })
+                  : t('search.offResults', { scope: worldwide ? '' : t('search.offScopeCH'), shown: off.products.length, total: fmt(off.total) })}
+                {off.query !== q && t('search.offFor', { q: off.query })}
               </p>
               {off.products.length === 0 && !worldwide && (
                 <button
@@ -187,7 +203,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
                     setOff({ kind: 'idle' });
                   }}
                 >
-                  Weltweit suchen
+                  {t('search.offSearchWorldwide')}
                 </button>
               )}
               <ul className="search-list">
@@ -197,8 +213,9 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
                       <span className="search-item-main">
                         <span className="search-item-name">{p.name}</span>
                         <span className="search-item-portion">
-                          {p.brand && `${p.brand} · `}pro 100 {p.is_liquid ? 'ml' : 'g'} · P {fmt(p.protein_per_100g)} · F {fmt(p.fat_per_100g)} · KH {fmt(p.carbs_per_100g)}
-                          {p.incomplete && ' · unvollständig'}
+                          {p.brand && `${p.brand} · `}
+                          {t('search.per100', { unit: p.is_liquid ? 'ml' : 'g' })} · {t('macro.p')} {fmt(p.protein_per_100g)} · {t('macro.f')} {fmt(p.fat_per_100g)} · {t('macro.c')} {fmt(p.carbs_per_100g)}
+                          {p.incomplete && ` · ${t('search.incomplete')}`}
                         </span>
                       </span>
                       <span className="search-item-kcal">{fmt(p.kcal_per_100g)} kcal</span>
@@ -221,6 +238,7 @@ interface PickerProps {
 }
 
 function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
+  const t = useT();
   const baseUnit = defaultUnit(food);
   // Vorschlag: zuletzt verwendete Menge, sonst übliche Portion
   const initialUnit = food.last_unit ?? baseUnit;
@@ -242,7 +260,7 @@ function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
       }}
     >
       <button type="button" className="btn-link" onClick={onBack}>
-        ‹ Zurück zur Suche
+        {t('search.backToSearch')}
       </button>
       <div>
         <div className="picker-name">{food.name}</div>
@@ -250,15 +268,15 @@ function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
       </div>
       <div className="field-row">
         <div className="field" style={{ flex: 2 }}>
-          <span>Menge</span>
+          <span>{t('common.amount')}</span>
           <AmountStepper value={amount} onChange={setAmount} unit={unit} />
         </div>
         <label className="field">
-          <span>Einheit</span>
+          <span>{t('common.unit')}</span>
           <select value={unit} onChange={(e) => setUnit(e.target.value as Unit)} disabled={units.length === 1}>
             {units.map((u) => (
               <option key={u} value={u}>
-                {u}
+                {unitLabel(t, u)}
               </option>
             ))}
           </select>
@@ -275,16 +293,16 @@ function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
       />
       <div className="picker-preview">
         <span className="picker-kcal">{fmt(m.kcal)} kcal</span>
-        <span>P {fmt(m.protein)} g</span>
-        <span>F {fmt(m.fat)} g</span>
-        <span>KH {fmt(m.carbs)} g</span>
+        <span>{t('macro.p')} {fmt(m.protein)} g</span>
+        <span>{t('macro.f')} {fmt(m.fat)} g</span>
+        <span>{t('macro.c')} {fmt(m.carbs)} g</span>
       </div>
       <div className="form-actions">
         <button type="button" className="btn-secondary" onClick={onBack}>
-          Abbrechen
+          {t('common.cancel')}
         </button>
         <button type="submit" className="btn-primary" disabled={!valid}>
-          Hinzufügen
+          {t('common.add')}
         </button>
       </div>
     </form>

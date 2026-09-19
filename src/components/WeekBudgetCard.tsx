@@ -1,5 +1,6 @@
 import { fmt } from '../lib/nutrition';
 import type { WeekBudget } from '../lib/week';
+import { useT } from '../i18n';
 
 interface Props {
   budget: WeekBudget;
@@ -14,30 +15,38 @@ interface Props {
  * Schnitt pro Tag bleibt, statt jeden Tag exakt treffen zu müssen.
  */
 export function WeekBudgetCard({ budget: b, isCurrent, compact }: Props) {
+  const t = useT();
   const usedPct = Math.min(100, ((b.spentBefore + b.today) / b.budget) * 100);
+  const perDayDrift = fmt(Math.abs(b.driftBefore) / Math.max(1, b.daysLeft));
   const driftText =
     Math.abs(b.driftBefore) < 25
-      ? 'bisher auf Kurs'
+      ? t('week.budgetOnTrack')
       : b.driftBefore > 0
-        ? `${fmt(b.driftBefore)} kcal über Plan – ${fmt(b.driftBefore / Math.max(1, b.daysLeft))} kcal/Tag ausgleichen`
-        : `${fmt(-b.driftBefore)} kcal unter Plan – ${fmt(-b.driftBefore / Math.max(1, b.daysLeft))} kcal/Tag Spielraum`;
+        ? t('week.budgetOver', { n: fmt(b.driftBefore), perDay: perDayDrift })
+        : t('week.budgetUnder', { n: fmt(-b.driftBefore), perDay: perDayDrift });
 
   if (compact) {
     if (!isCurrent || b.daysLeft === 0) return null;
     return (
       <p className="budget-line">
-        <span className="budget-line-label">Wochenbudget</span>
+        <span className="budget-line-label">{t('week.budget')}</span>
         <span>
-          heute noch <strong className={b.todayLeft < 0 ? 'status-over' : ''}>{fmt(b.todayLeft)}</strong> kcal · Ø {fmt(b.perDay)} kcal für {b.daysLeft} {b.daysLeft === 1 ? 'Tag' : 'Tage'} · {driftText}
+          {t('week.budgetLine', {
+            left: fmt(b.todayLeft),
+            perDay: fmt(b.perDay),
+            days: b.daysLeft,
+            dayWord: b.daysLeft === 1 ? t('common.day') : t('common.days'),
+            drift: driftText,
+          })}
         </span>
       </p>
     );
   }
 
   return (
-    <section className="card section" aria-label="Wochenbudget">
+    <section className="card section" aria-label={t('week.budget')}>
       <div className="section-head">
-        <h2>Wochenbudget</h2>
+        <h2>{t('week.budget')}</h2>
         <span className="search-hint">{fmt(b.budget)} kcal</span>
       </div>
       <div className="progress-track budget-track" role="progressbar" aria-valuenow={Math.round(b.spentBefore + b.today)} aria-valuemin={0} aria-valuemax={Math.round(b.budget)}>
@@ -46,37 +55,38 @@ export function WeekBudgetCard({ budget: b, isCurrent, compact }: Props) {
       {isCurrent && b.daysLeft > 0 ? (
         <div className="week-stats budget-stats">
           <div className="week-stat">
-            <span className="week-stat-target">Verbraucht</span>
+            <span className="week-stat-target">{t('week.budgetUsed')}</span>
             <span className="week-stat-value">
               {fmt(b.spentBefore + b.today)} <span className="week-stat-unit">kcal</span>
             </span>
           </div>
           <div className="week-stat">
-            <span className="week-stat-target">Ø pro Resttag ({b.daysLeft})</span>
+            <span className="week-stat-target">{t('week.budgetPerDay', { n: b.daysLeft })}</span>
             <span className="week-stat-value">
               {fmt(b.perDay)} <span className="week-stat-unit">kcal</span>
             </span>
           </div>
           <div className="week-stat">
-            <span className="week-stat-target">Heute noch</span>
+            <span className="week-stat-target">{t('week.budgetTodayLeft')}</span>
             <span className={`week-stat-value ${b.todayLeft < 0 ? 'delta-down' : ''}`}>
               {fmt(b.todayLeft)} <span className="week-stat-unit">kcal</span>
             </span>
           </div>
           <div className="week-stat">
-            <span className="week-stat-target">Bisherige Tage</span>
+            <span className="week-stat-target">{t('week.budgetPast')}</span>
             <span className="week-stat-value budget-drift">{driftText}</span>
           </div>
         </div>
       ) : (
         <p className="week-total">
-          Gesamt: <strong>{fmt(b.totalSpent)}</strong> von {fmt(b.budget)} kcal ({b.totalSpent >= b.budget ? '+' : '−'}
-          {fmt(Math.abs(b.totalSpent - b.budget))})
+          {t('week.budgetTotal', {
+            actual: fmt(b.totalSpent),
+            budget: fmt(b.budget),
+            diff: `${b.totalSpent >= b.budget ? '+' : '−'}${fmt(Math.abs(b.totalSpent - b.budget))}`,
+          })}
         </p>
       )}
-      <p className="search-hint budget-hint">
-        Nicht erfasste vergangene Tage zählen mit ihrem Tagesziel. Ein Tag über Ziel ist kein Problem, solange die Woche stimmt.
-      </p>
+      <p className="search-hint budget-hint">{t('week.budgetHint')}</p>
     </section>
   );
 }

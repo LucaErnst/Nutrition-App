@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
-import { snapshotOf, type DailyGoal, type DayInfo, type FoodItem, type MealEntry, type MealTemplate, type Settings, type WeightEntry } from './types';
+import { snapshotOf, type DailyGoal, type DayInfo, type FoodItem, type MealEntry, type MealTemplate, type Settings, type WaterEntry, type WeightEntry } from './types';
 
 class NutritionDB extends Dexie {
   foodItems!: EntityTable<FoodItem, 'id'>;
@@ -9,6 +9,7 @@ class NutritionDB extends Dexie {
   days!: EntityTable<DayInfo, 'date'>;
   settings!: EntityTable<Settings, 'id'>;
   templates!: EntityTable<MealTemplate, 'id'>;
+  water!: EntityTable<WaterEntry, 'id'>;
 
   constructor() {
     super('nutrition-tracker');
@@ -39,6 +40,9 @@ class NutritionDB extends Dexie {
             if (!entry.snapshot && food) entry.snapshot = snapshotOf(food);
           });
       });
+    this.version(5).stores({
+      water: '++id, date',
+    });
   }
 }
 

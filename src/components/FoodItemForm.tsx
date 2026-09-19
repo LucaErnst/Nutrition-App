@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { db } from '../db/db';
 import type { FoodItem, Portion, UnitType } from '../db/types';
+import { useT } from '../i18n';
 
 interface Props {
   item?: FoodItem;
@@ -14,6 +15,7 @@ function num(v: string): number {
 
 /** Anlegen/Bearbeiten eines Referenz-Lebensmittels, Werte pro 100 g. */
 export function FoodItemForm({ item, onDone }: Props) {
+  const t = useT();
   const [name, setName] = useState(item?.name ?? '');
   const [brand, setBrand] = useState(item?.brand ?? '');
   const [unitType, setUnitType] = useState<UnitType>(item?.unit_type ?? 'weight');
@@ -34,8 +36,8 @@ export function FoodItemForm({ item, onDone }: Props) {
 
   async function submit(ev: FormEvent) {
     ev.preventDefault();
-    if (!name.trim()) return setError('Name fehlt.');
-    if (unitType === 'piece' && num(pieceWeight) <= 0) return setError('Stückgewicht fehlt.');
+    if (!name.trim()) return setError(t('food.errName'));
+    if (unitType === 'piece' && num(pieceWeight) <= 0) return setError(t('food.errPieceWeight'));
 
     const data: Omit<FoodItem, 'id' | 'created_at' | 'source' | 'saved'> = {
       name: name.trim(),
@@ -66,78 +68,78 @@ export function FoodItemForm({ item, onDone }: Props) {
   return (
     <form className="form" onSubmit={submit}>
       <label className="field">
-        <span>Name</span>
+        <span>{t('common.name')}</span>
         <input value={name} onChange={(e) => setName(e.target.value)} required />
       </label>
       <label className="field">
-        <span>Marke (optional)</span>
+        <span>{t('food.brand')}</span>
         <input value={brand} onChange={(e) => setBrand(e.target.value)} />
       </label>
       <div className="field-row">
         <label className="field">
-          <span>Einheit</span>
+          <span>{t('common.unit')}</span>
           <select value={unitType} onChange={(e) => setUnitType(e.target.value as UnitType)}>
-            <option value="weight">Gramm</option>
-            <option value="volume">Milliliter</option>
-            <option value="piece">Stück</option>
+            <option value="weight">{t('unit.grams')}</option>
+            <option value="volume">{t('unit.milliliters')}</option>
+            <option value="piece">{t('unit.pieces')}</option>
           </select>
         </label>
         {unitType === 'piece' && (
           <label className="field">
-            <span>g / Stück</span>
+            <span>{t('manual.gPerPiece')}</span>
             <input type="number" inputMode="decimal" min={0} step="any" value={pieceWeight} onChange={(e) => setPieceWeight(e.target.value)} required />
           </label>
         )}
         <label className="field">
-          <span>Übliche Portion</span>
+          <span>{t('food.usualPortion')}</span>
           <input type="number" inputMode="decimal" min={0} step="any" value={defaultAmount} onChange={(e) => setDefaultAmount(e.target.value)} placeholder={unitType === 'piece' ? '1' : '100'} />
         </label>
       </div>
       <fieldset className="field">
-        <legend>Nährwerte pro {per}</legend>
+        <legend>{t('food.per', { per })}</legend>
         <div className="field-row macros-row">
           <label className="field">
             <span>kcal</span>
             <input type="number" inputMode="decimal" min={0} step="any" value={kcal} onChange={(e) => setKcal(e.target.value)} required />
           </label>
           <label className="field">
-            <span>Protein g</span>
+            <span>{t('manual.proteinG')}</span>
             <input type="number" inputMode="decimal" min={0} step="any" value={protein} onChange={(e) => setProtein(e.target.value)} />
           </label>
           <label className="field">
-            <span>Fett g</span>
+            <span>{t('manual.fatG')}</span>
             <input type="number" inputMode="decimal" min={0} step="any" value={fat} onChange={(e) => setFat(e.target.value)} />
           </label>
           <label className="field">
-            <span>KH g</span>
+            <span>{t('manual.carbsG')}</span>
             <input type="number" inputMode="decimal" min={0} step="any" value={carbs} onChange={(e) => setCarbs(e.target.value)} />
           </label>
         </div>
       </fieldset>
       <fieldset className="field">
-        <legend>Portionsgrössen (optional, z.B. „1 EL“ = 14 g)</legend>
+        <legend>{t('food.portions')}</legend>
         <ul className="portion-list">
           {portions.map((p, i) => (
             <li key={i} className="portion-row">
-              <input value={p.label} onChange={(e) => setPortion(i, { label: e.target.value })} placeholder="z.B. 1 Handvoll" aria-label="Bezeichnung" />
-              <input type="number" inputMode="decimal" min={0} step="any" value={p.grams} onChange={(e) => setPortion(i, { grams: e.target.value })} placeholder={unitType === 'volume' ? 'ml' : 'g'} aria-label="Gewicht" />
-              <button type="button" className="btn-icon" onClick={() => setPortions((l) => l.filter((_, j) => j !== i))} aria-label="Portion entfernen">
+              <input value={p.label} onChange={(e) => setPortion(i, { label: e.target.value })} placeholder={t('food.portionLabelPlaceholder')} aria-label={t('food.portionLabel')} />
+              <input type="number" inputMode="decimal" min={0} step="any" value={p.grams} onChange={(e) => setPortion(i, { grams: e.target.value })} placeholder={unitType === 'volume' ? 'ml' : 'g'} aria-label={t('food.portionWeight')} />
+              <button type="button" className="btn-icon" onClick={() => setPortions((l) => l.filter((_, j) => j !== i))} aria-label={t('food.portionRemove')}>
                 ×
               </button>
             </li>
           ))}
         </ul>
         <button type="button" className="btn-link" onClick={() => setPortions((l) => [...l, { label: '', grams: '' }])} style={{ marginTop: 6 }}>
-          + Portionsgrösse
+          {t('food.addPortion')}
         </button>
       </fieldset>
       {error && <p className="form-error" role="alert">{error}</p>}
       <div className="form-actions">
         <button type="button" className="btn-secondary" onClick={onDone}>
-          Abbrechen
+          {t('common.cancel')}
         </button>
         <button type="submit" className="btn-primary">
-          {item ? 'Speichern' : 'Anlegen'}
+          {item ? t('common.save') : t('common.create')}
         </button>
       </div>
     </form>

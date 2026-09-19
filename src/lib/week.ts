@@ -2,6 +2,7 @@ import type { Macros } from '../db/types';
 import { ZERO_MACROS } from '../db/types';
 import type { DayTargets } from './goals';
 import { fmt } from './nutrition';
+import type { MessageKey } from '../i18n/en';
 
 export interface DaySummary {
   date: string;
@@ -13,7 +14,8 @@ export interface DaySummary {
 
 export interface Conclusion {
   kind: 'ok' | 'warn' | 'info';
-  text: string;
+  key: MessageKey;
+  params?: Record<string, string | number>;
 }
 
 export interface WeekSummary {
@@ -73,53 +75,46 @@ export function summarizeWeek(days: DaySummary[], today: string): WeekSummary {
 }
 
 function conclude(n: number, elapsed: number, avg: Macros, t: WeekSummary['avgTarget'], includesToday: boolean): Conclusion[] {
-  if (n === 0) return [{ kind: 'info', text: 'Noch keine Einträge in dieser Woche.' }];
+  if (n === 0) return [{ kind: 'info', key: 'concl.noEntries' }];
   const out: Conclusion[] = [];
 
   if (!t) {
-    out.push({ kind: 'info', text: 'Keine Phase/Zielwerte für diese Woche hinterlegt.' });
+    out.push({ kind: 'info', key: 'concl.noGoals' });
   } else {
     // Protein
     if (avg.protein >= t.protein) {
-      out.push({ kind: 'ok', text: `Protein erreicht: Ø ${fmt(avg.protein)} g (Ziel ≥ ${fmt(t.protein)} g).` });
+      out.push({ kind: 'ok', key: 'concl.proteinOk', params: { avg: fmt(avg.protein), target: fmt(t.protein) } });
     } else {
-      out.push({ kind: 'warn', text: `Protein unter Ziel: Ø ${fmt(avg.protein)} g, es fehlen ${fmt(t.protein - avg.protein)} g pro Tag.` });
+      out.push({ kind: 'warn', key: 'concl.proteinLow', params: { avg: fmt(avg.protein), missing: fmt(t.protein - avg.protein) } });
     }
 
     // Kalorien (±5 % gilt als im Rahmen)
     const diff = avg.kcal - t.kcal;
     const ratio = avg.kcal / t.kcal;
     if (ratio >= 0.95 && ratio <= 1.05) {
-      out.push({ kind: 'ok', text: `Kalorien im Rahmen: Ø ${fmt(avg.kcal)} von ${fmt(t.kcal)} kcal.` });
+      out.push({ kind: 'ok', key: 'concl.kcalOk', params: { avg: fmt(avg.kcal), target: fmt(t.kcal) } });
     } else if (diff < 0) {
-      out.push({ kind: 'warn', text: `Kalorien unter Ziel: Ø ${fmt(avg.kcal)} kcal, ${fmt(-diff)} kcal pro Tag zu wenig.` });
+      out.push({ kind: 'warn', key: 'concl.kcalLow', params: { avg: fmt(avg.kcal), diff: fmt(-diff) } });
     } else {
-      out.push({ kind: 'warn', text: `Kalorien über Ziel: Ø ${fmt(avg.kcal)} kcal, ${fmt(diff)} kcal pro Tag zu viel.` });
+      out.push({ kind: 'warn', key: 'concl.kcalHigh', params: { avg: fmt(avg.kcal), diff: fmt(diff) } });
     }
 
     // Fett
-    if (avg.fat < t.fat_min) {
-      out.push({ kind: 'warn', text: `Fett zu niedrig: Ø ${fmt(avg.fat)} g (Ziel ${fmt(t.fat_min)}–${fmt(t.fat_max)} g).` });
-    } else if (avg.fat > t.fat_max) {
-      out.push({ kind: 'warn', text: `Fett auffällig hoch: Ø ${fmt(avg.fat)} g (Ziel ${fmt(t.fat_min)}–${fmt(t.fat_max)} g).` });
-    } else {
-      out.push({ kind: 'ok', text: `Fett im Bereich: Ø ${fmt(avg.fat)} g.` });
-    }
+    const fatParams = { avg: fmt(avg.fat), min: fmt(t.fat_min), max: fmt(t.fat_max) };
+    if (avg.fat < t.fat_min) out.push({ kind: 'warn', key: 'concl.fatLow', params: fatParams });
+    else if (avg.fat > t.fat_max) out.push({ kind: 'warn', key: 'concl.fatHigh', params: fatParams });
+    else out.push({ kind: 'ok', key: 'concl.fatOk', params: fatParams });
 
     // Kohlenhydrate nur erwähnen, wenn deutlich daneben
     if (avg.carbs < t.carbs * 0.85) {
-      out.push({ kind: 'info', text: `Kohlenhydrate niedrig: Ø ${fmt(avg.carbs)} g, Rest-Ziel wäre ≈ ${fmt(t.carbs)} g.` });
+      out.push({ kind: 'info', key: 'concl.carbsLow', params: { avg: fmt(avg.carbs), target: fmt(t.carbs) } });
     } else if (avg.carbs > t.carbs * 1.15) {
-      out.push({ kind: 'info', text: `Kohlenhydrate hoch: Ø ${fmt(avg.carbs)} g, Rest-Ziel wäre ≈ ${fmt(t.carbs)} g.` });
+      out.push({ kind: 'info', key: 'concl.carbsHigh', params: { avg: fmt(avg.carbs), target: fmt(t.carbs) } });
     }
   }
 
-  if (n < elapsed) {
-    out.push({ kind: 'info', text: `${n} von ${elapsed} vergangenen Tagen erfasst – Schnitt bezieht sich nur auf erfasste Tage.` });
-  }
-  if (includesToday) {
-    out.push({ kind: 'info', text: 'Heute ist noch nicht abgeschlossen und zählt bereits in den Schnitt.' });
-  }
+  if (n < elapsed) out.push({ kind: 'info', key: 'concl.partial', params: { n, elapsed } });
+  if (includesToday) out.push({ kind: 'info', key: 'concl.today' });
   return out;
 }
 

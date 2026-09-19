@@ -1,5 +1,7 @@
 import type { FoodItem, Unit } from '../db/types';
 import { fmt } from '../lib/nutrition';
+import { useT } from '../i18n';
+import { unitLabel } from './FoodSearch';
 
 interface Chip {
   label: string;
@@ -16,6 +18,7 @@ interface Props {
 
 /** Schnellwahl: zuletzt verwendet, übliche Portion, eigene Portionsgrössen. */
 export function PortionChips({ food, baseUnit, current, onPick }: Props) {
+  const t = useT();
   const chips: Chip[] = [];
   const seen = new Set<string>();
   const add = (c: Chip) => {
@@ -25,16 +28,17 @@ export function PortionChips({ food, baseUnit, current, onPick }: Props) {
       chips.push(c);
     }
   };
+  const num = (n: number) => fmt(n, n % 1 ? 1 : 0);
 
-  if (food.last_amount && food.last_unit) add({ label: `Zuletzt ${fmt(food.last_amount, food.last_amount % 1 ? 1 : 0)} ${food.last_unit}`, amount: food.last_amount, unit: food.last_unit });
-  if (food.default_amount) add({ label: `Üblich ${fmt(food.default_amount, food.default_amount % 1 ? 1 : 0)} ${baseUnit}`, amount: food.default_amount, unit: baseUnit });
+  if (food.last_amount && food.last_unit) add({ label: t('picker.last', { n: num(food.last_amount), unit: unitLabel(t, food.last_unit) }), amount: food.last_amount, unit: food.last_unit });
+  if (food.default_amount) add({ label: t('picker.usual', { n: num(food.default_amount), unit: unitLabel(t, baseUnit) }), amount: food.default_amount, unit: baseUnit });
   const gramUnit: Unit = food.unit_type === 'volume' ? 'ml' : 'g';
   for (const p of food.portions ?? []) add({ label: `${p.label} (${fmt(p.grams)} ${gramUnit})`, amount: p.grams, unit: gramUnit });
 
   if (chips.length === 0) return null;
 
   return (
-    <div className="chips" role="group" aria-label="Schnellwahl Menge">
+    <div className="chips" role="group" aria-label={t('picker.quick')}>
       {chips.map((c) => {
         const active = c.amount === current.amount && c.unit === current.unit;
         return (

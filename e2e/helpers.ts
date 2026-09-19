@@ -17,21 +17,21 @@ export async function freshApp(page: Page) {
     );
   });
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'Frühstück' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Breakfast' })).toBeVisible();
 }
 
 export async function openAddDialog(page: Page, meal: string) {
-  await page.getByRole('button', { name: `Posten zu ${meal} hinzufügen` }).click();
+  await page.getByRole('button', { name: `Add item to ${meal}` }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
 }
 
 /** Fügt ein Referenz-Lebensmittel über die Suche mit der vorgeschlagenen Menge hinzu. */
 export async function addFromSearch(page: Page, meal: string, food: string, amount?: string) {
   await openAddDialog(page, meal);
-  await page.getByRole('searchbox', { name: 'Lebensmittel suchen' }).fill(food);
+  await page.getByRole('searchbox', { name: 'Search foods' }).fill(food);
   await page.getByRole('dialog').getByText(food, { exact: true }).click();
-  if (amount) await page.getByRole('dialog').getByRole('spinbutton', { name: 'Menge' }).fill(amount);
-  await page.getByRole('dialog').getByRole('button', { name: 'Hinzufügen', exact: true }).click();
+  if (amount) await page.getByRole('dialog').getByRole('spinbutton', { name: 'Amount' }).fill(amount);
+  await page.getByRole('dialog').getByRole('button', { name: 'Add', exact: true }).click();
   await expect(page.getByRole('dialog')).toBeHidden();
 }
 

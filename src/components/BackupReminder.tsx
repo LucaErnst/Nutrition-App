@@ -3,12 +3,14 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/db';
 import { useSettings } from '../db/hooks';
 import { exportBackup } from '../lib/backup';
+import { useT } from '../i18n';
 
 const REMIND_AFTER_DAYS = 14;
 const SNOOZE_KEY = 'nutrition-tracker:backup-snooze-until';
 
 /** Erinnert im Tagebuch an ein Backup, wenn das letzte länger als 14 Tage her ist. */
 export function BackupReminder() {
+  const t = useT();
   const settings = useSettings();
   const entryCount = useLiveQuery(() => db.mealEntries.count());
   const [snoozed, setSnoozed] = useState(() => {
@@ -48,15 +50,14 @@ export function BackupReminder() {
   return (
     <div className="banner" role="status">
       <span>
-        {days === undefined ? 'Noch kein Backup erstellt.' : `Letztes Backup vor ${days} Tagen.`}{' '}
-        Deine Daten liegen nur auf diesem Gerät.
+        {days === undefined ? t('reminder.none') : t('reminder.old', { n: days })} {t('reminder.local')}
       </span>
       <div className="banner-actions">
         <button className="btn-link" onClick={snooze}>
-          Später
+          {t('common.later')}
         </button>
         <button className="btn-primary" onClick={() => void backupNow()} disabled={busy}>
-          Jetzt sichern
+          {t('reminder.now')}
         </button>
       </div>
     </div>

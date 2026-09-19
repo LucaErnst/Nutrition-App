@@ -6,6 +6,7 @@ import { lookupBarcode, offProductToFoodItem } from '../lib/openfoodfacts';
 const BarcodeScanner = lazy(() => import('./BarcodeScanner').then((m) => ({ default: m.BarcodeScanner })));
 import { ManualEntryForm } from './ManualEntryForm';
 import { ProductResult } from './ProductResult';
+import { useT } from '../i18n';
 
 interface Props {
   date: string;
@@ -22,6 +23,7 @@ type State =
   | { kind: 'manual'; code: string };
 
 export function ScanTab({ date, mealType, onDone }: Props) {
+  const t = useT();
   const [state, setState] = useState<State>({ kind: 'scanning' });
   const [codeInput, setCodeInput] = useState('');
   const [showCamera, setShowCamera] = useState(true);
@@ -70,7 +72,7 @@ export function ScanTab({ date, mealType, onDone }: Props) {
       <ProductResult
         item={state.item}
         fromLocal={state.fromLocal}
-        backLabel="‹ Nochmals scannen"
+        backLabel={t('product.backScan')}
         onBack={() => setState({ kind: 'scanning' })}
         onConfirm={async (amount, unit, save) => {
           let food = state.item;
@@ -90,17 +92,15 @@ export function ScanTab({ date, mealType, onDone }: Props) {
   return (
     <div className="scan">
       {showCamera ? (
-        <Suspense fallback={<div className="scanner skeleton-card"><p className="scanner-status">Scanner wird geladen…</p></div>}>
+        <Suspense fallback={<div className="scanner skeleton-card"><p className="scanner-status">{t('scan.loading')}</p></div>}>
           <BarcodeScanner onDetected={(code) => void handleCode(code)} paused={busy} />
         </Suspense>
       ) : null}
       <button type="button" className="btn-link" onClick={() => setShowCamera((v) => !v)}>
-        {showCamera ? 'Kamera ausblenden' : 'Kamera einblenden'}
+        {showCamera ? t('scan.hideCamera') : t('scan.showCamera')}
       </button>
       {isIosStandalone() && (
-        <p className="search-hint">
-          Fragt iOS bei jedem Start nach der Kamera? In Safari die App-Adresse öffnen → „aA“ → Website-Einstellungen → Kamera: Erlauben.
-        </p>
+        <p className="search-hint">{t('scan.iosHint')}</p>
       )}
 
       <form className="scan-code-form" onSubmit={submitCode}>
@@ -108,25 +108,23 @@ export function ScanTab({ date, mealType, onDone }: Props) {
           className="search-input"
           inputMode="numeric"
           pattern="[0-9 ]*"
-          placeholder="Barcode eingeben (EAN)"
+          placeholder={t('scan.enterBarcode')}
           value={codeInput}
           onChange={(e) => setCodeInput(e.target.value)}
-          aria-label="Barcode manuell eingeben"
+          aria-label={t('scan.enterBarcodeLabel')}
         />
         <button type="submit" className="btn-primary" disabled={busy || !codeInput.trim()}>
-          Suchen
+          {t('common.search')}
         </button>
       </form>
 
-      {state.kind === 'loading' && <p className="search-hint">Suche {state.code} bei Open Food Facts…</p>}
+      {state.kind === 'loading' && <p className="search-hint">{t('scan.looking', { code: state.code })}</p>}
 
       {state.kind === 'not_found' && (
         <div className="scan-notice">
-          <p>
-            <strong>{state.code}</strong> ist bei Open Food Facts nicht bekannt.
-          </p>
+          <p>{t('scan.notFound', { code: state.code })}</p>
           <button className="btn-secondary" onClick={() => setState({ kind: 'manual', code: state.code })}>
-            Nährwerte manuell eingeben
+            {t('scan.enterManually')}
           </button>
         </div>
       )}
@@ -136,10 +134,10 @@ export function ScanTab({ date, mealType, onDone }: Props) {
           <p role="alert">{state.message}</p>
           <div className="form-actions" style={{ justifyContent: 'flex-start' }}>
             <button className="btn-secondary" onClick={() => void handleCode(state.code)}>
-              Erneut versuchen
+              {t('common.retry')}
             </button>
             <button className="btn-secondary" onClick={() => setState({ kind: 'manual', code: state.code })}>
-              Manuell eingeben
+              {t('scan.manual')}
             </button>
           </div>
         </div>

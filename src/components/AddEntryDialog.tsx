@@ -1,6 +1,7 @@
 import { useScrollLock } from '../lib/useScrollLock';
 import { useEffect, useState } from 'react';
-import { MEAL_LABELS, type MealType } from '../db/types';
+import type { MealType } from '../db/types';
+import { mealLabel, useT } from '../i18n';
 import { ManualEntryForm } from './ManualEntryForm';
 import { FoodSearch } from './FoodSearch';
 import { ScanTab } from './ScanTab';
@@ -15,8 +16,8 @@ interface Props {
 type Tab = 'search' | 'scan' | 'templates' | 'manual';
 
 export function AddEntryDialog({ date, mealType, onClose }: Props) {
+  const t = useT();
   const [tab, setTab] = useState<Tab>('search');
-
   useScrollLock();
 
   useEffect(() => {
@@ -27,34 +28,28 @@ export function AddEntryDialog({ date, mealType, onClose }: Props) {
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'search', label: t('add.tabSearch') },
+    { id: 'scan', label: t('add.tabScan') },
+    { id: 'templates', label: t('add.tabTemplates') },
+    { id: 'manual', label: t('add.tabManual') },
+  ];
+
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div
-        className="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="add-entry-title"
-        onClick={(ev) => ev.stopPropagation()}
-      >
+      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="add-entry-title" onClick={(ev) => ev.stopPropagation()}>
         <header className="modal-header">
-          <h3 id="add-entry-title">Posten zu {MEAL_LABELS[mealType]}</h3>
-          <button className="btn-icon" onClick={onClose} aria-label="Schliessen">
+          <h3 id="add-entry-title">{t('add.title', { meal: mealLabel(mealType) })}</h3>
+          <button className="btn-icon" onClick={onClose} aria-label={t('common.close')}>
             ×
           </button>
         </header>
         <div className="tabs" role="tablist">
-          <button role="tab" aria-selected={tab === 'search'} className={tab === 'search' ? 'active' : ''} onClick={() => setTab('search')}>
-            Suchen
-          </button>
-          <button role="tab" aria-selected={tab === 'scan'} className={tab === 'scan' ? 'active' : ''} onClick={() => setTab('scan')}>
-            Scannen
-          </button>
-          <button role="tab" aria-selected={tab === 'templates'} className={tab === 'templates' ? 'active' : ''} onClick={() => setTab('templates')}>
-            Vorlagen
-          </button>
-          <button role="tab" aria-selected={tab === 'manual'} className={tab === 'manual' ? 'active' : ''} onClick={() => setTab('manual')}>
-            Manuell
-          </button>
+          {tabs.map((tb) => (
+            <button key={tb.id} role="tab" aria-selected={tab === tb.id} className={tab === tb.id ? 'active' : ''} onClick={() => setTab(tb.id)}>
+              {tb.label}
+            </button>
+          ))}
         </div>
         {tab === 'search' && <FoodSearch date={date} mealType={mealType} onAdded={onClose} />}
         {tab === 'scan' && <ScanTab date={date} mealType={mealType} onDone={onClose} />}

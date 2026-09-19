@@ -9,6 +9,8 @@ import { activeGoalFor, targetsFor } from '../lib/goals';
 import { DailySummary } from './DailySummary';
 import { MealSlot } from './MealSlot';
 import { BackupReminder } from './BackupReminder';
+import { useT } from '../i18n';
+import { WaterRow } from './WaterRow';
 
 interface Props {
   initialDate?: string;
@@ -16,6 +18,7 @@ interface Props {
 }
 
 export function DayView({ initialDate, onOpenGoals }: Props) {
+  const t = useT();
   const [date, setDate] = useState(initialDate ?? todayISO());
 
   useEffect(() => {
@@ -34,8 +37,8 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
 
   return (
     <div className="day">
-      <nav className="date-nav" aria-label="Datum">
-        <button className="btn-icon" onClick={() => setDate(addDays(date, -1))} aria-label="Vorheriger Tag">
+      <nav className="date-nav" aria-label={t('weight.date')}>
+        <button className="btn-icon" onClick={() => setDate(addDays(date, -1))} aria-label={t('day.prev')}>
           ‹
         </button>
         <div className="date-nav-center">
@@ -44,11 +47,11 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
             className="date-input"
             value={date}
             onChange={(e) => e.target.value && setDate(e.target.value)}
-            aria-label="Datum wählen"
+            aria-label={t('day.pickDate')}
           />
           <span className="date-label">{formatDateLabel(date)}</span>
         </div>
-        <button className="btn-icon" onClick={() => setDate(addDays(date, 1))} aria-label="Nächster Tag">
+        <button className="btn-icon" onClick={() => setDate(addDays(date, 1))} aria-label={t('day.next')}>
           ›
         </button>
       </nav>
@@ -64,6 +67,8 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
       />
 
       {budget && <WeekBudgetCard budget={budget} isCurrent compact />}
+
+      <WaterRow date={date} />
 
       {MEAL_TYPES.map((mt) => (
         <MealSlot key={`${date}-${mt}`} date={date} mealType={mt} entries={groups[mt]} />

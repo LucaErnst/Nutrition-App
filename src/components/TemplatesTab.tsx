@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { MEAL_LABELS, type MealTemplate, type MealType } from '../db/types';
+import type { MealTemplate, MealType } from '../db/types';
+import { mealLabel, useT } from '../i18n';
 import { applyTemplate, copyMeal, deleteTemplate, useCopySources, useTemplates } from '../db/hooks';
 import { addDays } from '../lib/date';
 import { fmt, macrosFor, sumMacros } from '../lib/nutrition';
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function TemplatesTab({ date, mealType, onDone }: Props) {
+  const t = useT();
   const templates = useTemplates();
   const sources = (useCopySources(date) ?? []).filter((s) => !(s.date === date && s.meal_type === mealType));
   const [busy, setBusy] = useState<number | null>(null);
@@ -23,7 +25,7 @@ export function TemplatesTab({ date, mealType, onDone }: Props) {
     <div className="search">
       {sources.length > 0 && (
         <>
-          <p className="search-hint">Kopieren von</p>
+          <p className="search-hint">{t('tpl.copyFrom')}</p>
           <ul className="search-list">
             {sources.map((src) => (
               <li key={`${src.date}|${src.meal_type}`}>
@@ -36,10 +38,10 @@ export function TemplatesTab({ date, mealType, onDone }: Props) {
                 >
                   <span className="search-item-main">
                     <span className="search-item-name">
-                      {src.date === date ? 'Heute' : src.date === addDays(date, -1) ? 'Gestern' : src.date} · {MEAL_LABELS[src.meal_type]}
+                      {src.date === date ? t('common.today') : src.date === addDays(date, -1) ? t('common.yesterday') : src.date} · {mealLabel(src.meal_type)}
                     </span>
                     <span className="search-item-portion">
-                      {src.entries.length} Posten · P {fmt(src.totals.protein)} · F {fmt(src.totals.fat)} · KH {fmt(src.totals.carbs)}
+                      {src.entries.length} {src.entries.length === 1 ? t('common.item') : t('common.items')} · {t('macro.p')} {fmt(src.totals.protein)} · {t('macro.f')} {fmt(src.totals.fat)} · {t('macro.c')} {fmt(src.totals.carbs)}
                     </span>
                   </span>
                   <span className="search-item-kcal">{fmt(src.totals.kcal)} kcal</span>
@@ -50,25 +52,25 @@ export function TemplatesTab({ date, mealType, onDone }: Props) {
         </>
       )}
 
-      <p className="search-hint">Vorlagen</p>
+      <p className="search-hint">{t('tpl.templates')}</p>
       {templates.length === 0 && (
         <p className="search-empty">
-          Noch keine Vorlagen. Öffne eine Mahlzeit mit Posten im Tagebuch und tippe auf „Als Vorlage speichern“.
+          {t('tpl.none')}
         </p>
       )}
     <ul className="search-list">
-      {templates.map((t) => (
+      {templates.map((tpl) => (
         <TemplateRow
-          key={t.id}
-          template={t}
-          busy={busy === t.id}
+          key={tpl.id}
+          template={tpl}
+          busy={busy === tpl.id}
           onApply={async () => {
-            setBusy(t.id!);
-            await applyTemplate(t, date, mealType);
+            setBusy(tpl.id!);
+            await applyTemplate(tpl, date, mealType);
             onDone();
           }}
           onDelete={() => {
-            if (confirm(`Vorlage „${t.name}“ löschen?`)) void deleteTemplate(t.id!);
+            if (confirm(t('tpl.confirmDelete', { name: tpl.name }))) void deleteTemplate(tpl.id!);
           }}
         />
       ))}
@@ -78,6 +80,7 @@ export function TemplatesTab({ date, mealType, onDone }: Props) {
 }
 
 function TemplateRow({ template, busy, onApply, onDelete }: { template: MealTemplate; busy: boolean; onApply: () => void; onDelete: () => void }) {
+  const t = useT();
   // Lebensmittel der Vorlage laden, um Summe und Zeilen anzuzeigen
   const foods = useLiveQuery(() => db.foodItems.bulkGet(template.items.map((i) => i.food_item_id)), [template.id]);
   const lines = (foods ?? []).flatMap((f, i) => (f ? [{ food: f, item: template.items[i] }] : []));
@@ -89,15 +92,15 @@ function TemplateRow({ template, busy, onApply, onDelete }: { template: MealTemp
         <span className="search-item-main">
           <span className="search-item-name">{template.name}</span>
           <span className="search-item-portion">
-            {lines.map((l) => `${fmt(l.item.amount, l.item.amount % 1 ? 1 : 0)} ${l.item.unit} ${l.food.name}`).join(' · ')}
+            {lines.map((l) => `${fmt(l.item.amount, l.item.amount % 1 ? 1 : 0)} ${l.item.unit === 'Stück' ? t('unit.piece') : l.item.unit} ${l.food.name}`).join(' · ')}
           </span>
           <span className="search-item-portion">
-            P {fmt(totals.protein)} · F {fmt(totals.fat)} · KH {fmt(totals.carbs)}
+            {t('macro.p')} {fmt(totals.protein)} · {t('macro.f')} {fmt(totals.fat)} · {t('macro.c')} {fmt(totals.carbs)}
           </span>
         </span>
         <span className="search-item-kcal">{fmt(totals.kcal)} kcal</span>
       </button>
-      <button className="btn-icon" onClick={onDelete} aria-label={`Vorlage ${template.name} löschen`} title="Löschen">
+      <button className="btn-icon" onClick={onDelete} aria-label={t('tpl.delete', { name: template.name })} title={t('common.delete')}>
         ×
       </button>
     </li>

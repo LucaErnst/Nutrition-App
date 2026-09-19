@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { logError } from '../lib/errorLog';
+import { t } from '../i18n';
 
 interface State {
   error: Error | null;
@@ -23,12 +24,12 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
     return (
       <div className="app">
         <section className="card section" role="alert" style={{ marginTop: 24 }}>
-          <h2>Da ist etwas schiefgelaufen</h2>
+          <h2>{t('error.title')}</h2>
           <p className="search-hint" style={{ margin: '8px 0 12px' }}>
             {this.state.error.message}
           </p>
           <button className="btn-primary" onClick={() => window.location.reload()}>
-            App neu laden
+            {t('error.reload')}
           </button>
         </section>
       </div>

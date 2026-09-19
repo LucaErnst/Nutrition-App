@@ -6,23 +6,25 @@ import { UpdateBanner } from './components/UpdateBanner';
 import { ToastProvider } from './components/Toast';
 import { IconDiary, IconFood, IconMore, IconWeek, IconWeight } from './components/Icons';
 import type { ComponentType, SVGProps } from 'react';
+import { useT, type MessageKeyOf } from './i18n';
 import { WeekView } from './components/WeekView';
 const WeightView = lazy(() => import('./components/WeightView').then((m) => ({ default: m.WeightView })));
 
 type View = 'diary' | 'week' | 'weight' | 'database' | 'more';
 
-const VIEWS: { id: View; label: string; Icon: ComponentType<SVGProps<SVGSVGElement>> }[] = [
-  { id: 'diary', label: 'Tagebuch', Icon: IconDiary },
-  { id: 'week', label: 'Woche', Icon: IconWeek },
-  { id: 'weight', label: 'Gewicht', Icon: IconWeight },
-  { id: 'database', label: 'Datenbank', Icon: IconFood },
-  { id: 'more', label: 'Mehr', Icon: IconMore },
+const VIEWS: { id: View; label: MessageKeyOf<'nav'>; Icon: ComponentType<SVGProps<SVGSVGElement>> }[] = [
+  { id: 'diary', label: 'nav.diary', Icon: IconDiary },
+  { id: 'week', label: 'nav.week', Icon: IconWeek },
+  { id: 'weight', label: 'nav.weight', Icon: IconWeight },
+  { id: 'database', label: 'nav.database', Icon: IconFood },
+  { id: 'more', label: 'nav.more', Icon: IconMore },
 ];
 
 /** Platzhalter, während ein nachgeladener Bereich (Chart) geladen wird. */
 function Skeleton() {
+  const t = useT();
   return (
-    <div className="skeleton" aria-busy="true" aria-label="Lade…">
+    <div className="skeleton" aria-busy="true" aria-label={t('common.loading')}>
       <div className="skeleton-card" style={{ height: 140 }} />
       <div className="skeleton-card" style={{ height: 320 }} />
     </div>
@@ -30,6 +32,7 @@ function Skeleton() {
 }
 
 export default function App() {
+  const t = useT();
   const [view, setView] = useState<View>('diary');
   const [diaryDate, setDiaryDate] = useState<string | undefined>(undefined);
 
@@ -42,8 +45,8 @@ export default function App() {
     <ToastProvider>
       <div className="app">
         <header className="app-header">
-          <h1>Ernährung</h1>
-          <nav className="app-nav" aria-label="Hauptnavigation">
+          <h1>{t('app.title')}</h1>
+          <nav className="app-nav" aria-label={t('nav.label')}>
             {VIEWS.map((v) => (
               <button
                 key={v.id}
@@ -55,7 +58,7 @@ export default function App() {
                 }}
               >
                 <v.Icon className="nav-icon" />
-                <span>{v.label}</span>
+                <span>{t(v.label)}</span>
               </button>
             ))}
           </nav>

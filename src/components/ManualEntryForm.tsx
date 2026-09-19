@@ -2,6 +2,8 @@ import { useState, type FormEvent } from 'react';
 import { db } from '../db/db';
 import { addMealEntry } from '../db/hooks';
 import type { FoodItem, MealType, Unit } from '../db/types';
+import { useT } from '../i18n';
+import { unitLabel } from './FoodSearch';
 
 interface Props {
   date: string;
@@ -21,6 +23,7 @@ function num(v: string): number {
 }
 
 export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: Props) {
+  const t = useT();
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('100');
   const [unit, setUnit] = useState<Unit>('g');
@@ -41,8 +44,8 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
   async function submit(ev: FormEvent) {
     ev.preventDefault();
     const amt = num(amount);
-    if (amt <= 0) return setError('Menge muss grösser als 0 sein.');
-    if (num(kcal) <= 0 && num(protein) <= 0 && num(fat) <= 0 && num(carbs) <= 0) return setError('Mindestens kcal angeben.');
+    if (amt <= 0) return setError(t('manual.errAmount'));
+    if (num(kcal) <= 0 && num(protein) <= 0 && num(fat) <= 0 && num(carbs) <= 0) return setError(t('manual.errValues'));
     // Ohne Namen: Schnell-Eintrag, landet nicht in der Datenbank.
     const quick = !name.trim();
 
@@ -55,7 +58,7 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
     const factor = effectiveBasis === 'per100' ? 1 : 100 / grams;
 
     const item: FoodItem = {
-      name: quick ? 'Schnell-Eintrag' : name.trim(),
+      name: quick ? t('manual.quickEntry') : name.trim(),
       kcal_per_100g: num(kcal) * factor,
       protein_per_100g: num(protein) * factor,
       fat_per_100g: num(fat) * factor,
@@ -74,109 +77,92 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
     onDone();
   }
 
-  const basisLabel = effectiveBasis === 'per100' ? (unit === 'ml' ? 'pro 100 ml' : 'pro 100 g') : `für ${amount || '…'} ${unit}`;
+  const baseUnit = unit === 'ml' ? 'ml' : 'g';
+  const basisLabel =
+    effectiveBasis === 'per100' ? t('manual.per100', { unit: baseUnit }) : t('manual.forAmount', { amount: amount || '…', unit: unitLabel(t, unit) });
+  const numInput = (value: string, set: (v: string) => void) => (
+    <input type="number" inputMode="decimal" min={0} step="any" value={value} onChange={(e) => set(e.target.value)} />
+  );
 
   return (
     <form className="form" onSubmit={submit}>
-      {barcode && <p className="search-hint">Barcode {barcode} wird mitgespeichert.</p>}
+      {barcode && <p className="search-hint">{t('manual.barcodeKept', { code: barcode })}</p>}
       <label className="field">
-        <span>Name (leer lassen für Schnell-Eintrag nur mit Werten)</span>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="z.B. Magerquark – oder leer" />
+        <span>{t('manual.nameHint')}</span>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('manual.namePlaceholder')} />
       </label>
 
       <div className="field-row">
         <label className="field">
-          <span>Menge</span>
-          <input
-            type="number"
-            inputMode="decimal"
-            min={0}
-            step="any"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            required
-          />
+          <span>{t('common.amount')}</span>
+          <input type="number" inputMode="decimal" min={0} step="any" value={amount} onChange={(e) => setAmount(e.target.value)} required />
         </label>
         <label className="field">
-          <span>Einheit</span>
+          <span>{t('common.unit')}</span>
           <select value={unit} onChange={(e) => setUnit(e.target.value as Unit)}>
             <option value="g">g</option>
             <option value="ml">ml</option>
-            <option value="Stück">Stück</option>
+            <option value="Stück">{t('unit.piece')}</option>
           </select>
         </label>
         {isPiece && (
           <label className="field">
-            <span>g / Stück</span>
-            <input
-              type="number"
-              inputMode="decimal"
-              min={0}
-              step="any"
-              value={pieceWeight}
-              onChange={(e) => setPieceWeight(e.target.value)}
-              placeholder="optional"
-            />
+            <span>{t('manual.gPerPiece')}</span>
+            <input type="number" inputMode="decimal" min={0} step="any" value={pieceWeight} onChange={(e) => setPieceWeight(e.target.value)} placeholder={t('common.optional')} />
           </label>
         )}
       </div>
 
       <fieldset className="field">
-        <legend>Nährwerte {basisLabel}</legend>
-        <div className="segmented" role="radiogroup" aria-label="Bezugsbasis">
+        <legend>{t('manual.valuesFor', { basis: basisLabel })}</legend>
+        <div className="segmented" role="radiogroup" aria-label={t('manual.basis')}>
           <label className={effectiveBasis === 'per100' ? 'active' : ''}>
-            <input
-              type="radio"
-              name="basis"
-              checked={effectiveBasis === 'per100'}
-              onChange={() => setBasis('per100')}
-              disabled={!per100Allowed}
-            />
-            pro 100 {unit === 'ml' ? 'ml' : 'g'}
+            <input type="radio" name="basis" checked={effectiveBasis === 'per100'} onChange={() => setBasis('per100')} disabled={!per100Allowed} />
+            {t('manual.basisPer100', { unit: baseUnit })}
           </label>
           <label className={effectiveBasis === 'portion' ? 'active' : ''}>
-            <input
-              type="radio"
-              name="basis"
-              checked={effectiveBasis === 'portion'}
-              onChange={() => setBasis('portion')}
-            />
-            für die Menge
+            <input type="radio" name="basis" checked={effectiveBasis === 'portion'} onChange={() => setBasis('portion')} />
+            {t('manual.basisPortion')}
           </label>
         </div>
         <div className="field-row macros-row">
           <label className="field">
             <span>kcal</span>
-            <input type="number" inputMode="decimal" min={0} step="any" value={kcal} onChange={(e) => setKcal(e.target.value)} />
+            {numInput(kcal, setKcal)}
           </label>
           <label className="field">
-            <span>Protein g</span>
-            <input type="number" inputMode="decimal" min={0} step="any" value={protein} onChange={(e) => setProtein(e.target.value)} />
+            <span>{t('manual.proteinG')}</span>
+            {numInput(protein, setProtein)}
           </label>
           <label className="field">
-            <span>Fett g</span>
-            <input type="number" inputMode="decimal" min={0} step="any" value={fat} onChange={(e) => setFat(e.target.value)} />
+            <span>{t('manual.fatG')}</span>
+            {numInput(fat, setFat)}
           </label>
           <label className="field">
-            <span>KH g</span>
-            <input type="number" inputMode="decimal" min={0} step="any" value={carbs} onChange={(e) => setCarbs(e.target.value)} />
+            <span>{t('manual.carbsG')}</span>
+            {numInput(carbs, setCarbs)}
           </label>
         </div>
       </fieldset>
 
       <label className="checkbox">
         <input type="checkbox" checked={save && !!name.trim()} disabled={!name.trim()} onChange={(e) => setSave(e.target.checked)} />
-        In meiner Referenzdatenbank speichern{!name.trim() && ' (braucht einen Namen)'}
+        {t('manual.saveToDb')}
+        {!name.trim() && t('manual.needsName')}
       </label>
 
-      {error && <p className="form-error" role="alert">{error}</p>}
+      {error && (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      )}
 
       <div className="form-actions">
         <button type="button" className="btn-secondary" onClick={onCancel ?? onDone}>
-          Abbrechen
+          {t('common.cancel')}
         </button>
         <button type="submit" className="btn-primary">
-          Hinzufügen
+          {t('common.add')}
         </button>
       </div>
     </form>

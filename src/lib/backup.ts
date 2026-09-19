@@ -1,6 +1,7 @@
 import { db } from '../db/db';
 import { backfillSnapshots } from '../db/hooks';
-import type { DailyGoal, DayInfo, FoodItem, MealEntry, MealTemplate, Settings, WeightEntry } from '../db/types';
+import { t } from '../i18n';
+import type { DailyGoal, DayInfo, FoodItem, MealEntry, MealTemplate, Settings, WaterEntry, WeightEntry } from '../db/types';
 
 export const BACKUP_VERSION = 1;
 
@@ -15,10 +16,11 @@ export interface Backup {
   days: DayInfo[];
   settings: Settings[];
   templates: MealTemplate[];
+  water: WaterEntry[];
 }
 
 export async function createBackup(): Promise<Backup> {
-  const [foodItems, mealEntries, goals, weights, days, settings, templates] = await Promise.all([
+  const [foodItems, mealEntries, goals, weights, days, settings, templates, water] = await Promise.all([
     db.foodItems.toArray(),
     db.mealEntries.toArray(),
     db.goals.toArray(),
@@ -26,6 +28,7 @@ export async function createBackup(): Promise<Backup> {
     db.days.toArray(),
     db.settings.toArray(),
     db.templates.toArray(),
+    db.water.toArray(),
   ]);
   return {
     app: 'nutrition-tracker',
@@ -38,6 +41,7 @@ export async function createBackup(): Promise<Backup> {
     days,
     settings,
     templates,
+    water,
   };
 }
 
@@ -66,7 +70,7 @@ async function doExport(): Promise<'shared' | 'downloaded'> {
 
   if (navigator.canShare?.({ files: [file] })) {
     try {
-      await navigator.share({ files: [file], title: 'Ernährung Backup' });
+      await navigator.share({ files: [file], title: `${t('app.title')} Backup` });
       return 'shared';
     } catch (e) {
       // Abbruch durch Nutzer → nichts tun; anderer Fehler → Download versuchen
@@ -90,12 +94,12 @@ export function parseBackup(text: string): Backup {
   try {
     data = JSON.parse(text);
   } catch {
-    throw new Error('Datei ist kein gültiges JSON.');
+    throw new Error(t('backup.errJson'));
   }
   const b = data as Partial<Backup>;
-  if (!b || b.app !== 'nutrition-tracker') throw new Error('Datei ist kein Backup dieser App.');
+  if (!b || b.app !== 'nutrition-tracker') throw new Error(t('backup.errNotBackup'));
   if (typeof b.version !== 'number' || b.version > BACKUP_VERSION) {
-    throw new Error('Backup stammt aus einer neueren App-Version.');
+    throw new Error(t('backup.errNewer'));
   }
   const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
   return {
@@ -109,12 +113,13 @@ export function parseBackup(text: string): Backup {
     days: arr(b.days),
     settings: arr(b.settings),
     templates: arr(b.templates),
+    water: arr(b.water),
   };
 }
 
 /** Ersetzt alle lokalen Daten durch das Backup (IDs bleiben erhalten). */
 export async function restoreBackup(b: Backup): Promise<void> {
-  await db.transaction('rw', [db.foodItems, db.mealEntries, db.goals, db.weights, db.days, db.settings, db.templates], async () => {
+  await db.transaction('rw', [db.foodItems, db.mealEntries, db.goals, db.weights, db.days, db.settings, db.templates, db.water], async () => {
     await Promise.all([
       db.foodItems.clear(),
       db.mealEntries.clear(),
@@ -123,6 +128,7 @@ export async function restoreBackup(b: Backup): Promise<void> {
       db.days.clear(),
       db.settings.clear(),
       db.templates.clear(),
+      db.water.clear(),
     ]);
     await db.foodItems.bulkAdd(b.foodItems);
     await db.mealEntries.bulkAdd(b.mealEntries);
@@ -131,6 +137,7 @@ export async function restoreBackup(b: Backup): Promise<void> {
     await db.days.bulkAdd(b.days);
     await db.settings.bulkAdd(b.settings);
     await db.templates.bulkAdd(b.templates);
+    await db.water.bulkAdd(b.water);
   });
   // Backups aus Versionen vor 0.4 haben keine Snapshots
   await backfillSnapshots();

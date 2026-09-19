@@ -16,14 +16,6 @@ export const MEAL_TYPES: MealType[] = [
   'dinner',
 ];
 
-export const MEAL_LABELS: Record<MealType, string> = {
-  breakfast: 'Frühstück',
-  morning_snack: 'Vormittag-Snack',
-  lunch: 'Mittagessen',
-  afternoon_snack: 'Nachmittag-Snack',
-  dinner: 'Abendessen',
-};
-
 export interface Portion {
   label: string;
   /** Gewicht in g bzw. ml */
@@ -123,6 +115,10 @@ export interface Settings {
   training_weekdays: number[];
   /** Zeitpunkt des letzten erfolgreichen Backup-Exports */
   last_backup_at?: number;
+  /** Sprache der Oberfläche; Standard Englisch */
+  language?: 'en' | 'de';
+  /** Tagesziel Wasser in ml */
+  water_goal_ml?: number;
 }
 
 /** Mahlzeiten-Vorlage, z.B. "Standard-Frühstück": mehrere Posten auf einmal eintragen. */
@@ -130,6 +126,14 @@ export interface MealTemplate {
   id?: number;
   name: string;
   items: { food_item_id: number; amount: number; unit: Unit }[];
+  created_at: number;
+}
+
+/** Ein Schluck/Glas Wasser; die Tagesmenge ist die Summe. */
+export interface WaterEntry {
+  id?: number;
+  date: string;
+  ml: number;
   created_at: number;
 }
 

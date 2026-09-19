@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrowserMultiFormatReader, type IScannerControls } from '@zxing/browser';
 import { BarcodeFormat, DecodeHintType } from '@zxing/library';
+import { t } from '../i18n';
 
 interface Props {
   onDetected: (code: string) => void;
@@ -30,7 +31,7 @@ export function BarcodeScanner({ onDetected, paused = false }: Props) {
     const video = videoRef.current;
     if (!video) return;
     if (!navigator.mediaDevices?.getUserMedia) {
-      setError('Keine Kamera verfügbar (Browser unterstützt getUserMedia nicht oder Seite ist nicht sicher/HTTPS).');
+      setError(t('scan.errNoCamera'));
       return;
     }
 
@@ -61,9 +62,9 @@ export function BarcodeScanner({ onDetected, paused = false }: Props) {
       .catch((e: unknown) => {
         if (cancelled) return;
         const name = e instanceof Error ? e.name : '';
-        if (name === 'NotAllowedError') setError('Kamerazugriff wurde abgelehnt.');
-        else if (name === 'NotFoundError') setError('Keine Kamera gefunden.');
-        else setError('Kamera konnte nicht gestartet werden.');
+        if (name === 'NotAllowedError') setError(t('scan.errDenied'));
+        else if (name === 'NotFoundError') setError(t('scan.errNotFound'));
+        else setError(t('scan.errStart'));
       });
 
     return () => {
@@ -76,7 +77,7 @@ export function BarcodeScanner({ onDetected, paused = false }: Props) {
     <div className="scanner">
       <video ref={videoRef} className="scanner-video" muted playsInline />
       {!error && <div className="scanner-frame" aria-hidden="true" />}
-      {!error && !ready && <p className="scanner-status">Kamera wird gestartet…</p>}
+      {!error && !ready && <p className="scanner-status">{t('scan.starting')}</p>}
       {error && <p className="scanner-error" role="alert">{error}</p>}
     </div>
   );

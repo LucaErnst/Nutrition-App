@@ -1,5 +1,6 @@
 import { fmt } from '../lib/nutrition';
 import type { Status } from '../lib/goals';
+import { useT } from '../i18n';
 
 interface Props {
   label: string;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function ProgressBar({ label, value, target, range, unit, color, status }: Props) {
+  const t = useT();
   // Skala reicht bis 110 % des Ziels (bzw. Bereichs-Maximum), damit "drüber" sichtbar ist
   const scaleMax = (range ? range[1] : target) * 1.15;
   const pct = Math.min(100, (value / scaleMax) * 100);
@@ -48,12 +50,12 @@ export function ProgressBar({ label, value, target, range, unit, color, status }
         {!range && <div className="progress-marker" style={{ left: `${targetPct}%` }} />}
       </div>
       <div className="progress-foot">
-        {status === 'over' && <span>{fmt(Math.abs(remaining))} {unit} über Ziel</span>}
-        {status === 'ok' && range && <span>im Zielbereich</span>}
-        {status === 'ok' && !range && remaining > 0 && <span>Ziel erreicht · noch {fmt(remaining)} {unit} bis zur Grenze</span>}
-        {status === 'ok' && !range && remaining <= 0 && <span>Ziel erreicht</span>}
-        {status === 'under' && remaining > 0 && <span>noch {fmt(remaining)} {unit}</span>}
-        {status === 'under' && remaining <= 0 && <span>Ziel erreicht</span>}
+        {status === 'over' && <span>{t('progress.over', { n: fmt(Math.abs(remaining)), unit })}</span>}
+        {status === 'ok' && range && <span>{t('progress.inRange')}</span>}
+        {status === 'ok' && !range && remaining > 0 && <span>{t('progress.reachedLeft', { n: fmt(remaining), unit })}</span>}
+        {status === 'ok' && !range && remaining <= 0 && <span>{t('progress.reached')}</span>}
+        {status === 'under' && remaining > 0 && <span>{t('progress.left', { n: fmt(remaining), unit })}</span>}
+        {status === 'under' && remaining <= 0 && <span>{t('progress.reached')}</span>}
       </div>
     </div>
   );

@@ -1,8 +1,10 @@
 import { useRef, useState } from 'react';
 import { exportBackup, parseBackup, restoreBackup, type Backup } from '../lib/backup';
 import { useSettings } from '../db/hooks';
+import { getLocale, useT } from '../i18n';
 
 export function BackupSection() {
+  const t = useT();
   const fileRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
   const [pending, setPending] = useState<Backup | null>(null);
@@ -14,10 +16,10 @@ export function BackupSection() {
     setBusy(true);
     try {
       const how = await exportBackup();
-      setMessage({ kind: 'ok', text: how === 'shared' ? 'Backup geteilt.' : 'Backup heruntergeladen.' });
+      setMessage({ kind: 'ok', text: how === 'shared' ? t('backup.shared') : t('backup.downloaded') });
     } catch (e) {
       if (!(e instanceof Error && e.name === 'AbortError')) {
-        setMessage({ kind: 'error', text: 'Export fehlgeschlagen.' });
+        setMessage({ kind: 'error', text: t('backup.exportFailed') });
       }
     } finally {
       setBusy(false);
@@ -31,7 +33,7 @@ export function BackupSection() {
       const b = parseBackup(await file.text());
       setPending(b);
     } catch (e) {
-      setMessage({ kind: 'error', text: e instanceof Error ? e.message : 'Datei konnte nicht gelesen werden.' });
+      setMessage({ kind: 'error', text: e instanceof Error ? e.message : t('backup.readFailed') });
     } finally {
       if (fileRef.current) fileRef.current.value = '';
     }
@@ -42,57 +44,55 @@ export function BackupSection() {
     setBusy(true);
     try {
       await restoreBackup(pending);
-      setMessage({ kind: 'ok', text: 'Backup wiederhergestellt.' });
+      setMessage({ kind: 'ok', text: t('backup.restored') });
       setPending(null);
     } catch {
-      setMessage({ kind: 'error', text: 'Wiederherstellen fehlgeschlagen – bestehende Daten sind unverändert.' });
+      setMessage({ kind: 'error', text: t('backup.restoreFailed') });
     } finally {
       setBusy(false);
     }
   }
 
+  function formatWhen(iso: string | number): string {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return t('backup.unknownDate');
+    return d.toLocaleString(getLocale(), { dateStyle: 'medium', timeStyle: 'short' });
+  }
+
   return (
     <section className="card section">
-      <h2>Backup</h2>
-      <p className="search-hint">
-        Alle Daten liegen nur auf diesem Gerät. Exportiere regelmässig ein Backup (z.B. in iCloud Drive) – damit kannst du auch auf ein anderes Gerät umziehen.
-      </p>
-      <p className="search-hint">
-        Letztes Backup:{' '}
-        {settings?.last_backup_at
-          ? new Date(settings.last_backup_at).toLocaleString('de-CH', { dateStyle: 'medium', timeStyle: 'short' })
-          : 'noch nie'}
-      </p>
+      <h2>{t('backup.title')}</h2>
+      <p className="search-hint">{t('backup.hint')}</p>
+      <p className="search-hint">{t('backup.last', { when: settings?.last_backup_at ? formatWhen(settings.last_backup_at) : t('backup.never') })}</p>
       <div className="form-actions" style={{ justifyContent: 'flex-start', marginTop: 12 }}>
         <button className="btn-primary" onClick={() => void doExport()} disabled={busy}>
-          Backup exportieren
+          {t('backup.export')}
         </button>
         <button className="btn-secondary" onClick={() => fileRef.current?.click()} disabled={busy}>
-          Backup importieren…
+          {t('backup.import')}
         </button>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="application/json,.json"
-          hidden
-          onChange={(e) => void onFile(e.target.files?.[0])}
-        />
+        <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(e) => void onFile(e.target.files?.[0])} />
       </div>
 
       {pending && (
         <div className="scan-notice" style={{ marginTop: 12 }}>
           <p>
-            <strong>Backup vom {formatExportDate(pending.exported_at)}</strong>: {pending.mealEntries.length} Posten,{' '}
-            {pending.foodItems.length} Lebensmittel, {pending.weights.length} Gewichte, {pending.goals.length} Phasen,{' '}
-            {pending.templates.length} Vorlagen.
+            {t('backup.pending', {
+              when: formatWhen(pending.exported_at),
+              entries: pending.mealEntries.length,
+              foods: pending.foodItems.length,
+              weights: pending.weights.length,
+              goals: pending.goals.length,
+              templates: pending.templates.length,
+            })}
           </p>
-          <p className="form-error">Beim Wiederherstellen werden alle aktuellen Daten auf diesem Gerät ersetzt.</p>
+          <p className="form-error">{t('backup.warning')}</p>
           <div className="form-actions" style={{ justifyContent: 'flex-start' }}>
             <button className="btn-secondary" onClick={() => setPending(null)} disabled={busy}>
-              Abbrechen
+              {t('common.cancel')}
             </button>
             <button className="btn-primary" onClick={() => void doRestore()} disabled={busy}>
-              Ersetzen und wiederherstellen
+              {t('backup.restore')}
             </button>
           </div>
         </div>
@@ -105,10 +105,4 @@ export function BackupSection() {
       )}
     </section>
   );
-}
-
-function formatExportDate(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return 'unbekanntem Datum';
-  return d.toLocaleString('de-CH', { dateStyle: 'medium', timeStyle: 'short' });
 }

@@ -1,3 +1,5 @@
+import { getLocale, t } from '../i18n';
+
 export function toISODate(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -17,15 +19,21 @@ export function addDays(iso: string, delta: number): string {
 
 export function formatDateLabel(iso: string): string {
   const today = todayISO();
-  if (iso === today) return 'Heute';
-  if (iso === addDays(today, -1)) return 'Gestern';
-  if (iso === addDays(today, 1)) return 'Morgen';
+  if (iso === today) return t('common.today');
+  if (iso === addDays(today, -1)) return t('common.yesterday');
+  if (iso === addDays(today, 1)) return t('common.tomorrow');
   const [y, m, d] = iso.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('de-CH', {
+  return new Date(y, m - 1, d).toLocaleDateString(getLocale(), {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
   });
+}
+
+/** Lokales Kurzdatum, z.B. 19.09.2026 bzw. 09/19/2026 */
+export function formatDate(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString(getLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 /** Montag der Woche, in der `iso` liegt. */
@@ -41,11 +49,11 @@ export function weekDates(start: string): string[] {
 }
 
 export function formatShortDate(iso: string): string {
-  const [, m, d] = iso.split('-');
-  return `${Number(d)}.${Number(m)}.`;
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString(getLocale(), { day: 'numeric', month: 'numeric' });
 }
 
 export function weekdayShort(iso: string): string {
   const [y, m, d] = iso.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('de-CH', { weekday: 'short' });
+  return new Date(y, m - 1, d).toLocaleDateString(getLocale(), { weekday: 'short' });
 }

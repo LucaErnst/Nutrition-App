@@ -1,7 +1,9 @@
 import { useRegisterSW } from 'virtual:pwa-register/react';
+import { useT } from '../i18n';
 
 /** Zeigt an, wenn der Service Worker eine neue Version geladen hat. */
 export function UpdateBanner() {
+  const t = useT();
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
@@ -16,13 +18,13 @@ export function UpdateBanner() {
 
   return (
     <div className="banner banner-update" role="status">
-      <span>Neue Version verfügbar.</span>
+      <span>{t('update.available')}</span>
       <div className="banner-actions">
         <button className="btn-link" onClick={() => setNeedRefresh(false)}>
-          Später
+          {t('common.later')}
         </button>
         <button className="btn-primary" onClick={() => void updateServiceWorker(true)}>
-          Neu laden
+          {t('update.reload')}
         </button>
       </div>
     </div>

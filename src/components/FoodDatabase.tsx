@@ -5,14 +5,10 @@ import { fmt } from '../lib/nutrition';
 import { FoodItemForm } from './FoodItemForm';
 import { Modal } from './Modal';
 import { normalize } from './FoodSearch';
-
-const SOURCE_LABEL: Record<FoodItem['source'], string> = {
-  reference: 'Referenz',
-  manual: 'Manuell',
-  openfoodfacts: 'Open Food Facts',
-};
+import { useT } from '../i18n';
 
 export function FoodDatabase() {
+  const t = useT();
   const foods = useSavedFoods();
   const [query, setQuery] = useState('');
   const [editing, setEditing] = useState<FoodItem | 'new' | null>(null);
@@ -25,7 +21,7 @@ export function FoodDatabase() {
   }, [foods, query]);
 
   async function remove(item: FoodItem) {
-    if (!confirm(`„${item.name}“ aus der Datenbank entfernen?`)) return;
+    if (!confirm(t('db.confirmRemove', { name: item.name }))) return;
     await deleteFoodItem(item.id!);
   }
 
@@ -35,17 +31,17 @@ export function FoodDatabase() {
         <input
           className="search-input"
           type="search"
-          placeholder="Suchen…"
+          placeholder={t('db.searchPlaceholder')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          aria-label="Datenbank durchsuchen"
+          aria-label={t('db.searchLabel')}
         />
         <button className="btn-primary" onClick={() => setEditing('new')}>
-          + Neu
+          {t('db.new')}
         </button>
       </div>
       <p className="search-hint">
-        {foods ? `${results.length} von ${foods.length} Einträgen` : 'Lade…'} · Werte pro 100 g / ml · Änderungen gelten für neue Einträge, bereits eingetragene Tage bleiben unverändert.
+        {foods ? t('db.count', { shown: results.length, total: foods.length }) : t('common.loading')} · {t('db.hint')}
       </p>
       <ul className="db-list card">
         {results.map((f) => (
@@ -54,34 +50,34 @@ export function FoodDatabase() {
               <span className="search-item-name">{f.name}</span>
               <span className="db-item-meta">
                 {f.brand && <>{f.brand} · </>}
-                {SOURCE_LABEL[f.source]}
-                {f.unit_type === 'piece' && ` · ${fmt(f.piece_weight_g ?? 0)} g/Stück`}
+                {t(`db.source.${f.source}`)}
+                {f.unit_type === 'piece' && ` · ${t('db.perPiece', { n: fmt(f.piece_weight_g ?? 0) })}`}
               </span>
             </div>
             <div className="db-item-macros">
               <span className="entry-kcal">{fmt(f.kcal_per_100g)} kcal</span>
-              <span>P {fmt(f.protein_per_100g, 1)}</span>
-              <span>F {fmt(f.fat_per_100g, 1)}</span>
-              <span>KH {fmt(f.carbs_per_100g, 1)}</span>
+              <span>{t('macro.p')} {fmt(f.protein_per_100g, 1)}</span>
+              <span>{t('macro.f')} {fmt(f.fat_per_100g, 1)}</span>
+              <span>{t('macro.c')} {fmt(f.carbs_per_100g, 1)}</span>
             </div>
             <div className="db-item-actions">
               <button className={`btn-link star-text ${f.favorite ? 'on' : ''}`} onClick={() => void toggleFavorite(f)} aria-pressed={!!f.favorite}>
-                {f.favorite ? '★ Favorit' : '☆ Favorit'}
+                {f.favorite ? '★' : '☆'} {t('db.favorite')}
               </button>
               <button className="btn-link" onClick={() => setEditing(f)}>
-                Bearbeiten
+                {t('common.edit')}
               </button>
               <button className="btn-link danger" onClick={() => void remove(f)}>
-                Entfernen
+                {t('common.remove')}
               </button>
             </div>
           </li>
         ))}
-        {foods && results.length === 0 && <li className="search-empty">Nichts gefunden.</li>}
+        {foods && results.length === 0 && <li className="search-empty">{t('db.none')}</li>}
       </ul>
 
       {editing && (
-        <Modal title={editing === 'new' ? 'Neues Lebensmittel' : 'Lebensmittel bearbeiten'} onClose={() => setEditing(null)}>
+        <Modal title={editing === 'new' ? t('db.newFood') : t('db.editFood')} onClose={() => setEditing(null)}>
           <FoodItemForm item={editing === 'new' ? undefined : editing} onDone={() => setEditing(null)} />
         </Modal>
       )}

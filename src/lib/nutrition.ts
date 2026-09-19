@@ -1,5 +1,6 @@
 import type { FoodItem, Macros, MealEntry, NutritionSnapshot, Unit } from '../db/types';
 import { ZERO_MACROS } from '../db/types';
+import { getLocale } from '../i18n';
 
 /** Das, was zum Rechnen und Anzeigen eines Eintrags nötig ist. */
 export type NutritionSource = Pick<
@@ -59,8 +60,13 @@ export interface EntryWithFood {
 }
 
 export function fmt(n: number, digits = 0): string {
-  return n.toLocaleString('de-CH', {
+  return n.toLocaleString(getLocale(), {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   });
+}
+
+/** Wie fmt, aber ohne Auffüllen mit Nullen (0.5 statt 0.50). */
+export function fmtMax(n: number, maxDigits: number): string {
+  return n.toLocaleString(getLocale(), { maximumFractionDigits: maxDigits });
 }

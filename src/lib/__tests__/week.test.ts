@@ -21,10 +21,10 @@ describe('summarizeWeek', () => {
 
   it('liefert ein Fazit in Spec-Wortlaut', () => {
     const w = summarizeWeek([day('2026-09-14', 2700, train)], '2026-09-18');
-    const texts = w.conclusions.map((c) => c.text).join(' ');
-    expect(texts).toContain('Protein erreicht');
-    expect(texts).toContain('Kalorien im Rahmen');
-    expect(texts).toContain('Fett im Bereich');
+    const keys = w.conclusions.map((c) => c.key);
+    expect(keys).toContain('concl.proteinOk');
+    expect(keys).toContain('concl.kcalOk');
+    expect(keys).toContain('concl.fatOk');
     expect(w.conclusions.some((c) => c.kind === 'ok')).toBe(true);
   });
 
@@ -33,15 +33,16 @@ describe('summarizeWeek', () => {
       [day('2026-09-14', 2700, train), day('2026-09-15', 0, rest, false), day('2026-09-16', 1000, train)],
       '2026-09-16',
     );
-    const texts = w.conclusions.map((c) => c.text).join(' ');
-    expect(texts).toContain('2 von 3 vergangenen Tagen erfasst');
-    expect(texts).toContain('Heute ist noch nicht abgeschlossen');
+    const keys = w.conclusions.map((c) => c.key);
+    expect(keys).toContain('concl.partial');
+    expect(w.conclusions.find((c) => c.key === 'concl.partial')?.params).toEqual({ n: 2, elapsed: 3 });
+    expect(keys).toContain('concl.today');
   });
 
   it('kommt ohne Zielwerte aus', () => {
     const w = summarizeWeek([day('2026-09-14', 2000, undefined)], '2026-09-18');
     expect(w.avgTarget).toBeUndefined();
-    expect(w.conclusions[0].text).toContain('Keine Phase');
+    expect(w.conclusions[0].key).toBe('concl.noGoals');
   });
 
   it('ohne Einträge nur ein Hinweis', () => {
