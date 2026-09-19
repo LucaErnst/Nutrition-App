@@ -31,6 +31,11 @@ Web-Bundle nichts davon lädt.
    ```
 4. Für Android: **Android Studio** installieren (inkl. SDK), beim ersten Start die Standard-SDK-Komponenten wählen.
 
+Mindest-iOS ist **16.0** (ML Kit 8 verlangt es). iOS-Simulator-Runtime bei Bedarf laden:
+```bash
+xcodebuild -downloadPlatform iOS
+```
+
 ## iOS bauen und auf dem iPhone testen
 
 ```bash
