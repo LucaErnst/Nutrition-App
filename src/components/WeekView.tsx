@@ -56,6 +56,7 @@ export function WeekView({ onOpenDay }: Props) {
 
       {week && (
         <>
+          <div className="split-side">
           <section className="card section" aria-label={t('week.average')}>
             <div className="section-head">
               <h2>{t('week.average')}</h2>
@@ -102,8 +103,9 @@ export function WeekView({ onOpenDay }: Props) {
               ))}
             </ul>
           </section>
+          </div>
 
-          <section className="card section" aria-label={t('week.days')}>
+          <section className="card section split-main" aria-label={t('week.days')}>
             <h2>{t('week.days')}</h2>
             <DayBars days={week.days} today={today} onOpenDay={onOpenDay} />
           </section>

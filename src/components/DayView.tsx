@@ -58,21 +58,26 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
 
       <BackupReminder />
 
-      <DailySummary
-        totals={totals}
-        targets={targets}
-        isTraining={isTraining}
-        onToggleTraining={(v) => void setTrainingDay(date, v)}
-        onOpenGoals={goals && !goal ? onOpenGoals : undefined}
-      />
+      {/* Auf breiten Displays (iPad, aufgeklapptes iPhone Duo) zwei Spalten: Tagesstand links, Mahlzeiten rechts */}
+      <div className="split-side">
+        <DailySummary
+          totals={totals}
+          targets={targets}
+          isTraining={isTraining}
+          onToggleTraining={(v) => void setTrainingDay(date, v)}
+          onOpenGoals={goals && !goal ? onOpenGoals : undefined}
+        />
 
-      {budget && <WeekBudgetCard budget={budget} isCurrent compact />}
+        {budget && <WeekBudgetCard budget={budget} isCurrent compact />}
 
-      <WaterRow date={date} />
+        <WaterRow date={date} />
+      </div>
 
-      {MEAL_TYPES.map((mt) => (
-        <MealSlot key={`${date}-${mt}`} date={date} mealType={mt} entries={groups[mt]} />
-      ))}
+      <div className="split-main">
+        {MEAL_TYPES.map((mt) => (
+          <MealSlot key={`${date}-${mt}`} date={date} mealType={mt} entries={groups[mt]} />
+        ))}
+      </div>
     </div>
   );
 }

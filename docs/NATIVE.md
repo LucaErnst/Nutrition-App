@@ -83,3 +83,15 @@ npm run brand
 ## Offen (siehe STORE-LAUNCH.md)
 
 Onboarding, automatisches Cloud-Backup, In-App-Kauf (RevenueCat), Rechtstexte, Store-Einträge.
+
+## Grosse Displays (iPad, iPhone Duo)
+
+Ab 700 px Breite werden Tagebuch, Woche und Gewicht zweispaltig (`.split-side` / `.split-main`
+in `src/index.css`, Abschnitt „Grosse Displays“). Das gilt für das aufgeklappte iPhone Duo im
+Querformat (~904 × 640 pt) und für iPads; hochkant (~640 pt) bleibt es einspaltig, zentriert.
+Das Aussendisplay (4:3, ~474 × 696 pt) nutzt das Handy-Layout mit Tab-Leiste unten.
+Der Wechsel zwischen den Displays ist für die App ein Fenster-Resize; `e2e/duo-layout.spec.ts`
+prüft, dass dabei kein horizontales Scrollen entsteht und offene Dialoge bedienbar bleiben.
+Alle Ausrichtungen sind in `Info.plist` freigegeben. Der Build ist auf iPhone beschränkt
+(`TARGETED_DEVICE_FAMILY = 1`); für einen iPad-Release müsste das auf `1,2` und die
+iPad-Screenshots ergänzt werden.

@@ -46,6 +46,7 @@ export function WeightView() {
 
   return (
     <div className="weight">
+      <div className="split-side">
       <section className="card section">
         <h2>{t('weight.enter')}</h2>
         <form className="weight-form" onSubmit={submit}>
@@ -73,9 +74,10 @@ export function WeightView() {
         </form>
         <p className="search-hint">{t('weight.hint')}</p>
       </section>
+      </div>
 
       {latest && (
-        <section className="card section">
+        <section className="card section split-main">
           <div className="section-head">
             <h2>{t('weight.history')}</h2>
             <div className="segmented segmented-sm" role="radiogroup" aria-label={t('weight.range')}>
@@ -120,7 +122,7 @@ export function WeightView() {
       )}
 
       {points.length > 0 && (
-        <section className="card section">
+        <section className="card section split-side-2">
           <h2>{t('weight.entries')}</h2>
           <ul className="weight-list">
             {list.map((p) => {

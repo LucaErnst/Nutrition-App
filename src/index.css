@@ -2236,3 +2236,90 @@ input[type='date']::-webkit-date-and-time-value {
   border-radius: 8px;
   background: var(--surface-2);
 }
+
+
+/* ===== Grosse Displays: iPad und aufgeklapptes iPhone Duo (0.15.0) =====
+   Ab 700 px Breite werden Tagebuch, Woche und Gewicht zweispaltig: Stand/Auswertung
+   links, Listen rechts. Darunter bleibt alles einspaltig;
+   die Wrapper .split-side/.split-main sind dann reine Flex-Container ohne Wirkung. */
+.split-side,
+.split-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 700px) {
+  .app {
+    max-width: 1040px;
+  }
+
+  .day,
+  .week,
+  .weight {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-auto-rows: auto;
+    column-gap: 16px;
+    row-gap: 12px;
+    align-items: start;
+  }
+
+  .day > .date-nav,
+  .day > .banner,
+  .week > .date-nav {
+    grid-column: 1 / -1;
+  }
+
+  .split-side {
+    grid-column: 1;
+  }
+
+  .split-main {
+    grid-column: 2;
+  }
+
+  /* Weight: Eingabe und Einträge links, Verlauf rechts */
+  .weight > .split-side-2 {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .weight {
+    grid-template-rows: auto 1fr;
+  }
+
+  .weight > .split-main {
+    grid-row: 1 / span 2;
+  }
+
+  .split-side .weight-form {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .split-side .weight-form .btn-primary {
+    grid-column: 1 / -1;
+  }
+
+  /* In der schmalen Seitenspalte die Innen-Layouts wieder einspaltig halten */
+  .split-side .progress-list {
+    grid-template-columns: 1fr;
+  }
+
+  .split-side .week-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .split-side .summary-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Querformat auf kleinen Displays (Duo aussen, iPhone quer): Tab-Leiste bleibt unten,
+   aber der Inhalt darf die Breite nutzen */
+@media (max-width: 600px) and (orientation: landscape) {
+  .app-header {
+    padding-top: calc(8px + env(safe-area-inset-top));
+  }
+}
