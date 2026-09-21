@@ -11,8 +11,9 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>Serious Nutrition</title>
     <style>
-      /* Start-Screen: deckt die Ladezeit ab, bis die App ihre Daten hat. Sieht genauso aus wie der
-         native Splash (Logo 22 % der Bildschirmhöhe auf #0f1115), damit der Übergang nahtlos ist. */
+      /* Start-Screen: deckt die Ladezeit ab, bis die App ihre Daten hat. Beginnt exakt wie der native
+         Splash (Logo 22 % der Bildschirmhöhe, mittig auf #0f1115), dann rutscht das Logo etwas hoch
+         und darunter erscheint der Schriftzug; zum Schluss blendet alles weich aus. */
       #splash {
         position: fixed;
         inset: 0;
@@ -27,14 +28,39 @@
         opacity: 0;
         pointer-events: none;
       }
+      #splash .stack {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transform: translateY(-2%);
+      }
       #splash .logo {
         position: relative;
         width: max(22vh, 22vw);
         aspect-ratio: 1;
-        transform: translateY(-2%);
-        animation: splash-breathe 4.5s ease-in-out infinite;
+        animation: splash-rise 0.9s cubic-bezier(0.33, 0, 0.15, 1) 0.6s forwards;
       }
-      #splash.hide .logo {
+      #splash .wordmark {
+        position: absolute;
+        top: 100%;
+        margin-top: max(1.2vh, 8px);
+        white-space: nowrap;
+        font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+        font-weight: 600;
+        font-size: max(2.3vh, 16px);
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: #f3efe6;
+        opacity: 0;
+        transform: translateY(12px);
+        animation: splash-word 0.9s cubic-bezier(0.33, 0, 0.15, 1) 1.05s forwards;
+      }
+      #splash .wordmark em {
+        font-style: normal;
+        color: #e6c46a;
+      }
+      #splash.hide .stack {
         animation: splash-out 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
       }
       #splash img {
@@ -51,35 +77,42 @@
         background-size: 260% 100%;
         -webkit-mask: url('/splash-logo.png') center / contain no-repeat;
         mask: url('/splash-logo.png') center / contain no-repeat;
-        animation: splash-shine 3.6s ease-in-out 0.6s infinite;
+        animation: splash-shine 3.6s ease-in-out 1.2s infinite;
         mix-blend-mode: screen;
+      }
+      @keyframes splash-rise {
+        to { transform: translateY(max(-5vh, -40px)); }
+      }
+      @keyframes splash-word {
+        to { opacity: 1; transform: translateY(0); }
       }
       @keyframes splash-shine {
         0% { background-position: 120% 0; }
         60%, 100% { background-position: -40% 0; }
       }
-      @keyframes splash-breathe {
-        0%, 100% { transform: translateY(-2%) scale(1); }
-        50% { transform: translateY(-2%) scale(1.025); }
-      }
       @keyframes splash-out {
-        to { transform: translateY(-2%) scale(1.06); opacity: 0; }
+        to { transform: translateY(-2%) scale(1.05); opacity: 0; }
       }
       @media (prefers-reduced-motion: reduce) {
-        #splash .logo, #splash .shine, #splash.hide .logo { animation: none; }
+        #splash .logo, #splash .shine, #splash.hide .stack { animation: none; }
+        #splash .wordmark { animation: none; opacity: 1; transform: none; }
+        #splash .logo { transform: translateY(max(-5vh, -40px)); }
       }
     </style>
   </head>
   <body>
     <div id="splash" aria-hidden="true">
-      <div class="logo">
-        <img src="/splash-logo.png" alt="" />
-        <div class="shine"></div>
+      <div class="stack">
+        <div class="logo">
+          <img src="/splash-logo.png" alt="" />
+          <div class="shine"></div>
+          <div class="wordmark">Serious <em>Nutrition</em></div>
+        </div>
       </div>
     </div>
     <div id="root"></div>
     <script>
-      // Mindestens 1,6 s zeigen (sonst flackert es bei schnellem Start), spätestens nach 6 s weg.
+      // Mindestens 2,6 s zeigen (Logo, hochrutschen, Schriftzug) (sonst flackert es bei schnellem Start), spätestens nach 6 s weg.
       (function () {
         var el = document.getElementById('splash');
         var shown = Date.now();
@@ -87,7 +120,7 @@
         function hide() {
           if (done) return;
           done = true;
-          var wait = Math.max(0, 1600 - (Date.now() - shown));
+          var wait = Math.max(0, 2600 - (Date.now() - shown));
           setTimeout(function () {
             el.classList.add('hide');
             setTimeout(function () { el.remove(); }, 850);
