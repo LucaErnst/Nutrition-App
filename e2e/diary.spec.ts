@@ -102,6 +102,8 @@ test('language switch to German and back', async ({ page }) => {
 test('default phase name and number format follow the language', async ({ page }) => {
   // Phase „Bulk“ aus dem Helper: Standardname → wird übersetzt angezeigt
   await expect(page.locator('.summary-phase')).toHaveText('· Bulk');
+  // Heute explizit als Ruhetag setzen, damit der Test nicht vom Wochentag abhängt
+  await page.getByRole('radiogroup', { name: 'Day type' }).getByText('Rest day').click();
   await expect(page.locator('.summary-remaining')).toContainText('2,350 kcal left');
   await page.getByRole('button', { name: 'More' }).click();
   await page.getByLabel('Language').getByText('Deutsch').click();

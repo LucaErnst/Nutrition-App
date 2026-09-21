@@ -15,6 +15,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
+    window.__hideSplash?.();
     console.error('Unerwarteter Fehler', error, info.componentStack);
     logError('react', error);
   }

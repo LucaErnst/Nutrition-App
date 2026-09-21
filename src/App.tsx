@@ -45,6 +45,11 @@ export default function App() {
     if (settings && goals && !settings.onboarding_done && goals.length > 0) void saveSettings({ onboarding_done: true });
   }, [settings, goals]);
   const showOnboarding = !!settings && !!goals && !settings.onboarding_done && goals.length === 0;
+
+  // Start-Screen (index.html) ausblenden, sobald die ersten Daten da sind
+  useEffect(() => {
+    if (settings && goals) window.__hideSplash?.();
+  }, [settings, goals]);
   const [diaryDate, setDiaryDate] = useState<string | undefined>(undefined);
 
   // Jede Ansicht beginnt oben – nicht dort, wo die vorherige aufgehört hat.
