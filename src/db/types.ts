@@ -105,6 +105,8 @@ export interface DailyGoal {
   protein_g: number;
   fat_min_g: number;
   fat_max_g: number;
+  /** Datum der letzten Kalorien-Anpassung aus der Phasen-Auswertung; ab hier läuft das 14-Tage-Fenster neu */
+  adjusted_at?: string;
 }
 
 /** Tagesbezogene Einstellungen, z.B. Trainingstag-Override. */

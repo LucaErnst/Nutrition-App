@@ -8,6 +8,7 @@ import { targetsFor } from '../lib/goals';
 import { scheduleReminderSync } from '../lib/remindersNative';
 import { getLocale, phaseDisplayName, useT } from '../i18n';
 import { Modal } from './Modal';
+import { PhaseReview } from './PhaseReview';
 
 const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0];
 
@@ -21,6 +22,7 @@ export function GoalsView() {
   const goals = useGoals() ?? [];
   const settings = useSettings();
   const [editing, setEditing] = useState<DailyGoal | 'new' | null>(null);
+  const [reviewing, setReviewing] = useState<DailyGoal | null>(null);
   const today = todayISO();
 
   function toggleWeekday(d: number) {
@@ -103,6 +105,9 @@ export function GoalsView() {
                   </div>
                 </dl>
                 <div className="db-item-actions">
+                  <button className="btn-link" onClick={() => setReviewing(g)}>
+                    {t('phase.open')}
+                  </button>
                   <button className="btn-link" onClick={() => setEditing(g)}>
                     {t('common.edit')}
                   </button>
@@ -116,6 +121,7 @@ export function GoalsView() {
         </ul>
       </section>
 
+      {reviewing && <PhaseReview goal={reviewing} onClose={() => setReviewing(null)} />}
       {editing && (
         <Modal title={editing === 'new' ? t('goals.newTitle') : t('goals.editTitle')} onClose={() => setEditing(null)}>
           <GoalForm goal={editing === 'new' ? undefined : editing} onDone={() => setEditing(null)} />

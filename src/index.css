@@ -2430,3 +2430,71 @@ body::-webkit-scrollbar,
   color: var(--text-2);
   margin-top: 2px;
 }
+
+/* ===== Phasen-Auswertung ===== */
+.phase-review h4 {
+  margin: 18px 0 6px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-2);
+}
+
+.phase-weight-line {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.phase-weeks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.phase-week {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.phase-week-label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.phase-week-values {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.phase-apply {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  display: grid;
+  gap: 8px;
+}
+
+.phase-quote {
+  margin: 18px 0 0;
+  padding: 0 0 0 12px;
+  border-left: 3px solid var(--accent);
+  color: var(--text-2);
+  font-style: italic;
+  font-size: 14px;
+}
+
+.phase-week-trend {
+  color: var(--text-2);
+  white-space: nowrap;
+}
