@@ -36,12 +36,13 @@ export async function initNative() {
   try {
     const { autoBackupIfDue } = await import('./backup');
     const { syncReminders } = await import('./remindersNative');
+    const { importPendingWater, syncWidgets } = await import('./widgets');
     void autoBackupIfDue();
-    void syncReminders();
+    void importPendingWater().then(() => syncReminders()).then(() => syncWidgets());
     const { App } = await import('@capacitor/app');
     await App.addListener('resume', () => {
       void autoBackupIfDue();
-      void syncReminders();
+      void importPendingWater().then(() => syncReminders()).then(() => syncWidgets());
     });
     // Android: Zurück-Taste schliesst offene Dialoge (Escape), sonst App in den Hintergrund
     await App.addListener('backButton', () => {

@@ -1,5 +1,6 @@
 import { db } from '../db/db';
 import { backfillSnapshots } from '../db/hooks';
+import { scheduleReminderSync } from './remindersNative';
 import { t } from '../i18n';
 import { isNative, shareFile } from './native';
 import type { DailyGoal, DayInfo, FoodItem, MealEntry, MealTemplate, Settings, WaterEntry, WeightEntry } from '../db/types';
@@ -123,6 +124,7 @@ export async function restoreBackup(b: Backup): Promise<void> {
   });
   // Backups aus Versionen vor 0.4 haben keine Snapshots
   await backfillSnapshots();
+  scheduleReminderSync();
 }
 
 // --- Automatisches Backup (nur nativ) ------------------------------------------

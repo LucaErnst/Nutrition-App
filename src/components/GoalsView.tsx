@@ -5,6 +5,7 @@ import { saveSettings, useGoals, useSettings } from '../db/hooks';
 import { formatDate, todayISO } from '../lib/date';
 import { fmt } from '../lib/nutrition';
 import { targetsFor } from '../lib/goals';
+import { scheduleReminderSync } from '../lib/remindersNative';
 import { getLocale, phaseDisplayName, useT } from '../i18n';
 import { Modal } from './Modal';
 
@@ -33,6 +34,7 @@ export function GoalsView() {
   async function remove(g: DailyGoal) {
     if (!confirm(t('goals.confirmDelete', { name: phaseDisplayName(g) }))) return;
     await db.goals.delete(g.id!);
+    scheduleReminderSync();
   }
 
   return (
@@ -154,6 +156,7 @@ function GoalForm({ goal, onDone }: { goal?: DailyGoal; onDone: () => void }) {
     };
     if (goal?.id) await db.goals.update(goal.id, data);
     else await db.goals.add(data);
+    scheduleReminderSync();
     onDone();
   }
 

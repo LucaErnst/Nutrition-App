@@ -95,3 +95,22 @@ prüft, dass dabei kein horizontales Scrollen entsteht und offene Dialoge bedien
 Alle Ausrichtungen sind in `Info.plist` freigegeben. Der Build ist auf iPhone beschränkt
 (`TARGETED_DEVICE_FAMILY = 1`); für einen iPad-Release müsste das auf `1,2` und die
 iPad-Screenshots ergänzt werden.
+
+## Widgets (iOS, WidgetKit)
+
+Target `SeriousWidgets` (ios/App/SeriousWidgets, Swift, Deployment-Target 16.0), eingebettet in die App.
+Datenfluss: `src/lib/widgets.ts` rechnet nach jeder Datenänderung (über `scheduleReminderSync`) und beim
+Start/Vordergrund einen Tagesstand (`WidgetSnapshot`) und schreibt ihn per lokalem Capacitor-Plugin
+`WidgetBridge` (ios/App/App/WidgetBridgePlugin.swift, registriert in `MainViewController`) als JSON in
+die App Group `group.ch.beserious.nutrition`; danach `WidgetCenter.reloadAllTimelines()`.
+Die Extension liest den Stand (`Snapshot.load()`), setzt einen Stand von gestern für heute auf null und
+rechnet Wasser dazu, das über den Widget-Button (`AddWaterIntent`, iOS 17) vorgemerkt wurde. Die App
+holt diese Einträge mit `takePendingWater` ab (`importPendingWater()` in native.ts) und speichert sie in
+der Datenbank.
+
+Widgets: `TodayWidget` (Home klein/mittel; mittel mit +250/+500 ml) und `LockWidget`
+(Sperrbildschirm rund/rechteckig/inline). Tippen öffnet die App über `seriousnutrition://diary`.
+Das Target wurde mit xcodeproj (Ruby, aus CocoaPods) angelegt; App Group und Entitlements sind in
+`App/App.entitlements` bzw. `SeriousWidgets/SeriousWidgets.entitlements`, das automatische Signing
+registriert die App Group selbst. Beide Targets müssen dieselbe MARKETING_VERSION/CURRENT_PROJECT_VERSION
+haben, sonst lehnt App Store Connect den Upload ab.

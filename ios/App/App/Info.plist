@@ -47,6 +47,17 @@
 			</array>
 		</dict>
 	</dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>ch.beserious.nutrition</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>seriousnutrition</string>
+			</array>
+		</dict>
+	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

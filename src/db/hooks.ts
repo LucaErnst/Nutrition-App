@@ -35,6 +35,7 @@ export async function updateMealEntryAmount(id: number, amount: number) {
   const entry = await db.mealEntries.get(id);
   await db.mealEntries.update(id, { amount });
   if (entry) await db.foodItems.update(entry.food_item_id, { last_amount: amount, last_unit: entry.unit });
+  scheduleReminderSync();
 }
 
 export async function deleteMealEntry(id: number) {
@@ -98,7 +99,9 @@ export const DEFAULT_SETTINGS: Settings = { id: 1, training_weekdays: [1, 2, 4, 
 
 export async function saveSettings(patch: Partial<Omit<Settings, 'id'>>) {
   const cur = (await db.settings.get(1)) ?? DEFAULT_SETTINGS;
-  return db.settings.put({ ...cur, ...patch, id: 1 });
+  const r = await db.settings.put({ ...cur, ...patch, id: 1 });
+  scheduleReminderSync();
+  return r;
 }
 
 /** Ist ein Datum ein Trainingstag? Tages-Override schlägt Wochentag-Standard. */
@@ -112,7 +115,8 @@ export function useIsTrainingDay(date: string): boolean | undefined {
 }
 
 export async function setTrainingDay(date: string, is_training: boolean) {
-  return db.days.put({ date, is_training });
+  await db.days.put({ date, is_training });
+  scheduleReminderSync();
 }
 
 export function weekdayOf(date: string): number {
@@ -226,7 +230,9 @@ export async function backfillSnapshots(): Promise<number> {
 
 /** Stellt einen gelöschten Eintrag mit derselben ID wieder her (Undo). */
 export async function restoreMealEntry(entry: MealEntry) {
-  return db.mealEntries.add(entry);
+  const id = await db.mealEntries.add(entry);
+  scheduleReminderSync();
+  return id;
 }
 
 export async function toggleFavorite(item: FoodItem) {
@@ -317,5 +323,6 @@ export async function removeLastWater(date: string): Promise<number | undefined>
   const entry = last[0];
   if (!entry) return undefined;
   await db.water.delete(entry.id!);
+  scheduleReminderSync();
   return entry.ml;
 }

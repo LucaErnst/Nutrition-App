@@ -10,6 +10,7 @@ import { todayISO } from './date';
 import { DEFAULT_REMINDERS, planReminders, type TodayState } from './reminders';
 import { activeGoalFor, targetsFor } from './goals';
 import { macrosFor, resolveSource, sumMacros } from './nutrition';
+import { scheduleWidgetSync } from './widgets';
 
 const DEFAULT_WATER_GOAL_ML = 3000;
 const DEFAULT_TRAINING_WEEKDAYS = [1, 2, 4, 5];
@@ -19,6 +20,7 @@ let timer: number | undefined;
 /** Entprellt: mehrere Datenänderungen kurz hintereinander → eine Neuplanung. */
 export function scheduleReminderSync() {
   if (!isNative) return;
+  scheduleWidgetSync();
   window.clearTimeout(timer);
   timer = window.setTimeout(() => void syncReminders(), 1500);
 }
