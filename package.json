@@ -16,7 +16,8 @@
     "ios": "npm run cap:sync && npx cap open ios",
     "android": "npm run cap:sync && npx cap open android",
     "screenshots": "npm run build && node store/screenshots.mjs",
-    "brand": "node store/brand-assets.mjs && npx @capacitor/assets generate --iconBackgroundColor \"#0f1115\" --iconBackgroundColorDark \"#0f1115\" --splashBackgroundColor \"#0f1115\" --splashBackgroundColorDark \"#0f1115\" && rm -rf icons public/manifest.webmanifest"
+    "brand": "node store/brand-assets.mjs && npx @capacitor/assets generate --iconBackgroundColor \"#0f1115\" --iconBackgroundColorDark \"#0f1115\" --splashBackgroundColor \"#0f1115\" --splashBackgroundColorDark \"#0f1115\" && rm -rf icons public/manifest.webmanifest",
+    "clips": "node marketing/demo-data.mjs && node marketing/clips.mjs"
   },
   "dependencies": {
     "@capacitor-mlkit/barcode-scanning": "^8.2.1",
