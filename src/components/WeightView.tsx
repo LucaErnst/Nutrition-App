@@ -131,7 +131,7 @@ export function WeightView() {
                 <li key={p.date} className="weight-row">
                   <span className="weight-date">{formatDate(p.date)}</span>
                   <span className="weight-value">{fmt(p.weight, 1)} kg</span>
-                  <span className="weight-trend">{t('weight.trendShort', { n: fmt(p.trend, 1) })}</span>
+                  <span className="weight-trend">{t('weight.trendShort', { n: fmt(p.trend, 1) })}{p.source === 'health' ? ` · ${t('weight.fromHealth')}` : ''}</span>
                   <button
                     className="btn-icon"
                     onClick={() => void deleteWeight(entry.id!)}

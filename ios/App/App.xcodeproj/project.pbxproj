@@ -18,7 +18,9 @@
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		70B9BA9EDD89C5245F467638 /* WidgetBridgePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CD2035EC37F0856BC17C3C /* WidgetBridgePlugin.swift */; };
+		7C79F1B75D5CE3D05E3A51F4 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92A3AB6DED1F78E38286B014 /* HealthKit.framework */; };
 		9582B6852FE996820072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6842FE996800072D4E8 /* SceneDelegate.swift */; };
+		9FE812BB1C6C546D2959AC7A /* HealthBridgePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75D4A003015D86078824451 /* HealthBridgePlugin.swift */; };
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
 		A5CB62F2381AB1AA755846C9 /* SeriousWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D3EB33590F6004B1F9E955 /* SeriousWidgets.swift */; };
 		A6E15B5F4B5DAA3716E5455F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C399FDBE2A9C49F36EA8096F /* SwiftUI.framework */; };
@@ -72,8 +74,10 @@
 		57D3EB33590F6004B1F9E955 /* SeriousWidgets.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SeriousWidgets.swift; sourceTree = "<group>"; };
 		79D6D32C25E10EFCF384C2E1 /* App.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		8A63EBE7C009AB8A60A5419B /* AddWaterIntent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AddWaterIntent.swift; sourceTree = "<group>"; };
+		92A3AB6DED1F78E38286B014 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/HealthKit.framework; sourceTree = DEVELOPER_DIR; };
 		9450540789BC67BB7CE36287 /* SeriousWidgets.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = SeriousWidgets.entitlements; sourceTree = "<group>"; };
 		9582B6842FE996800072D4E8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		A75D4A003015D86078824451 /* HealthBridgePlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HealthBridgePlugin.swift; sourceTree = "<group>"; };
 		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
 		B01DD427223FFB570ADAD6CC /* SharedStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
@@ -90,6 +94,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */,
+				7C79F1B75D5CE3D05E3A51F4 /* HealthKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,6 +170,7 @@
 				B01DD427223FFB570ADAD6CC /* SharedStore.swift */,
 				2009E2A17B41BD1362CF1D6A /* MainViewController.swift */,
 				79D6D32C25E10EFCF384C2E1 /* App.entitlements */,
+				A75D4A003015D86078824451 /* HealthBridgePlugin.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -185,6 +191,7 @@
 				C399FDBE2A9C49F36EA8096F /* SwiftUI.framework */,
 				53CEBA05893512FEA6251982 /* WidgetKit.framework */,
 				FF5D00FCEAB7E175401E00CD /* AppIntents.framework */,
+				92A3AB6DED1F78E38286B014 /* HealthKit.framework */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -335,6 +342,7 @@
 				70B9BA9EDD89C5245F467638 /* WidgetBridgePlugin.swift in Sources */,
 				EFB6AF6FBFDA17AFC506E96F /* SharedStore.swift in Sources */,
 				0990D4E1750F9861EA557B5C /* MainViewController.swift in Sources */,
+				9FE812BB1C6C546D2959AC7A /* HealthBridgePlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

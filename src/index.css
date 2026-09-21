@@ -2424,3 +2424,9 @@ body::-webkit-scrollbar,
   width: 0;
   height: 0;
 }
+
+.summary-health {
+  font-size: 12px;
+  color: var(--text-2);
+  margin-top: 2px;
+}

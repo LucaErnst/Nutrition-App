@@ -7,12 +7,14 @@ import { ProgressBar } from './ProgressBar';
 interface Props {
   totals: Macros;
   targets?: DayTargets;
+  /** Aktivkalorien aus Apple Health (nur Anzeige) */
+  activeEnergy?: number;
   isTraining?: boolean;
   onToggleTraining?: (v: boolean) => void;
   onOpenGoals?: () => void;
 }
 
-export function DailySummary({ totals, targets, isTraining, onToggleTraining, onOpenGoals }: Props) {
+export function DailySummary({ totals, targets, activeEnergy, isTraining, onToggleTraining, onOpenGoals }: Props) {
   const t = useT();
 
   if (!targets) {
@@ -54,6 +56,7 @@ export function DailySummary({ totals, targets, isTraining, onToggleTraining, on
             {remaining >= 0 ? t('day.remaining', { n: fmt(remaining) }) : t('day.over', { n: fmt(-remaining) })}
             <span className="summary-phase"> · {targets.phase_name}</span>
           </div>
+          {activeEnergy !== undefined && activeEnergy > 0 && <div className="summary-health">{t('day.activeEnergy', { n: fmt(activeEnergy) })}</div>}
         </div>
         {onToggleTraining && (
           <div className="segmented segmented-sm" role="radiogroup" aria-label={t('day.dayType')}>

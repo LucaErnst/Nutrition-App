@@ -3,6 +3,7 @@ import { db } from './db';
 import { MEAL_TYPES, ZERO_MACROS, snapshotOf, type DailyGoal, type FoodItem, type Macros, type MealEntry, type MealTemplate, type MealType, type Settings, type Unit, type WeightEntry } from './types';
 import { addDays } from '../lib/date';
 import { scheduleReminderSync } from '../lib/remindersNative';
+import { scheduleHealthSync, syncHealthWeight } from '../lib/health';
 import { macrosFor, resolveSource, sumMacros, type EntryWithFood } from '../lib/nutrition';
 import { activeGoalFor, targetsFor } from '../lib/goals';
 import type { DaySummary } from '../lib/week';
@@ -28,6 +29,7 @@ export async function addMealEntry(entry: Omit<MealEntry, 'id' | 'created_at' | 
   const id = await db.mealEntries.add({ ...entry, snapshot: snapshotOf(food), created_at: Date.now() });
   if (food.id) await db.foodItems.update(food.id, { last_amount: entry.amount, last_unit: entry.unit });
   scheduleReminderSync();
+  scheduleHealthSync(entry.date);
   return id;
 }
 
@@ -36,11 +38,14 @@ export async function updateMealEntryAmount(id: number, amount: number) {
   await db.mealEntries.update(id, { amount });
   if (entry) await db.foodItems.update(entry.food_item_id, { last_amount: amount, last_unit: entry.unit });
   scheduleReminderSync();
+  if (entry) scheduleHealthSync(entry.date);
 }
 
 export async function deleteMealEntry(id: number) {
+  const entry = await db.mealEntries.get(id);
   await db.mealEntries.delete(id);
   scheduleReminderSync();
+  if (entry) scheduleHealthSync(entry.date);
 }
 
 export function groupByMeal(entries: EntryWithFood[]): Record<MealType, EntryWithFood[]> {
@@ -173,12 +178,16 @@ export function useWeights(): WeightEntry[] | undefined {
 export async function upsertWeight(date: string, weight_kg: number) {
   const existing = await db.weights.where('date').equals(date).first();
   scheduleReminderSync();
-  if (existing) return db.weights.update(existing.id!, { weight_kg });
+  void syncHealthWeight(date, weight_kg);
+  // Manuell eingetragen überschreibt einen Health-Import
+  if (existing) return db.weights.update(existing.id!, { weight_kg, source: undefined });
   return db.weights.add({ date, weight_kg });
 }
 
 export async function deleteWeight(id: number) {
-  return db.weights.delete(id);
+  const w = await db.weights.get(id);
+  await db.weights.delete(id);
+  if (w && w.source !== 'health') void syncHealthWeight(w.date, undefined);
 }
 
 // --- Vorlagen ----------------------------------------------------------------
@@ -206,6 +215,7 @@ export async function applyTemplate(template: MealTemplate, date: string, meal_t
   });
   if (rows.length) await db.mealEntries.bulkAdd(rows);
   scheduleReminderSync();
+  scheduleHealthSync(date);
   return rows.length;
 }
 
@@ -232,6 +242,7 @@ export async function backfillSnapshots(): Promise<number> {
 export async function restoreMealEntry(entry: MealEntry) {
   const id = await db.mealEntries.add(entry);
   scheduleReminderSync();
+  scheduleHealthSync(entry.date);
   return id;
 }
 
@@ -285,6 +296,7 @@ export async function copyMeal(source: MealCopySource, date: string, meal_type: 
   }));
   if (rows.length) await db.mealEntries.bulkAdd(rows);
   scheduleReminderSync();
+  scheduleHealthSync(date);
   return rows.length;
 }
 
@@ -314,6 +326,7 @@ export function useWaterByDate(dates: string[]): Map<string, number> | undefined
 export async function addWater(date: string, ml: number) {
   const id = await db.water.add({ date, ml, created_at: Date.now() });
   scheduleReminderSync();
+  scheduleHealthSync(date);
   return id;
 }
 
@@ -324,5 +337,6 @@ export async function removeLastWater(date: string): Promise<number | undefined>
   if (!entry) return undefined;
   await db.water.delete(entry.id!);
   scheduleReminderSync();
+  scheduleHealthSync(date);
   return entry.ml;
 }

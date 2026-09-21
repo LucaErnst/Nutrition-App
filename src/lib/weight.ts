@@ -6,6 +6,7 @@ export interface WeightPoint {
   weight: number;
   /** Gleitender 7-Tage-Durchschnitt (über die Einträge der letzten 7 Tage) */
   trend: number;
+  source?: WeightEntry['source'];
 }
 
 /**
@@ -18,7 +19,7 @@ export function withTrend(entries: WeightEntry[], windowDays = 7): WeightPoint[]
     const from = addDays(e.date, -(windowDays - 1));
     const inWindow = sorted.filter((x) => x.date >= from && x.date <= e.date);
     const trend = inWindow.reduce((s, x) => s + x.weight_kg, 0) / inWindow.length;
-    return { date: e.date, weight: e.weight_kg, trend };
+    return { date: e.date, weight: e.weight_kg, trend, source: e.source };
   });
 }
 

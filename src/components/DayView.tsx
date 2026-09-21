@@ -11,6 +11,8 @@ import { MealSlot } from './MealSlot';
 import { BackupReminder } from './BackupReminder';
 import { useT } from '../i18n';
 import { WaterRow } from './WaterRow';
+import { readActiveEnergy } from '../lib/health';
+import { useSettings } from '../db/hooks';
 
 interface Props {
   initialDate?: string;
@@ -34,6 +36,12 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
   const today = todayISO();
   const weekDays = useDaySummaries(weekDates(weekStartOf(date)));
   const budget = weekDays && date === today ? weekBudget(weekDays, today) : undefined;
+  const settings = useSettings();
+  const [activeEnergy, setActiveEnergy] = useState<number | undefined>(undefined);
+  useEffect(() => {
+    setActiveEnergy(undefined);
+    if (settings?.health_enabled) void readActiveEnergy(date).then(setActiveEnergy);
+  }, [date, settings?.health_enabled]);
 
   return (
     <div className="day">
@@ -63,6 +71,7 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
         <DailySummary
           totals={totals}
           targets={targets}
+          activeEnergy={activeEnergy}
           isTraining={isTraining}
           onToggleTraining={(v) => void setTrainingDay(date, v)}
           onOpenGoals={goals && !goal ? onOpenGoals : undefined}

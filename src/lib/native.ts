@@ -53,11 +53,13 @@ export async function initNative() {
     const { autoBackupIfDue } = await import('./backup');
     const { syncReminders } = await import('./remindersNative');
     const { importPendingWater, syncWidgets } = await import('./widgets');
+    const { healthRefresh } = await import('./health');
     const refresh = () => {
       void autoBackupIfDue();
       void importPendingWater().finally(() => {
         void syncReminders();
         void syncWidgets();
+        void healthRefresh().then(() => syncWidgets());
       });
     };
     refresh();

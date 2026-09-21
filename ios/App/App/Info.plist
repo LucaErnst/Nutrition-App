@@ -26,6 +26,10 @@
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Serious Nutrition reads your weight and active energy from Apple Health to show them in the diary and weight trend.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Serious Nutrition writes your logged calories, macros, water and weight to Apple Health.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>The camera is used to scan food barcodes. / Die Kamera wird zum Scannen von Barcodes verwendet.</string>
 	<key>UIApplicationSceneManifest</key>

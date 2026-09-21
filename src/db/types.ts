@@ -132,6 +132,8 @@ export interface Settings {
   reminders?: ReminderSettings;
   /** Zufalls-Versatz für die Text-Rotation der Erinnerungen */
   reminder_salt?: number;
+  /** Apple Health verbunden (nur iOS) */
+  health_enabled?: boolean;
 }
 
 /** Mahlzeiten-Vorlage, z.B. "Standard-Frühstück": mehrere Posten auf einmal eintragen. */
@@ -154,6 +156,8 @@ export interface WeightEntry {
   id?: number;
   date: string;
   weight_kg: number;
+  /** 'health' = aus Apple Health übernommen (wird nicht zurückgeschrieben) */
+  source?: 'health';
 }
 
 export interface Macros {

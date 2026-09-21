@@ -7,7 +7,7 @@ export interface LoggedError {
   at: number;
   message: string;
   stack?: string;
-  source: 'error' | 'unhandledrejection' | 'react' | 'widget';
+  source: 'error' | 'unhandledrejection' | 'react' | 'widget' | 'health';
   version: string;
 }
 
