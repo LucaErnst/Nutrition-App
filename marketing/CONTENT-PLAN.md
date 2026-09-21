@@ -1,59 +1,59 @@
-# TikTok-Content-Plan: Serious Nutrition – erste 14 Tage
+# TikTok content plan: Serious Nutrition – first 14 days
 
-Ziel: Downloads über organische Reichweite. Absender ist **Luca als Coach** (be_s3rious), die App ist
-der Beleg, nicht der Star. Jeder Clip: 15–30 s, 9:16, Hook in den ersten 1,5 s als Text + gesprochen.
+Goal: downloads through organic reach. The sender is **Luca as a coach** (be_s3rious); the app is
+the proof, not the star. Every clip: 15–30 s, 9:16, hook in the first 1.5 s as text + spoken.
 
-## Regeln, die wir einhalten
-- **Du vor der Kamera, App als B-Roll.** Reine App-Videos nur als Ergänzung (max. 2 pro Woche).
-- Ein Clip = eine Aussage. Kein Feature-Katalog.
-- Hook-Text oben, 3–6 Wörter, Konflikt oder Zahl („Ein Tag über Ziel? Egal.“).
-- Untertitel immer an (Ton aus ist Standard).
-- CTA am Ende leise: „Serious Nutrition, gratis im App Store“ – kein „Link in Bio“-Gebettel.
-- Deutsch als Hauptsprache (dein Publikum), Wochen 3–4 testen wir EN-Duplikate.
-- Posten: 1×/Tag, 11:30 oder 18:30 (CET). Erste Stunde: auf jeden Kommentar antworten.
-- Nichts posten, was die App nicht hält. Keine „in 4 Wochen 5 kg“-Versprechen (auch wegen App-Store-Regeln).
+## Rules we stick to
+- **You on camera, app as B-roll.** Pure app videos only as a supplement (max. 2 per week).
+- One clip = one claim. No feature catalogue.
+- Hook text on top, 3–6 words, a conflict or a number ("One day over target? Who cares.").
+- Captions always on (sound off is the default).
+- CTA at the end, quiet: "Serious Nutrition, free on the App Store" – no "link in bio" begging.
+- English as the main language; German duplicates for the strongest clips from week 3 on.
+- Posting: 1×/day, 11:30 or 18:30 CET. First hour: reply to every comment.
+- Never post what the app can't back up. No "5 kg in 4 weeks" promises (App Store rules, too).
 
-## Formate (rotieren)
-| Kürzel | Format | Anteil |
+## Formats (rotate)
+| Code | Format | Share |
 |---|---|---|
-| **M** | Meinung/Mythos: Luca sagt einen Satz, den viele falsch machen, App zeigt die Alternative | 40 % |
-| **H** | How-to in 10 s: eine Sache in der App, ohne Gesicht, Text-Overlay | 25 % |
-| **S** | Story: „Warum ich das gebaut habe“, Coach-Alltag, Athleten-Beispiel (anonym) | 20 % |
-| **R** | Reaktion/Antwort auf Kommentar (ab Woche 2) | 15 % |
+| **O** | Opinion/myth: Luca says one thing most people get wrong, app shows the alternative | 40 % |
+| **H** | How-to in 10 s: one thing in the app, no face, text overlay | 25 % |
+| **S** | Story: "why I built this", coach life, athlete example (anonymous) | 20 % |
+| **R** | Reply to a comment (from week 2) | 15 % |
 
-## Tag für Tag
+## Day by day
 
-| Tag | Fmt | Hook (Text oben) | Luca sagt (Kern, 1–2 Sätze) | App-B-Roll | Caption + Hashtags |
+| Day | Fmt | Hook (text on top) | Luca says (core, 1–2 sentences) | App B-roll | Caption + hashtags |
 |---|---|---|---|---|---|
-| 1 | S | Ich hab meinen Athleten eine App gebaut. | „MyFitnessPal hat mich genervt: Abo, Werbung, ein Kalorienziel für jeden Tag. Also hab ich das gebaut, was ich im Coaching brauche.“ | Clip A (Protein in 5 s) | Serious Nutrition ist da – gratis, kein Konto. #calisthenics #ernährung #kalorienzählen #basel #beserious |
-| 2 | M | Hör auf, Tageskalorien zu zählen. | „Ein Tag über Ziel ruiniert nichts. Eine Woche über Ziel schon. Deshalb rechnet die App die Woche als Budget.“ | Clip B (Wochenbudget) | Wochenbudget statt Tagespanik. #kalorien #aufbau #diät #fitnesstipps |
-| 3 | H | Barcode → fertig. | (ohne Gesicht) Scan eines Produkts, Nährwerte erscheinen, Menge, Hinzufügen | echtes iPhone-Video: Scanner | 3 Mio. Produkte, 2 Sekunden. #mealprep #tracking #fitnessapp |
-| 4 | M | Deine Waage lügt. Jeden Morgen. | „Wasser, Salz, Glykogen – 1 kg hin oder her sagt nichts. Der 7-Tage-Trend sagt alles.“ | Clip C (Gewichtstrend) | Trend statt Tageswert. #gewicht #abnehmen #muskelaufbau |
-| 5 | M | Trainingstag ≠ Ruhetag. | „Warum sollst du am Ruhetag gleich viel essen wie nach 2 h Training? Zwei Ziele, ein Tipp zum Umschalten.“ | Tagebuch: Training/Ruhetag-Schalter, Ziele springen | #trainingstag #ruhetag #makros |
-| 6 | H | Protein-Minimum. Fett-Bereich. Rest Carbs. | (ohne Gesicht) Zielformular: Protein 160, Fett 70–90, Carbs werden berechnet | Ziele-Formular | So setzt du Makros wie ein Coach. #makros #protein |
-| 7 | S | Kein Konto. Keine Werbung. Kein Abo. Warum? | „Weil ich als Coach eure Daten nicht brauche und ihr sie auch nicht abgeben müsst. Alles bleibt auf dem Handy, Backup als Datei.“ | Mehr → Backup exportieren | Deine Daten, dein Handy. #datenschutz #fitnessapp |
-| 8 | R | „Wie viel Protein brauche ich wirklich?“ | Antwort auf Kommentar: „1,6–2,2 g pro kg. Die App rechnet dir das im Onboarding vor.“ | Onboarding-Vorschlag | #protein #coachantwortet |
-| 9 | M | Das Frühstück ist immer gleich? Dann tipp es nicht 100-mal. | „Vorlage speichern, ein Tipp, fertig. Tracking darf keine 5 Minuten am Tag kosten.“ | Vorlage anwenden | #mealprep #routine |
-| 10 | H | Gestern kopieren. | (ohne Gesicht) „Von gestern kopieren“ → Mahlzeit erscheint, Menge ändern | Tagebuch | #tracking #kalorien |
-| 11 | S | Mein Aufbau, Woche 6: die Zahlen. | Ehrlicher Check: Wochenschnitt, Trend +0,7 kg/Monat, was ich anpasse | Woche + Gewicht | #aufbau #bulk #transparent |
-| 12 | M | „Ich hab keine Zeit zu tracken.“ | „Du hast Zeit für 3 h TikTok. 5 Sekunden pro Mahlzeit sind drin.“ (mit Augenzwinkern) | Clip A | #ausreden #disziplin #beserious |
-| 13 | R | Kommentar-Frage der Woche | Aus den Kommentaren von Tag 1–10 die häufigste Frage beantworten | passend | #coachantwortet |
-| 14 | M | Erinnerungen, die nicht nerven. | „Max. 3 pro Tag, und wenn du’s schon eingetragen hast, kommt keine. So gehört sich das.“ | Reminders-Screen + eine echte Push-Nachricht auf dem iPhone | #reminder #gewohnheit |
+| 1 | S | I built my athletes an app. | "MyFitnessPal annoyed me: subscription, ads, one calorie target for every day. So I built what I actually need in coaching." | Clip A (protein in 5 s) | Serious Nutrition is out – free, no account. #calisthenics #nutrition #calorietracking #basel #beserious |
+| 2 | O | Stop counting daily calories. | "One day over target ruins nothing. A week over target does. That's why the app treats the week as a budget." | Clip B (weekly budget) | Weekly budget instead of daily panic. #calories #bulk #cut #fitnesstips |
+| 3 | H | Barcode → done. | (no face) Scan a product, nutrition appears, amount, add | real iPhone recording: scanner | 3 million products, 2 seconds. #mealprep #tracking #fitnessapp |
+| 4 | O | Your scale lies. Every morning. | "Water, salt, glycogen – 1 kg up or down means nothing. The 7-day trend means everything." | Clip C (weight trend) | Trend, not today's number. #weightloss #musclegain #bodyweight |
+| 5 | O | Training day ≠ rest day. | "Why would you eat the same on a rest day as after 2 h of training? Two targets, one tap to switch." | Diary: training/rest toggle, targets jump | #trainingday #restday #macros |
+| 6 | H | Protein minimum. Fat range. Carbs fill the rest. | (no face) Targets form: protein 160, fat 70–90, carbs get calculated | Targets form | Set macros like a coach. #macros #protein |
+| 7 | S | No account. No ads. No subscription. Why? | "Because as a coach I don't need your data and you shouldn't have to hand it over. Everything stays on your phone, backup as a file." | More → export backup | Your data, your phone. #privacy #fitnessapp |
+| 8 | R | "How much protein do I really need?" | Reply to a comment: "1.6–2.2 g per kg. The onboarding calculates it for you." | Onboarding suggestion | #protein #coachanswers |
+| 9 | O | Same breakfast every day? Then don't type it 100 times. | "Save a template, one tap, done. Tracking shouldn't cost you 5 minutes a day." | Apply template | #mealprep #routine |
+| 10 | H | Copy yesterday. | (no face) "Copy from yesterday" → meal appears, change amount | Diary | #tracking #calories |
+| 11 | S | My bulk, week 6: the numbers. | Honest check-in: weekly average, trend +0.7 kg/month, what I'm adjusting | Week + Weight | #bulk #leanbulk #transparent |
+| 12 | O | "I don't have time to track." | "You have time for 3 hours of TikTok. 5 seconds per meal is fine." (with a wink) | Clip A | #excuses #discipline #beserious |
+| 13 | R | Comment question of the week | Answer the most common question from days 1–10 | as needed | #coachanswers |
+| 14 | O | Reminders that don't nag. | "Max. 3 per day, and if you've already logged it, none. That's how it should be." | Reminders screen + a real push notification on the iPhone | #reminder #habits |
 
-## Was du filmen musst (einmal pro Woche, ca. 20 Minuten)
-- Handy hochkant, Augenhöhe, Tageslicht oder Studio-Licht, ruhiger Hintergrund (Gym/Halle ist ideal).
-- Pro Clip 2–3 Takes des Kernsatzes, jeweils 8–15 s. Nicht polieren – echt ist besser als glatt.
-- Tag 3 und 14 brauchen echtes iPhone-Material (Scanner, Push): Bildschirmaufnahme wie beim Review-Video.
-- Alles per AirDrop in einen Ordner `marketing/raw/woche-1/` – ich schneide, setze Hook, Untertitel, App-B-Roll und Abspann.
+## What you film (once a week, ~20 minutes)
+- Phone upright, eye level, daylight or studio light, calm background (gym/hall is ideal).
+- Per clip 2–3 takes of the core sentence, 8–15 s each. Don't polish – real beats smooth.
+- Days 3 and 14 need real iPhone footage (scanner, push): screen recording like the review video.
+- Everything via AirDrop into `marketing/raw/week-1/` – I cut, add hook, captions, app B-roll and outro.
 
-## Wöchentliche Auswertung (Montag)
-Ich lese TikTok Studio (du bist in Chrome eingeloggt) und schreibe einen kurzen Report:
-- Pro Clip: Views, Ø Wiedergabedauer, Abschlussrate, Likes/Kommentare/Shares/Saves, neue Follower
-- Wichtigste Zahl: **Haltequote nach 3 s** – entscheidet der Hook. Unter 60 % → Hook-Format tauschen.
-- App-Downloads (App Store Connect → Analytics) neben Posting-Tagen legen.
-- Konsequenz: Das Format mit der besten Abschlussrate bekommt in der nächsten Woche 2 Slots mehr, das schwächste fliegt.
+## Weekly review (Monday)
+I read TikTok Studio (you're logged in in Chrome) and write a short report:
+- Per clip: views, avg. watch time, completion rate, likes/comments/shares/saves, new followers
+- Key number: **retention after 3 s** – that's the hook. Below 60 % → swap the hook format.
+- App downloads (App Store Connect → Analytics) next to posting days.
+- Consequence: the format with the best completion rate gets 2 more slots next week, the weakest is dropped.
 
-## Was vor dem Start noch fehlt
-1. App im Store (Freigabe abwarten) → Link in die Bio.
-2. Metricool-Konto (gratis) anlegen und TikTok verbinden – dein Login, deine Sache. Danach plane ich dort.
-3. Woche-1-Material filmen (Tage 1, 2, 4, 5, 7).
+## Still missing before launch
+1. App live in the store (waiting for approval) → link in bio.
+2. Metricool account (free) with TikTok connected – your login, your job. Then I schedule there.
+3. Week-1 footage (days 1, 2, 4, 5, 7).

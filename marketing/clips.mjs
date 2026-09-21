@@ -32,7 +32,7 @@ async function typeSlow(page, locator, text) {
 async function withApp(name, fn) {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({
-    viewport: VIEW, deviceScaleFactor: 2, colorScheme: 'dark', locale: 'de-CH',
+    viewport: VIEW, deviceScaleFactor: 2, colorScheme: 'dark', locale: 'en-US',
     recordVideo: { dir: RAW, size: VIEW },
   });
   const ctxStart = Date.now();
@@ -40,14 +40,14 @@ async function withApp(name, fn) {
   await page.addInitScript(TAP_FX);
   await page.goto('http://localhost:4173/');
   // Sprache Deutsch + Demo-Daten importieren
-  await page.evaluate(() => localStorage.setItem('nutrition-tracker:language', 'de'));
+  await page.evaluate(() => localStorage.setItem('nutrition-tracker:language', 'en'));
   await page.reload();
-  await page.getByRole('button', { name: 'Überspringen, Ziele später festlegen' }).click();
-  await page.getByRole('button', { name: 'Mehr' }).click();
+  await page.getByRole('button', { name: 'Skip, set targets later' }).click();
+  await page.getByRole('button', { name: 'More' }).click();
   await page.locator('input[type=file]').setInputFiles(fileURLToPath(new URL('./demo-backup.json', import.meta.url)));
-  await page.getByRole('button', { name: 'Ersetzen und wiederherstellen' }).click();
+  await page.getByRole('button', { name: 'Replace and restore' }).click();
   await page.waitForTimeout(600);
-  await page.getByRole('button', { name: 'Tagebuch' }).click();
+  await page.getByRole('button', { name: 'Diary' }).click();
   await page.waitForTimeout(400);
   await page.evaluate(() => window.scrollTo(0, 0));
   const t0 = Date.now();
@@ -95,24 +95,24 @@ const a = await withApp('a-protein', async (page) => {
   await page.waitForTimeout(1500);
   await page.evaluate(() => document.querySelector('.progress-list')?.scrollIntoView({ block: 'center' }));
   await page.waitForTimeout(1200);
-  await tap(page, page.getByRole('button', { name: 'Posten zu Abendessen hinzufügen' }), 900);
-  await typeSlow(page, page.getByRole('searchbox', { name: 'Lebensmittel suchen' }), 'skyr');
+  await tap(page, page.getByRole('button', { name: 'Add item to Dinner' }), 900);
+  await typeSlow(page, page.getByRole('searchbox', { name: 'Search foods' }), 'skyr');
   await page.waitForTimeout(700);
-  await tap(page, page.getByRole('dialog').getByText('Skyr natur', { exact: true }), 900);
-  const amount = page.getByRole('dialog').getByRole('spinbutton', { name: 'Menge' });
+  await tap(page, page.getByRole('dialog').getByText('Skyr', { exact: true }), 900);
+  const amount = page.getByRole('dialog').getByRole('spinbutton', { name: 'Amount' });
   await amount.click();
   await page.keyboard.press('Meta+A');
   await page.keyboard.type('250');
   await page.waitForTimeout(700);
-  await tap(page, page.getByRole('dialog').getByRole('button', { name: 'Hinzufügen', exact: true }), 500);
+  await tap(page, page.getByRole('dialog').getByRole('button', { name: 'Add', exact: true }), 500);
   await page.evaluate(() => document.querySelector('.progress-list')?.scrollIntoView({ block: 'center' }));
   await page.waitForTimeout(2600);
 });
 
 // --- Clip B: Wochenbudget --------------------------------------------------------
 const b = await withApp('b-week', async (page) => {
-  await tap(page, page.getByRole('button', { name: 'Woche' }), 800);
-  await tap(page, page.getByRole('button', { name: 'Vorherige Woche' }), 1800);
+  await tap(page, page.getByRole('button', { name: 'Week' }), 800);
+  await tap(page, page.getByRole('button', { name: 'Previous week' }), 1800);
   await page.evaluate(() => window.scrollTo({ top: 260, behavior: 'smooth' }));
   await page.waitForTimeout(2200);
   await page.evaluate(() => document.querySelector('.day-bars')?.scrollIntoView({ block: 'center', behavior: 'smooth' }));
@@ -121,13 +121,13 @@ const b = await withApp('b-week', async (page) => {
 
 // --- Clip C: Gewichtstrend -------------------------------------------------------
 const c = await withApp('c-weight', async (page) => {
-  await tap(page, page.getByRole('button', { name: 'Gewicht' }), 1200);
+  await tap(page, page.getByRole('button', { name: 'Weight' }), 1200);
   await page.waitForTimeout(2000);
-  await tap(page, page.getByRole('radiogroup', { name: 'Zeitraum' }).getByText('30 Tage'), 1800);
-  await tap(page, page.getByRole('radiogroup', { name: 'Zeitraum' }).getByText('90 Tage'), 3000);
+  await tap(page, page.getByRole('radiogroup', { name: 'Range' }).getByText('30 days'), 1800);
+  await tap(page, page.getByRole('radiogroup', { name: 'Range' }).getByText('90 days'), 3000);
 });
 
-const outA = await render('a-protein', a, 'Protein-Rest?\n5 Sekunden.', 4.5, 'Kein Konto. Keine Werbung.\nDeine Daten bleiben bei dir.');
-const outB = await render('b-week', b, 'Ein Tag über Ziel?\nEgal. Die Woche zählt.', 4.5, 'Wochenbudget statt\nTageskalorien.');
-const outC = await render('c-weight', c, 'Dein Gewicht schwankt.\nDer Trend nicht.', 4, '7-Tage-Trend statt\nWaagen-Panik.');
+const outA = await render('a-protein', a, 'Protein left?\n5 seconds.', 4.5, 'No account. No ads.\nYour data stays with you.');
+const outB = await render('b-week', b, 'One day over target?\nWho cares. The week counts.', 4.5, 'Weekly budget instead of\ndaily calorie panic.');
+const outC = await render('c-weight', c, 'Your weight fluctuates.\nThe trend doesn\'t.', 4, '7-day trend instead of\nscale anxiety.');
 console.log([outA, outB, outC].join('\n'));

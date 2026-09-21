@@ -7,22 +7,22 @@ const iso = (d) => d.toISOString().slice(0, 10);
 const daysAgo = (n) => { const d = new Date(TODAY); d.setDate(d.getDate() - n); return d; };
 
 const foods = [
-  { id: 1, name: 'Haferflocken', kcal: 370, p: 13, f: 7, c: 59, unit: 'g' },
-  { id: 2, name: 'Skyr natur', brand: 'Emmi', kcal: 63, p: 11, f: 0.2, c: 4, unit: 'g' },
-  { id: 3, name: 'Heidelbeeren', kcal: 57, p: 0.7, f: 0.3, c: 12, unit: 'g' },
-  { id: 4, name: 'Ei (ganz)', kcal: 155, p: 13, f: 11, c: 1, unit: 'piece', piece: 55 },
-  { id: 5, name: 'Hähnchenbrust (gekocht)', kcal: 165, p: 31, f: 3.6, c: 0, unit: 'g' },
-  { id: 6, name: 'Basmatireis (gekocht)', kcal: 130, p: 2.7, f: 0.3, c: 28, unit: 'g' },
-  { id: 7, name: 'Brokkoli', kcal: 34, p: 2.8, f: 0.4, c: 7, unit: 'g' },
-  { id: 8, name: 'Olivenöl', kcal: 884, p: 0, f: 100, c: 0, unit: 'g' },
-  { id: 9, name: 'Rindfleisch mager (gekocht)', kcal: 185, p: 28, f: 8, c: 0, unit: 'g' },
-  { id: 10, name: 'Süsskartoffel', kcal: 86, p: 1.6, f: 0.1, c: 20, unit: 'g' },
-  { id: 11, name: 'Banane', kcal: 89, p: 1.1, f: 0.3, c: 23, unit: 'piece', piece: 120 },
-  { id: 12, name: 'Cashewnüsse', kcal: 553, p: 18, f: 44, c: 30, unit: 'g' },
-  { id: 13, name: 'Protein-Milch', brand: 'Emmi', kcal: 56, p: 8, f: 1.5, c: 3, unit: 'ml' },
-  { id: 14, name: 'Lachs (gebraten)', kcal: 208, p: 20, f: 13, c: 0, unit: 'g' },
-  { id: 15, name: 'Vollkornbrot', kcal: 247, p: 8, f: 3, c: 41, unit: 'g' },
-  { id: 16, name: 'Hüttenkäse', kcal: 98, p: 11, f: 4, c: 3, unit: 'g' },
+  { id: 1, name: 'Oats', kcal: 370, p: 13, f: 7, c: 59, unit: 'g' },
+  { id: 2, name: 'Skyr', brand: 'Emmi', kcal: 63, p: 11, f: 0.2, c: 4, unit: 'g' },
+  { id: 3, name: 'Blueberries', kcal: 57, p: 0.7, f: 0.3, c: 12, unit: 'g' },
+  { id: 4, name: 'Egg (whole)', kcal: 155, p: 13, f: 11, c: 1, unit: 'piece', piece: 55 },
+  { id: 5, name: 'Chicken breast (cooked)', kcal: 165, p: 31, f: 3.6, c: 0, unit: 'g' },
+  { id: 6, name: 'Basmati rice (cooked)', kcal: 130, p: 2.7, f: 0.3, c: 28, unit: 'g' },
+  { id: 7, name: 'Broccoli', kcal: 34, p: 2.8, f: 0.4, c: 7, unit: 'g' },
+  { id: 8, name: 'Olive oil', kcal: 884, p: 0, f: 100, c: 0, unit: 'g' },
+  { id: 9, name: 'Lean beef (cooked)', kcal: 185, p: 28, f: 8, c: 0, unit: 'g' },
+  { id: 10, name: 'Sweet potato', kcal: 86, p: 1.6, f: 0.1, c: 20, unit: 'g' },
+  { id: 11, name: 'Banana', kcal: 89, p: 1.1, f: 0.3, c: 23, unit: 'piece', piece: 120 },
+  { id: 12, name: 'Cashew nuts', kcal: 553, p: 18, f: 44, c: 30, unit: 'g' },
+  { id: 13, name: 'Protein milk', brand: 'Emmi', kcal: 56, p: 8, f: 1.5, c: 3, unit: 'ml' },
+  { id: 14, name: 'Salmon (pan-fried)', kcal: 208, p: 20, f: 13, c: 0, unit: 'g' },
+  { id: 15, name: 'Whole grain bread', kcal: 247, p: 8, f: 3, c: 41, unit: 'g' },
+  { id: 16, name: 'Cottage cheese', kcal: 98, p: 11, f: 4, c: 3, unit: 'g' },
 ];
 
 const foodItems = foods.map((f) => ({
@@ -92,9 +92,9 @@ for (let i = 90; i >= 0; i--) {
 const backup = {
   app: 'nutrition-tracker', version: 1, exported_at: new Date().toISOString(),
   foodItems, mealEntries,
-  goals: [{ id: 1, phase_name: 'Aufbau', phase_type: 'bulk', start_date: iso(daysAgo(60)), training_day_kcal: 2900, rest_day_kcal: 2500, protein_g: 160, fat_min_g: 70, fat_max_g: 90 }],
+  goals: [{ id: 1, phase_name: 'Bulk', phase_type: 'bulk', start_date: iso(daysAgo(60)), training_day_kcal: 2900, rest_day_kcal: 2500, protein_g: 160, fat_min_g: 70, fat_max_g: 90 }],
   weights, days,
-  settings: [{ id: 1, training_weekdays: [1, 2, 4, 5], language: 'de', water_goal_ml: 3000, onboarding_done: true, last_backup_at: Date.now() }],
+  settings: [{ id: 1, training_weekdays: [1, 2, 4, 5], language: 'en', water_goal_ml: 3000, onboarding_done: true, last_backup_at: Date.now() }],
   templates: [], water,
 };
 fs.writeFileSync(new URL('./demo-backup.json', import.meta.url), JSON.stringify(backup));
