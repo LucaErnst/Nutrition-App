@@ -2404,3 +2404,23 @@ input[type='date']::-webkit-date-and-time-value {
     filter: brightness(0.92);
   }
 }
+
+/* Scrollbalken ausblenden (nativer Look; Scrollen bleibt möglich) */
+html,
+body,
+.modal,
+.modal-body,
+.collapse-inner {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.modal::-webkit-scrollbar,
+.modal-body::-webkit-scrollbar,
+.collapse-inner::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
