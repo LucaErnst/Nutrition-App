@@ -36,9 +36,12 @@ Für den Launch ist das unkritisch, für den Schutz gegen Nachahmer ein Wort-Bil
 | Aufwand | Ein Produkt, Kauf wiederherstellen | Trial, Preisstufen, Kündigungs-Flows, Grace Periods |
 
 Schnitt:
-- **Free:** Tagebuch, Barcode-Scan, Textsuche, Wasser, Ziele/Phasen, Wochenübersicht mit Fazit.
-- **Pro (einmalig, ca. CHF 15–25):** Wochenbudget, Vorlagen und Kopieren, Portionsgrössen und
-  Schnellwahl, Gewichtstrend, Backup/Export, Apple Health/Health Connect (sobald nativ).
+- **Free (Entscheid 21.09.2026):** Tagebuch, Barcode-Scan, Textsuche, Wasser, Ziele/Phasen,
+  Wochenübersicht mit Fazit, **Wochenbudget**, Erinnerungen, **Backup/Export** (eigene Daten nie
+  hinter der Paywall).
+- **Pro (einmalig, CHF 14.90):** Vorlagen und Kopieren, Portionsgrössen und Schnellwahl,
+  Gewichtstrend, Widgets (inkl. Wasser-Button), und alles Neue ab 1.1 (Apple Health usw.).
+  Early Adopter (installiert vor 1.1) behalten alles gratis.
 - **Coach (Abo, später):** Cloud-Sync über Geräte, Coach sieht Wochen und Gewicht seiner Athleten,
   Kommentare. Alternativ B2B: Coach zahlt pro Athlet, Athleten nutzen die App kostenlos.
 

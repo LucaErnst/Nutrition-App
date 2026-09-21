@@ -2323,3 +2323,84 @@ input[type='date']::-webkit-date-and-time-value {
     padding-top: calc(8px + env(safe-area-inset-top));
   }
 }
+
+/* ===== Native Feel (1.1) =====
+   Transluzente Leisten mit Blur (Inhalt scrollt sichtbar darunter durch), 44-pt-Tippziele,
+   Dynamic Type über --dt-zoom (wird in native.ts aus der iOS-Schriftgrösse gesetzt). */
+:root {
+  --dt-zoom: 1;
+  --glass: color-mix(in srgb, var(--surface) 72%, transparent);
+}
+
+.app,
+.onboarding,
+.toast {
+  zoom: var(--dt-zoom);
+}
+
+@media (max-width: 600px) {
+  .app-nav {
+    background: var(--glass);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-top-color: color-mix(in srgb, var(--border) 60%, transparent);
+  }
+
+  .app-nav button {
+    min-height: 44px;
+  }
+}
+
+/* Tippziele: 44 pt, ohne das Layout zu vergrössern (Hitbox wächst nach aussen) */
+.btn-icon,
+.btn-add,
+.btn-link,
+.stepper-btn,
+.chip,
+.meal-chevron {
+  position: relative;
+}
+
+.btn-icon::before,
+.btn-add::before,
+.btn-link::before,
+.stepper-btn::before,
+.chip::before,
+.meal-chevron::before {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
+.btn-primary,
+.btn-secondary,
+.search-input,
+.segmented label {
+  min-height: 44px;
+}
+
+/* Modal-Kopf mit Blur, wenn der Inhalt scrollt (deckt das Modal-Padding mit ab) */
+.modal-header {
+  position: sticky;
+  top: calc(-12px - env(safe-area-inset-top));
+  z-index: 1;
+  margin: calc(-12px - env(safe-area-inset-top)) -20px 12px;
+  padding: calc(12px + env(safe-area-inset-top)) 20px 10px;
+  background: var(--glass);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  backdrop-filter: saturate(180%) blur(16px);
+}
+
+/* iOS-Hervorhebung beim Tippen statt Hover */
+@media (hover: none) {
+  .btn-add:active,
+  .btn-primary:active,
+  .btn-secondary:active,
+  .chip:active,
+  .meal:active .meal-header {
+    filter: brightness(0.92);
+  }
+}

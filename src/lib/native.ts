@@ -17,6 +17,22 @@ export async function haptic(kind: 'light' | 'medium' | 'success' = 'light') {
 }
 
 /** Native Initialisierung: Statusleiste, Splash ausblenden, Android-Zurück-Taste. */
+/**
+ * Dynamic Type: iOS-Schriftgrösse (Bedienungshilfen) auf die App übertragen. WebKit liefert die
+ * eingestellte Textgrösse über die Systemschrift-Kurzform; daraus wird ein Zoomfaktor (0.9–1.3).
+ */
+export function applyDynamicType() {
+  if (typeof CSS === 'undefined' || !CSS.supports('font', '-apple-system-body')) return;
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:absolute;visibility:hidden;font:-apple-system-body';
+  document.body.appendChild(probe);
+  const px = parseFloat(getComputedStyle(probe).fontSize);
+  probe.remove();
+  if (!(px > 0)) return;
+  const zoom = Math.min(1.3, Math.max(0.9, px / 17));
+  document.documentElement.style.setProperty('--dt-zoom', zoom.toFixed(3));
+}
+
 export async function initNative() {
   if (!isNative) return;
   try {
@@ -47,6 +63,7 @@ export async function initNative() {
     refresh();
     const { App } = await import('@capacitor/app');
     await App.addListener('resume', () => {
+      applyDynamicType();
       refresh();
     });
     // Android: Zurück-Taste schliesst offene Dialoge (Escape), sonst App in den Hintergrund

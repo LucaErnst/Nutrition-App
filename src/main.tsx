@@ -5,9 +5,10 @@ import App from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { installErrorLogging } from './lib/errorLog';
 import { I18nProvider } from './i18n';
-import { initNative } from './lib/native';
+import { applyDynamicType, initNative } from './lib/native';
 
 installErrorLogging();
+applyDynamicType();
 void initNative();
 import { seedIfEmpty } from './db/seed';
 
