@@ -27,6 +27,20 @@ export function BackupSection() {
     }
   }
 
+  async function doCsv(kind: 'days' | 'entries' | 'weights') {
+    setBusy(true);
+    setMessage(null);
+    try {
+      const { exportCsv } = await import('../lib/csvExport');
+      const how = await exportCsv(kind);
+      setMessage({ kind: 'ok', text: how === 'shared' ? t('backup.shared') : t('backup.downloaded') });
+    } catch (e) {
+      if (!(e instanceof Error && e.name === 'AbortError')) setMessage({ kind: 'error', text: t('backup.exportFailed') });
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function onFile(file: File | undefined) {
     setMessage(null);
     if (!file) return;
@@ -78,6 +92,13 @@ export function BackupSection() {
           {t('backup.import')}
         </button>
         <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(e) => void onFile(e.target.files?.[0])} />
+      </div>
+
+      <p className="search-hint" style={{ marginTop: 14 }}>{t('csv.hint')}</p>
+      <div className="chips" role="group" aria-label={t('csv.title')}>
+        <button className="chip" onClick={() => void doCsv('days')} disabled={busy}>{t('csv.days')}</button>
+        <button className="chip" onClick={() => void doCsv('entries')} disabled={busy}>{t('csv.entries')}</button>
+        <button className="chip" onClick={() => void doCsv('weights')} disabled={busy}>{t('csv.weights')}</button>
       </div>
 
       {pending && (

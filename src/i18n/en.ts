@@ -256,6 +256,11 @@ export const en = {
   // Reminders
   'rem.title': 'Reminders',
   'health.title': 'Apple Health',
+  'csv.title': 'CSV export',
+  'csv.hint': 'Tables for Excel, Numbers or your coach (CSV, semicolon-separated):',
+  'csv.days': 'Days',
+  'csv.entries': 'Entries',
+  'csv.weights': 'Weight',
   'phase.title': 'Phase review',
   'phase.open': 'Review',
   'phase.range': '{start} – {end} · week {week}',
