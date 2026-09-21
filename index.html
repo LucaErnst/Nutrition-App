@@ -21,7 +21,7 @@
         align-items: center;
         justify-content: center;
         background: #0f1115;
-        transition: opacity 0.45s ease;
+        transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       }
       #splash.hide {
         opacity: 0;
@@ -32,10 +32,10 @@
         width: max(22vh, 22vw);
         aspect-ratio: 1;
         transform: translateY(-2%);
-        animation: splash-breathe 2.2s ease-in-out infinite;
+        animation: splash-breathe 4.5s ease-in-out infinite;
       }
       #splash.hide .logo {
-        animation: splash-out 0.45s ease forwards;
+        animation: splash-out 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
       }
       #splash img {
         display: block;
@@ -47,23 +47,23 @@
       #splash .shine {
         position: absolute;
         inset: 0;
-        background: linear-gradient(115deg, transparent 38%, rgba(255, 246, 214, 0.75) 50%, transparent 62%);
+        background: linear-gradient(115deg, transparent 30%, rgba(255, 246, 214, 0.55) 50%, transparent 70%);
         background-size: 260% 100%;
         -webkit-mask: url('/splash-logo.png') center / contain no-repeat;
         mask: url('/splash-logo.png') center / contain no-repeat;
-        animation: splash-shine 1.9s ease-in-out 0.35s infinite;
+        animation: splash-shine 3.6s ease-in-out 0.6s infinite;
         mix-blend-mode: screen;
       }
       @keyframes splash-shine {
         0% { background-position: 120% 0; }
-        55%, 100% { background-position: -40% 0; }
+        60%, 100% { background-position: -40% 0; }
       }
       @keyframes splash-breathe {
         0%, 100% { transform: translateY(-2%) scale(1); }
-        50% { transform: translateY(-2%) scale(1.035); }
+        50% { transform: translateY(-2%) scale(1.025); }
       }
       @keyframes splash-out {
-        to { transform: translateY(-2%) scale(1.12); opacity: 0; }
+        to { transform: translateY(-2%) scale(1.06); opacity: 0; }
       }
       @media (prefers-reduced-motion: reduce) {
         #splash .logo, #splash .shine, #splash.hide .logo { animation: none; }
@@ -79,7 +79,7 @@
     </div>
     <div id="root"></div>
     <script>
-      // Mindestens 900 ms zeigen (sonst flackert es bei schnellem Start), spätestens nach 5 s weg.
+      // Mindestens 1,6 s zeigen (sonst flackert es bei schnellem Start), spätestens nach 6 s weg.
       (function () {
         var el = document.getElementById('splash');
         var shown = Date.now();
@@ -87,14 +87,14 @@
         function hide() {
           if (done) return;
           done = true;
-          var wait = Math.max(0, 900 - (Date.now() - shown));
+          var wait = Math.max(0, 1600 - (Date.now() - shown));
           setTimeout(function () {
             el.classList.add('hide');
-            setTimeout(function () { el.remove(); }, 500);
+            setTimeout(function () { el.remove(); }, 850);
           }, wait);
         }
         window.__hideSplash = hide;
-        setTimeout(hide, 5000);
+        setTimeout(hide, 6000);
       })();
     </script>
     <script type="module" src="/src/main.tsx"></script>
