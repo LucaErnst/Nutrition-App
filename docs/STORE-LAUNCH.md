@@ -113,3 +113,22 @@ Aufwand gesamt: rund 10–12 Arbeitstage Entwicklung plus 3–4 Wochen Kalenderz
 
 Die PWA bleibt parallel online: kostenlose Web-Version ohne Store-Abgabe, Einstieg für Interessierte
 und Fallback, falls ein Store-Review hängt.
+
+## Pro-Kauf – Stand 21.09.2026
+
+- RevenueCat-Projekt „Serious Nutrition“ (app.revenuecat.com/projects/21797f16): App-Store-App mit
+  Bundle-ID und In-App-Purchase-Key (Key-ID 86T3ZCT49W) verbunden; Entitlement
+  `serious_nutrition_pro`; Offering `default` mit Package `$rc_lifetime` → Produkt `pro_lifetime`.
+  Public SDK-Key steht in `src/lib/pro.ts` (darf im Code sein).
+- App Store Connect: In-App-Kauf `pro_lifetime` (Non-Consumable, CHF 15.00, Apple-ID 6814513884),
+  Status „Prepare for Submission“ – wird zusammen mit Version 1.1 eingereicht (erster IAP muss mit
+  einer App-Version kommen). Review-Screenshot der Paywall fehlt noch.
+- Paid Apps Agreement: akzeptiert, Bank (BLKB) und W-8BEN eingereicht; bis Apple „Active“ meldet,
+  liefert der Sandbox-Store keine Produkte (Paywall zeigt dann „Store nicht erreichbar“).
+- App: `src/lib/pro.ts` (Status, Kauf, Wiederherstellen, Early Adopter ab 5 Einträgen beim ersten
+  Start), `src/components/Paywall.tsx` (global über `openPaywall()`), Sperren mit `usePro()` in
+  MealSlot (Kopieren, Vorlage), AddEntryDialog (Vorlagen-Tab), FoodItemForm (Portionen), WeightView
+  (Diagramm), HealthSection, GoalsView (Auswertung), BackupSection (CSV); Widgets zeigen ohne Pro
+  einen Hinweis (`pro`-Flag im Snapshot). Web/PWA: kein Kauf, alles frei.
+- Sandbox-Test: Sandbox-Tester unter App Store Connect → Users and Access → Sandbox anlegen, auf dem
+  iPhone unter Einstellungen → App Store → Sandbox-Account anmelden, dann Kauf in der App.

@@ -79,6 +79,17 @@ struct MetricRow: View {
     }
 }
 
+struct ProLockView: View {
+    let de: Bool
+    var body: some View {
+        VStack(spacing: 6) {
+            Text("BS").font(.system(size: 22, weight: .bold)).foregroundStyle(Brand.gold)
+            Text("Serious Nutrition Pro").font(.system(size: 12, weight: .semibold)).foregroundStyle(Brand.text)
+            Text(L.t(de, "Widgets are part of Pro", "Widgets sind Teil von Pro")).font(.system(size: 11)).foregroundStyle(Brand.text2).multilineTextAlignment(.center)
+        }
+    }
+}
+
 struct NoDataView: View {
     let de: Bool
     var body: some View {
@@ -96,7 +107,7 @@ struct SmallView: View {
     var s: Snapshot { e.snap }
     var de: Bool { s.isGerman }
     var body: some View {
-        if !e.hasData { NoDataView(de: de) } else {
+        if !e.hasData { NoDataView(de: de) } else if s.pro == false { ProLockView(de: de) } else {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 26, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit()
@@ -121,7 +132,7 @@ struct MediumView: View {
     var s: Snapshot { e.snap }
     var de: Bool { s.isGerman }
     var body: some View {
-        if !e.hasData { NoDataView(de: de) } else {
+        if !e.hasData { NoDataView(de: de) } else if s.pro == false { ProLockView(de: de) } else {
             HStack(spacing: 14) {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(alignment: .firstTextBaseline, spacing: 4) {
@@ -284,10 +295,10 @@ struct LockSwitch: View {
     let entry: Entry
     var body: some View {
         Group {
-            if !entry.hasData {
+            if !entry.hasData || entry.snap.pro == false {
                 switch family {
                 case .accessoryCircular: ZStack { AccessoryWidgetBackground(); Text("BS").font(.system(size: 14, weight: .bold)) }
-                case .accessoryRectangular: Text(L.t(entry.snap.isGerman, "Open Serious Nutrition once", "Serious Nutrition einmal öffnen")).font(.system(size: 12))
+                case .accessoryRectangular: Text(entry.snap.pro == false ? L.t(entry.snap.isGerman, "Widgets are part of Serious Nutrition Pro", "Widgets sind Teil von Serious Nutrition Pro") : L.t(entry.snap.isGerman, "Open Serious Nutrition once", "Serious Nutrition einmal öffnen")).font(.system(size: 12))
                 default: Text("BS · " + L.t(entry.snap.isGerman, "open the app", "App öffnen"))
                 }
             } else {

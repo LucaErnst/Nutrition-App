@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import type { MealType } from '../db/types';
+import { usePro } from '../lib/pro';
+import { openPaywall, ProBadge } from './Paywall';
 import { copyMeal, deleteMealEntry, restoreMealEntry, saveTemplate, updateMealEntryAmount, useCopySources } from '../db/hooks';
 import { addDays } from '../lib/date';
 import { fmt, sumMacros, type EntryWithFood } from '../lib/nutrition';
@@ -15,6 +17,7 @@ interface Props {
 }
 
 export function MealSlot({ date, mealType, entries }: Props) {
+  const pro = usePro();
   const t = useT();
   const [adding, setAdding] = useState(false);
   // Standardmässig eingeklappt: nur Titel, kcal und "+ Add" sichtbar.
@@ -67,6 +70,7 @@ export function MealSlot({ date, mealType, entries }: Props) {
           <button
             className="btn-link"
             onClick={async () => {
+              if (!pro) return openPaywall();
               const n = await copyMeal(yesterday, date, mealType);
               toast.show({ message: t('slot.copied', { n }) });
             }}
@@ -77,6 +81,7 @@ export function MealSlot({ date, mealType, entries }: Props) {
               kcal: fmt(yesterday.totals.kcal),
             })}
           </button>
+          {!pro && <ProBadge />}
         </div>
       )}
 
@@ -90,8 +95,9 @@ export function MealSlot({ date, mealType, entries }: Props) {
             </ul>
             <div className="meal-footer">
               {templateName === null ? (
-                <button className="btn-link" onClick={() => setTemplateName(t('slot.templateDefault', { meal: label }))}>
+                <button className="btn-link" onClick={() => (pro ? setTemplateName(t('slot.templateDefault', { meal: label })) : openPaywall())}>
                   {t('slot.saveTemplate')}
+                  {!pro && <ProBadge />}
                 </button>
               ) : (
                 <form

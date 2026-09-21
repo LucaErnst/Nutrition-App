@@ -6,6 +6,8 @@ import { ManualEntryForm } from './ManualEntryForm';
 import { FoodSearch } from './FoodSearch';
 import { ScanTab } from './ScanTab';
 import { TemplatesTab } from './TemplatesTab';
+import { usePro } from '../lib/pro';
+import { openPaywall } from './Paywall';
 
 interface Props {
   date: string;
@@ -18,6 +20,7 @@ type Tab = 'search' | 'scan' | 'templates' | 'manual';
 export function AddEntryDialog({ date, mealType, onClose }: Props) {
   const t = useT();
   const [tab, setTab] = useState<Tab>('search');
+  const pro = usePro();
   useScrollLock();
 
   useEffect(() => {
@@ -46,7 +49,7 @@ export function AddEntryDialog({ date, mealType, onClose }: Props) {
         </header>
         <div className="tabs" role="tablist">
           {tabs.map((tb) => (
-            <button key={tb.id} role="tab" aria-selected={tab === tb.id} className={tab === tb.id ? 'active' : ''} onClick={() => setTab(tb.id)}>
+            <button key={tb.id} role="tab" aria-selected={tab === tb.id} className={tab === tb.id ? 'active' : ''} onClick={() => (tb.id === 'templates' && !pro ? openPaywall() : setTab(tb.id))}>
               {tb.label}
             </button>
           ))}

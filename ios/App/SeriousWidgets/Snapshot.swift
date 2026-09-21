@@ -13,10 +13,11 @@ struct Snapshot: Codable {
     var weekLeftToday: Int?
     var weekDaysLeft: Int?
     var weekOnTrack: Bool?
+    var pro: Bool?
     var updatedAt: Double
 
     static let placeholder = Snapshot(date: "", lang: "en", kcal: 1497, kcalTarget: 2700, protein: 112, proteinTarget: 160,
-                                      waterMl: 1750, waterGoalMl: 3000, weekLeftToday: 1203, weekDaysLeft: 3, weekOnTrack: true, updatedAt: 0)
+                                      waterMl: 1750, waterGoalMl: 3000, weekLeftToday: 1203, weekDaysLeft: 3, weekOnTrack: true, pro: true, updatedAt: 0)
 
     var kcalLeft: Int? { kcalTarget.map { max(0, $0 - kcal) } }
     var proteinLeft: Int? { proteinTarget.map { max(0, $0 - protein) } }

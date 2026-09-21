@@ -4,11 +4,14 @@ import { deleteWeight, upsertWeight, useWeights } from '../db/hooks';
 import { addDays, formatDate, formatShortDate, todayISO } from '../lib/date';
 import { useT } from '../i18n';
 import { fmt } from '../lib/nutrition';
+import { usePro } from '../lib/pro';
+import { openPaywall, ProBadge } from './Paywall';
 import { trendChange, withTrend, type WeightPoint } from '../lib/weight';
 
 type Range = 30 | 90 | 365 | 0;
 
 export function WeightView() {
+  const pro = usePro();
   const t = useT();
   const RANGES: { value: Range; label: string }[] = [
     { value: 30, label: t('weight.r30') },
@@ -113,7 +116,14 @@ export function WeightView() {
             </div>
           </div>
 
-          <WeightChart points={visible} />
+          {pro ? (
+            <WeightChart points={visible} />
+          ) : (
+            <div className="pro-lock" onClick={openPaywall} role="button" tabIndex={0}>
+              <ProBadge />
+              <span>{t('pro.lockTrend')}</span>
+            </div>
+          )}
           <p className="chart-legend">
             <span><span className="legend-swatch legend-weight" /> {t('weight.legendDaily')}</span>
             <span><span className="legend-swatch legend-trend" /> {t('weight.legendTrend')}</span>

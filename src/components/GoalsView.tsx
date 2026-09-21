@@ -9,6 +9,8 @@ import { scheduleReminderSync } from '../lib/remindersNative';
 import { getLocale, phaseDisplayName, useT } from '../i18n';
 import { Modal } from './Modal';
 import { PhaseReview } from './PhaseReview';
+import { usePro } from '../lib/pro';
+import { openPaywall, ProBadge } from './Paywall';
 
 const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0];
 
@@ -18,6 +20,7 @@ function weekdayName(d: number): string {
 }
 
 export function GoalsView() {
+  const pro = usePro();
   const t = useT();
   const goals = useGoals() ?? [];
   const settings = useSettings();
@@ -105,8 +108,9 @@ export function GoalsView() {
                   </div>
                 </dl>
                 <div className="db-item-actions">
-                  <button className="btn-link" onClick={() => setReviewing(g)}>
+                  <button className="btn-link" onClick={() => (pro ? setReviewing(g) : openPaywall())}>
                     {t('phase.open')}
+                    {!pro && <ProBadge />}
                   </button>
                   <button className="btn-link" onClick={() => setEditing(g)}>
                     {t('common.edit')}

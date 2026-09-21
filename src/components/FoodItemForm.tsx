@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { db } from '../db/db';
 import type { FoodItem, Portion, UnitType } from '../db/types';
+import { usePro } from '../lib/pro';
+import { openPaywall, ProBadge } from './Paywall';
 import { useT } from '../i18n';
 
 interface Props {
@@ -15,6 +17,7 @@ function num(v: string): number {
 
 /** Anlegen/Bearbeiten eines Referenz-Lebensmittels, Werte pro 100 g. */
 export function FoodItemForm({ item, onDone }: Props) {
+  const pro = usePro();
   const t = useT();
   const [name, setName] = useState(item?.name ?? '');
   const [brand, setBrand] = useState(item?.brand ?? '');
@@ -117,7 +120,9 @@ export function FoodItemForm({ item, onDone }: Props) {
         </div>
       </fieldset>
       <fieldset className="field">
-        <legend>{t('food.portions')}</legend>
+        <legend>
+          {t('food.portions')} {!pro && <ProBadge />}
+        </legend>
         <ul className="portion-list">
           {portions.map((p, i) => (
             <li key={i} className="portion-row">
@@ -129,7 +134,7 @@ export function FoodItemForm({ item, onDone }: Props) {
             </li>
           ))}
         </ul>
-        <button type="button" className="btn-link" onClick={() => setPortions((l) => [...l, { label: '', grams: '' }])} style={{ marginTop: 6 }}>
+        <button type="button" className="btn-link" onClick={() => (pro ? setPortions((l) => [...l, { label: '', grams: '' }]) : openPaywall())} style={{ marginTop: 6 }}>
           {t('food.addPortion')}
         </button>
       </fieldset>

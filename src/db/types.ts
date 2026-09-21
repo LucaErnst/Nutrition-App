@@ -136,6 +136,8 @@ export interface Settings {
   reminder_salt?: number;
   /** Apple Health verbunden (nur iOS) */
   health_enabled?: boolean;
+  /** Pro ohne Kauf: 'early_adopter' (vor 1.1 installiert) oder 'none'; undefined = noch nicht geprüft */
+  pro_granted?: 'early_adopter' | 'none';
 }
 
 /** Mahlzeiten-Vorlage, z.B. "Standard-Frühstück": mehrere Posten auf einmal eintragen. */

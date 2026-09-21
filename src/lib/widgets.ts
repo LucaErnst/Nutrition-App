@@ -16,6 +16,7 @@ import { todayISO, weekDates, weekStartOf } from './date';
 import { activeGoalFor, targetsFor } from './goals';
 import { macrosFor, resolveSource, sumMacros } from './nutrition';
 import { weekBudget } from './week';
+import { isPro } from './pro';
 import type { DaySummary } from './week';
 
 /** Was das Widget anzeigt – bewusst klein und flach (wird als JSON abgelegt). */
@@ -32,6 +33,8 @@ export interface WidgetSnapshot {
   weekLeftToday?: number;
   weekDaysLeft?: number;
   weekOnTrack?: boolean;
+  /** false = Widgets zeigen den Pro-Hinweis statt Daten */
+  pro: boolean;
   updatedAt: number;
 }
 
@@ -99,6 +102,7 @@ export async function buildSnapshot(): Promise<WidgetSnapshot> {
     weekLeftToday: budget ? Math.round(budget.todayLeft) : undefined,
     weekDaysLeft: budget?.daysLeft,
     weekOnTrack: budget ? budget.driftBefore <= 0 : undefined,
+    pro: isPro(),
     updatedAt: Date.now(),
   };
 }

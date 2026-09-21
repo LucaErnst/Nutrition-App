@@ -2,9 +2,12 @@ import { useRef, useState } from 'react';
 import { exportBackup, parseBackup, restoreBackup, type Backup } from '../lib/backup';
 import { useSettings } from '../db/hooks';
 import { getLocale, useT } from '../i18n';
+import { usePro } from '../lib/pro';
+import { openPaywall, ProBadge } from './Paywall';
 import { isNative } from '../lib/native';
 
 export function BackupSection() {
+  const pro = usePro();
   const t = useT();
   const fileRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
@@ -28,6 +31,7 @@ export function BackupSection() {
   }
 
   async function doCsv(kind: 'days' | 'entries' | 'weights') {
+    if (!pro) return openPaywall();
     setBusy(true);
     setMessage(null);
     try {
@@ -94,7 +98,9 @@ export function BackupSection() {
         <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(e) => void onFile(e.target.files?.[0])} />
       </div>
 
-      <p className="search-hint" style={{ marginTop: 14 }}>{t('csv.hint')}</p>
+      <p className="search-hint" style={{ marginTop: 14 }}>
+        {t('csv.hint')} {!pro && <ProBadge />}
+      </p>
       <div className="chips" role="group" aria-label={t('csv.title')}>
         <button className="chip" onClick={() => void doCsv('days')} disabled={busy}>{t('csv.days')}</button>
         <button className="chip" onClick={() => void doCsv('entries')} disabled={busy}>{t('csv.entries')}</button>

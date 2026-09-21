@@ -4,6 +4,7 @@ import { FoodDatabase } from './components/FoodDatabase';
 import { MoreView } from './components/MoreView';
 import { isNative } from './lib/native';
 import { Onboarding } from './components/Onboarding';
+import { PaywallHost } from './components/Paywall';
 import { useGoals, useSettings, saveSettings } from './db/hooks';
 const UpdateBanner = lazy(() => import('./components/UpdateBanner').then((m) => ({ default: m.UpdateBanner })));
 import { ToastProvider } from './components/Toast';
@@ -60,6 +61,7 @@ export default function App() {
   return (
     <ToastProvider>
       {showOnboarding && <Onboarding onDone={() => window.scrollTo(0, 0)} />}
+      <PaywallHost />
       <div className="app">
         <header className="app-header">
           <h1>{t('app.title')}</h1>

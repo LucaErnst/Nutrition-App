@@ -2498,3 +2498,105 @@ body::-webkit-scrollbar,
   color: var(--text-2);
   white-space: nowrap;
 }
+
+/* ===== Pro / Paywall ===== */
+.pro-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #1a1400;
+  background: linear-gradient(135deg, #f0d27a, #d4a93a);
+  vertical-align: middle;
+  line-height: 1.5;
+}
+
+.pro-lock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 26px 16px;
+  margin: 8px 0;
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.paywall {
+  display: grid;
+  gap: 14px;
+}
+
+.paywall-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.paywall-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  background: #0f1115;
+  color: #e6c46a;
+  flex: none;
+}
+
+.paywall-name {
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.paywall-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.paywall-features li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14px;
+}
+
+.paywall-features .conclusion-icon {
+  background: color-mix(in srgb, #e6c46a 22%, transparent);
+  color: #b8912f;
+}
+
+.paywall-free {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.paywall-buy {
+  width: 100%;
+  font-size: 16px;
+  padding: 14px;
+}
+
+.paywall-once {
+  text-align: center;
+  margin-top: -6px;
+}
+
+.paywall .btn-link {
+  justify-self: center;
+}
+
+.paywall-legal {
+  justify-content: center;
+}

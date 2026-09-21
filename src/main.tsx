@@ -6,10 +6,12 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { installErrorLogging } from './lib/errorLog';
 import { I18nProvider } from './i18n';
 import { applyDynamicType, initNative } from './lib/native';
+import { initPro } from './lib/pro';
 
 installErrorLogging();
 applyDynamicType();
 void initNative();
+void initPro();
 import { seedIfEmpty } from './db/seed';
 
 void seedIfEmpty();

@@ -3,12 +3,15 @@ import { saveSettings, useSettings } from '../db/hooks';
 import { healthAvailable, healthBackfill, requestHealthAccess, setHealthEnabledCache } from '../lib/health';
 import { isNative } from '../lib/native';
 import { useT } from '../i18n';
+import { usePro } from '../lib/pro';
+import { openPaywall, ProBadge } from './Paywall';
 
 /** Mehr → Apple Health: ein Schalter; beim Einschalten Freigabe + Erstabgleich. */
 export function HealthSection() {
   const t = useT();
   const settings = useSettings();
   const enabled = !!settings?.health_enabled;
+  const pro = usePro();
   const [available, setAvailable] = useState(false);
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
@@ -21,6 +24,7 @@ export function HealthSection() {
 
   async function toggle(on: boolean) {
     setNote(null);
+    if (on && !pro) return openPaywall();
     if (!on) {
       setHealthEnabledCache(false);
       await saveSettings({ health_enabled: false });
@@ -46,7 +50,9 @@ export function HealthSection() {
   return (
     <section className="card section">
       <div className="section-head">
-        <h2>{t('health.title')}</h2>
+        <h2>
+          {t('health.title')} {!pro && <ProBadge />}
+        </h2>
         <label className="checkbox">
           <input type="checkbox" checked={enabled} disabled={busy} onChange={(e) => void toggle(e.target.checked)} />
           {enabled ? t('rem.on') : t('rem.off')}
