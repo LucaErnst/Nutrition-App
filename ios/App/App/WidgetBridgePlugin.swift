@@ -20,10 +20,12 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         store.set(json, forKey: SharedStore.snapshotKey)
+        store.synchronize()
         if #available(iOS 14.0, *) {
             WidgetCenter.shared.reloadAllTimelines()
         }
-        call.resolve()
+        let readBack = store.string(forKey: SharedStore.snapshotKey)
+        call.resolve(["stored": readBack == json, "bytes": readBack?.utf8.count ?? 0, "group": SharedStore.appGroup])
     }
 
     @objc func takePendingWater(_ call: CAPPluginCall) {

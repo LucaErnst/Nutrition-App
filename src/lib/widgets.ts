@@ -8,6 +8,7 @@
  * nächsten Start/Vordergrund übernimmt.
  */
 import { registerPlugin } from '@capacitor/core';
+import { logError } from './errorLog';
 import { db } from '../db/db';
 import { getLanguage } from '../i18n';
 import { isNative } from './native';
@@ -40,7 +41,7 @@ interface PendingWater {
 }
 
 interface WidgetBridgePlugin {
-  setSnapshot(opts: { json: string }): Promise<void>;
+  setSnapshot(opts: { json: string }): Promise<{ stored: boolean; bytes: number; group: string }>;
   takePendingWater(): Promise<{ items: PendingWater[] }>;
 }
 
@@ -111,13 +112,25 @@ export function scheduleWidgetSync() {
   timer = window.setTimeout(() => void syncWidgets(), 800);
 }
 
+/** Letzter Sync-Stand für die Diagnose-Ansicht */
+export function lastWidgetSync(): { at: number; stored?: boolean; bytes?: number; snap?: WidgetSnapshot } | undefined {
+  try {
+    const raw = localStorage.getItem('nutrition-tracker:widget-sync');
+    return raw ? JSON.parse(raw) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export async function syncWidgets(): Promise<void> {
   if (!isNative) return;
   try {
     const snap = await buildSnapshot();
-    await WidgetBridge.setSnapshot({ json: JSON.stringify(snap) });
-  } catch {
-    /* Plugin fehlt (z.B. Android) – ignorieren */
+    const res = await WidgetBridge.setSnapshot({ json: JSON.stringify(snap) });
+    localStorage.setItem('nutrition-tracker:widget-sync', JSON.stringify({ at: Date.now(), stored: res?.stored, bytes: res?.bytes, snap }));
+  } catch (e) {
+    // Fehlende Bridge (Android) oder Rechenfehler – unter Mehr → Diagnose sichtbar machen
+    logError('widget', e);
   }
 }
 
@@ -130,7 +143,8 @@ export async function importPendingWater(): Promise<number> {
   let items: PendingWater[] = [];
   try {
     items = (await WidgetBridge.takePendingWater()).items ?? [];
-  } catch {
+  } catch (e) {
+    logError('widget', e);
     return 0;
   }
   for (const p of items) {

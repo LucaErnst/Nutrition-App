@@ -1,4 +1,6 @@
-import { useSyncExternalStore } from 'react';
+import { useState, useSyncExternalStore } from 'react';
+import { isNative } from '../lib/native';
+import { lastWidgetSync, syncWidgets } from '../lib/widgets';
 import { clearErrors, formatErrorsForShare, readErrors, subscribeErrors } from '../lib/errorLog';
 import { getLocale, useT } from '../i18n';
 
@@ -16,6 +18,12 @@ function subscribe(fn: () => void) {
 export function DiagnosticsSection() {
   const t = useT();
   const errors = useSyncExternalStore(subscribe, getSnapshot);
+  const [widgetInfo, setWidgetInfo] = useState(() => lastWidgetSync());
+
+  async function refreshWidgets() {
+    await syncWidgets();
+    setWidgetInfo(lastWidgetSync());
+  }
 
   async function share() {
     const text = formatErrorsForShare(errors);
@@ -36,6 +44,12 @@ export function DiagnosticsSection() {
       <p className="search-hint">
         {errors.length === 0 ? t('diag.none') : t('diag.count', { n: errors.length })}
       </p>
+      {isNative && (
+        <p className="search-hint" style={{ wordBreak: 'break-all' }}>
+          Widgets: {widgetInfo ? `${new Date(widgetInfo.at).toLocaleTimeString(getLocale())} · stored=${String(widgetInfo.stored)} · ${widgetInfo.bytes ?? '?'} B · kcal ${widgetInfo.snap?.kcal}/${widgetInfo.snap?.kcalTarget ?? '–'}` : 'noch kein Sync'}{' '}
+          <button className="btn-link" onClick={() => void refreshWidgets()}>Sync</button>
+        </p>
+      )}
       {errors.length > 0 && (
         <>
           <ul className="error-list">

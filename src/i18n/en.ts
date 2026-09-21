@@ -256,6 +256,7 @@ export const en = {
   // Reminders
   'rem.title': 'Reminders',
   'rem.on': 'On',
+  'rem.summary': '{n} occasions active · {planned} planned for the next 7 days',
   'rem.off': 'Off',
   'rem.hint': 'Local notifications, at most {n} per day. Whatever is already logged is skipped – texts change every day.',
   'rem.denied': 'Notifications are blocked. Allow them in iOS Settings → Serious Nutrition → Notifications.',

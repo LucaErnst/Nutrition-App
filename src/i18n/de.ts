@@ -240,6 +240,7 @@ export const de: Record<MessageKey, string> = {
   'more.waterGoal': 'Tagesziel Wasser (ml)',
   'rem.title': 'Erinnerungen',
   'rem.on': 'An',
+  'rem.summary': '{n} Anlässe aktiv · {planned} geplant für die nächsten 7 Tage',
   'rem.off': 'Aus',
   'rem.hint': 'Lokale Mitteilungen, höchstens {n} pro Tag. Was schon eingetragen ist, wird übersprungen – die Texte wechseln täglich.',
   'rem.denied': 'Mitteilungen sind blockiert. Erlauben unter iOS-Einstellungen → Serious Nutrition → Mitteilungen.',

@@ -284,10 +284,18 @@ struct LockSwitch: View {
     let entry: Entry
     var body: some View {
         Group {
-            switch family {
-            case .accessoryCircular: CircularView(e: entry)
-            case .accessoryRectangular: RectangularView(e: entry)
-            default: InlineView(e: entry)
+            if !entry.hasData {
+                switch family {
+                case .accessoryCircular: ZStack { AccessoryWidgetBackground(); Text("BS").font(.system(size: 14, weight: .bold)) }
+                case .accessoryRectangular: Text(L.t(entry.snap.isGerman, "Open Serious Nutrition once", "Serious Nutrition einmal öffnen")).font(.system(size: 12))
+                default: Text("BS · " + L.t(entry.snap.isGerman, "open the app", "App öffnen"))
+                }
+            } else {
+                switch family {
+                case .accessoryCircular: CircularView(e: entry)
+                case .accessoryRectangular: RectangularView(e: entry)
+                default: InlineView(e: entry)
+                }
             }
         }
         .modifier(AccessoryBackground())

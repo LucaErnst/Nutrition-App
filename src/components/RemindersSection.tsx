@@ -6,16 +6,28 @@ import { DEFAULT_REMINDERS, MAX_PER_DAY, type ReminderSettings } from '../lib/re
 import { reminderPermission, requestReminderPermission, syncReminders } from '../lib/remindersNative';
 
 /** Erinnerungen: Master-Schalter, Zeiten pro Anlass, Wasser-Takt. Nur native App. */
+function activeCount(r: ReminderSettings): number {
+  return [r.weigh, r.breakfast, r.lunch, r.dinner, r.weekly].filter((v) => v !== null).length + (r.protein ? 1 : 0) + (r.water ? 1 : 0);
+}
+
 export function RemindersSection() {
   const t = useT();
   const settings = useSettings();
   const r: ReminderSettings = settings?.reminders ?? DEFAULT_REMINDERS;
   const [perm, setPerm] = useState<'granted' | 'denied' | 'prompt'>('prompt');
   const [planned, setPlanned] = useState<number | null>(null);
+  // Einstellungen eingeklappt lassen; beim Einschalten einmal aufklappen
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (isNative) void reminderPermission().then(setPerm);
   }, []);
+
+  // Zusammenfassung braucht die Anzahl geplanter Erinnerungen auch ohne Änderung
+  useEffect(() => {
+    if (isNative && settings?.reminders?.enabled && planned === null) void syncReminders().then(setPlanned);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings?.reminders?.enabled]);
 
   async function update(patch: Partial<ReminderSettings>) {
     const next = { ...r, ...patch };
@@ -31,6 +43,7 @@ export function RemindersSection() {
       if (!ok) return;
     }
     await update({ enabled: on });
+    setOpen(on);
   }
 
   if (!isNative) {
@@ -56,15 +69,30 @@ export function RemindersSection() {
     <section className="card section">
       <div className="section-head">
         <h2>{t('rem.title')}</h2>
-        <label className="checkbox">
-          <input type="checkbox" checked={r.enabled} onChange={(e) => void toggleEnabled(e.target.checked)} />
-          {r.enabled ? t('rem.on') : t('rem.off')}
-        </label>
+        <div className="meal-header-right">
+          <label className="checkbox">
+            <input type="checkbox" checked={r.enabled} onChange={(e) => void toggleEnabled(e.target.checked)} />
+            {r.enabled ? t('rem.on') : t('rem.off')}
+          </label>
+          {r.enabled && (
+            <button
+              className={`btn-icon meal-chevron ${open ? 'open' : ''}`}
+              onClick={() => setOpen((v) => !v)}
+              aria-expanded={open}
+              aria-label={open ? t('slot.collapse') : t('slot.expand')}
+            >
+              ›
+            </button>
+          )}
+        </div>
       </div>
-      <p className="search-hint">{t('rem.hint', { n: MAX_PER_DAY })}</p>
+      <p className="search-hint">
+        {r.enabled && !open ? t('rem.summary', { n: activeCount(r), planned: planned ?? '–' }) : t('rem.hint', { n: MAX_PER_DAY })}
+      </p>
       {perm === 'denied' && <p className="form-error">{t('rem.denied')}</p>}
 
-      {r.enabled && (
+      <div className={`collapse ${r.enabled && open ? 'open' : ''}`} aria-hidden={!(r.enabled && open)}>
+        <div className="collapse-inner">
         <div className="rem-list">
           {timeField(t('rem.weigh'), r.weigh, (v) => void update({ weigh: v }))}
           {timeField(t('rem.breakfast'), r.breakfast, (v) => void update({ breakfast: v }))}
@@ -99,7 +127,8 @@ export function RemindersSection() {
           {timeField(t('rem.weekly'), r.weekly, (v) => void update({ weekly: v }))}
           {planned !== null && <p className="search-hint">{t('rem.planned', { n: planned })}</p>}
         </div>
-      )}
+        </div>
+      </div>
     </section>
   );
 }
