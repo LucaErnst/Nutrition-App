@@ -23,3 +23,9 @@ kleiner/Leistung höher → kein echter Stillstand.
 Quellen (vom Coach genannt): Aufbau 0,25–0,5 %/Woche für Anfänger/Fortgeschrittene (PubMed);
 langsames Defizit (0,7 %/Woche) besser für Muskelerhalt als schnelles (1,4 %); Protein 1,4–2,0 g/kg
 für Trainierende, 1,6–2,4 g/kg im Defizit.
+
+## Lucas Sätze (Ton für das Fazit)
+
+- „Wir reagieren nicht auf einen einzelnen Wert. Erst wenn der Trend zwei Wochen in dieselbe Richtung geht und deine Daten vollständig sind, passen wir etwas an.“
+- „Wenn dein Gewicht schneller fällt, aber gleichzeitig deine Leistung, Energie und Regeneration schlechter werden, ist das kein guter Fortschritt. Unser Ziel ist nicht einfach weniger Gewicht, sondern möglichst wenig Fettverlust bei möglichst voller Leistung.“ *(gemeint: möglichst wenig Muskelverlust)*
+- „Halte dich an den Plan, tracke ehrlich und gib deinem Körper Zeit. Wir verändern immer nur eine kleine Sache, beobachten die Reaktion und entscheiden dann weiter – nicht jeden Montag alles komplett neu.“
