@@ -39,9 +39,10 @@ Schnitt:
 - **Free (Entscheid 21.09.2026):** Tagebuch, Barcode-Scan, Textsuche, Wasser, Ziele/Phasen,
   Wochenübersicht mit Fazit, **Wochenbudget**, Erinnerungen, **Backup/Export** (eigene Daten nie
   hinter der Paywall).
-- **Pro (einmalig, CHF 14.90):** Vorlagen und Kopieren, Portionsgrössen und Schnellwahl,
+- **Pro (einmalig, CHF 15.00):** Vorlagen und Kopieren, Portionsgrössen und Schnellwahl,
   Gewichtstrend, Widgets (inkl. Wasser-Button), und alles Neue ab 1.1 (Apple Health usw.).
-  Early Adopter (installiert vor 1.1) behalten alles gratis.
+  Early Adopter behalten alles gratis: Wer die App vor 1.1 benutzt hat – erkennbar an gespeicherten
+  Daten auf dem Gerät – bekommt Pro geschenkt, unabhängig davon, wie viel er getrackt hat.
 - **Coach (Abo, später):** Cloud-Sync über Geräte, Coach sieht Wochen und Gewicht seiner Athleten,
   Kommentare. Alternativ B2B: Coach zahlt pro Athlet, Athleten nutzen die App kostenlos.
 
@@ -125,7 +126,7 @@ und Fallback, falls ein Store-Review hängt.
   einer App-Version kommen). Review-Screenshot der Paywall fehlt noch.
 - Paid Apps Agreement: akzeptiert, Bank (BLKB) und W-8BEN eingereicht; bis Apple „Active“ meldet,
   liefert der Sandbox-Store keine Produkte (Paywall zeigt dann „Store nicht erreichbar“).
-- App: `src/lib/pro.ts` (Status, Kauf, Wiederherstellen, Early Adopter ab 5 Einträgen beim ersten
+- App: `src/lib/pro.ts` (Status, Kauf, Wiederherstellen, Early Adopter: jede Spur früherer Nutzung beim ersten
   Start), `src/components/Paywall.tsx` (global über `openPaywall()`), Sperren mit `usePro()` in
   MealSlot (Kopieren, Vorlage), AddEntryDialog (Vorlagen-Tab), FoodItemForm (Portionen), WeightView
   (Diagramm), HealthSection, GoalsView (Auswertung), BackupSection (CSV); Widgets zeigen ohne Pro

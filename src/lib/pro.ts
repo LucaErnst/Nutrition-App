@@ -3,12 +3,13 @@
  * Woche, Wochenbudget, Erinnerungen, Backup. Pro: Vorlagen, Kopieren, Portionen, Gewichtstrend,
  * Widgets, Apple Health, Phasen-Auswertung, CSV.
  *
- * Early Adopter: Wer die App vor 1.1 installiert hatte (beim ersten Start mit Kauf-Logik schon
- * Einträge in der Datenbank), bekommt Pro dauerhaft geschenkt – lokal gespeichert.
+ * Early Adopter: Wer die App vor 1.1 installiert hatte – erkennbar an gespeicherten Daten beim
+ * ersten Start mit Kauf-Logik – bekommt Pro dauerhaft geschenkt; lokal gespeichert.
  * Web/PWA: kein Kauf möglich, Pro-Features bleiben dort frei (die Web-Version ist die Demo).
  */
 import { useSyncExternalStore } from 'react';
 import { db } from '../db/db';
+import type { Settings } from '../db/types';
 import { logError } from './errorLog';
 import { isNative } from './native';
 
@@ -72,8 +73,7 @@ export async function initPro(): Promise<void> {
       set({ pro: true, source: 'early_adopter', ready: true });
     } else if (settings?.pro_granted === undefined) {
       // Erster Start mit Kauf-Logik: bestehende Nutzer behalten alles
-      const entries = await db.mealEntries.count();
-      const grant = entries >= 5 ? 'early_adopter' : 'none';
+      const grant = (await hadAppBefore(settings)) ? 'early_adopter' : 'none';
       await db.settings.put({ ...(settings ?? { id: 1 as const, training_weekdays: [1, 2, 4, 5] }), pro_granted: grant });
       if (grant === 'early_adopter') set({ pro: true, source: 'early_adopter', ready: true });
     }
@@ -89,6 +89,38 @@ export async function initPro(): Promise<void> {
     logError('pro', e);
     set({ ready: true });
   }
+}
+
+/** Spuren früherer Nutzung im lokalen Speicher. */
+export interface UsageTraces {
+  /** Es liegen gespeicherte Einstellungen vor (Onboarding abgeschlossen oder etwas verstellt). */
+  settings: boolean;
+  goals: number;
+  entries: number;
+  weights: number;
+  days: number;
+  /** Selbst angelegte oder gescannte Lebensmittel – ohne die mitgelieferten Referenzdaten. */
+  ownFoods: number;
+}
+
+/**
+ * Hatte der Nutzer die App schon vor 1.1? Jede Spur früherer Nutzung genügt. Die mitgelieferten
+ * Referenzlebensmittel zählen nicht, sonst wäre jede frische Installation ein Early Adopter.
+ */
+export function usedAppBefore(t: UsageTraces): boolean {
+  return t.settings || t.goals > 0 || t.entries > 0 || t.weights > 0 || t.days > 0 || t.ownFoods > 0;
+}
+
+async function hadAppBefore(settings: Settings | undefined): Promise<boolean> {
+  if (settings) return true;
+  const [goals, entries, weights, days, ownFoods] = await Promise.all([
+    db.goals.count(),
+    db.mealEntries.count(),
+    db.weights.count(),
+    db.days.count(),
+    db.foodItems.where('source').notEqual('reference').count(),
+  ]);
+  return usedAppBefore({ settings: false, goals, entries, weights, days, ownFoods });
 }
 
 function applyCustomerInfo(info: import('@revenuecat/purchases-capacitor').CustomerInfo) {
