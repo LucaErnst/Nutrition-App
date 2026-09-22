@@ -2325,17 +2325,18 @@ input[type='date']::-webkit-date-and-time-value {
 }
 
 /* ===== Native Feel (1.1) =====
-   Transluzente Leisten mit Blur (Inhalt scrollt sichtbar darunter durch), 44-pt-Tippziele,
-   Dynamic Type über --dt-zoom (wird in native.ts aus der iOS-Schriftgrösse gesetzt). */
+   Transluzente Leisten mit Blur (Inhalt scrollt sichtbar darunter durch), 44-pt-Tippziele.
+   Kein Zoom nach iOS-Textgrösse: Das Layout bleibt auf jedem Gerät fix (Dynamic Type war 0.17 kurz
+   drin und liess die Seite beim Zurückkehren in die App springen). */
 :root {
-  --dt-zoom: 1;
   --glass: color-mix(in srgb, var(--surface) 72%, transparent);
 }
 
-.app,
-.onboarding,
-.toast {
-  zoom: var(--dt-zoom);
+/* Kein horizontales Scrollen, egal was innen passiert */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 @media (max-width: 600px) {
