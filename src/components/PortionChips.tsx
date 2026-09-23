@@ -1,5 +1,6 @@
 import type { FoodItem, Unit } from '../db/types';
 import { fmt } from '../lib/nutrition';
+import { fmtAmount } from '../lib/units';
 import { useT } from '../i18n';
 import { unitLabel } from './FoodSearch';
 
@@ -28,12 +29,12 @@ export function PortionChips({ food, baseUnit, current, onPick }: Props) {
       chips.push(c);
     }
   };
-  const num = (n: number) => fmt(n, n % 1 ? 1 : 0);
+  const num = (n: number, unit: Unit) => fmtAmount(n, unit);
 
-  if (food.last_amount && food.last_unit) add({ label: t('picker.last', { n: num(food.last_amount), unit: unitLabel(t, food.last_unit) }), amount: food.last_amount, unit: food.last_unit });
-  if (food.default_amount) add({ label: t('picker.usual', { n: num(food.default_amount), unit: unitLabel(t, baseUnit) }), amount: food.default_amount, unit: baseUnit });
+  if (food.last_amount && food.last_unit) add({ label: t('picker.last', { n: num(food.last_amount, food.last_unit), unit: unitLabel(t, food.last_unit) }), amount: food.last_amount, unit: food.last_unit });
+  if (food.default_amount) add({ label: t('picker.usual', { n: num(food.default_amount, baseUnit), unit: unitLabel(t, baseUnit) }), amount: food.default_amount, unit: baseUnit });
   const gramUnit: Unit = food.unit_type === 'volume' ? 'ml' : 'g';
-  for (const p of food.portions ?? []) add({ label: `${p.label} (${fmt(p.grams)} ${gramUnit})`, amount: p.grams, unit: gramUnit });
+  for (const p of food.portions ?? []) add({ label: `${p.label} (${fmt(p.grams)} ${unitLabel(t, gramUnit)})`, amount: p.grams, unit: gramUnit });
 
   if (chips.length === 0) return null;
 

@@ -3,6 +3,9 @@ import { db } from '../db/db';
 import { addMealEntry } from '../db/hooks';
 import type { FoodItem, MealType, Unit } from '../db/types';
 import { useT } from '../i18n';
+import { useUnitSystem } from '../db/hooks';
+import { isPieceUnit, labelFor, toBase, unitChoices, UNITS } from '../lib/units';
+import { GROUP_KEYS } from './UnitSelect';
 import { unitLabel } from './FoodSearch';
 
 interface Props {
@@ -24,6 +27,7 @@ function num(v: string): number {
 
 export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: Props) {
   const t = useT();
+  const system = useUnitSystem();
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('100');
   const [unit, setUnit] = useState<Unit>('g');
@@ -36,7 +40,7 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
   const [save, setSave] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const isPiece = unit === 'Stück';
+  const isPiece = isPieceUnit(unit);
   // Ohne Stückgewicht ist "pro 100 g" nicht sinnvoll – dann zählt die Portion.
   const per100Allowed = !isPiece || num(pieceWeight) > 0;
   const effectiveBasis: Basis = per100Allowed ? basis : 'portion';
@@ -52,7 +56,7 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
     // Gewicht pro Stück: falls nicht angegeben, 100 g annehmen, damit
     // "pro Stück" und "pro 100 g" identisch sind.
     const pw = isPiece ? num(pieceWeight) || 100 : undefined;
-    const grams = isPiece ? amt * pw! : amt;
+    const grams = isPiece ? amt * pw! : toBase(amt, unit);
 
     // Alles auf 100 g normalisieren.
     const factor = effectiveBasis === 'per100' ? 1 : 100 / grams;
@@ -63,7 +67,7 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
       protein_per_100g: num(protein) * factor,
       fat_per_100g: num(fat) * factor,
       carbs_per_100g: num(carbs) * factor,
-      unit_type: isPiece ? 'piece' : unit === 'ml' ? 'volume' : 'weight',
+      unit_type: UNITS[unit].kind,
       piece_weight_g: pw,
       default_amount: amt,
       source: 'manual',
@@ -77,7 +81,8 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
     onDone();
   }
 
-  const baseUnit = unit === 'ml' ? 'ml' : 'g';
+  // Nährwerte sind immer pro 100 g bzw. 100 ml – unabhängig von der Eingabe-Einheit.
+  const baseUnit = UNITS[unit].kind === 'volume' ? 'ml' : 'g';
   const basisLabel =
     effectiveBasis === 'per100' ? t('manual.per100', { unit: baseUnit }) : t('manual.forAmount', { amount: amount || '…', unit: unitLabel(t, unit) });
   const numInput = (value: string, set: (v: string) => void) => (
@@ -100,9 +105,18 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
         <label className="field">
           <span>{t('common.unit')}</span>
           <select value={unit} onChange={(e) => setUnit(e.target.value as Unit)}>
-            <option value="g">g</option>
-            <option value="ml">ml</option>
-            <option value="Stück">{t('unit.piece')}</option>
+            <optgroup label={t('unit.groupPiece')}>
+              <option value="Stück">{t('unit.piece')}</option>
+            </optgroup>
+            {unitChoices('weight', system).concat(unitChoices('volume', system)).map((g, i) => (
+              <optgroup key={`${g.group}-${i}`} label={t(GROUP_KEYS[g.group])}>
+                {g.units.map((u) => (
+                  <option key={u} value={u}>
+                    {labelFor(u, t('unit.piece'))}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
           </select>
         </label>
         {isPiece && (

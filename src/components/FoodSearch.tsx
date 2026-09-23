@@ -5,6 +5,9 @@ import { addMealEntry, toggleFavorite, useFoodUsage, useSavedFoods } from '../db
 import { defaultUnit, fmt, macrosFor } from '../lib/nutrition';
 import { offProductToFoodItem, searchProducts, type OffProduct } from '../lib/openfoodfacts';
 import { useT } from '../i18n';
+import { useUnitSystem } from '../db/hooks';
+import { convertAmount, fmtAmount, isPieceUnit, labelFor } from '../lib/units';
+import { UnitSelect } from './UnitSelect';
 import { ProductResult } from './ProductResult';
 import { AmountStepper } from './AmountStepper';
 import { PortionChips } from './PortionChips';
@@ -21,7 +24,7 @@ export function normalize(s: string): string {
 
 /** Anzeige-Einheit (Stück wird übersetzt, g/ml bleiben) */
 export function unitLabel(t: ReturnType<typeof useT>, unit: Unit): string {
-  return unit === 'Stück' ? t('unit.piece') : unit;
+  return labelFor(unit, t('unit.piece'));
 }
 
 type OffState =
@@ -137,7 +140,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
       ) : (
         <ul className="search-list">
           {results.map((f) => {
-            const unit = defaultUnit(f);
+            const unit = defaultUnit(f, 'metric');
             const amount = f.default_amount ?? (unit === 'Stück' ? 1 : 100);
             const m = macrosFor(f, amount, unit);
             return (
@@ -156,7 +159,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
                     <span className="search-item-name">{f.name}</span>
                     {f.brand && <span className="search-item-brand">{f.brand}</span>}
                     <span className="search-item-portion">
-                      {fmt(amount, amount % 1 ? 1 : 0)} {unitLabel(t, unit)} · {t('macro.p')} {fmt(m.protein)} · {t('macro.f')} {fmt(m.fat)} · {t('macro.c')} {fmt(m.carbs)}
+                      {fmtAmount(amount, unit)} {unitLabel(t, unit)} · {t('macro.p')} {fmt(m.protein)} · {t('macro.f')} {fmt(m.fat)} · {t('macro.c')} {fmt(m.carbs)}
                     </span>
                   </span>
                   <span className="search-item-kcal">{fmt(m.kcal)} kcal</span>
@@ -231,6 +234,13 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
   );
 }
 
+/** Vorgeschlagene Menge in der Einheit, die im Feld steht. */
+function initialAmount(food: FoodItem, baseUnit: Unit, unit: Unit): number {
+  if (food.last_amount !== undefined) return food.last_amount;
+  if (food.default_amount !== undefined) return convertAmount(food.default_amount, baseUnit, unit);
+  return isPieceUnit(unit) ? 1 : convertAmount(100, baseUnit, unit);
+}
+
 interface PickerProps {
   food: FoodItem;
   onBack: () => void;
@@ -239,17 +249,17 @@ interface PickerProps {
 
 function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
   const t = useT();
-  const baseUnit = defaultUnit(food);
-  // Vorschlag: zuletzt verwendete Menge, sonst übliche Portion
-  const initialUnit = food.last_unit ?? baseUnit;
+  const system = useUnitSystem();
+  // Einheit, in der die gespeicherten Mengen des Lebensmittels stehen (g, ml oder Stück)
+  const baseUnit = defaultUnit(food, 'metric');
+  // Vorschlag: zuletzt verwendete Menge, sonst die übliche Portion – umgerechnet in die Einheit,
+  // in der dieser Nutzer einträgt. 30 g dürfen nicht als 30 oz im Feld landen.
+  const initialUnit = food.last_unit ?? defaultUnit(food, system);
   const [unit, setUnit] = useState<Unit>(initialUnit);
-  const [amount, setAmount] = useState(String(food.last_amount ?? food.default_amount ?? (baseUnit === 'Stück' ? 1 : 100)));
+  const [amount, setAmount] = useState(String(initialAmount(food, baseUnit, initialUnit)));
   const n = Number(amount.replace(',', '.'));
   const valid = Number.isFinite(n) && n > 0;
   const m = macrosFor(food, valid ? n : 0, unit);
-
-  // Bei Stück-Artikeln zusätzlich Gramm-Eingabe erlauben, sonst nur die Basis-Einheit.
-  const units: Unit[] = food.unit_type === 'piece' ? ['Stück', 'g'] : [baseUnit];
 
   return (
     <form
@@ -273,13 +283,7 @@ function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
         </div>
         <label className="field">
           <span>{t('common.unit')}</span>
-          <select value={unit} onChange={(e) => setUnit(e.target.value as Unit)} disabled={units.length === 1}>
-            {units.map((u) => (
-              <option key={u} value={u}>
-                {unitLabel(t, u)}
-              </option>
-            ))}
-          </select>
+          <UnitSelect kind={food.unit_type} value={unit} onChange={setUnit} />
         </label>
       </div>
       <PortionChips
@@ -288,7 +292,7 @@ function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
         current={{ amount: n, unit }}
         onPick={(a, u) => {
           setAmount(String(a));
-          if (units.includes(u)) setUnit(u);
+          setUnit(u);
         }}
       />
       <div className="picker-preview">

@@ -1,6 +1,29 @@
 import type { ReminderSettings } from '../lib/reminders';
 export type UnitType = 'weight' | 'volume' | 'piece';
-export type Unit = 'g' | 'ml' | 'Stück';
+/**
+ * Eingabe-Einheiten. US- und UK-Einheiten tragen das Land im Code, weil eine Flüssigunze
+ * dort verschieden gross ist – siehe lib/units.ts. Gespeicherte Einträge bleiben dadurch
+ * stabil, auch wenn der Nutzer sein Einheitensystem später umstellt.
+ */
+export type Unit =
+  | 'g'
+  | 'kg'
+  | 'oz'
+  | 'lb'
+  | 'ml'
+  | 'cl'
+  | 'dl'
+  | 'l'
+  | 'floz_us'
+  | 'cup_us'
+  | 'pt_us'
+  | 'tbsp_us'
+  | 'tsp_us'
+  | 'floz_uk'
+  | 'pt_uk'
+  | 'tbsp_uk'
+  | 'tsp_uk'
+  | 'Stück';
 export type MealType =
   | 'breakfast'
   | 'morning_snack'
@@ -138,6 +161,8 @@ export interface Settings {
   health_enabled?: boolean;
   /** Pro ohne Kauf: 'early_adopter' (vor 1.1 installiert) oder 'none'; undefined = noch nicht geprüft */
   pro_granted?: 'early_adopter' | 'none';
+  /** Einheitensystem; ohne Angabe aus der Gerätesprache abgeleitet */
+  units_system?: 'metric' | 'us' | 'uk';
 }
 
 /** Mahlzeiten-Vorlage, z.B. "Standard-Frühstück": mehrere Posten auf einmal eintragen. */

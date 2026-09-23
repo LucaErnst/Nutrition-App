@@ -6,6 +6,7 @@ import { isNative } from './lib/native';
 import { Onboarding } from './components/Onboarding';
 import { PaywallHost } from './components/Paywall';
 import { useGoals, useSettings, saveSettings } from './db/hooks';
+import { detectUnitSystem, setUnitSystemCache } from './lib/units';
 const UpdateBanner = lazy(() => import('./components/UpdateBanner').then((m) => ({ default: m.UpdateBanner })));
 import { ToastProvider } from './components/Toast';
 import { IconDiary, IconFood, IconMore, IconWeek, IconWeight } from './components/Icons';
@@ -46,6 +47,12 @@ export default function App() {
     if (settings && goals && !settings.onboarding_done && goals.length > 0) void saveSettings({ onboarding_done: true });
   }, [settings, goals]);
   const showOnboarding = !!settings && !!goals && !settings.onboarding_done && goals.length === 0;
+
+  // Einheitensystem merken, sobald die Einstellungen da sind: Dialoge frieren ihre Vorgabe
+  // beim Öffnen ein und dürfen nicht auf die Gerätesprache zurückfallen.
+  useEffect(() => {
+    if (settings) setUnitSystemCache(settings.units_system ?? detectUnitSystem());
+  }, [settings]);
 
   // Start-Screen (index.html) ausblenden, sobald die ersten Daten da sind
   useEffect(() => {

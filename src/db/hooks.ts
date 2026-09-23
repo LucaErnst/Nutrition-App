@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
 import { MEAL_TYPES, ZERO_MACROS, snapshotOf, type DailyGoal, type FoodItem, type Macros, type MealEntry, type MealTemplate, type MealType, type Settings, type Unit, type WeightEntry } from './types';
@@ -7,6 +8,7 @@ import { scheduleHealthSync, syncHealthWeight } from '../lib/health';
 import { macrosFor, resolveSource, sumMacros, type EntryWithFood } from '../lib/nutrition';
 import { activeGoalFor, targetsFor } from '../lib/goals';
 import type { DaySummary } from '../lib/week';
+import { detectUnitSystem, getUnitSystem, setUnitSystemCache, type UnitSystem } from '../lib/units';
 
 /** Alle Einträge eines Tages, mit aufgelöstem FoodItem und berechneten Makros. */
 export function useDayEntries(date: string): EntryWithFood[] | undefined {
@@ -101,6 +103,19 @@ export function useSettings(): Settings | undefined {
 }
 
 export const DEFAULT_SETTINGS: Settings = { id: 1, training_weekdays: [1, 2, 4, 5] };
+
+/**
+ * Einheitensystem des Nutzers; ohne eigene Wahl das der Gerätesprache. Solange die
+ * Einstellungen noch laden, gilt der zuletzt bekannte Wert statt eines Rückfalls auf metrisch.
+ */
+export function useUnitSystem(): UnitSystem {
+  const settings = useSettings();
+  const system = settings ? (settings.units_system ?? detectUnitSystem()) : getUnitSystem();
+  useEffect(() => {
+    if (settings) setUnitSystemCache(system);
+  }, [settings, system]);
+  return system;
+}
 
 export async function saveSettings(patch: Partial<Omit<Settings, 'id'>>) {
   const cur = (await db.settings.get(1)) ?? DEFAULT_SETTINGS;

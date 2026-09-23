@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import type { FoodItem, Unit } from '../db/types';
-import { fmt, macrosFor } from '../lib/nutrition';
+import { defaultUnit, fmt, macrosFor } from '../lib/nutrition';
 import { useT } from '../i18n';
+import { useUnitSystem } from '../db/hooks';
+import { UnitSelect } from './UnitSelect';
+import { convertAmount } from '../lib/units';
 import { AmountStepper } from './AmountStepper';
 import { PortionChips } from './PortionChips';
 
@@ -16,8 +19,14 @@ interface ResultProps {
 /** Ergebniskarte für ein Open-Food-Facts-Produkt (Scan oder Textsuche): Menge wählen, speichern. */
 export function ProductResult({ item, fromLocal, backLabel, onBack, onConfirm }: ResultProps) {
   const t = useT();
-  const unit: Unit = item.unit_type === 'volume' ? 'ml' : 'g';
-  const [amount, setAmount] = useState(String(item.last_amount ?? item.default_amount ?? 100));
+  const system = useUnitSystem();
+  const baseUnit = defaultUnit(item, 'metric');
+  const [unit, setUnit] = useState<Unit>(item.last_unit ?? defaultUnit(item, system));
+  const [amount, setAmount] = useState(() => {
+    const u = item.last_unit ?? defaultUnit(item, system);
+    if (item.last_amount !== undefined) return String(item.last_amount);
+    return String(convertAmount(item.default_amount ?? 100, baseUnit, u));
+  });
   const [save, setSave] = useState(true);
   const n = Number(amount.replace(',', '.'));
   const valid = Number.isFinite(n) && n > 0;
@@ -53,12 +62,18 @@ export function ProductResult({ item, fromLocal, backLabel, onBack, onConfirm }:
         </div>
         <label className="field">
           <span>{t('common.unit')}</span>
-          <select value={unit} disabled>
-            <option value={unit}>{unit}</option>
-          </select>
+          <UnitSelect kind={item.unit_type} value={unit} onChange={setUnit} />
         </label>
       </div>
-      <PortionChips food={item} baseUnit={unit} current={{ amount: n, unit }} onPick={(a) => setAmount(String(a))} />
+      <PortionChips
+        food={item}
+        baseUnit={baseUnit}
+        current={{ amount: n, unit }}
+        onPick={(a, u) => {
+          setAmount(String(a));
+          setUnit(u);
+        }}
+      />
       <div className="picker-preview">
         <span className="picker-kcal">{fmt(m.kcal)} kcal</span>
         <span>{t('macro.p')} {fmt(m.protein)} g</span>

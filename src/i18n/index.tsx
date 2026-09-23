@@ -15,7 +15,7 @@ const STORAGE_KEY = 'nutrition-tracker:language';
 type Params = Record<string, string | number>;
 
 /** Aktive Sprache – auch für Funktionen ausserhalb von React (fmt, Datum). */
-let current: Language = readStored() ?? 'en';
+let current: Language = readStored() ?? deviceLanguage();
 
 function readStored(): Language | undefined {
   try {
@@ -24,6 +24,19 @@ function readStored(): Language | undefined {
   } catch {
     return undefined;
   }
+}
+
+/**
+ * Sprache des Geräts beim allerersten Start. Wer die App schon benutzt hat, behält seine
+ * gespeicherte Wahl – die hier ist nur der Ausgangspunkt, umstellbar unter „Mehr“.
+ */
+export function deviceLanguage(langs: readonly string[] = navigator.languages?.length ? navigator.languages : [navigator.language]): Language {
+  for (const l of langs) {
+    const tag = l?.toLowerCase() ?? '';
+    if (tag.startsWith('de')) return 'de';
+    if (tag.startsWith('en')) return 'en';
+  }
+  return 'en';
 }
 
 export function getLanguage(): Language {

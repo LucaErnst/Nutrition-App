@@ -6,6 +6,7 @@ import { copyMeal, deleteMealEntry, restoreMealEntry, saveTemplate, updateMealEn
 import { addDays } from '../lib/date';
 import { fmt, sumMacros, type EntryWithFood } from '../lib/nutrition';
 import { mealLabel, useT } from '../i18n';
+import { fmtAmount, labelFor } from '../lib/units';
 import { AddEntryDialog } from './AddEntryDialog';
 import { AmountStepper } from './AmountStepper';
 import { useToast } from './Toast';
@@ -167,7 +168,7 @@ function EntryRow({ item }: { item: EntryWithFood }) {
     setEditing(false);
   }
 
-  const unitLabel = entry.unit === 'Stück' ? t('unit.piece') : entry.unit;
+  const unitLabel = labelFor(entry.unit, t('unit.piece'));
 
   return (
     <li className="entry">
@@ -199,7 +200,7 @@ function EntryRow({ item }: { item: EntryWithFood }) {
             </span>
           ) : (
             <button className="btn-link" onClick={() => setEditing(true)} title={t('slot.changeAmount')}>
-              {fmt(entry.amount, entry.amount % 1 === 0 ? 0 : 1)} {unitLabel}
+              {fmtAmount(entry.amount, entry.unit)} {unitLabel}
             </button>
           )}
         </span>

@@ -110,9 +110,14 @@ Qualitätsgewinn; „Optional“ = nice-to-have.
 - Rezepte (mehrere Zutaten → ein Lebensmittel mit Portionen).
 - Mikronährstoffe / Ballaststoffe (OFF liefert `fiber_100g`, `sugars_100g`, `salt_100g`).
 - Export als CSV/PDF für Coaching-Gespräche.
-- Mehrsprachigkeit (i18n) ✓ (0.8.0) – Englisch als Standard, Deutsch umschaltbar unter „Mehr“. Wörterbücher in
+- Mehrsprachigkeit (i18n) ✓ (0.8.0, 0.19.0) – beim ersten Start die Gerätesprache, danach umschaltbar unter „Mehr“. Wörterbücher in
   `src/i18n/en.ts` / `de.ts` (Unit-Test prüft Vollständigkeit und Platzhalter). Zahlen- und Datumsformat folgen
   der Sprache; Open-Food-Facts-Namen werden in der gewählten Sprache abgefragt. Eigene Daten bleiben unverändert.
+- Einheiten ✓ (0.19.0) – Gewicht (g, kg, oz, lb), Volumen (ml, cl, dl, l) und die US-/UK-Einheiten
+  (fl oz, cup, pt, tbsp, tsp). Nährwerte bleiben pro 100 g/ml gespeichert, jede Einheit rechnet über einen
+  festen Faktor um (`src/lib/units.ts`). US- und UK-Flüssigunzen tragen das Land im Code ('floz_us' /
+  'floz_uk'), damit ein eingetragener Posten sich nie ändert, wenn der Nutzer das System umstellt.
+  Einstellung unter „Mehr → Einheiten“ (Standard aus der Gerätesprache) bestimmt nur Reihenfolge und Vorgabe.
 - Wasser ✓ (0.8.0) – Zeile unter der Tagesbilanz mit +250/+500 ml, Undo, Tagesziel unter „Mehr“ (Standard 3 l);
   Ø Wasser in der Wochenansicht und im Fazit; im Backup enthalten (Schema v5).
 

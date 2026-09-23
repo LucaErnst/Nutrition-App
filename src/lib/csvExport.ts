@@ -6,6 +6,7 @@
 import { db } from '../db/db';
 import { getLanguage, mealLabel } from '../i18n';
 import { addDays, todayISO } from './date';
+import { csvUnitLabel } from './units';
 import { activeGoalFor, targetsFor } from './goals';
 import { macrosFor, resolveSource } from './nutrition';
 import { withTrend } from './weight';
@@ -85,7 +86,7 @@ export async function buildCsv(from?: string, to?: string): Promise<CsvFiles> {
     const src = resolveSource(e, foodById.get(e.food_item_id));
     if (!src) continue;
     const m = macrosFor(src, e.amount, e.unit);
-    entryRows.push([e.date, mealLabel(e.meal_type), src.name, src.brand ?? '', e.amount, e.unit, m.kcal, m.protein, m.fat, m.carbs]);
+    entryRows.push([e.date, mealLabel(e.meal_type), src.name, src.brand ?? '', e.amount, csvUnitLabel(e.unit), m.kcal, m.protein, m.fat, m.carbs]);
     const t = totalsByDate.get(e.date) ?? { kcal: 0, protein: 0, fat: 0, carbs: 0, n: 0 };
     t.kcal += m.kcal;
     t.protein += m.protein;

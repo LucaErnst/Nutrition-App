@@ -4,6 +4,7 @@ import { mealLabel, useT } from '../i18n';
 import { applyTemplate, copyMeal, deleteTemplate, useCopySources, useTemplates } from '../db/hooks';
 import { addDays } from '../lib/date';
 import { fmt, macrosFor, sumMacros } from '../lib/nutrition';
+import { fmtAmount, labelFor } from '../lib/units';
 import { db } from '../db/db';
 import { useLiveQuery } from 'dexie-react-hooks';
 
@@ -92,7 +93,7 @@ function TemplateRow({ template, busy, onApply, onDelete }: { template: MealTemp
         <span className="search-item-main">
           <span className="search-item-name">{template.name}</span>
           <span className="search-item-portion">
-            {lines.map((l) => `${fmt(l.item.amount, l.item.amount % 1 ? 1 : 0)} ${l.item.unit === 'Stück' ? t('unit.piece') : l.item.unit} ${l.food.name}`).join(' · ')}
+            {lines.map((l) => `${fmtAmount(l.item.amount, l.item.unit)} ${labelFor(l.item.unit, t('unit.piece'))} ${l.food.name}`).join(' · ')}
           </span>
           <span className="search-item-portion">
             {t('macro.p')} {fmt(totals.protein)} · {t('macro.f')} {fmt(totals.fat)} · {t('macro.c')} {fmt(totals.carbs)}

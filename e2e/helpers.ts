@@ -1,7 +1,23 @@
 import { expect, type Page } from '@playwright/test';
 
+/**
+ * Sprache auf Englisch festnageln, bevor die erste Seite lädt. Der Browser läuft laut
+ * playwright.config.ts auf de-CH; ohne gespeicherte Wahl folgt die App der Gerätesprache
+ * (siehe language.spec.ts) und würde auch die Referenzdaten deutsch anlegen.
+ */
+export async function pinEnglish(page: Page) {
+  await page.addInitScript(() => {
+    try {
+      localStorage.setItem('nutrition-tracker:language', 'en');
+    } catch {
+      // Privater Modus o.ä. – dann bleibt es bei der Gerätesprache.
+    }
+  });
+}
+
 /** Frische App: IndexedDB und localStorage leeren, dann laden (Seed läuft automatisch). */
 export async function freshApp(page: Page) {
+  await pinEnglish(page);
   await page.goto('/');
   await page.evaluate(async () => {
     localStorage.clear();
@@ -32,6 +48,7 @@ export async function freshApp(page: Page) {
 
 /** Frische App ohne Phase – landet im Onboarding. */
 export async function freshAppRaw(page: Page) {
+  await pinEnglish(page);
   await page.goto('/');
   await page.evaluate(async () => {
     localStorage.clear();

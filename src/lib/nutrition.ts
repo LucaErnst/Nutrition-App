@@ -1,6 +1,7 @@
-import type { FoodItem, Macros, MealEntry, NutritionSnapshot, Unit } from '../db/types';
+import type { FoodItem, Macros, MealEntry, NutritionSnapshot, Unit, UnitType } from '../db/types';
 import { ZERO_MACROS } from '../db/types';
 import { getLocale } from '../i18n';
+import { defaultUnitFor, isPieceUnit, toBase, type UnitSystem } from './units';
 
 /** Das, was zum Rechnen und Anzeigen eines Eintrags nötig ist. */
 export type NutritionSource = Pick<
@@ -16,10 +17,10 @@ export function resolveSource(entry: MealEntry, food: FoodItem | undefined): Nut
   return entry.snapshot ?? food;
 }
 
-/** Rechnet die eingetragene Menge in Gramm (bzw. ml) um. */
+/** Rechnet die eingetragene Menge in Gramm (bzw. ml) um – die Basis der Nährwerte. */
 export function amountToGrams(item: NutritionSource | NutritionSnapshot, amount: number, unit: Unit): number {
-  if (unit === 'Stück') return amount * (item.piece_weight_g ?? 100);
-  return amount;
+  if (isPieceUnit(unit)) return amount * (item.piece_weight_g ?? 100);
+  return toBase(amount, unit);
 }
 
 export function macrosFor(item: NutritionSource | NutritionSnapshot, amount: number, unit: Unit): Macros {
@@ -44,10 +45,9 @@ export function sumMacros(list: Macros[]): Macros {
   );
 }
 
-export function defaultUnit(item: Pick<FoodItem, 'unit_type'>): Unit {
-  if (item.unit_type === 'piece') return 'Stück';
-  if (item.unit_type === 'volume') return 'ml';
-  return 'g';
+/** Vorgeschlagene Einheit für ein Lebensmittel – abhängig vom Einheitensystem des Nutzers. */
+export function defaultUnit(item: Pick<FoodItem, 'unit_type'>, system: UnitSystem = 'metric'): Unit {
+  return defaultUnitFor(item.unit_type as UnitType, system);
 }
 
 export interface EntryWithFood {

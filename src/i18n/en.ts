@@ -44,6 +44,17 @@ export const en = {
   'unit.grams': 'Grams',
   'unit.milliliters': 'Milliliters',
   'unit.pieces': 'Pieces',
+  'unit.groupPiece': 'Piece',
+  'unit.groupMetric': 'Metric',
+  'unit.groupImperial': 'US / UK',
+  'unit.groupUs': 'US',
+  'unit.groupUk': 'UK',
+  'units.title': 'Units',
+  'units.hint': 'Which units you enter amounts in. Every unit stays available – this only decides the order and the default.',
+  'units.metric': 'Metric',
+  'units.us': 'US',
+  'units.uk': 'UK',
+  'units.example': 'Default for new foods: {weight} and {volume}.',
 
   // Macros
   'macro.kcal': 'Calories',

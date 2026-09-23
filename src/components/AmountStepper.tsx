@@ -1,5 +1,8 @@
 import type { Unit } from '../db/types';
 import { useT } from '../i18n';
+import { stepFor } from '../lib/units';
+
+export { stepFor };
 
 interface Props {
   value: string;
@@ -13,12 +16,6 @@ interface Props {
   ariaLabel?: string;
 }
 
-/** Schrittweite: 10 g/ml, 1 Stück; unter 20 g feiner. */
-export function stepFor(unit: Unit, current: number): number {
-  if (unit === 'Stück') return 1;
-  return current < 20 ? 5 : 10;
-}
-
 function parse(v: string): number {
   const n = Number(v.replace(',', '.'));
   return Number.isFinite(n) ? n : 0;
@@ -30,7 +27,7 @@ export function AmountStepper({ value, onChange, unit, compact, autoFocus, onBlu
 
   function bump(dir: 1 | -1) {
     const step = stepFor(unit, dir < 0 ? n - 0.01 : n);
-    const next = Math.max(0, Math.round((n + dir * step) * 100) / 100);
+    const next = Math.max(0, Math.round((n + dir * step) * 1000) / 1000);
     onChange(String(next));
   }
 

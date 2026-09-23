@@ -8,6 +8,7 @@ import { DiagnosticsSection } from './DiagnosticsSection';
 import { RemindersSection } from './RemindersSection';
 import { HealthSection } from './HealthSection';
 import { ProSection } from './ProSection';
+import { UnitsSection } from './UnitsSection';
 
 /** Rechtstexte liegen auf der Web-Adresse – auch die native App verlinkt dorthin. */
 const LEGAL_BASE = 'https://lucaernst.github.io/Nutrition-App/legal/';
@@ -91,6 +92,7 @@ export function MoreView() {
       </section>
 
       <ProSection />
+      <UnitsSection />
       <RemindersSection />
       <HealthSection />
       <GoalsView />
