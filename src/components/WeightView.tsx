@@ -1,12 +1,22 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { deleteWeight, upsertWeight, useWeights } from '../db/hooks';
+import { deleteWeight, upsertWeight, useUnitSystem, useWeights } from '../db/hooks';
 import { addDays, formatDate, formatShortDate, todayISO } from '../lib/date';
 import { useT } from '../i18n';
 import { fmt } from '../lib/nutrition';
 import { usePro } from '../lib/pro';
 import { openPaywall, ProBadge } from './Paywall';
 import { trendChange, withTrend, type WeightPoint } from '../lib/weight';
+import {
+  bodyWeightParts,
+  bodyWeightUnitFor,
+  formatBodyWeight,
+  kgToLb,
+  lbToKg,
+  stoneToKg,
+  trendUnitFor,
+  type BodyWeightUnit,
+} from '../lib/units';
 
 type Range = 30 | 90 | 365 | 0;
 
@@ -20,8 +30,11 @@ export function WeightView() {
     { value: 0, label: t('weight.rAll') },
   ];
   const weights = useWeights();
+  const bodyUnit = bodyWeightUnitFor(useUnitSystem());
   const [date, setDate] = useState(todayISO());
   const [value, setValue] = useState('');
+  /** Nur bei Stone: der Pfund-Anteil der Eingabe. */
+  const [valueLb, setValueLb] = useState('');
   const [range, setRange] = useState<Range>(90);
   const [showAll, setShowAll] = useState(false);
 
@@ -40,8 +53,10 @@ export function WeightView() {
     ev.preventDefault();
     const n = Number(value.replace(',', '.'));
     if (!Number.isFinite(n) || n <= 0 || !date) return;
-    await upsertWeight(date, Math.round(n * 10) / 10);
+    const kg = toKg(n, Number(valueLb.replace(',', '.')) || 0, bodyUnit);
+    await upsertWeight(date, Math.round(kg * 10) / 10);
     setValue('');
+    setValueLb('');
   }
 
   const recent = [...points].reverse();
@@ -58,19 +73,34 @@ export function WeightView() {
             <input type="date" value={date} max={todayISO()} onChange={(e) => setDate(e.target.value)} required />
           </label>
           <label className="field">
-            <span>{t('weight.kg')}</span>
+            <span>{bodyUnit === 'st' ? 'st' : bodyUnit}</span>
             <input
               type="number"
               inputMode="decimal"
-              step="0.1"
-              min={20}
-              max={300}
-              placeholder={latest ? fmt(latest.weight, 1) : t('weight.placeholder')}
+              step={bodyUnit === 'st' ? 1 : 0.1}
+              min={LIMITS[bodyUnit].min}
+              max={LIMITS[bodyUnit].max}
+              placeholder={latest ? bodyWeightParts(latest.weight, bodyUnit).value : t('weight.placeholder', { n: EXAMPLE[bodyUnit] })}
               value={value}
               onChange={(e) => setValue(e.target.value)}
               required
             />
           </label>
+          {bodyUnit === 'st' && (
+            <label className="field">
+              <span>lb</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                step={0.1}
+                min={0}
+                max={13.9}
+                placeholder={latest ? bodyWeightParts(latest.weight, bodyUnit).extra?.value : '0'}
+                value={valueLb}
+                onChange={(e) => setValueLb(e.target.value)}
+              />
+            </label>
+          )}
           <button type="submit" className="btn-primary" disabled={!value}>
             {t('common.save')}
           </button>
@@ -97,27 +127,27 @@ export function WeightView() {
             <div className="week-stat">
               <span className="week-stat-target">{t('weight.current')}</span>
               <span className="week-stat-value">
-                {fmt(latest.weight, 1)} <span className="week-stat-unit">kg</span>
+                <BodyValue kg={latest.weight} unit={bodyUnit} />
               </span>
             </div>
             <div className="week-stat">
               <span className="week-stat-target">{t('weight.trend')}</span>
               <span className="week-stat-value">
-                {fmt(latest.trend, 1)} <span className="week-stat-unit">kg</span>
+                <BodyValue kg={latest.trend} unit={bodyUnit} />
               </span>
             </div>
             <div className="week-stat">
               <span className="week-stat-target">{t('weight.d7')}</span>
-              <span className="week-stat-value">{change7 === undefined ? '–' : <Delta v={change7} />}</span>
+              <span className="week-stat-value">{change7 === undefined ? '–' : <Delta v={change7} unit={bodyUnit} />}</span>
             </div>
             <div className="week-stat">
               <span className="week-stat-target">{t('weight.d30')}</span>
-              <span className="week-stat-value">{change30 === undefined ? '–' : <Delta v={change30} />}</span>
+              <span className="week-stat-value">{change30 === undefined ? '–' : <Delta v={change30} unit={bodyUnit} />}</span>
             </div>
           </div>
 
           {pro ? (
-            <WeightChart points={visible} />
+            <WeightChart points={visible} unit={bodyUnit} />
           ) : (
             <div className="pro-lock" onClick={openPaywall} role="button" tabIndex={0}>
               <ProBadge />
@@ -140,8 +170,8 @@ export function WeightView() {
               return (
                 <li key={p.date} className="weight-row">
                   <span className="weight-date">{formatDate(p.date)}</span>
-                  <span className="weight-value">{fmt(p.weight, 1)} kg</span>
-                  <span className="weight-trend">{t('weight.trendShort', { n: fmt(p.trend, 1) })}{p.source === 'health' ? ` · ${t('weight.fromHealth')}` : ''}</span>
+                  <span className="weight-value">{formatBodyWeight(p.weight, bodyUnit)}</span>
+                  <span className="weight-trend">{t('weight.trendShort', { n: formatBodyWeight(p.trend, bodyUnit) })}{p.source === 'health' ? ` · ${t('weight.fromHealth')}` : ''}</span>
                   <button
                     className="btn-icon"
                     onClick={() => void deleteWeight(entry.id!)}
@@ -165,29 +195,64 @@ export function WeightView() {
   );
 }
 
-function Delta({ v }: { v: number }) {
+/** Beispielwert im leeren Feld – in Pfund wäre "78,4" irreführend. */
+const EXAMPLE: Record<BodyWeightUnit, string> = { kg: '78.4', lb: '172.8', st: '12' };
+
+/** Grenzen der Eingabe: 20–300 kg, in der jeweiligen Einheit. */
+const LIMITS: Record<BodyWeightUnit, { min: number; max: number }> = {
+  kg: { min: 20, max: 300 },
+  lb: { min: 44, max: 661 },
+  st: { min: 3, max: 47 },
+};
+
+function toKg(value: number, lb: number, unit: BodyWeightUnit): number {
+  if (unit === 'kg') return value;
+  if (unit === 'lb') return lbToKg(value);
+  return stoneToKg(value, lb);
+}
+
+function BodyValue({ kg, unit }: { kg: number; unit: BodyWeightUnit }) {
+  const p = bodyWeightParts(kg, unit);
+  return (
+    <>
+      {p.value} <span className="week-stat-unit">{p.label}</span>
+      {p.extra && (
+        <>
+          {' '}{p.extra.value} <span className="week-stat-unit">{p.extra.label}</span>
+        </>
+      )}
+    </>
+  );
+}
+
+/** Veränderungen werden auch in England in Pfund gedacht, nicht in Stone. */
+function Delta({ v, unit }: { v: number; unit: BodyWeightUnit }) {
   const sign = v > 0 ? '+' : v < 0 ? '−' : '±';
   const cls = Math.abs(v) < 0.05 ? '' : v > 0 ? 'delta-up' : 'delta-down';
+  const shown = trendUnitFor(unit) === 'kg' ? Math.abs(v) : kgToLb(Math.abs(v));
   return (
     <span className={cls}>
-      {sign}{fmt(Math.abs(v), 1)} <span className="week-stat-unit">kg</span>
+      {sign}{fmt(shown, 1)} <span className="week-stat-unit">{trendUnitFor(unit)}</span>
     </span>
   );
 }
 
-function WeightChart({ points }: { points: WeightPoint[] }) {
+function WeightChart({ points, unit }: { points: WeightPoint[]; unit: BodyWeightUnit }) {
   const t = useT();
   if (points.length === 0) {
     return <p className="search-empty">{t('weight.noneInRange')}</p>;
   }
-  const values = points.flatMap((p) => [p.weight, p.trend]);
+  // In Stone wäre die Achse unlesbar (12,98 st) – darum Pfund für alles ausser metrisch.
+  const chartUnit = trendUnitFor(unit);
+  const data = chartUnit === 'kg' ? points : points.map((p) => ({ ...p, weight: kgToLb(p.weight), trend: kgToLb(p.trend) }));
+  const values = data.flatMap((p) => [p.weight, p.trend]);
   const min = Math.floor(Math.min(...values) - 1);
   const max = Math.ceil(Math.max(...values) + 1);
 
   return (
     <div className="chart">
       <ResponsiveContainer width="100%" height={240}>
-        <LineChart data={points} margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
+        <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
           <CartesianGrid stroke="var(--border)" vertical={false} />
           <XAxis
             dataKey="date"
@@ -201,7 +266,7 @@ function WeightChart({ points }: { points: WeightPoint[] }) {
           <Tooltip
             contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13 }}
             labelFormatter={(d) => formatDate(String(d))}
-            formatter={(v, name) => [`${fmt(Number(v), 1)} kg`, name === 'weight' ? t('weight.tooltipWeight') : t('weight.tooltipTrend')]}
+            formatter={(v, name) => [`${fmt(Number(v), 1)} ${chartUnit}`, name === 'weight' ? t('weight.tooltipWeight') : t('weight.tooltipTrend')]}
           />
           <Line type="monotone" dataKey="weight" stroke="var(--text-2)" strokeWidth={1} dot={{ r: 2.5, fill: 'var(--text-2)', strokeWidth: 0 }} activeDot={{ r: 4 }} isAnimationActive={false} />
           <Line type="monotone" dataKey="trend" stroke="var(--accent)" strokeWidth={2.5} dot={false} isAnimationActive={false} />

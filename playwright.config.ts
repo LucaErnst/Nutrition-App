@@ -13,7 +13,13 @@ export default defineConfig({
     locale: 'de-CH',
   },
   projects: [
-    { name: 'mobile', use: { ...devices['iPhone 13'], defaultBrowserType: 'chromium' } },
+    { name: 'mobile', use: { ...devices['iPhone 13'], defaultBrowserType: 'chromium' }, testIgnore: /imperial\.spec\.ts/ },
+    // Ein amerikanisches Gerät: Sprache und Einheiten kommen allein aus der Gerätesprache.
+    {
+      name: 'us',
+      use: { ...devices['iPhone 13'], defaultBrowserType: 'chromium', locale: 'en-US' },
+      testMatch: /imperial\.spec\.ts/,
+    },
   ],
   webServer: {
     command: 'npm run build && npx vite preview --port 4173 --strictPort',

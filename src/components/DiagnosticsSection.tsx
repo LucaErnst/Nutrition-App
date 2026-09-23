@@ -62,7 +62,7 @@ export function DiagnosticsSection() {
               </li>
             ))}
           </ul>
-          <div className="form-actions" style={{ justifyContent: 'flex-start' }}>
+          <div className="form-actions">
             <button className="btn-secondary" onClick={() => void share()}>
               {t('diag.share')}
             </button>

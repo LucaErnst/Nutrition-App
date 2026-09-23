@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { db } from '../db/db';
-import { saveSettings, upsertWeight } from '../db/hooks';
+import { saveSettings, upsertWeight, useUnitSystem } from '../db/hooks';
+import { bodyWeightUnitFor, ftInToCm, heightUnitFor, lbToKg, stoneToKg } from '../lib/units';
 import { useI18n, useT, type Language } from '../i18n';
 import { todayISO } from '../lib/date';
 import { fmt } from '../lib/nutrition';
@@ -28,11 +29,24 @@ export function Onboarding({ onDone }: Props) {
   const [sex, setSex] = useState<Sex>('male');
   const [age, setAge] = useState('');
   const [height, setHeight] = useState('');
+  /** Zoll-Anteil, nur bei Fuss/Zoll */
+  const [heightIn, setHeightIn] = useState('');
   const [weight, setWeight] = useState('');
+  /** Pfund-Anteil, nur bei Stone */
+  const [weightLb, setWeightLb] = useState('');
   const [activity, setActivity] = useState<Activity>('high');
   const [phase, setPhase] = useState<Phase>('bulk');
   const [trainingDays, setTrainingDays] = useState<number[]>([1, 2, 4, 5]);
   const [error, setError] = useState<string | null>(null);
+
+  // Körpermasse werden in Zentimetern und Kilogramm gerechnet; eingegeben wird in der
+  // Einheit des Geräts (USA: lb und ft/in, England: st und ft/in).
+  const system = useUnitSystem();
+  const bodyUnit = bodyWeightUnitFor(system);
+  const hUnit = heightUnitFor(system);
+  const heightCm = hUnit === 'cm' ? num(height) : ftInToCm(num(height), num(heightIn));
+  const weightKg =
+    bodyUnit === 'kg' ? num(weight) : bodyUnit === 'lb' ? lbToKg(num(weight)) : stoneToKg(num(weight), num(weightLb));
 
   // Vorschlag (editierbar)
   const [trainKcal, setTrainKcal] = useState('');
@@ -57,7 +71,7 @@ export function Onboarding({ onDone }: Props) {
         fat_min_g: num(fatMin),
         fat_max_g: num(fatMax),
       });
-      if (num(weight) > 0) await upsertWeight(todayISO(), num(weight));
+      if (weightKg > 0) await upsertWeight(todayISO(), Math.round(weightKg * 10) / 10);
       await saveSettings({ training_weekdays: trainingDays, water_goal_ml: num(water) || undefined, onboarding_done: true });
     } else {
       await saveSettings({ onboarding_done: true });
@@ -71,9 +85,9 @@ export function Onboarding({ onDone }: Props) {
 
   function toBody(ev: FormEvent) {
     ev.preventDefault();
-    if (num(age) <= 0 || num(height) <= 0 || num(weight) <= 0) return setError(t('ob.errBody'));
+    if (num(age) <= 0 || heightCm <= 0 || weightKg <= 0) return setError(t('ob.errBody'));
     setError(null);
-    const g = suggestGoals({ sex, age: num(age), height_cm: num(height), weight_kg: num(weight), activity, phase, training_days: trainingDays.length });
+    const g = suggestGoals({ sex, age: num(age), height_cm: heightCm, weight_kg: weightKg, activity, phase, training_days: trainingDays.length });
     setTrainKcal(String(g.training_day_kcal));
     setRestKcal(String(g.rest_day_kcal));
     setProtein(String(g.protein_g));
@@ -140,13 +154,44 @@ export function Onboarding({ onDone }: Props) {
                 <input type="number" inputMode="numeric" min={10} max={100} value={age} onChange={(e) => setAge(e.target.value)} required />
               </label>
               <label className="field">
-                <span>{t('ob.height')}</span>
-                <input type="number" inputMode="numeric" min={100} max={250} value={height} onChange={(e) => setHeight(e.target.value)} required />
+                <span>{t('ob.height', { unit: hUnit === 'cm' ? 'cm' : 'ft' })}</span>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={hUnit === 'cm' ? 100 : 3}
+                  max={hUnit === 'cm' ? 250 : 8}
+                  value={height}
+                  onChange={(e) => setHeight(e.target.value)}
+                  required
+                />
               </label>
+              {hUnit === 'ftin' && (
+                <label className="field">
+                  <span>in</span>
+                  <input type="number" inputMode="numeric" min={0} max={11} value={heightIn} onChange={(e) => setHeightIn(e.target.value)} />
+                </label>
+              )}
+            </div>
+            <div className="field-row">
               <label className="field">
-                <span>{t('ob.weight')}</span>
-                <input type="number" inputMode="decimal" step="0.1" min={30} max={300} value={weight} onChange={(e) => setWeight(e.target.value)} required />
+                <span>{t('ob.weight', { unit: bodyUnit === 'st' ? 'st' : bodyUnit })}</span>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  step={bodyUnit === 'st' ? 1 : 0.1}
+                  min={bodyUnit === 'kg' ? 30 : bodyUnit === 'lb' ? 66 : 4}
+                  max={bodyUnit === 'kg' ? 300 : bodyUnit === 'lb' ? 661 : 47}
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  required
+                />
               </label>
+              {bodyUnit === 'st' && (
+                <label className="field">
+                  <span>lb</span>
+                  <input type="number" inputMode="decimal" step={0.1} min={0} max={13.9} value={weightLb} onChange={(e) => setWeightLb(e.target.value)} />
+                </label>
+              )}
             </div>
             <label className="field">
               <span>{t('ob.activity')}</span>

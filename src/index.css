@@ -2601,3 +2601,31 @@ body::-webkit-scrollbar,
 .paywall-legal {
   justify-content: center;
 }
+
+/* ---------------------------------------------------------------------------
+   Mehr: Bedienelemente mittig. Die Karten dort sind Einstellungen, keine Listen –
+   linksbündige Knöpfe wirken angeheftet, mittig sitzen sie in ihrem Feld.
+   Gilt nur für diese Ansicht, Dialoge und Tagebuch bleiben unberührt.
+   ------------------------------------------------------------------------ */
+.goals .chips,
+.goals .form-actions,
+.goals .db-item-actions,
+.goals .legal-links {
+  justify-content: center;
+}
+
+.goals .section > .btn-primary,
+.goals .section > .btn-secondary,
+.goals .section > .btn-link,
+.goals .btn-centered {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Sprachwahl steht jetzt unter der Diagnose und trägt keine Kopfzeile mehr.
+   Bewusst nur diese eine – die Segment-Schalter in Formularen bleiben breit. */
+.segmented-centered {
+  margin: 0 auto 8px;
+  width: fit-content;
+}

@@ -88,7 +88,7 @@ export function BackupSection() {
           {t('backup.auto', { when: settings?.last_auto_backup_at ? formatWhen(settings.last_auto_backup_at) : t('backup.never') })}
         </p>
       )}
-      <div className="form-actions" style={{ justifyContent: 'flex-start', marginTop: 12 }}>
+      <div className="form-actions" style={{ marginTop: 12 }}>
         <button className="btn-primary" onClick={() => void doExport()} disabled={busy}>
           {t('backup.export')}
         </button>
@@ -120,7 +120,7 @@ export function BackupSection() {
             })}
           </p>
           <p className="form-error">{t('backup.warning')}</p>
-          <div className="form-actions" style={{ justifyContent: 'flex-start' }}>
+          <div className="form-actions">
             <button className="btn-secondary" onClick={() => setPending(null)} disabled={busy}>
               {t('common.cancel')}
             </button>

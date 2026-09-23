@@ -118,6 +118,9 @@ Qualitätsgewinn; „Optional“ = nice-to-have.
   festen Faktor um (`src/lib/units.ts`). US- und UK-Flüssigunzen tragen das Land im Code ('floz_us' /
   'floz_uk'), damit ein eingetragener Posten sich nie ändert, wenn der Nutzer das System umstellt.
   Einstellung unter „Mehr → Einheiten“ (Standard aus der Gerätesprache) bestimmt nur Reihenfolge und Vorgabe.
+  Körpermasse folgen derselben Wahl: Gewicht in kg, lb oder st + lb (England), Grösse in cm oder ft/in im
+  Onboarding. Gespeichert bleiben Kilogramm und Zentimeter; Diagramm und Veränderungen zeigen nie Stone,
+  sondern Pfund. Die Phasen-Auswertung rechnet weiter in Prozent und Kilogramm und übersetzt nur die Anzeige.
 - Wasser ✓ (0.8.0) – Zeile unter der Tagesbilanz mit +250/+500 ml, Undo, Tagesziel unter „Mehr“ (Standard 3 l);
   Ø Wasser in der Wochenansicht und im Fazit; im Backup enthalten (Schema v5).
 

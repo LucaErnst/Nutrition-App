@@ -194,3 +194,112 @@ function regionOf(tag: string | undefined): string | undefined {
   // en-US, en-GB, de-CH … – die Region ist der zweistellige Teil.
   return parts.slice(1).find((p) => p.length === 2);
 }
+
+/* ---------------------------------------------------------------------------
+ * Körpermasse: Gewicht und Grösse. Gespeichert wird immer in Kilogramm bzw.
+ * Zentimetern – die Einheit ist reine Anzeige- und Eingabesache und folgt dem
+ * gewählten System (England wiegt in Stone, die USA in Pfund).
+ * ------------------------------------------------------------------------ */
+
+export type BodyWeightUnit = 'kg' | 'lb' | 'st';
+export type HeightUnit = 'cm' | 'ftin';
+
+const LB_PER_KG = 2.2046226218487757;
+const LB_PER_STONE = 14;
+const CM_PER_INCH = 2.54;
+
+export function bodyWeightUnitFor(system: UnitSystem): BodyWeightUnit {
+  if (system === 'us') return 'lb';
+  if (system === 'uk') return 'st';
+  return 'kg';
+}
+
+export function heightUnitFor(system: UnitSystem): HeightUnit {
+  return system === 'metric' ? 'cm' : 'ftin';
+}
+
+export function kgToLb(kg: number): number {
+  return kg * LB_PER_KG;
+}
+
+export function lbToKg(lb: number): number {
+  return lb / LB_PER_KG;
+}
+
+/** Stone und Pfund, wie eine britische Waage es anzeigt. */
+export function kgToStone(kg: number): { st: number; lb: number } {
+  const totalLb = Math.round(kgToLb(kg) * 10) / 10;
+  let st = Math.floor(totalLb / LB_PER_STONE);
+  let lb = Math.round((totalLb - st * LB_PER_STONE) * 10) / 10;
+  // Gerundet darf nie "12 st 14 lb" herauskommen.
+  if (lb >= LB_PER_STONE) {
+    st += 1;
+    lb = 0;
+  }
+  return { st, lb };
+}
+
+export function stoneToKg(st: number, lb: number): number {
+  return lbToKg(st * LB_PER_STONE + lb);
+}
+
+export function cmToFtIn(cm: number): { ft: number; in: number } {
+  const totalIn = Math.round(cm / CM_PER_INCH);
+  const ft = Math.floor(totalIn / 12);
+  return { ft, in: totalIn - ft * 12 };
+}
+
+export function ftInToCm(ft: number, inch: number): number {
+  return Math.round((ft * 12 + inch) * CM_PER_INCH * 10) / 10;
+}
+
+/** Körpergewicht in der Einheit des Nutzers – zur Anzeige, gespeichert bleibt es Kilogramm. */
+export function fromKg(kg: number, unit: BodyWeightUnit): number {
+  return unit === 'kg' ? kg : kgToLb(kg);
+}
+
+function n(value: number, digits = 1): string {
+  return value.toLocaleString(getLocale(), { maximumFractionDigits: digits, minimumFractionDigits: digits });
+}
+
+/** Zahl und Einheit getrennt, damit die Oberfläche die Einheit kleiner setzen kann. */
+export interface BodyWeightParts {
+  value: string;
+  label: string;
+  /** Nur bei Stone: der Pfund-Anteil. */
+  extra?: { value: string; label: string };
+}
+
+export function bodyWeightParts(kg: number, unit: BodyWeightUnit): BodyWeightParts {
+  if (unit === 'kg') return { value: n(kg), label: 'kg' };
+  if (unit === 'lb') return { value: n(kgToLb(kg)), label: 'lb' };
+  const { st, lb } = kgToStone(kg);
+  return { value: String(st), label: 'st', extra: { value: n(lb), label: 'lb' } };
+}
+
+export function formatBodyWeight(kg: number, unit: BodyWeightUnit): string {
+  const p = bodyWeightParts(kg, unit);
+  return p.extra ? `${p.value} ${p.label} ${p.extra.value} ${p.extra.label}` : `${p.value} ${p.label}`;
+}
+
+/** Einheit, in der Diagramme und Veränderungen dargestellt werden – Stone taugt dafür nicht. */
+export function trendUnitFor(unit: BodyWeightUnit): 'kg' | 'lb' {
+  return unit === 'kg' ? 'kg' : 'lb';
+}
+
+/**
+ * Veränderungen werden auch in England in Pfund gedacht – "+0 st 2 lb" liest niemand gern.
+ * Das Vorzeichen bleibt immer sichtbar, auch bei null.
+ */
+export function formatBodyDelta(kgDelta: number, unit: BodyWeightUnit): string {
+  const inUnit = unit === 'kg' ? kgDelta : kgToLb(kgDelta);
+  const label = unit === 'kg' ? 'kg' : 'lb';
+  const sign = inUnit > 0 ? '+' : inUnit < 0 ? '−' : '±';
+  return `${sign}${n(Math.abs(inUnit))} ${label}`;
+}
+
+export function formatHeight(cm: number, unit: HeightUnit): string {
+  if (unit === 'cm') return `${Math.round(cm)} cm`;
+  const { ft, in: inch } = cmToFtIn(cm);
+  return `${ft}′ ${inch}″`;
+}

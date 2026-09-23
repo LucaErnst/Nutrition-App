@@ -37,23 +37,8 @@ export function MoreView() {
   return (
     <div className="goals">
       <section className="card section">
-        <div className="section-head">
-          <h2>{t('more.language')}</h2>
-          <div className="segmented segmented-sm" role="radiogroup" aria-label={t('more.language')}>
-            {LANGS.map((l) => (
-              <label key={l.id} className={lang === l.id ? 'active' : ''}>
-                <input type="radio" name="language" checked={lang === l.id} onChange={() => setLanguage(l.id)} />
-                {l.label}
-              </label>
-            ))}
-          </div>
-        </div>
-        <p className="search-hint">{t('more.languageHint')}</p>
-      </section>
-
-      <section className="card section">
         <h2>{t('more.water')}</h2>
-        <div className="field" style={{ maxWidth: 260, marginTop: 8 }}>
+        <div className="field" style={{ maxWidth: 260, marginTop: 8, marginInline: 'auto' }}>
           <span>{t('more.waterGoal')}</span>
           <div className="stepper">
             <button type="button" className="stepper-btn" onClick={() => commitGoal(waterGoal - 250)} aria-label={t('picker.decrease')} disabled={waterGoal <= 500}>
@@ -98,6 +83,20 @@ export function MoreView() {
       <GoalsView />
       <BackupSection />
       <DiagnosticsSection />
+
+      <section className="card section">
+        <h2>{t('more.language')}</h2>
+        <div className="segmented segmented-centered" role="radiogroup" aria-label={t('more.language')}>
+          {LANGS.map((l) => (
+            <label key={l.id} className={lang === l.id ? 'active' : ''}>
+              <input type="radio" name="language" checked={lang === l.id} onChange={() => setLanguage(l.id)} />
+              {l.label}
+            </label>
+          ))}
+        </div>
+        <p className="search-hint">{t('more.languageHint')}</p>
+      </section>
+
       <section className="card section">
         <h2>{t('more.legal')}</h2>
         <p className="legal-links">

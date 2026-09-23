@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { db } from '../db/db';
 import type { DailyGoal } from '../db/types';
-import { useDaySummaries, useWeights } from '../db/hooks';
+import { useDaySummaries, useUnitSystem, useWeights } from '../db/hooks';
+import { bodyWeightUnitFor, formatBodyDelta, formatBodyWeight, type BodyWeightUnit } from '../lib/units';
 import { addDays, formatDate, formatShortDate, todayISO } from '../lib/date';
 import { fmt } from '../lib/nutrition';
 import { evaluatePhase, type PhaseReport } from '../lib/phase';
@@ -23,6 +24,7 @@ export function PhaseReview({ goal, onClose }: Props) {
   for (let d = goal.start_date; d <= end; d = addDays(d, 1)) dates.push(d);
   const days = useDaySummaries(dates);
   const weights = useWeights();
+  const bodyUnit = bodyWeightUnitFor(useUnitSystem());
   const [applied, setApplied] = useState(false);
 
   const report: PhaseReport | undefined = days && weights ? evaluatePhase({ goal, days, weights, today }) : undefined;
@@ -63,9 +65,9 @@ export function PhaseReview({ goal, onClose }: Props) {
             <>
               <p className="phase-weight-line">
                 {t('phase.weightLine', {
-                  start: fmt(report.weight.startTrend, 1),
-                  now: fmt(report.weight.currentTrend, 1),
-                  delta: sign(Math.round((report.weight.deltaKg ?? 0) * 10) / 10),
+                  start: formatBodyWeight(report.weight.startTrend, bodyUnit),
+                  now: formatBodyWeight(report.weight.currentTrend, bodyUnit),
+                  delta: formatBodyDelta(report.weight.deltaKg ?? 0, bodyUnit),
                   weeks: fmt(report.elapsedWeeks, 1),
                 })}
               </p>
@@ -92,7 +94,7 @@ export function PhaseReview({ goal, onClose }: Props) {
                 </span>
                 <span className="phase-week-values">
                   <strong>{w.avgKcal !== undefined ? fmt(w.avgKcal) : '–'}</strong>
-                  <span className="phase-week-trend">{w.trendKg !== undefined ? `${fmt(w.trendKg, 1)} kg` : '–'}</span>
+                  <span className="phase-week-trend">{w.trendKg !== undefined ? formatBodyWeight(w.trendKg, bodyUnit) : '–'}</span>
                 </span>
               </li>
             ))}
@@ -105,7 +107,7 @@ export function PhaseReview({ goal, onClose }: Props) {
                 <span className="conclusion-icon" aria-hidden="true">
                   {m.kind === 'ok' ? '✓' : m.kind === 'warn' ? '!' : 'i'}
                 </span>
-                {t(m.key, fmtParams(m.params))}
+                {t(m.key, fmtParams(m.params, bodyUnit))}
               </li>
             ))}
           </ul>
@@ -136,9 +138,19 @@ export function PhaseReview({ goal, onClose }: Props) {
 }
 
 /** Zahlen in Meldungen nach Sprache formatieren (0.29 → 0,29) */
-function fmtParams(p?: Record<string, string | number>): Record<string, string | number> | undefined {
+/**
+ * Zahlen der Regel-Texte formatieren. 'kg' ist dabei eine Gewichtsangabe und bekommt die
+ * Einheit des Nutzers mit – die Regeln selbst rechnen weiter in Prozent und Kilogramm.
+ */
+function fmtParams(p?: Record<string, string | number>, bodyUnit: BodyWeightUnit = 'kg'): Record<string, string | number> | undefined {
   if (!p) return p;
-  return Object.fromEntries(Object.entries(p).map(([k, v]) => [k, typeof v === 'number' ? fmt(v, Number.isInteger(v) ? 0 : 2) : v]));
+  return Object.fromEntries(
+    Object.entries(p).map(([k, v]) => {
+      if (typeof v !== 'number') return [k, v];
+      if (k === 'kg') return [k, formatBodyWeight(v, bodyUnit)];
+      return [k, fmt(v, Number.isInteger(v) ? 0 : 2)];
+    }),
+  );
 }
 
 function Stat({ label, value, unit, target, prefix = '' }: { label: string; value?: number; unit: string; target?: number; prefix?: string }) {
