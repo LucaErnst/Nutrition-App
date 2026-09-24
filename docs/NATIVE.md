@@ -114,3 +114,17 @@ Das Target wurde mit xcodeproj (Ruby, aus CocoaPods) angelegt; App Group und Ent
 `App/App.entitlements` bzw. `SeriousWidgets/SeriousWidgets.entitlements`, das automatische Signing
 registriert die App Group selbst. Beide Targets müssen dieselbe MARKETING_VERSION/CURRENT_PROJECT_VERSION
 haben, sonst lehnt App Store Connect den Upload ab.
+
+## Widget-Layout anschauen (ohne die App zu installieren)
+
+```bash
+xcrun simctl boot "iPhone 18 Pro"
+tools/widget-preview.sh
+```
+
+Die App selbst läuft nicht im Simulator: Der Barcode-Scanner (Google ML Kit) liefert keine
+arm64-Simulator-Variante, darum setzt CocoaPods `EXCLUDED_ARCHS[sdk=iphonesimulator*] = arm64`
+und der Build wird x86_64 – auf Apple Silicon nicht ausführbar. Die Widget-Quellen hängen an
+keinem Pod; `tools/widget-preview.sh` kompiliert sie unverändert in eine winzige Hülle
+(`tools/WidgetPreviewApp.swift`) und zeigt Medium und Small mit den Platzhalterwerten aus
+`Snapshot.placeholder`. Danach `xcrun simctl io booted screenshot` für ein Bild.

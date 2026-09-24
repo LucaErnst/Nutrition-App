@@ -151,7 +151,7 @@ struct MediumView: View {
             // wo der Blick zuerst hinfällt, und nichts hängt mehr in einer Ecke.
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 6) {
-                    BrandLogo(size: 15)
+                    BrandLogo(size: 19)
                     Text("Serious Nutrition").font(.system(size: 11, weight: .semibold)).foregroundStyle(Brand.text2)
                     Spacer(minLength: 8)
                     if let left = s.weekLeftToday, let days = s.weekDaysLeft {
@@ -172,9 +172,14 @@ struct MediumView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 9) {
+                        // Die Wasserzeile sitzt etwas tiefer, damit ihr Balken auf Höhe des
+                        // Kalorienbalkens liegt – und die Knöpfe darunter bündig mit der
+                        // Proteinleiste enden, ohne dass dazwischen ein Loch klafft.
                         MetricRow(label: L.t(de, "Water", "Wasser"),
                                   value: String(format: "%.2g / %.2g l", Double(s.waterMl) / 1000, Double(s.waterGoalMl) / 1000),
                                   progress: s.waterProgress, color: Brand.water)
+                            .padding(.top, 12)
+                        Spacer(minLength: 0)
                         if #available(iOS 17.0, *) {
                             HStack(spacing: 6) {
                                 WaterButton(ml: 250, de: de)
