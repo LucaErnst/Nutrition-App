@@ -474,9 +474,10 @@ button {
 .segmented label {
   flex: 1;
   text-align: center;
-  padding: 6px;
+  padding: 7px 12px;
   border-radius: 6px;
   font-size: 13px;
+  line-height: 1.25;
   cursor: pointer;
   color: var(--text-2);
 }
@@ -2358,6 +2359,7 @@ body {
 .btn-link,
 .stepper-btn,
 .chip,
+.segmented label,
 .meal-chevron {
   position: relative;
 }
@@ -2367,6 +2369,7 @@ body {
 .btn-link::before,
 .stepper-btn::before,
 .chip::before,
+.segmented label::before,
 .meal-chevron::before {
   content: '';
   position: absolute;
@@ -2376,10 +2379,11 @@ body {
   transform: translate(-50%, -50%);
 }
 
+/* Grosse Schaltflächen und Eingabefelder tragen die 44 pt sichtbar; Segment-Schalter
+   bekommen sie über die Hitbox oben, damit der Knopf eng am Wort sitzt. */
 .btn-primary,
 .btn-secondary,
-.search-input,
-.segmented label {
+.search-input {
   min-height: 44px;
 }
 
