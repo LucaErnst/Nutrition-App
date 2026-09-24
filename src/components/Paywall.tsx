@@ -67,7 +67,7 @@ function Paywall({ onClose }: { onClose: () => void }) {
     <Modal title={t('pro.title')} onClose={onClose}>
       <div className="paywall">
         <div className="paywall-brand">
-          <span className="paywall-mark">BS</span>
+          <img className="paywall-mark" src={`${import.meta.env.BASE_URL}icon-192.png`} alt="" width={44} height={44} />
           <div>
             <div className="paywall-name">Serious Nutrition Pro</div>
             <div className="search-hint">{t('pro.tagline')}</div>

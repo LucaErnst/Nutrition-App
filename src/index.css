@@ -2543,12 +2543,9 @@ body::-webkit-scrollbar,
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
+  /* Das App-Icon selbst, nicht ein Kürzel – so erkennt man auf der Paywall, wofür man zahlt. */
+  object-fit: cover;
   background: #0f1115;
-  color: #e6c46a;
   flex: none;
 }
 
