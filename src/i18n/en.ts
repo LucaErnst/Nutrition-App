@@ -292,6 +292,8 @@ export const en = {
   'pro.sectionHint': 'Pro is a one-time purchase that unlocks Apple Health, the phase review, widgets, templates, portions, the trend chart and CSV export.',
   'pro.sectionEarly': 'You were here before Pro existed – everything stays free for you. Thank you.',
   'pro.sectionActive': 'Pro is active. Thank you for supporting the app.',
+  'pro.unlockedList': 'Health · Phase review · Widgets · Templates · Portions · Trend · CSV',
+  'diag.summaryOk': 'No errors logged.',
   'pro.open': 'See what’s in Pro',
   'pro.previewOn': 'Preview the app as a free user',
   'pro.previewOff': 'Back to Pro',

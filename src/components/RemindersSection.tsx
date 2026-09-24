@@ -74,7 +74,7 @@ export function RemindersSection() {
             <input type="checkbox" checked={r.enabled} onChange={(e) => void toggleEnabled(e.target.checked)} />
             {r.enabled ? t('rem.on') : t('rem.off')}
           </label>
-          {r.enabled && (
+          {r.enabled ? (
             <button
               className={`btn-icon meal-chevron ${open ? 'open' : ''}`}
               onClick={() => setOpen((v) => !v)}
@@ -83,6 +83,10 @@ export function RemindersSection() {
             >
               ›
             </button>
+          ) : (
+            // Platz für den Pfeil bleibt reserviert, sonst springt der Schalter beim
+            // Ein- und Ausschalten und steht nicht mehr über dem von Apple Health.
+            <span className="chevron-slot" aria-hidden="true" />
           )}
         </div>
       </div>

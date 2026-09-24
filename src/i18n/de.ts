@@ -276,6 +276,8 @@ export const de: Record<MessageKey, string> = {
   'pro.sectionHint': 'Pro ist ein Einmalkauf und schaltet Apple Health, die Phasen-Auswertung, Widgets, Vorlagen, Portionen, das Trend-Diagramm und den CSV-Export frei.',
   'pro.sectionEarly': 'Du warst vor Pro schon da – für dich bleibt alles gratis. Danke.',
   'pro.sectionActive': 'Pro ist aktiv. Danke, dass du die App unterstützt.',
+  'pro.unlockedList': 'Health · Auswertung · Widgets · Vorlagen · Portionen · Trend · CSV',
+  'diag.summaryOk': 'Keine Fehler protokolliert.',
   'pro.open': 'Was in Pro steckt',
   'pro.previewOn': 'App als Free-Nutzer ansehen',
   'pro.previewOff': 'Zurück zu Pro',

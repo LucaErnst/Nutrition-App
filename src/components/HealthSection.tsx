@@ -53,10 +53,15 @@ export function HealthSection() {
         <h2>
           {t('health.title')} {!pro && <ProBadge />}
         </h2>
-        <label className="checkbox">
-          <input type="checkbox" checked={enabled} disabled={busy} onChange={(e) => void toggle(e.target.checked)} />
-          {enabled ? t('rem.on') : t('rem.off')}
-        </label>
+        <div className="meal-header-right">
+          <label className="checkbox">
+            <input type="checkbox" checked={enabled} disabled={busy} onChange={(e) => void toggle(e.target.checked)} />
+            {enabled ? t('rem.on') : t('rem.off')}
+          </label>
+          {/* Platzhalter in der Breite des Aufklapp-Pfeils, damit der Schalter auf einer
+              Linie mit dem der Erinnerungen steht. */}
+          <span className="chevron-slot" aria-hidden="true" />
+        </div>
       </div>
       <p className="search-hint">{busy ? t('health.syncing') : note ?? t('health.hint')}</p>
     </section>

@@ -121,10 +121,13 @@ struct SmallView: View {
     var de: Bool { s.isGerman }
     var body: some View {
         if !e.hasData { NoDataView(de: de) } else if s.pro == false { ProLockView(de: de) } else {
+            // Im kleinen Widget bleibt die Marke weg – hier zählt nur die Zahl.
             VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 26, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit()
+                        .lineLimit(1).minimumScaleFactor(0.7)
                     Text(s.kcalTarget == nil ? "kcal" : L.t(de, "kcal left", "kcal übrig")).font(.system(size: 11, weight: .medium)).foregroundStyle(Brand.text2)
+                        .lineLimit(1)
                 }
                 Bar(progress: s.kcalProgress, color: Brand.kcal)
                 MetricRow(label: L.t(de, "Protein", "Protein"),

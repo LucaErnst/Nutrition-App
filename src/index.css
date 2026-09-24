@@ -2630,3 +2630,61 @@ body::-webkit-scrollbar,
   margin: 0 auto 8px;
   width: fit-content;
 }
+
+/* ---------------------------------------------------------------------------
+   Mehr → Pro, gekaufter Zustand. Kein Verkaufstext mehr, sondern eine ruhige
+   Bestätigung mit Goldakzent – dasselbe Gold wie im Widget und auf dem Abzeichen.
+   ------------------------------------------------------------------------ */
+.pro-active {
+  border: 1px solid rgba(230, 196, 106, 0.32);
+  background:
+    linear-gradient(158deg, rgba(230, 196, 106, 0.12), rgba(230, 196, 106, 0) 58%),
+    var(--surface);
+}
+
+.pro-hero {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pro-hero-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  flex: none;
+  object-fit: cover;
+}
+
+.pro-hero-text {
+  min-width: 0;
+}
+
+.pro-hero-title {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.pro-hero-sub {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.pro-unlocked {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: rgba(230, 196, 106, 0.85);
+  letter-spacing: 0.01em;
+}
+
+/* Platzhalter in der Breite eines Icon-Knopfs: hält Schalter ohne Aufklapp-Pfeil
+   auf derselben Linie wie die mit Pfeil (Apple Health neben Erinnerungen). */
+.chevron-slot {
+  display: inline-block;
+  width: 32px;
+  flex: none;
+}
