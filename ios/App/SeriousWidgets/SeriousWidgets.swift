@@ -75,6 +75,20 @@ struct BrandLogo: View {
     }
 }
 
+/// Beschriftung und Wert einer Kennzahl – ohne Balken, damit das Raster im mittleren
+/// Widget Zeile und Balken getrennt ausrichten kann.
+struct LabelValue: View {
+    let label: String
+    let value: String
+    var body: some View {
+        HStack(spacing: 4) {
+            Text(label).font(.system(size: 11, weight: .medium)).foregroundStyle(Brand.text2)
+            Spacer(minLength: 6)
+            Text(value).font(.system(size: 11, weight: .semibold)).foregroundStyle(Brand.text).monospacedDigit()
+        }
+    }
+}
+
 struct MetricRow: View {
     let label: String
     let value: String
@@ -149,9 +163,10 @@ struct MediumView: View {
     var de: Bool { s.isGerman }
     var body: some View {
         if !e.hasData { NoDataView(de: de) } else if s.pro == false { ProLockView(de: de) } else {
-            // Kopfzeile über die ganze Breite, darunter zwei Spalten mit gleicher Oberkante:
-            // links die Tagesbilanz, rechts Wasser. So steht die grosse Zahl oben links,
-            // wo der Blick zuerst hinfällt, und nichts hängt mehr in einer Ecke.
+            // Kopfzeile, darunter ein Raster mit drei Zeilen. Das Raster richtet die Spalten
+            // aneinander aus, statt sie über feste Abstände zu schieben: Der Wasserbalken liegt
+            // auf Höhe des Kalorienbalkens, die Knöpfe auf Höhe der Proteinleiste – und das
+            // unabhängig davon, wie gross das Widget auf dem jeweiligen iPhone ausfällt.
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 6) {
                     BrandLogo(size: 19)
@@ -163,34 +178,39 @@ struct MediumView: View {
                     }
                 }
 
-                HStack(alignment: .top, spacing: 16) {
-                    VStack(alignment: .leading, spacing: 9) {
+                // Auf grossen iPhones ist die Karte höher als der Inhalt. Die übrige Höhe
+                // verteilt sich gleichmässig über und unter dem Raster, statt unten zu hängen.
+                Spacer(minLength: 0)
+
+                Grid(alignment: .bottomLeading, horizontalSpacing: 16, verticalSpacing: 9) {
+                    GridRow {
                         HStack(alignment: .firstTextBaseline, spacing: 5) {
                             Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 32, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit()
+                                .lineLimit(1).minimumScaleFactor(0.7)
                             Text(s.kcalTarget == nil ? "kcal" : L.t(de, "kcal left", "kcal übrig")).font(.system(size: 11, weight: .medium)).foregroundStyle(Brand.text2)
+                                .lineLimit(1)
                         }
+                        LabelValue(label: L.t(de, "Water", "Wasser"),
+                                   value: String(format: "%.2g / %.2g l", Double(s.waterMl) / 1000, Double(s.waterGoalMl) / 1000))
+                            .frame(width: 132)
+                    }
+                    GridRow {
                         Bar(progress: s.kcalProgress, color: Brand.kcal)
+                        Bar(progress: s.waterProgress, color: Brand.water).frame(width: 132)
+                    }
+                    GridRow {
                         MetricRow(label: "Protein", value: s.proteinTarget.map { "\(s.protein) / \($0) g" } ?? "\(s.protein) g",
                                   progress: s.proteinProgress, color: Brand.protein)
-                    }
-
-                    VStack(alignment: .leading, spacing: 9) {
-                        // Die Wasserzeile sitzt etwas tiefer, damit ihr Balken auf Höhe des
-                        // Kalorienbalkens liegt – und die Knöpfe darunter bündig mit der
-                        // Proteinleiste enden, ohne dass dazwischen ein Loch klafft.
-                        MetricRow(label: L.t(de, "Water", "Wasser"),
-                                  value: String(format: "%.2g / %.2g l", Double(s.waterMl) / 1000, Double(s.waterGoalMl) / 1000),
-                                  progress: s.waterProgress, color: Brand.water)
-                            .padding(.top, 12)
-                        Spacer(minLength: 0)
                         if #available(iOS 17.0, *) {
                             HStack(spacing: 6) {
                                 WaterButton(ml: 250, de: de)
                                 WaterButton(ml: 500, de: de)
                             }
+                            .frame(width: 132)
+                        } else {
+                            Color.clear.frame(width: 132, height: 0)
                         }
                     }
-                    .frame(width: 132)
                 }
 
                 Spacer(minLength: 0)

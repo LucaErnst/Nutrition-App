@@ -128,3 +128,13 @@ und der Build wird x86_64 – auf Apple Silicon nicht ausführbar. Die Widget-Qu
 keinem Pod; `tools/widget-preview.sh` kompiliert sie unverändert in eine winzige Hülle
 (`tools/WidgetPreviewApp.swift`) und zeigt Medium und Small mit den Platzhalterwerten aus
 `Snapshot.placeholder`. Danach `xcrun simctl io booted screenshot` für ein Bild.
+
+**Stolperstein Asset-Katalog:** Der Verweis auf `SeriousWidgets/Assets.xcassets` muss im
+Projekt den Pfad `Assets.xcassets` tragen – die Gruppe trägt bereits `SeriousWidgets`. Mit dem
+doppelten Pfad baut Xcode ohne Fehler weiter und warnt nur („Failed to read file attributes"),
+das Widget landet dann ohne `Assets.car` auf dem Gerät und `Image("Logo")` bleibt leer. Prüfen
+lässt sich das am fertigen Archiv:
+
+```bash
+find <archiv> -name SeriousWidgets.appex -exec ls {}/Assets.car \;
+```
