@@ -55,31 +55,41 @@ export const UNITS: Record<Unit, UnitDef> = {
 
 export const ALL_UNITS = Object.keys(UNITS) as Unit[];
 
+/**
+ * Definition einer Einheit – mit Rückfall für Codes, die wir nicht kennen. Wiederhergestellte
+ * Backups können alles enthalten; ein unbekannter Code darf die App nie weissbluten lassen.
+ * Der Rückfall rechnet 1:1 in die Basis (wie vor der Einheiten-Umstellung) und zeigt den Code
+ * unverändert an, statt eine falsche Einheit vorzutäuschen.
+ */
+export function unitDef(unit: Unit): UnitDef {
+  return UNITS[unit] ?? { ...UNITS.g, label: String(unit) };
+}
+
 export function isPieceUnit(unit: Unit): boolean {
-  return UNITS[unit].kind === 'piece';
+  return unitDef(unit).kind === 'piece';
 }
 
 /** Menge in der Basiseinheit (g bzw. ml). Stück muss der Aufrufer selbst auflösen. */
 export function toBase(amount: number, unit: Unit): number {
-  return amount * UNITS[unit].base;
+  return amount * unitDef(unit).base;
 }
 
 /** Umgekehrt: aus g/ml die Menge in der gewünschten Einheit. */
 export function fromBase(base: number, unit: Unit): number {
-  const f = UNITS[unit].base;
+  const f = unitDef(unit).base;
   return f === 0 ? base : base / f;
 }
 
 /** Schrittweite: grob, unterhalb einer Schwelle feiner. */
 export function stepFor(unit: Unit, current: number): number {
-  const d = UNITS[unit];
+  const d = unitDef(unit);
   if (d.fineBelow !== undefined && d.fineStep !== undefined && current < d.fineBelow) return d.fineStep;
   return d.step;
 }
 
 /** Auf die Genauigkeit der Einheit runden. */
 export function roundTo(amount: number, unit: Unit): number {
-  const f = 10 ** UNITS[unit].digits;
+  const f = 10 ** unitDef(unit).digits;
   return Math.round(amount * f) / f;
 }
 
@@ -91,17 +101,17 @@ export function roundTo(amount: number, unit: Unit): number {
 export function convertAmount(amount: number, from: Unit, to: Unit): number {
   if (from === to) return amount;
   if (isPieceUnit(from) || isPieceUnit(to)) return amount;
-  return roundTo(toBase(amount, from) / UNITS[to].base, to);
+  return roundTo(toBase(amount, from) / unitDef(to).base, to);
 }
 
 /** Menge in der für die Einheit sinnvollen Genauigkeit – 250 g, aber 0.75 cup. */
 export function fmtAmount(amount: number, unit: Unit): string {
-  return amount.toLocaleString(getLocale(), { maximumFractionDigits: UNITS[unit].digits });
+  return amount.toLocaleString(getLocale(), { maximumFractionDigits: unitDef(unit).digits });
 }
 
 /** Beschriftung für Export-Dateien: eindeutig, auch ohne Kenntnis des Systems. */
 export function csvUnitLabel(unit: Unit): string {
-  const d = UNITS[unit];
+  const d = unitDef(unit);
   if (d.kind === 'piece') return 'pc';
   if (d.group === 'us') return `${d.label} (US)`;
   if (d.group === 'uk') return `${d.label} (UK)`;
@@ -144,7 +154,8 @@ export function unitChoicesForFood(kind: UnitType, system: UnitSystem): UnitChoi
 
 /** Beschriftung einer Einheit; 'Stück' wird übersetzt hereingereicht. */
 export function labelFor(unit: Unit, pieceLabel: string): string {
-  return UNITS[unit].kind === 'piece' ? pieceLabel : UNITS[unit].label;
+  const d = unitDef(unit);
+  return d.kind === 'piece' ? pieceLabel : d.label;
 }
 
 /** Vorgabe für ein Lebensmittel ohne zuletzt benutzte Einheit. */

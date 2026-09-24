@@ -10,6 +10,8 @@ const OUT = fileURLToPath(new URL('./clips/', import.meta.url));
 const RAW = path.join(OUT, 'raw');
 fs.mkdirSync(RAW, { recursive: true });
 const VIEW = { width: 540, height: 960 };
+// Standard ist die Vorschau auf 4173; mit CLIPS_URL lässt sich auch der Dev-Server nutzen.
+const BASE = process.env.CLIPS_URL ?? 'http://localhost:4173/';
 
 // Tipp-Feedback, damit man im Video sieht, wo getippt wird
 const TAP_FX = `
@@ -38,7 +40,7 @@ async function withApp(name, fn) {
   const ctxStart = Date.now();
   const page = await ctx.newPage();
   await page.addInitScript(TAP_FX);
-  await page.goto('http://localhost:4173/');
+  await page.goto(BASE);
   // Sprache Deutsch + Demo-Daten importieren
   await page.evaluate(() => localStorage.setItem('nutrition-tracker:language', 'en'));
   await page.reload();

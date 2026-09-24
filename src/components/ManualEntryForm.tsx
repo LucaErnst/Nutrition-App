@@ -4,7 +4,7 @@ import { addMealEntry } from '../db/hooks';
 import type { FoodItem, MealType, Unit } from '../db/types';
 import { useT } from '../i18n';
 import { useUnitSystem } from '../db/hooks';
-import { isPieceUnit, labelFor, toBase, unitChoices, UNITS } from '../lib/units';
+import { isPieceUnit, labelFor, toBase, unitChoices, unitDef } from '../lib/units';
 import { GROUP_KEYS } from './UnitSelect';
 import { unitLabel } from './FoodSearch';
 
@@ -67,7 +67,7 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
       protein_per_100g: num(protein) * factor,
       fat_per_100g: num(fat) * factor,
       carbs_per_100g: num(carbs) * factor,
-      unit_type: UNITS[unit].kind,
+      unit_type: unitDef(unit).kind,
       piece_weight_g: pw,
       default_amount: amt,
       source: 'manual',
@@ -82,7 +82,7 @@ export function ManualEntryForm({ date, mealType, onDone, onCancel, barcode }: P
   }
 
   // Nährwerte sind immer pro 100 g bzw. 100 ml – unabhängig von der Eingabe-Einheit.
-  const baseUnit = UNITS[unit].kind === 'volume' ? 'ml' : 'g';
+  const baseUnit = unitDef(unit).kind === 'volume' ? 'ml' : 'g';
   const basisLabel =
     effectiveBasis === 'per100' ? t('manual.per100', { unit: baseUnit }) : t('manual.forAmount', { amount: amount || '…', unit: unitLabel(t, unit) });
   const numInput = (value: string, set: (v: string) => void) => (

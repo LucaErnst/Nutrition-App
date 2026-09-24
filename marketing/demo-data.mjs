@@ -25,14 +25,18 @@ const foods = [
   { id: 16, name: 'Cottage cheese', kcal: 98, p: 11, f: 4, c: 3, unit: 'g' },
 ];
 
+// Die Zeilen oben notieren die Einheit locker als 'g' | 'ml' | 'piece'. Die App kennt
+// unit_type 'weight' | 'volume' | 'piece' und die Eingabe-Einheit 'g' | 'ml' | 'Stück'.
+const unitTypeOf = (f) => (f.unit === 'piece' ? 'piece' : f.unit === 'ml' ? 'volume' : 'weight');
+const entryUnitOf = (f) => (f.unit === 'piece' ? 'Stück' : f.unit);
 const foodItems = foods.map((f) => ({
   id: f.id, name: f.name, brand: f.brand,
   kcal_per_100g: f.kcal, protein_per_100g: f.p, fat_per_100g: f.f, carbs_per_100g: f.c,
-  unit_type: f.unit === 'piece' ? 'piece' : f.unit, piece_weight_g: f.piece, source: 'manual', saved: 1,
+  unit_type: unitTypeOf(f), piece_weight_g: f.piece, source: 'manual', saved: 1,
   favorite: [2, 5, 1].includes(f.id) ? 1 : 0, created_at: Date.now() - 40 * 864e5,
 }));
 
-const snap = (f) => ({ name: f.name, brand: f.brand, kcal_per_100g: f.kcal, protein_per_100g: f.p, fat_per_100g: f.f, carbs_per_100g: f.c, unit_type: f.unit === 'piece' ? 'piece' : f.unit, piece_weight_g: f.piece });
+const snap = (f) => ({ name: f.name, brand: f.brand, kcal_per_100g: f.kcal, protein_per_100g: f.p, fat_per_100g: f.f, carbs_per_100g: f.c, unit_type: unitTypeOf(f), piece_weight_g: f.piece });
 const by = Object.fromEntries(foods.map((f) => [f.id, f]));
 
 // Tagespläne (Menge in g/ml bzw. Stück); leicht variiert
@@ -66,7 +70,7 @@ for (let i = N; i >= 1; i--) {
       const jitter = 0.9 + ((i * 7 + fid * 3) % 21) / 100;
       const kind = CARB_FAT.has(fid) ? 1.85 : 0.82;
       const amount = f.unit === 'piece' ? amt : Math.round(amt * kind * scale * bump * jitter / 5) * 5;
-      mealEntries.push({ id: id++, date, meal_type: meal, food_item_id: fid, amount, unit: f.unit === 'piece' ? 'piece' : f.unit, created_at: d.getTime() + 8 * 36e5, snapshot: snap(f) });
+      mealEntries.push({ id: id++, date, meal_type: meal, food_item_id: fid, amount, unit: entryUnitOf(f), created_at: d.getTime() + 8 * 36e5, snapshot: snap(f) });
     }
   }
   const ml = 2000 + ((i * 13) % 6) * 250;
@@ -76,8 +80,8 @@ for (let i = N; i >= 1; i--) {
 
 // Heute: Frühstück + Mittag schon drin, Abend offen (für Clip A)
 const today = iso(TODAY);
-for (const [fid, amt] of [[1, 80], [2, 250], [3, 120]]) mealEntries.push({ id: id++, date: today, meal_type: 'breakfast', food_item_id: fid, amount: amt, unit: by[fid].unit === 'piece' ? 'piece' : by[fid].unit, created_at: Date.now() - 6 * 36e5, snapshot: snap(by[fid]) });
-for (const [fid, amt] of [[5, 200], [6, 200], [7, 150], [8, 10]]) mealEntries.push({ id: id++, date: today, meal_type: 'lunch', food_item_id: fid, amount: amt, unit: by[fid].unit, created_at: Date.now() - 2 * 36e5, snapshot: snap(by[fid]) });
+for (const [fid, amt] of [[1, 80], [2, 250], [3, 120]]) mealEntries.push({ id: id++, date: today, meal_type: 'breakfast', food_item_id: fid, amount: amt, unit: entryUnitOf(by[fid]), created_at: Date.now() - 6 * 36e5, snapshot: snap(by[fid]) });
+for (const [fid, amt] of [[5, 200], [6, 200], [7, 150], [8, 10]]) mealEntries.push({ id: id++, date: today, meal_type: 'lunch', food_item_id: fid, amount: amt, unit: entryUnitOf(by[fid]), created_at: Date.now() - 2 * 36e5, snapshot: snap(by[fid]) });
 for (let k = 0; k < 5; k++) water.push({ date: today, ml: 250, created_at: Date.now() - (5 - k) * 36e5 });
 days.push({ date: today, is_training: true });
 
@@ -94,7 +98,9 @@ const backup = {
   foodItems, mealEntries,
   goals: [{ id: 1, phase_name: 'Bulk', phase_type: 'bulk', start_date: iso(daysAgo(60)), training_day_kcal: 2900, rest_day_kcal: 2500, protein_g: 160, fat_min_g: 70, fat_max_g: 90 }],
   weights, days,
-  settings: [{ id: 1, training_weekdays: [1, 2, 4, 5], language: 'en', water_goal_ml: 3000, onboarding_done: true, last_backup_at: Date.now() }],
+  // units_system fest auf metrisch: die Aufnahme läuft mit locale en-US, sonst stünden dort
+  // Unzen und Pfund – und Luca spricht in den Skripten von Gramm und Kilo.
+  settings: [{ id: 1, training_weekdays: [1, 2, 4, 5], language: 'en', units_system: 'metric', water_goal_ml: 3000, onboarding_done: true, last_backup_at: Date.now() }],
   templates: [], water,
 };
 fs.writeFileSync(new URL('./demo-backup.json', import.meta.url), JSON.stringify(backup));

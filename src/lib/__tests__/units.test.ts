@@ -1,15 +1,18 @@
 import { describe, expect, it } from 'vitest';
+import type { Unit } from '../../db/types';
 import {
   convertAmount,
   csvUnitLabel,
   defaultUnitFor,
   detectUnitSystem,
   fromBase,
+  labelFor,
   stepFor,
   toBase,
   unitChoices,
   unitChoicesForFood,
   UNITS,
+  unitDef,
 } from '../units';
 import { amountToGrams, macrosFor } from '../nutrition';
 import type { NutritionSource } from '../nutrition';
@@ -154,5 +157,22 @@ describe('Mengen umrechnen', () => {
   it('Stück bleibt unangetastet – ohne Stückgewicht gibt es nichts umzurechnen', () => {
     expect(convertAmount(2, 'Stück', 'g')).toBe(2);
     expect(convertAmount(2, 'g', 'Stück')).toBe(2);
+  });
+});
+
+describe('Unbekannte Einheiten aus alten Sicherungen', () => {
+  // Ein wiederhergestelltes Backup kann Codes enthalten, die es nicht mehr gibt.
+  const odd = 'piece' as Unit;
+
+  it('stürzen nicht ab, sondern rechnen 1:1 wie vor der Umstellung', () => {
+    expect(() => toBase(50, odd)).not.toThrow();
+    expect(toBase(50, odd)).toBe(50);
+    expect(stepFor(odd, 100)).toBe(10);
+    expect(unitDef(odd).kind).toBe('weight');
+  });
+
+  it('zeigen ihren eigenen Code an, statt eine falsche Einheit vorzutäuschen', () => {
+    expect(labelFor(odd, 'pc')).toBe('piece');
+    expect(csvUnitLabel(odd)).toBe('piece');
   });
 });
