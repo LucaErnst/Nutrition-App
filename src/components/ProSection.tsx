@@ -1,3 +1,4 @@
+import { useSettings } from '../db/hooks';
 import { isNative } from '../lib/native';
 import { isPreviewFree, setPreviewFree, useProState } from '../lib/pro';
 import { useT } from '../i18n';
@@ -7,6 +8,10 @@ import { openPaywall } from './Paywall';
 export function ProSection() {
   const t = useT();
   const { pro, source, price } = useProState();
+  // Wer die App vor 1.1 hatte, darf sich die gesperrte Ansicht jederzeit anschauen – auch
+  // nach einem (Sandbox-)Kauf, der den Status auf 'purchase' schiebt. Echte Neukunden
+  // bekommen den Schalter nie zu sehen.
+  const wasEarlyAdopter = useSettings()?.pro_granted === 'early_adopter';
   if (!isNative) return null;
   return (
     <section className="card section pro-section">
@@ -20,7 +25,7 @@ export function ProSection() {
           {price ? t('pro.buy', { price }) : t('pro.open')}
         </button>
       )}
-      {(source === 'early_adopter' || isPreviewFree()) && (
+      {(wasEarlyAdopter || isPreviewFree()) && (
         <button className="btn-link btn-centered" onClick={() => setPreviewFree(!isPreviewFree())} style={{ marginTop: 8 }}>
           {isPreviewFree() ? t('pro.previewOff') : t('pro.previewOn')}
         </button>
