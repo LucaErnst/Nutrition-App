@@ -62,6 +62,19 @@ struct Bar: View {
     }
 }
 
+/// App-Icon als Bildmarke. Auf dem Sperrbildschirm zeichnet iOS Bilder einfarbig,
+/// darum bleibt es dort beim Textkürzel.
+struct BrandLogo: View {
+    var size: CGFloat = 16
+    var body: some View {
+        Image("Logo")
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: size, height: size)
+            .clipShape(RoundedRectangle(cornerRadius: size * 0.28, style: .continuous))
+    }
+}
+
 struct MetricRow: View {
     let label: String
     let value: String
@@ -83,7 +96,7 @@ struct ProLockView: View {
     let de: Bool
     var body: some View {
         VStack(spacing: 6) {
-            Text("BS").font(.system(size: 22, weight: .bold)).foregroundStyle(Brand.gold)
+            BrandLogo(size: 26)
             Text("Serious Nutrition Pro").font(.system(size: 12, weight: .semibold)).foregroundStyle(Brand.text)
             Text(L.t(de, "Widgets are part of Pro", "Widgets sind Teil von Pro")).font(.system(size: 11)).foregroundStyle(Brand.text2).multilineTextAlignment(.center)
         }
@@ -94,7 +107,7 @@ struct NoDataView: View {
     let de: Bool
     var body: some View {
         VStack(spacing: 6) {
-            Text("BS").font(.system(size: 22, weight: .bold)).foregroundStyle(Brand.gold)
+            BrandLogo(size: 26)
             Text(L.t(de, "Open the app once", "App einmal öffnen")).font(.system(size: 11)).foregroundStyle(Brand.text2)
         }
     }
@@ -133,37 +146,46 @@ struct MediumView: View {
     var de: Bool { s.isGerman }
     var body: some View {
         if !e.hasData { NoDataView(de: de) } else if s.pro == false { ProLockView(de: de) } else {
-            HStack(spacing: 14) {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(alignment: .firstTextBaseline, spacing: 4) {
-                        Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 28, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit()
-                        Text(s.kcalTarget == nil ? "kcal" : L.t(de, "kcal left", "kcal übrig")).font(.system(size: 11, weight: .medium)).foregroundStyle(Brand.text2)
-                    }
-                    Bar(progress: s.kcalProgress, color: Brand.kcal)
-                    MetricRow(label: "Protein", value: s.proteinTarget.map { "\(s.protein) / \($0) g" } ?? "\(s.protein) g",
-                              progress: s.proteinProgress, color: Brand.protein)
+            // Kopfzeile über die ganze Breite, darunter zwei Spalten mit gleicher Oberkante:
+            // links die Tagesbilanz, rechts Wasser. So steht die grosse Zahl oben links,
+            // wo der Blick zuerst hinfällt, und nichts hängt mehr in einer Ecke.
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 6) {
+                    BrandLogo(size: 15)
+                    Text("Serious Nutrition").font(.system(size: 11, weight: .semibold)).foregroundStyle(Brand.text2)
+                    Spacer(minLength: 8)
                     if let left = s.weekLeftToday, let days = s.weekDaysLeft {
-                        Text(L.t(de, "Week: \(fmtInt(left, de: de)) kcal today · \(days) d left", "Woche: heute \(fmtInt(left, de: de)) kcal · \(days) T übrig"))
-                            .font(.system(size: 10)).foregroundStyle(Brand.text2).lineLimit(1)
+                        Text(L.t(de, "Week \(fmtInt(left, de: de)) kcal · \(days) d", "Woche \(fmtInt(left, de: de)) kcal · \(days) T"))
+                            .font(.system(size: 10, weight: .medium)).foregroundStyle(Brand.text2).lineLimit(1)
                     }
                 }
-                VStack(alignment: .leading, spacing: 8) {
-                    MetricRow(label: L.t(de, "Water", "Wasser"),
-                              value: String(format: "%.2g / %.2g l", Double(s.waterMl) / 1000, Double(s.waterGoalMl) / 1000),
-                              progress: s.waterProgress, color: Brand.water)
-                    if #available(iOS 17.0, *) {
-                        HStack(spacing: 6) {
-                            WaterButton(ml: 250, de: de)
-                            WaterButton(ml: 500, de: de)
+
+                HStack(alignment: .top, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 9) {
+                        HStack(alignment: .firstTextBaseline, spacing: 5) {
+                            Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 32, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit()
+                            Text(s.kcalTarget == nil ? "kcal" : L.t(de, "kcal left", "kcal übrig")).font(.system(size: 11, weight: .medium)).foregroundStyle(Brand.text2)
+                        }
+                        Bar(progress: s.kcalProgress, color: Brand.kcal)
+                        MetricRow(label: "Protein", value: s.proteinTarget.map { "\(s.protein) / \($0) g" } ?? "\(s.protein) g",
+                                  progress: s.proteinProgress, color: Brand.protein)
+                    }
+
+                    VStack(alignment: .leading, spacing: 9) {
+                        MetricRow(label: L.t(de, "Water", "Wasser"),
+                                  value: String(format: "%.2g / %.2g l", Double(s.waterMl) / 1000, Double(s.waterGoalMl) / 1000),
+                                  progress: s.waterProgress, color: Brand.water)
+                        if #available(iOS 17.0, *) {
+                            HStack(spacing: 6) {
+                                WaterButton(ml: 250, de: de)
+                                WaterButton(ml: 500, de: de)
+                            }
                         }
                     }
-                    Spacer(minLength: 0)
-                    HStack(spacing: 4) {
-                        Text("BS").font(.system(size: 11, weight: .bold)).foregroundStyle(Brand.gold)
-                        Text("Serious Nutrition").font(.system(size: 10, weight: .medium)).foregroundStyle(Brand.text2)
-                    }
+                    .frame(width: 132)
                 }
-                .frame(width: 118)
+
+                Spacer(minLength: 0)
             }
         }
     }
