@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useI18n, useT, type Language } from '../i18n';
 import { fmt } from '../lib/nutrition';
 import { saveSettings, useSettings } from '../db/hooks';
-import { GoalsView } from './GoalsView';
+import { GoalsView, TrainingDaysSection } from './GoalsView';
 import { BackupSection } from './BackupSection';
 import { DiagnosticsSection } from './DiagnosticsSection';
 import { RemindersSection } from './RemindersSection';
 import { HealthSection } from './HealthSection';
 import { ProSection } from './ProSection';
 import { UnitsSection } from './UnitsSection';
+import { CollapsibleCard } from './CollapsibleCard';
 
 /** Rechtstexte liegen auf der Web-Adresse – auch die native App verlinkt dorthin. */
 const LEGAL_BASE = 'https://lucaernst.github.io/Nutrition-App/legal/';
@@ -36,8 +37,15 @@ export function MoreView() {
 
   return (
     <div className="goals">
-      <section className="card section">
-        <h2>{t('more.water')}</h2>
+      <GoalsView />
+      <ProSection />
+      <TrainingDaysSection />
+      <RemindersSection />
+      <HealthSection />
+      <BackupSection />
+      <UnitsSection />
+
+      <CollapsibleCard title={t('more.water')} summary={t('more.waterSummary', { goal: fmt(waterGoal / 1000, 1) })}>
         <div className="field" style={{ maxWidth: 260, marginTop: 8, marginInline: 'auto' }}>
           <span>{t('more.waterGoal')}</span>
           <div className="stepper">
@@ -74,14 +82,8 @@ export function MoreView() {
             </button>
           ))}
         </div>
-      </section>
+      </CollapsibleCard>
 
-      <ProSection />
-      <UnitsSection />
-      <RemindersSection />
-      <HealthSection />
-      <GoalsView />
-      <BackupSection />
       <DiagnosticsSection />
 
       <section className="card section">

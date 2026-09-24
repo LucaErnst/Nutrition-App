@@ -264,6 +264,7 @@ export const en = {
   'more.language': 'Language',
   'more.languageHint': 'Your own food names and templates stay as you entered them.',
   'more.water': 'Water',
+  'more.waterSummary': 'Daily goal {goal} l',
   'more.waterGoal': 'Daily water goal (ml)',
   // Reminders
   'rem.title': 'Reminders',

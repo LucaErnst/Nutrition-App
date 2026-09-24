@@ -249,6 +249,7 @@ export const de: Record<MessageKey, string> = {
   'more.language': 'Sprache',
   'more.languageHint': 'Deine eigenen Lebensmittelnamen und Vorlagen bleiben so, wie du sie eingegeben hast.',
   'more.water': 'Wasser',
+  'more.waterSummary': 'Tagesziel {goal} l',
   'more.waterGoal': 'Tagesziel Wasser (ml)',
   'rem.title': 'Erinnerungen',
   'health.title': 'Apple Health',

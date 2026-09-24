@@ -1,5 +1,6 @@
 import { saveSettings, useSettings, useUnitSystem } from '../db/hooks';
 import { useT } from '../i18n';
+import { CollapsibleCard } from './CollapsibleCard';
 import { bodyWeightUnitFor, defaultUnitFor, heightUnitFor, labelFor, type UnitSystem } from '../lib/units';
 
 const SYSTEMS: { id: UnitSystem; key: 'units.metric' | 'units.us' | 'units.uk' }[] = [
@@ -18,8 +19,13 @@ export function UnitsSection() {
   const system = useUnitSystem();
 
   return (
-    <section className="card section">
-      <h2>{t('units.title')}</h2>
+    <CollapsibleCard
+      title={t('units.title')}
+      summary={t('units.example', {
+        weight: labelFor(defaultUnitFor('weight', system), t('unit.piece')),
+        volume: labelFor(defaultUnitFor('volume', system), t('unit.piece')),
+      })}
+    >
       <div className="chips" role="radiogroup" aria-label={t('units.title')}>
         {SYSTEMS.map((s) => (
           <button
@@ -36,18 +42,12 @@ export function UnitsSection() {
         ))}
       </div>
       <p className="search-hint">
-        {t('units.example', {
-          weight: labelFor(defaultUnitFor('weight', system), t('unit.piece')),
-          volume: labelFor(defaultUnitFor('volume', system), t('unit.piece')),
-        })}
-      </p>
-      <p className="search-hint">
         {t('units.body', {
           bodyWeight: bodyWeightUnitFor(system) === 'st' ? 'st / lb' : bodyWeightUnitFor(system),
           height: heightUnitFor(system) === 'cm' ? 'cm' : 'ft / in',
         })}
       </p>
       <p className="search-hint">{t('units.hint')}</p>
-    </section>
+    </CollapsibleCard>
   );
 }

@@ -3,6 +3,7 @@ import { isNative } from '../lib/native';
 import { lastWidgetSync, syncWidgets } from '../lib/widgets';
 import { clearErrors, formatErrorsForShare, readErrors, subscribeErrors } from '../lib/errorLog';
 import { getLocale, useT } from '../i18n';
+import { CollapsibleCard } from './CollapsibleCard';
 
 let cache = readErrors();
 function getSnapshot() {
@@ -19,8 +20,6 @@ export function DiagnosticsSection() {
   const t = useT();
   const errors = useSyncExternalStore(subscribe, getSnapshot);
   const [widgetInfo, setWidgetInfo] = useState(() => lastWidgetSync());
-  // Eingeklappt: die Diagnose ist ein Werkzeug für den Fehlerfall, kein täglicher Inhalt.
-  const [open, setOpen] = useState(false);
 
   async function refreshWidgets() {
     await syncWidgets();
@@ -41,26 +40,7 @@ export function DiagnosticsSection() {
   }
 
   return (
-    <section className="card section">
-      <div className="section-head">
-        <h2>{t('diag.title')}</h2>
-        <div className="meal-header-right">
-          <button
-            className={`btn-icon meal-chevron ${open ? 'open' : ''}`}
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            aria-label={open ? t('slot.collapse') : t('slot.expand')}
-          >
-            ›
-          </button>
-        </div>
-      </div>
-      <p className="search-hint">
-        {errors.length === 0 ? t('diag.none') : t('diag.count', { n: errors.length })}
-      </p>
-
-      <div className={`collapse ${open ? 'open' : ''}`} aria-hidden={!open}>
-        <div className="collapse-inner">
+    <CollapsibleCard title={t('diag.title')} summary={errors.length === 0 ? t('diag.none') : t('diag.count', { n: errors.length })}>
       {isNative && (
         <p className="search-hint" style={{ wordBreak: 'break-all' }}>
           Widgets: {widgetInfo ? `${new Date(widgetInfo.at).toLocaleTimeString(getLocale())} · stored=${String(widgetInfo.stored)} · ${widgetInfo.bytes ?? '?'} B · kcal ${widgetInfo.snap?.kcal}/${widgetInfo.snap?.kcalTarget ?? '–'}` : 'noch kein Sync'}{' '}
@@ -89,8 +69,6 @@ export function DiagnosticsSection() {
           </div>
         </>
       )}
-        </div>
-      </div>
-    </section>
+    </CollapsibleCard>
   );
 }

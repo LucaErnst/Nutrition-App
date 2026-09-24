@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { addFromSearch, freshApp, kcalTotal } from './helpers';
+import { addFromSearch, freshApp, kcalTotal, openSection } from './helpers';
 
 test.beforeEach(async ({ page }) => {
   await freshApp(page);
@@ -75,6 +75,7 @@ test('water: add, undo, goal', async ({ page }) => {
 
 test('water goal can be typed and picked', async ({ page }) => {
   await page.getByRole('button', { name: 'More' }).click();
+  await openSection(page, 'Water');
   const goal = page.getByRole('spinbutton', { name: 'Daily water goal (ml)' });
   await goal.fill('2200');
   await goal.blur();

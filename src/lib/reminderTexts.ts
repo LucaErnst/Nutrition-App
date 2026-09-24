@@ -16,13 +16,13 @@ const lines = (s: string) => s.trim().split('\n').map((l) => l.trim()).filter(Bo
 
 // ---------------------------------------------------------------- Deutsch
 const deTitles: Record<ReminderKind, string[]> = {
-  breakfast: lines(`Frühstück?|Guten Morgen|Frühstück tracken|Start in den Tag|Frühstück offen|Morgenroutine|Erster Eintrag|Kurz und ehrlich`.replace(/\|/g, '\n')),
-  lunch: lines(`Mittagessen|Halbzeit|Mittag im Tagebuch?|Zwischenstand|Mahlzeit zwei|Dranbleiben|Mittag|Kein Nachrechnen am Abend`.replace(/\|/g, '\n')),
-  dinner: lines(`Tag abschliessen|Abendessen|Bilanz ziehen|Feierabend-Check|Letzte Mahlzeit|Tagebuch zumachen|Abend|Noch ein Eintrag`.replace(/\|/g, '\n')),
-  water: lines(`Trink was|Wasser|Durst ist zu spät|Kleine Pause|Flüssigkeit|Hydration-Check|Nachschub|Trinken nicht vergessen`.replace(/\|/g, '\n')),
-  weigh: lines(`Auf die Waage|Morgengewicht|Datenpunkt|Waage|Messen statt raten|Trend füttern|Check-in|Morgens`.replace(/\|/g, '\n')),
-  weekly: lines(`Wochenrückblick|Sonntag|Bilanz der Woche|Woche geschafft|Rückblick|Neue Woche|Wochenfazit|Ehrlicher Blick`.replace(/\|/g, '\n')),
-  protein: lines(`Protein offen|Noch {n} g Protein|Protein-Lücke|Protein-Ziel|Zielgerade|Abend-Protein|Der Rest ist Protein|Nicht vergessen`.replace(/\|/g, '\n')),
+  breakfast: lines(`Frühstück?|Guten Morgen|Frühstück tracken|Start in den Tag|Frühstück offen|Morgenroutine|Erster Eintrag|Kurz und ehrlich|Tag eins von heute|Noch nüchtern?|Teller gesehen?|Bevor es losgeht|Frühstück zählt|Morgen-Eintrag|Erste Zahlen|Kurz eintippen`.replace(/\|/g, '\n')),
+  lunch: lines(`Mittagessen|Halbzeit|Mittag im Tagebuch?|Zwischenstand|Mahlzeit zwei|Dranbleiben|Mittag|Kein Nachrechnen am Abend|Mittag steht an|Teller zu Ende?|Halber Tag|Stand der Dinge|Mittagsbilanz|Zwischenruf|Nach dem Essen|Kurz nachtragen`.replace(/\|/g, '\n')),
+  dinner: lines(`Tag abschliessen|Abendessen|Bilanz ziehen|Feierabend-Check|Letzte Mahlzeit|Tagebuch zumachen|Abend|Noch ein Eintrag|Abendbilanz|Tag zumachen|Letzter Eintrag|Teller leer?|Kurz vor Schluss|Abendrunde|Zahlen für heute|Heute fertig`.replace(/\|/g, '\n')),
+  water: lines(`Trink was|Wasser|Durst ist zu spät|Kleine Pause|Flüssigkeit|Hydration-Check|Nachschub|Trinken nicht vergessen|Glas leer?|Zwischendurch|Kurz trinken|Nachfüllen|Wasserstand|Schluck nehmen|Noch ein Glas|Pause für Wasser`.replace(/\|/g, '\n')),
+  weigh: lines(`Auf die Waage|Morgengewicht|Datenpunkt|Waage|Messen statt raten|Trend füttern|Check-in|Morgens|Kurz drauf|Zahl für heute|Nüchtern messen|Waage wartet|Tagesgewicht|Ein Wert|Vor dem Kaffee|Zehn Sekunden`.replace(/\|/g, '\n')),
+  weekly: lines(`Wochenrückblick|Sonntag|Bilanz der Woche|Woche geschafft|Rückblick|Neue Woche|Wochenfazit|Ehrlicher Blick|Sieben Tage|Woche im Blick|Zahlen der Woche|Kurz hinsehen|Wochenstand|Bilanz|Was war|Nächste Woche`.replace(/\|/g, '\n')),
+  protein: lines(`Protein offen|Noch {n} g Protein|Protein-Lücke|Protein-Ziel|Zielgerade|Abend-Protein|Der Rest ist Protein|Nicht vergessen|Noch offen|Protein-Rest|{n} g fehlen|Lücke schliessen|Letzter Baustein|Rest des Tages|Protein zählen|Fast geschafft`.replace(/\|/g, '\n')),
 };
 
 const deBodies: Record<ReminderKind, string[]> = {
@@ -91,6 +91,42 @@ Das Tagebuch wartet auf den ersten Eintrag. Lass es nicht warten.
 Frühstück gegessen? Ins Tagebuch damit, dann ist es abgehakt.
 Erster Eintrag des Tages. Kleiner Schritt, klare Linie.
 Frühstück rein. Der Rest des Tages baut darauf auf.
+Teller leer, Tagebuch leer? Nur eines davon ist in Ordnung.
+Der erste Eintrag dauert kürzer als dein Kaffee braucht.
+Was jetzt reingeht, musst du abends nicht rekonstruieren.
+Zwei Eier sind zwei Eier – aber nur eingetragen zählen sie.
+Du hast gegessen. Die App weiss es noch nicht.
+Morgens getrackt, abends entspannt.
+Niemand erinnert sich um 21 Uhr ans Frühstück. Die App schon.
+Der Tag zählt ab dem ersten Bissen. Dein Tagebuch auch.
+Heute schon Protein gesehen? Eintragen und nachschauen.
+Zwanzig Sekunden jetzt sparen dir zehn Minuten Rätselraten.
+Frühstück eintragen ist kein Aufwand, sondern eine Gewohnheit.
+Je früher der erste Eintrag, desto ehrlicher der ganze Tag.
+Ein leeres Tagebuch am Mittag ist schwerer zu füllen als eines am Morgen.
+Morgenroutine: aufstehen, essen, eintragen.
+Die Waage misst das Ergebnis. Das Tagebuch erklärt es.
+Dein Tag hat 2000 Entscheidungen. Diese hier dauert zwanzig Sekunden.
+Was du heute einträgst, hilft dir in vier Wochen beim Lesen des Trends.
+Frühstück ist die Mahlzeit, die sich am seltensten ändert. Nutz die Vorlage.
+Erst eintragen, dann den Tag angehen.
+Wer den Morgen verpasst, schätzt den Rest.
+Kaffee mit Milch zählt auch. Rein damit.
+Der Tag ist noch offen. Dein erster Eintrag entscheidet, wie klar er wird.
+Kein Eintrag heisst nicht null Kalorien. Nur keine Daten.
+Ein Frühstück, ein Tipp, fertig. Einfacher wird es nicht.
+Disziplin ist nicht der Wille. Es ist die Gewohnheit, jetzt zu tippen.
+Du weisst, was du gegessen hast. In zwei Stunden nicht mehr genau.
+Die ersten Kalorien des Tages sind die am leichtesten zu zählenden.
+Lieber grob eintragen als gar nicht.
+Das Frühstück ist dein Fundament. Fundamente misst man.
+Nichts gegessen? Dann trag nichts ein – aber schau kurz auf dein Ziel.
+Der Tag startet auf null. Halte das fest, bevor er losläuft.
+Vorlage antippen, Menge prüfen, speichern. Drei Bewegungen.
+Ein Morgen ohne Eintrag ist ein Tag mit Schätzung.
+Dein Trainingstag beginnt am Frühstückstisch, nicht in der Halle.
+Der Unterschied zwischen tracken und schätzen entscheidet sich jetzt.
+Klein anfangen: nur das Frühstück. Der Rest kommt von allein.
 `),
   lunch: lines(`
 Tracken dauert 20 Sekunden und bringt eine Woche Klarheit.
@@ -157,6 +193,42 @@ Was auf dem Teller war, gehört ins Tagebuch. Auch mittags.
 Mittag rein. Dann weisst du genau, was noch fehlt.
 Eintragen, dann entspannt in den Nachmittag.
 Mittagessen ins Tagebuch – Routine, die sich auszahlt.
+Halber Tag, halbe Daten. Mittag eintragen.
+Eintragen, solange die Portion noch vor dir steht.
+Mittag rein, dann weisst du, was der Abend noch hergibt.
+Wer mittags trackt, plant den Abend statt ihn zu bereuen.
+Zwei Minuten jetzt, kein Kopfrechnen um zehn.
+Was auf dem Teller lag, gehört in die App. Auch die Sauce.
+Mittagsbilanz: Wie viel Protein steht schon?
+Kantine, Restaurant, Resteessen – eintragen geht überall.
+Die Woche entscheidet sich nicht am Abend, sondern an Tagen wie heute.
+Nach dem Essen ist vor dem Eintrag.
+Der Nachmittag frisst dein Gedächtnis. Trag jetzt ein.
+Mittag getrackt heisst: Der Abend hat keine Überraschung mehr.
+Schätzen ist erlaubt. Nicht eintragen nicht.
+Halbzeit. Wie steht es um dein Kalorienziel?
+Zwei Mahlzeiten drin, der Rest ist Planung.
+Eintragen dauert kürzer als das Handy wegzulegen und wieder zu nehmen.
+Was du jetzt nicht festhältst, ist heute Abend eine Schätzung.
+Mittagessen eintragen und wissen, woran du bist.
+Auch ein schlechter Tag gehört ins Tagebuch. Vor allem der.
+Dein Wochenbudget dankt es dir, wenn du jetzt hinschaust.
+Mittag im Tagebuch, Kopf frei für den Nachmittag.
+Der Teller ist leer, das Feld noch nicht.
+Wenig Zeit? Schnell-Eintrag mit kcal reicht auch.
+Nicht der perfekte Eintrag zählt, sondern der vorhandene.
+Zwischenstand jetzt, Entscheidung später.
+Wer jeden Mittag einträgt, braucht nie eine Diät-Pause vom Tracken.
+Die Portion war grösser als geplant? Umso wichtiger, sie festzuhalten.
+Das Tagebuch urteilt nicht. Es rechnet.
+Mittagessen rein, dann läuft der Nachmittag von allein.
+Dein Abendessen wird besser, wenn du jetzt weisst, was noch geht.
+Ein Tag ohne Mittagseintrag ist ein halber Datenpunkt.
+Kurz aufs Handy, kurz eintragen, weiter.
+Ehrlichkeit am Mittag spart Ausreden am Abend.
+Zwischendurch getrackt ist besser als abends rekonstruiert.
+Deine Zahlen von heute sind dein Plan für morgen.
+Trag ein, was war – nicht, was geplant war.
 `),
   dinner: lines(`
 Abendessen rein, dann weisst du, wo du stehst.
@@ -223,6 +295,42 @@ Abendessen ins Tagebuch, dann ist Feierabend.
 Tag komplett machen. Abendessen eintragen.
 Rein damit. Morgen früh dankst du dir dafür.
 Abendessen tracken – kurz, ehrlich, erledigt.
+Letzte Mahlzeit, letzter Eintrag. Dann ist der Tag sauber.
+Abendessen rein und der Tag ist abgeschlossen.
+Ein Blick auf die Tagesbilanz, dann Feierabend.
+Was heute war, war heute. Trag es ein und lass es stehen.
+Der Tag endet im Tagebuch, nicht im Kopf.
+Über dem Ziel? Notieren, nicht schönrechnen.
+Unter dem Ziel? Auch das gehört dokumentiert.
+Abendessen eintragen, dann weisst du, wie die Woche steht.
+Kein Tag ist perfekt. Aber jeder ist zählbar.
+Zwei Minuten und dein Tagebuch ist vollständig.
+Morgen fängt bei null an. Heute noch schnell zu Ende bringen.
+Der Abendeintrag ist der, den die meisten vergessen. Du nicht.
+Teller leer, Tagebuch auch? Dann fehlt noch etwas.
+Was du heute Abend einträgst, liest du am Sonntag im Fazit.
+Vor dem Sofa noch kurz die Zahlen.
+Ein vollständiger Tag ist mehr wert als drei halbe.
+Abendessen tracken kostet weniger Zeit als eine Werbepause.
+Die ehrliche Zahl heute macht den Trend morgen brauchbar.
+Kalorien, Protein, fertig.
+Tag abschliessen heisst auch: nicht mehr darüber nachdenken.
+Dein Wochenbudget will wissen, wie heute gelaufen ist.
+Ein Eintrag jetzt, und der Kopf ist frei.
+Restaurant? Schätz die Portion und trag sie ein. Besser als nichts.
+Heute über dem Plan, morgen darunter. Die Woche zählt.
+Der letzte Eintrag des Tages ist der wichtigste für den Schnitt.
+Trag ein, was du gegessen hast. Nicht, was du essen wolltest.
+Abends eintragen ist Routine, keine Strafe.
+Ein Tag ohne Abendeintrag verzerrt deine ganze Woche.
+Schnell noch fertig machen, dann ist Ruhe.
+Der Tag ist gelaufen. Halt ihn fest.
+Das Tagebuch zumachen ist ein gutes Gefühl. Zwei Tipps davon entfernt.
+Fertig gegessen? Dann fertig eintragen.
+Morgen früh weisst du nicht mehr, wie gross die Portion war.
+Dein Trend braucht heute. Nicht ungefähr heute.
+Noch ein Eintrag, dann hast du sieben von sieben Tagen.
+Zahlen jetzt, Fazit am Sonntag.
 `),
   water: lines(`
 Dein Körper ist kein Kaktus.
@@ -289,6 +397,42 @@ Trink was. Klingt banal, wirkt enorm.
 Wasser zwischen den Mahlzeiten. Jetzt ist so ein Moment.
 Flasche greifen, Glas leeren, eintragen. Fertig.
 Zwei Sekunden für +500 ml. Kein Aufwand, echter Effekt.
+Ein Glas jetzt, nicht erst bei Durst.
+Wasser ist die billigste Leistungssteigerung, die es gibt.
+Kurz aufstehen, nachfüllen, weitermachen.
+Du hast ein Ziel. Das Glas steht daneben.
+Zwei Schlucke reichen nicht. Ein Glas schon eher.
+Trinken ist die Aufgabe mit dem besten Verhältnis von Aufwand zu Wirkung.
+Kopfweh am Nachmittag ist oft nur Wasser, das fehlt.
++250 ml, ein Tipp. Kein Grund zu zögern.
+Wie weit bist du heute? Kurz nachschauen.
+Kaffee zählt nicht als Ersatz. Wasser schon.
+Flasche leer? Das ist ein Zeichen, kein Zufall.
+Trink, bevor das Training es dir übel nimmt.
+Nächstes Glas, nächster Fortschritt.
+Ein Glas Wasser jetzt ist ein besserer Abend später.
+Hydration ist langweilig. Wirkt trotzdem.
+Deine Muskeln bestehen zu einem grossen Teil aus Wasser. Nachfüllen.
+Gerade keine Lust? Trotzdem trinken. Dauert zehn Sekunden.
+Ein Glas pro Erinnerung. Mehr will niemand von dir.
+Wasser ist der einfachste Eintrag des Tages.
+Der Durst kommt zu spät. Sei früher da.
+Noch nichts getrunken? Dann jetzt.
+Ein voller Tag Arbeit, ein leeres Glas. Ändern wir das.
+Trinken ist keine Leistung. Vergessen aber ein Fehler.
+Zwischen zwei Aufgaben passt ein Glas Wasser.
+Dein Tagesziel steht in der App. Der Rest liegt an dir.
+Wer viel trainiert, braucht mehr. Das gilt auch heute.
+Nachfüllen, antippen, erledigt.
+Wasser trinken macht dich nicht stärker. Zu wenig macht dich schwächer.
+Jetzt ein Glas spart später zwei.
+Ein Schluck ist ein Anfang. Ein Glas ist das Ziel.
+Die Flasche auf dem Tisch nützt nur, wenn du sie benutzt.
+Zwischendurch trinken hält den Kopf wach.
+Kurze Pause, langes Glas.
+Erinnerung angekommen? Dann Glas in die Hand.
+Kein Durst heisst nicht kein Bedarf.
+Wasser eintragen dauert einen Tipp. Trinken etwas länger.
 `),
   weigh: lines(`
 Nicht bewerten, nur messen.
@@ -355,6 +499,42 @@ Gewicht eintragen – kurz, nüchtern, täglich.
 Zahl ins Tagebuch. Kommentar unnötig.
 Ein Morgen ohne Gewicht ist ein Loch in der Kurve. Schliess es.
 Waage drauf, Zahl rein, Kaffee. Mehr braucht der Morgen nicht.
+Nüchtern, vor dem Kaffee, kurz drauf.
+Die Zahl ist ein Messwert, kein Urteil.
+Zehn Sekunden für einen Punkt in deinem Trend.
+Ein Tag sagt nichts. Dreissig sagen alles.
+Die Waage misst Wasser, Salz und Glykogen mit. Der Trend nicht.
+Messen statt schätzen. Jeden Morgen dieselbe Routine.
+Heute schwerer als gestern? Interessiert den 7-Tage-Schnitt wenig.
+Dein Trend braucht Futter. Heute ist ein Datenpunkt.
+Ohne Waage kein Verlauf, ohne Verlauf keine Anpassung.
+Kurz drauf, Zahl eintragen, Handy weglegen.
+Die Zahl schwankt. Deine Richtung nicht.
+Gleiche Uhrzeit, gleiche Bedingungen, brauchbare Daten.
+Ein Wert allein ist Rauschen. Viele Werte sind ein Signal.
+Morgengewicht eintragen und den Tag normal weiterleben.
+Nicht bewerten. Nur messen.
+Dein Coach-Urteil braucht Gewichtsdaten. Sonst bleibt es ein Rateschluss.
+Die Waage ist ein Werkzeug, kein Richter.
+Wer nur bei guter Laune wiegt, hat verzerrte Daten.
+Heute wiegen heisst am Sonntag etwas zu sehen.
+Zahl rein, Kopf aus.
+Der Trend arbeitet für dich, wenn du ihn fütterst.
+Auch ein Tag nach dem Essen draussen gehört auf die Waage.
+Zwei Kilo Schwankung sind normal. Deshalb schauen wir auf den Schnitt.
+Die Waage vor dem Frühstück, nicht danach.
+Regelmässig messen ist wichtiger als exakt messen.
+Ein Datenpunkt heute macht die Auswertung nächste Woche möglich.
+Keine Lust auf die Zahl? Sie ändert sich nicht durchs Wegschauen.
+Messen ist neutral. Was du daraus machst, nicht.
+Die Zahl von heute erklärt nichts. Zusammen mit den anderen alles.
+Kurz wiegen, dann trainieren.
+Dein Gewichtsverlauf ist die ehrlichste Rückmeldung, die du bekommst.
+Täglich wiegen macht die einzelne Zahl unwichtig. Das ist der Punkt.
+Nach dem Aufstehen, vor allem anderen.
+Eine Waage, zehn Sekunden, ein besserer Trend.
+Wer misst, kann anpassen. Wer schätzt, hofft.
+Heute ist ein Wert. Nächsten Monat ist es eine Linie.
 `),
   weekly: lines(`
 Deine Woche ist da. Ehrlich hinschauen, dann weiter.
@@ -421,6 +601,42 @@ Wochenfazit lesen. Dann weisst du, ob der Kurs stimmt.
 Woche gemessen. Jetzt verstehen.
 Rückblick lesen, durchatmen, weitermachen.
 Der ehrlichste Moment der Woche: das Fazit. Lies es.
+Sieben Tage sind zusammen. Schau sie dir an.
+Der Wochenschnitt sagt mehr als jeder einzelne Tag.
+Ein Blick auf die Woche, dann planst du die nächste.
+Was lief, was nicht? Die Zahlen sagen es dir ohne Umschweife.
+Nicht der Ausreisser zählt, sondern das Mittel.
+Protein getroffen? Kalorien im Rahmen? Kurz nachsehen.
+Die Woche ist die kleinste Einheit, die etwas aussagt.
+Ein Tag über dem Ziel ändert nichts. Eine Woche schon.
+Wochenfazit lesen und daraus eine Sache für nächste Woche mitnehmen.
+Jetzt ist der Moment für den ehrlichen Blick.
+Datenlage prüfen: Wie viele Tage hast du wirklich getrackt?
+Die Woche schliessen, die nächste öffnen.
+Keine Bewertung, nur Bilanz.
+Dein Trend über sieben Tage ist der einzige, der zählt.
+Fünf gute Tage und zwei schwache sind eine gute Woche.
+Schau nach, bevor du etwas änderst.
+Ändere höchstens eine Sache. Mehr verwässert das Ergebnis.
+Die Zahlen sind da. Du musst sie nur lesen.
+Woche vorbei. Was nimmst du mit?
+Wer jede Woche kurz hinschaut, muss selten grosse Kurskorrekturen machen.
+Ein Wochenrückblick dauert zwei Minuten und spart dir einen Monat Umweg.
+Der Schnitt zeigt dir den Weg, nicht das Gefühl.
+Kalorien, Protein, Gewicht – drei Zahlen, ein Bild.
+Bevor du am Ziel schraubst: erst die Datenlage ansehen.
+Sieben Tage Arbeit verdienen zwei Minuten Aufmerksamkeit.
+Gut gelaufen? Dann ändere nichts.
+Der Plan wird an der Woche gemessen, nicht am Montag.
+Was hat dich diese Woche aus dem Takt gebracht?
+Wochenbudget gehalten? Dann weisst du, dass es funktioniert.
+Eine schlechte Woche ist eine Information, kein Rückschlag.
+Schau auf den Trend, nicht auf den Freitag.
+Die Auswertung wartet in der App. Zwei Minuten.
+Rückblick jetzt, Entscheidung für Montag.
+Zahlen lesen ist Teil des Trainings.
+Die Woche ist gelaufen. Lern etwas daraus, dann lass sie los.
+Nächste Woche beginnt mit dem, was du jetzt siehst.
 `),
   protein: lines(`
 Noch {n} g Protein offen. Skyr, Quark, Eier – deine Wahl.
@@ -487,18 +703,54 @@ Noch {n} g. Dein Körper baut, wenn du lieferst.
 Noch {n} g Protein bis zum Ziel. Du bist fast da.
 {n} g fehlen. Quark, Beeren, Löffel. Erledigt.
 Noch {n} g Protein. Ein Teller Huhn mit Reis, und der Tag passt.
+Noch {n} g offen. Quark, Skyr, Eier – such dir was aus.
+{n} g fehlen. Ein Shake schliesst die Lücke.
+{n} g bis zum Ziel. Heute machbar, morgen egal.
+Es fehlen {n} g Protein. Das Abendessen entscheidet.
+{n} g offen – Hüttenkäse, Fisch oder Hähnchen.
+Noch {n} g. Kein Drama, aber auch nicht von allein erledigt.
+{n} g fehlen dir. Das ist eine Portion, keine Mahlzeit.
+Protein ist der eine Wert, den du wirklich treffen solltest. Noch {n} g.
+{n} g Rest. Plan dein Abendessen entsprechend.
+Noch {n} g – ein Becher Skyr und du bist durch.
+{n} g fehlen. Wer aufbaut, sollte sie holen.
+Protein-Lücke: {n} g. Schliessbar in einer Mahlzeit.
+Noch {n} g. Die Kalorien stimmen, das Protein noch nicht.
+{n} g offen. Zwei Eier und Quark wären eine Antwort.
+Es fehlen {n} g. Nicht perfekt sein, nur nah dran.
+{n} g Protein fehlen noch. Der Rest des Tages reicht dafür.
+Noch {n} g – lieber jetzt einplanen als später feststellen.
+{n} g offen. Protein zuerst, der Rest ergibt sich.
+Dir fehlen {n} g. Ein Snack mit Quark löst das.
+Noch {n} g Protein. Denk daran, bevor du kochst.
+{n} g bis zum Minimum. Nicht darunter bleiben.
+Es sind noch {n} g. Das ist der Unterschied zwischen fast und ganz.
+{n} g offen – Thunfisch, Skyr, Magerquark, Whey.
+Noch {n} g Protein. Kein Grund zur Panik, aber auch nicht vergessen.
+{n} g fehlen. Beim Abendessen mitdenken.
+Protein ist dein Minimum, kein Richtwert. Noch {n} g.
+{n} g offen. Die einfachste Lösung steht meist im Kühlschrank.
+Noch {n} g – was kommt heute Abend auf den Teller?
+{n} g fehlen. Damit steht und fällt dein Trainingsergebnis.
+Noch {n} g Protein bis zum Ziel. Machbar.
+{n} g offen. Lieber jetzt als morgen doppelt.
+Es fehlen {n} g – eine Handvoll Entscheidungen, keine grosse Sache.
+{n} g Protein noch. Dein Muskel merkt sich das.
+Noch {n} g. Trockene Zahl, klarer Auftrag.
+{n} g fehlen. Ein guter Tag endet damit, dass sie drin sind.
+Noch {n} g Protein offen. Du weisst, was zu tun ist.
 `),
 };
 
 // ---------------------------------------------------------------- English
 const enTitles: Record<ReminderKind, string[]> = {
-  breakfast: lines(`Breakfast?|Good morning|Log breakfast|Start the day|Breakfast open|Morning routine|First entry|Short and honest`.replace(/\|/g, '\n')),
-  lunch: lines(`Lunch|Halftime|Lunch in the diary?|Halfway mark|Meal two|Stay on it|Midday|No recalculating tonight`.replace(/\|/g, '\n')),
-  dinner: lines(`Close the day|Dinner|Draw the line|Evening check|Last meal|Shut the diary|Evening|One more entry`.replace(/\|/g, '\n')),
-  water: lines(`Drink up|Water|Thirst is late|Small break|Fluids|Hydration check|Refill|Don’t forget to drink`.replace(/\|/g, '\n')),
-  weigh: lines(`Step on the scale|Morning weight|Data point|Scale|Measure, don’t guess|Feed the trend|Check-in|Mornings`.replace(/\|/g, '\n')),
-  weekly: lines(`Weekly review|Sunday|The week in numbers|Week done|Review|New week|Weekly summary|Honest look`.replace(/\|/g, '\n')),
-  protein: lines(`Protein open|{n} g protein to go|Protein gap|Protein target|Home stretch|Evening protein|The rest is protein|Don’t forget`.replace(/\|/g, '\n')),
+  breakfast: lines(`Breakfast?|Good morning|Log breakfast|Start the day|Breakfast open|Morning routine|First entry|Short and honest|Day starts now|Still fasted?|Plate seen?|Before it starts|Breakfast counts|Morning entry|First numbers|Quick tap`.replace(/\|/g, '\n')),
+  lunch: lines(`Lunch|Halftime|Lunch in the diary?|Halfway mark|Meal two|Stay on it|Midday|No recalculating tonight|Lunch is up|Plate done?|Half a day|Where you stand|Midday balance|Quick check|After eating|Log it now`.replace(/\|/g, '\n')),
+  dinner: lines(`Close the day|Dinner|Draw the line|Evening check|Last meal|Shut the diary|Evening|One more entry|Evening balance|Close it out|Final entry|Plate empty?|Almost done|Evening round|Today's numbers|Done for today`.replace(/\|/g, '\n')),
+  water: lines(`Drink up|Water|Thirst is late|Small break|Fluids|Hydration check|Refill|Don’t forget to drink|Glass empty?|In between|Quick drink|Top it up|Water level|Take a sip|One more glass|Water break`.replace(/\|/g, '\n')),
+  weigh: lines(`Step on the scale|Morning weight|Data point|Scale|Measure, don’t guess|Feed the trend|Check-in|Mornings|Hop on|Today's number|Fasted weight|Scale is waiting|Daily weight|One value|Before coffee|Ten seconds`.replace(/\|/g, '\n')),
+  weekly: lines(`Weekly review|Sunday|The week in numbers|Week done|Review|New week|Weekly summary|Honest look|Seven days|Week in view|Numbers of the week|Quick look|Weekly standing|The balance|What happened|Next week`.replace(/\|/g, '\n')),
+  protein: lines(`Protein open|{n} g protein to go|Protein gap|Protein target|Home stretch|Evening protein|The rest is protein|Don’t forget|Still open|Protein left|{n} g missing|Close the gap|Last piece|Rest of the day|Count protein|Almost there`.replace(/\|/g, '\n')),
 };
 
 const enBodies: Record<ReminderKind, string[]> = {
@@ -567,6 +819,42 @@ The diary is waiting for the first entry. Don’t keep it waiting.
 Breakfast eaten? Into the diary, then it’s ticked off.
 First entry of the day. Small step, clear line.
 Breakfast in. The rest of the day builds on it.
+Plate empty, diary empty? Only one of those is fine.
+The first entry takes less time than your coffee.
+What goes in now, you won't have to reconstruct tonight.
+Two eggs are two eggs – but only logged do they count.
+You ate. The app doesn't know yet.
+Logged in the morning, relaxed in the evening.
+Nobody remembers breakfast at 9 pm. The app does.
+The day counts from the first bite. So does your diary.
+Seen your protein yet? Log it and find out.
+Twenty seconds now saves ten minutes of guessing.
+Logging breakfast isn't work, it's a habit.
+The earlier the first entry, the more honest the whole day.
+An empty diary at noon is harder to fill than one at breakfast.
+Morning routine: get up, eat, log.
+The scale measures the result. The diary explains it.
+Your day holds 2000 decisions. This one takes twenty seconds.
+What you log today helps you read the trend in four weeks.
+Breakfast rarely changes. That's what templates are for.
+Log first, then take on the day.
+Miss the morning and you'll be estimating the rest.
+Coffee with milk counts too. In it goes.
+The day is still open. Your first entry decides how clear it gets.
+No entry doesn't mean zero calories. It means no data.
+One breakfast, one tap, done. It doesn't get simpler.
+Discipline isn't willpower. It's the habit of tapping now.
+You know what you ate. In two hours you won't, exactly.
+The first calories of the day are the easiest ones to count.
+Rough beats nothing.
+Breakfast is your foundation. Foundations get measured.
+Ate nothing? Then log nothing – but check your target.
+The day starts at zero. Note that before it runs away.
+Tap the template, check the amount, save. Three moves.
+A morning without an entry is a day of estimates.
+Your training day starts at the breakfast table, not in the gym.
+Tracking or guessing gets decided right now.
+Start small: just breakfast. The rest follows.
 `),
   lunch: lines(`
 Logging takes 20 seconds and buys a week of clarity.
@@ -633,6 +921,42 @@ What was on the plate belongs in the diary. At noon too.
 Lunch in. Then you know exactly what’s missing.
 Log it, then relax into the afternoon.
 Lunch into the diary – a routine that pays.
+Half a day, half the data. Log lunch.
+Log it while the portion is still in front of you.
+Lunch in, and you know what the evening allows.
+Log at noon and you plan the evening instead of regretting it.
+Two minutes now, no mental maths at ten.
+Whatever was on the plate belongs in the app. The sauce too.
+Midday check: how much protein is in already?
+Canteen, restaurant, leftovers – logging works anywhere.
+The week isn't decided at night. It's decided on days like this.
+After the meal comes the entry.
+The afternoon eats your memory. Log now.
+Lunch logged means the evening holds no surprises.
+Estimating is allowed. Skipping isn't.
+Halftime. Where do you stand on calories?
+Two meals in, the rest is planning.
+Logging takes less time than putting your phone away and picking it up again.
+What you don't capture now is a guess tonight.
+Log lunch and know where you are.
+A bad day belongs in the diary too. That one especially.
+Your weekly budget appreciates an honest look right now.
+Lunch in the diary, head clear for the afternoon.
+The plate is empty, the field isn't.
+Short on time? A quick entry with just kcal works too.
+It's not the perfect entry that counts, it's the one that exists.
+Status now, decision later.
+Log every lunch and you'll never need a break from tracking.
+Portion bigger than planned? All the more reason to write it down.
+The diary doesn't judge. It calculates.
+Lunch in, and the afternoon runs itself.
+Dinner gets easier when you know what's left.
+A day without a lunch entry is half a data point.
+Phone out, entry in, move on.
+Honesty at noon saves excuses at night.
+Logged along the way beats reconstructed at night.
+Today's numbers are tomorrow's plan.
+Log what was – not what was planned.
 `),
   dinner: lines(`
 Log dinner, know where you stand.
@@ -699,6 +1023,42 @@ Dinner into the diary, then it’s evening.
 Complete the day. Log dinner.
 In it goes. Tomorrow morning you’ll thank yourself.
 Log dinner – short, honest, done.
+Last meal, last entry. Then the day is clean.
+Dinner in and the day is closed.
+One look at the daily summary, then you're off duty.
+What happened today happened. Log it and let it stand.
+The day ends in the diary, not in your head.
+Over target? Write it down, don't massage it.
+Under target? That belongs on record too.
+Log dinner and you'll know where the week stands.
+No day is perfect. Every day is countable.
+Two minutes and your diary is complete.
+Tomorrow starts at zero. Finish today first.
+The evening entry is the one most people forget. Not you.
+Plate empty, diary empty? Something's missing.
+What you log tonight you'll read in Sunday's summary.
+Before the sofa, the numbers.
+One complete day is worth more than three half ones.
+Logging dinner costs less time than an ad break.
+An honest number today makes tomorrow's trend usable.
+Calories, protein, done.
+Closing the day also means not thinking about it any more.
+Your weekly budget wants to know how today went.
+One entry now and your head is free.
+Restaurant? Estimate the portion and log it. Better than nothing.
+Over the plan today, under it tomorrow. The week counts.
+The last entry of the day matters most for the average.
+Log what you ate. Not what you meant to eat.
+Logging at night is routine, not punishment.
+A day without a dinner entry skews your whole week.
+Finish it off, then it's quiet.
+The day is done. Put it on record.
+Closing the diary feels good. Two taps away.
+Finished eating? Then finish logging.
+Tomorrow morning you won't remember the portion size.
+Your trend needs today. Not roughly today.
+One more entry and you've got seven out of seven.
+Numbers now, verdict on Sunday.
 `),
   water: lines(`
 You’re not a cactus.
@@ -765,6 +1125,42 @@ Drink up. Sounds trivial, works wonders.
 Water between meals. Now is one of those moments.
 Grab the bottle, empty the glass, log it. Done.
 Two seconds for +500 ml. No effort, real effect.
+A glass now, not when thirst shows up.
+Water is the cheapest performance gain there is.
+Get up, refill, carry on.
+You have a goal. The glass is right there.
+Two sips won't do it. A glass will.
+Drinking has the best effort-to-effect ratio of anything today.
+That afternoon headache is often just missing water.
++250 ml, one tap. No reason to hesitate.
+How far along are you? Take a look.
+Coffee doesn't replace it. Water does.
+Bottle empty? That's a signal, not a coincidence.
+Drink before training holds it against you.
+Next glass, next bit of progress.
+A glass now makes for a better evening later.
+Hydration is boring. It works anyway.
+Muscle is mostly water. Top it up.
+Not in the mood? Drink anyway. Ten seconds.
+One glass per reminder. Nobody's asking for more.
+Water is the easiest entry of the day.
+Thirst arrives late. Be early.
+Nothing yet today? Then now.
+A full day of work, an empty glass. Let's fix that.
+Drinking isn't an achievement. Forgetting is a mistake.
+Between two tasks there's room for a glass of water.
+Your daily goal is in the app. The rest is on you.
+Train hard, drink more. That includes today.
+Refill, tap, done.
+Drinking water won't make you stronger. Too little makes you weaker.
+One glass now saves two later.
+A sip is a start. A glass is the goal.
+The bottle on your desk only helps if you use it.
+Drinking between tasks keeps your head awake.
+Short break, tall glass.
+Reminder received? Then glass in hand.
+No thirst doesn't mean no need.
+Logging water takes one tap. Drinking takes a little longer.
 `),
   weigh: lines(`
 Don’t judge, just measure.
@@ -831,6 +1227,42 @@ Log weight – short, fasted, daily.
 Number into the diary. No comment needed.
 A morning without a weight is a hole in the curve. Close it.
 Scale on, number in, coffee. That is all the morning needs.
+Fasted, before coffee, quick step on.
+The number is a measurement, not a verdict.
+Ten seconds for one point in your trend.
+One day says nothing. Thirty say everything.
+The scale weighs water, salt and glycogen too. The trend doesn't.
+Measure instead of guessing. Same routine every morning.
+Heavier than yesterday? The 7-day average barely notices.
+Your trend needs feeding. Today is one data point.
+No scale, no curve. No curve, no adjustment.
+Step on, log the number, put the phone down.
+The number fluctuates. Your direction doesn't.
+Same time, same conditions, usable data.
+One value is noise. Many are a signal.
+Log your morning weight and get on with the day.
+Don't evaluate. Just measure.
+The phase review needs weight data. Otherwise it's guesswork.
+The scale is a tool, not a judge.
+Weighing only on good days gives you skewed data.
+Weighing today is what makes Sunday worth reading.
+Number in, head out.
+The trend works for you if you feed it.
+The day after eating out belongs on the scale too.
+Two kilos of swing is normal. That's why we watch the average.
+Scale before breakfast, not after.
+Measuring regularly beats measuring precisely.
+One data point today makes next week's review possible.
+Don't want to see the number? It won't change by looking away.
+Measuring is neutral. What you do with it isn't.
+Today's number explains nothing. With the others, everything.
+Weigh in, then train.
+Your weight curve is the most honest feedback you'll get.
+Daily weighing makes the single number unimportant. That's the point.
+After getting up, before anything else.
+One scale, ten seconds, a better trend.
+Measure and you can adjust. Guess and you hope.
+Today it's a value. Next month it's a line.
 `),
   weekly: lines(`
 Your week is in. Look at it honestly, then move on.
@@ -897,6 +1329,42 @@ Read the weekly summary. Then you know if the course is right.
 Week measured. Now understand it.
 Read the review, breathe, carry on.
 The most honest moment of the week: the summary. Read it.
+Seven days are in. Take a look.
+The weekly average says more than any single day.
+One look at the week, then plan the next.
+What worked, what didn't? The numbers say it plainly.
+It's not the outlier that counts, it's the mean.
+Protein hit? Calories in range? Check.
+The week is the smallest unit that tells you anything.
+One day over target changes nothing. A week does.
+Read the summary and take one thing into next week.
+Now is the moment for the honest look.
+Check your data: how many days did you actually track?
+Close this week, open the next.
+No judgement, just the balance.
+Your seven-day trend is the only one that matters.
+Five good days and two weak ones make a good week.
+Look before you change anything.
+Change one thing at most. More and you can't tell what worked.
+The numbers are there. You just have to read them.
+Week's over. What are you taking with you?
+Look briefly every week and you'll rarely need a big correction.
+A weekly review takes two minutes and saves you a month of detours.
+The average shows the way. The feeling doesn't.
+Calories, protein, weight – three numbers, one picture.
+Before you touch the target: check the data first.
+Seven days of work deserve two minutes of attention.
+Went well? Then change nothing.
+The plan is measured by the week, not by Monday.
+What threw you off this week?
+Weekly budget held? Then you know it works.
+A bad week is information, not a setback.
+Look at the trend, not at Friday.
+The review is waiting in the app. Two minutes.
+Look back now, decide for Monday.
+Reading numbers is part of the training.
+The week is done. Learn one thing, then let it go.
+Next week starts with what you see now.
 `),
   protein: lines(`
 {n} g of protein still open. Skyr, quark, eggs – your call.
@@ -963,6 +1431,42 @@ Protein today: {n} g open. Dinner sorts it.
 {n} g of protein to the target. You’re almost there.
 {n} g missing. Quark, berries, spoon. Done.
 {n} g of protein to go. A plate of chicken and rice and the day fits.
+{n} g still open. Quark, skyr, eggs – your pick.
+{n} g missing. A shake closes the gap.
+{n} g to the target. Doable today, irrelevant tomorrow.
+{n} g of protein short. Dinner decides.
+{n} g open – cottage cheese, fish or chicken.
+{n} g to go. No drama, but it won't happen by itself.
+{n} g short. That's a portion, not a meal.
+Protein is the one number worth hitting. {n} g to go.
+{n} g left. Plan dinner accordingly.
+{n} g to go – one tub of skyr and you're done.
+{n} g missing. If you're building, go get them.
+Protein gap: {n} g. Closable in one meal.
+{n} g left. Calories are fine, protein isn't yet.
+{n} g open. Two eggs and quark would be an answer.
+{n} g short. Don't be perfect, just be close.
+{n} g of protein to go. The rest of the day is enough.
+{n} g left – better to plan it now than notice it later.
+{n} g open. Protein first, the rest follows.
+You're {n} g short. A quark snack solves it.
+{n} g of protein left. Think of it before you cook.
+{n} g to the minimum. Don't end up below.
+{n} g to go. That's the difference between almost and done.
+{n} g open – tuna, skyr, cottage cheese, whey.
+{n} g of protein left. No panic, but don't forget either.
+{n} g missing. Keep it in mind at dinner.
+Protein is your minimum, not a suggestion. {n} g to go.
+{n} g open. The simplest answer is usually in the fridge.
+{n} g left – what's on the plate tonight?
+{n} g missing. Your training result depends on it.
+{n} g of protein to the target. Doable.
+{n} g open. Better now than double tomorrow.
+{n} g short – a handful of decisions, nothing dramatic.
+{n} g of protein to go. Your muscle keeps score.
+{n} g left. Dry number, clear job.
+{n} g missing. A good day ends with them in.
+{n} g of protein open. You know what to do.
 `),
 };
 

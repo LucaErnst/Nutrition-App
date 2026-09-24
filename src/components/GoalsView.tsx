@@ -19,14 +19,10 @@ function weekdayName(d: number): string {
   return new Date(2026, 8, 6 + d).toLocaleDateString(getLocale(), { weekday: 'short' }).replace('.', '');
 }
 
-export function GoalsView() {
-  const pro = usePro();
+/** Standard-Trainingstage – eigener Abschnitt, damit „Mehr“ die Reihenfolge bestimmen kann. */
+export function TrainingDaysSection() {
   const t = useT();
-  const goals = useGoals() ?? [];
   const settings = useSettings();
-  const [editing, setEditing] = useState<DailyGoal | 'new' | null>(null);
-  const [reviewing, setReviewing] = useState<DailyGoal | null>(null);
-  const today = todayISO();
 
   function toggleWeekday(d: number) {
     if (!settings) return;
@@ -36,6 +32,33 @@ export function GoalsView() {
     void saveSettings({ training_weekdays: [...set] });
   }
 
+  return (
+    <section className="card section">
+      <h2>{t('goals.trainingDays')}</h2>
+      <p className="search-hint">{t('goals.trainingDaysHint')}</p>
+      <div className="weekday-picker" role="group" aria-label={t('goals.trainingDaysLabel')}>
+        {WEEKDAYS.map((d) => {
+          const on = settings?.training_weekdays.includes(d) ?? false;
+          return (
+            <button key={d} className={`weekday ${on ? 'active' : ''}`} aria-pressed={on} onClick={() => toggleWeekday(d)}>
+              {weekdayName(d)}
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/** Phasen: Liste, Anlegen, Bearbeiten, Auswertung. */
+export function GoalsView() {
+  const pro = usePro();
+  const t = useT();
+  const goals = useGoals() ?? [];
+  const [editing, setEditing] = useState<DailyGoal | 'new' | null>(null);
+  const [reviewing, setReviewing] = useState<DailyGoal | null>(null);
+  const today = todayISO();
+
   async function remove(g: DailyGoal) {
     if (!confirm(t('goals.confirmDelete', { name: phaseDisplayName(g) }))) return;
     await db.goals.delete(g.id!);
@@ -43,22 +66,7 @@ export function GoalsView() {
   }
 
   return (
-    <div className="goals">
-      <section className="card section">
-        <h2>{t('goals.trainingDays')}</h2>
-        <p className="search-hint">{t('goals.trainingDaysHint')}</p>
-        <div className="weekday-picker" role="group" aria-label={t('goals.trainingDaysLabel')}>
-          {WEEKDAYS.map((d) => {
-            const on = settings?.training_weekdays.includes(d) ?? false;
-            return (
-              <button key={d} className={`weekday ${on ? 'active' : ''}`} aria-pressed={on} onClick={() => toggleWeekday(d)}>
-                {weekdayName(d)}
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
+    <>
       <section className="card section">
         <div className="section-head">
           <h2>{t('goals.phases')}</h2>
@@ -131,7 +139,7 @@ export function GoalsView() {
           <GoalForm goal={editing === 'new' ? undefined : editing} onDone={() => setEditing(null)} />
         </Modal>
       )}
-    </div>
+    </>
   );
 }
 

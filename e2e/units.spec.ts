@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { freshApp, kcalTotal, openAddDialog } from './helpers';
+import { freshApp, kcalTotal, openAddDialog, openSection } from './helpers';
 
 /** Trägt ein Referenz-Lebensmittel mit einer bestimmten Einheit ein. */
 async function addWithUnit(page: import('@playwright/test').Page, meal: string, food: string, amount: string, unit?: string) {
@@ -44,6 +44,7 @@ test('Gramm und Kilogramm ergeben denselben Wert', async ({ page }) => {
 
 test('US-Einstellung stellt die passenden Einheiten nach vorne', async ({ page }) => {
   await page.getByRole('button', { name: 'More' }).click();
+  await openSection(page, 'Units');
   const us = page.getByRole('radio', { name: 'US', exact: true });
   await us.click();
   await expect(us).toHaveAttribute('aria-checked', 'true');

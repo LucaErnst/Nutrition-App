@@ -84,3 +84,13 @@ export async function addFromSearch(page: Page, meal: string, food: string, amou
 export function kcalTotal(page: Page) {
   return page.locator('.summary-kcal-value');
 }
+
+/**
+ * Klappt eine Karte unter „Mehr“ auf (Wasser, Einheiten, Backup, Diagnose).
+ * Sie starten zugeklappt, damit die Ansicht nicht vollsteht.
+ */
+export async function openSection(page: Page, title: string) {
+  const card = page.locator('section.card').filter({ has: page.getByRole('heading', { name: title, exact: true }) });
+  const chevron = card.getByRole('button', { name: 'Expand' });
+  if (await chevron.count()) await chevron.click();
+}

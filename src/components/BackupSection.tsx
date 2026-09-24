@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { exportBackup, parseBackup, restoreBackup, type Backup } from '../lib/backup';
 import { useSettings } from '../db/hooks';
 import { getLocale, useT } from '../i18n';
+import { CollapsibleCard } from './CollapsibleCard';
 import { usePro } from '../lib/pro';
 import { openPaywall, ProBadge } from './Paywall';
 import { isNative } from '../lib/native';
@@ -79,10 +80,11 @@ export function BackupSection() {
   }
 
   return (
-    <section className="card section">
-      <h2>{t('backup.title')}</h2>
+    <CollapsibleCard
+      title={t('backup.title')}
+      summary={t('backup.last', { when: settings?.last_backup_at ? formatWhen(settings.last_backup_at) : t('backup.never') })}
+    >
       <p className="search-hint">{t('backup.hint')}</p>
-      <p className="search-hint">{t('backup.last', { when: settings?.last_backup_at ? formatWhen(settings.last_backup_at) : t('backup.never') })}</p>
       {isNative && (
         <p className="search-hint">
           {t('backup.auto', { when: settings?.last_auto_backup_at ? formatWhen(settings.last_auto_backup_at) : t('backup.never') })}
@@ -136,6 +138,6 @@ export function BackupSection() {
           {message.text}
         </p>
       )}
-    </section>
+    </CollapsibleCard>
   );
 }

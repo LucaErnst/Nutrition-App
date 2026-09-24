@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { addFromSearch, freshApp } from './helpers';
+import { addFromSearch, freshApp, openSection } from './helpers';
 
 test.beforeEach(async ({ page }) => {
   await freshApp(page);
@@ -40,6 +40,7 @@ test('backup export produces a JSON file incl. water', async ({ page }) => {
   await addFromSearch(page, 'Breakfast', 'Low-fat quark');
   await page.getByRole('region', { name: 'Water' }).getByRole('button', { name: 'Add 250 ml' }).click();
   await page.getByRole('button', { name: 'More' }).click();
+  await openSection(page, 'Backup');
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export backup' }).click();
   const file = await download;
