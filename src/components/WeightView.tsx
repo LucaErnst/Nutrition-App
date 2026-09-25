@@ -72,6 +72,7 @@ export function WeightView() {
             <span>{t('weight.date')}</span>
             <input type="date" value={date} max={todayISO()} onChange={(e) => setDate(e.target.value)} required />
           </label>
+          <div className="weight-unit-pair">
           <label className="field">
             <span>{bodyUnit === 'st' ? 'st' : bodyUnit}</span>
             <input
@@ -101,6 +102,7 @@ export function WeightView() {
               />
             </label>
           )}
+          </div>
           <button type="submit" className="btn-primary" disabled={!value}>
             {t('common.save')}
           </button>

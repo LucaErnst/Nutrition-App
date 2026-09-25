@@ -2302,6 +2302,20 @@ input[type='date']::-webkit-date-and-time-value {
     grid-column: 1 / -1;
   }
 
+  /* „Mehr“ in zwei Spalten: die Karten sind schmal, quer über 900 px sähen sie verloren aus.
+     Mehrspaltiger Fluss statt Raster, damit unterschiedlich hohe Karten ohne Lücken sitzen. */
+  .goals {
+    display: block;
+    column-count: 2;
+    column-gap: 16px;
+  }
+
+  .goals > section,
+  .goals > .about {
+    break-inside: avoid;
+    margin-bottom: 12px;
+  }
+
   /* In der schmalen Seitenspalte die Innen-Layouts wieder einspaltig halten */
   .split-side .progress-list {
     grid-template-columns: 1fr;
@@ -2687,4 +2701,18 @@ body::-webkit-scrollbar,
   display: inline-block;
   width: 32px;
   flex: none;
+}
+
+/* Stone und Pfund gehören zusammen: sonst bricht das Pfund-Feld allein in die nächste
+   Zeile und die Eingabe sieht auseinandergerissen aus. */
+.weight-unit-pair {
+  display: flex;
+  gap: 10px;
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.weight-unit-pair .field {
+  flex: 1 1 100px;
+  min-width: 0;
 }

@@ -138,3 +138,24 @@ lässt sich das am fertigen Archiv:
 ```bash
 find <archiv> -name SeriousWidgets.appex -exec ls {}/Assets.car \;
 ```
+
+## Hochladen
+
+```bash
+xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release \
+  -destination 'generic/platform=iOS' -archivePath <archiv> -allowProvisioningUpdates archive
+xcodebuild -exportArchive -archivePath <archiv> -exportOptionsPlist tools/ExportOptions.plist \
+  -exportPath <ziel> -allowProvisioningUpdates
+```
+
+`tools/ExportOptions.plist` lädt direkt nach App Store Connect (`destination: upload`). Vorher
+`CURRENT_PROJECT_VERSION` in beiden Zielen hochzählen – App und SeriousWidgets müssen dieselbe
+Nummer tragen.
+
+## Faltbares iPhone (Duo)
+
+Getestet wird gegen drei Grössen: aussen 474×696, innen 640×904, innen quer 904×640
+(`e2e/duo-layout.spec.ts`, `e2e/duo-1-1.spec.ts`). Wichtig ist nicht nur jede Grösse für sich,
+sondern der Wechsel zur Laufzeit – die Ansicht wird dabei nicht neu geladen, offene Dialoge und
+aufgeklappte Karten müssen ihren Zustand behalten. Ab 700 px werden Tagebuch, Woche und Gewicht
+zweispaltig und „Mehr“ fliesst in zwei Spalten.
