@@ -1,6 +1,7 @@
 import { db } from './db';
 import type { FoodItem, Unit } from './types';
 import { getLanguage } from '../i18n';
+import REFERENCE from './reference-foods.json';
 
 /**
  * Startdaten aus der Spec. Werte sind pro Portion angegeben (so wie in der
@@ -58,12 +59,41 @@ function toFoodItem(row: SeedRow, now: number): FoodItem {
   };
 }
 
+/**
+ * Grundnahrungsmittel aus der USDA-Tabelle (FoodData Central, gemeinfrei/CC0). Open Food Facts
+ * kennt jedes verpackte Produkt, aber „Pouletbrust roh" findet man dort schlecht – diese
+ * Tabelle füllt genau die Lücke und liegt offline in der App.
+ */
+function referenceToFoodItem(r: (typeof REFERENCE)[number], now: number): FoodItem {
+  return {
+    name: getLanguage() === 'de' ? r.de : r.en,
+    kcal_per_100g: r.kcal,
+    protein_per_100g: r.p,
+    fat_per_100g: r.f,
+    carbs_per_100g: r.c,
+    unit_type: 'weight',
+    source: 'reference',
+    saved: 1,
+    ref_key: r.key,
+    created_at: now,
+  };
+}
+
 /** Legt die Referenzdaten und die aktuelle Phase einmalig an. */
 export async function seedIfEmpty(): Promise<void> {
-  const count = await db.foodItems.where('source').equals('reference').count();
-  if (count === 0) {
-    const now = Date.now();
+  const existing = await db.foodItems.where('source').equals('reference').toArray();
+  const now = Date.now();
+  if (existing.length === 0) {
     await db.foodItems.bulkAdd(SEED.map((r, i) => toFoodItem(r, now + i)));
+  }
+
+  // Fehlende Grundnahrungsmittel nachziehen – auch bei Nutzern, die die App schon hatten.
+  // Verglichen wird über den Schlüssel, nicht über den Namen: Sonst legte ein Sprachwechsel
+  // alles ein zweites Mal an.
+  const known = new Set(existing.map((f) => f.ref_key).filter(Boolean));
+  const missing = REFERENCE.filter((r) => !known.has(r.key));
+  if (missing.length) {
+    await db.foodItems.bulkAdd(missing.map((r, i) => referenceToFoodItem(r, now + 1000 + i)));
   }
 
   // Die erste Phase entsteht im Onboarding (Zielvorschlag aus Körperdaten).

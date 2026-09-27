@@ -371,7 +371,7 @@ export const en = {
   'more.privacy': 'Privacy policy',
   'more.terms': 'Terms of use',
   'more.support': 'Support',
-  'more.about': '{app} · Version {version} · Data: local (IndexedDB) · Product data: Open Food Facts',
+  'more.about': '{app} · Version {version} · Data: local (IndexedDB) · Product data: Open Food Facts · Basic foods: USDA FoodData Central',
 
   // Backup
   'backup.title': 'Backup',
