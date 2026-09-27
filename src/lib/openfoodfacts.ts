@@ -1,5 +1,7 @@
+import { CapacitorHttp } from '@capacitor/core';
 import type { FoodItem } from '../db/types';
 import { getLanguage, t } from '../i18n';
+import { isNative } from './native';
 
 const APP_NAME = 'LucaNutritionTracker';
 const APP_VERSION = __APP_VERSION__;
@@ -10,6 +12,8 @@ const FIELDS = [
   'product_name',
   'product_name_de',
   'product_name_en',
+  'product_name_fr',
+  'product_name_it',
   'brands',
   'quantity',
   'serving_quantity',
@@ -79,36 +83,163 @@ export async function lookupBarcode(barcode: string): Promise<OffResult> {
 }
 
 export type OffSearchResult =
-  | { status: 'found'; products: OffProduct[]; total: number }
+  | { status: 'found'; products: OffProduct[]; total: number; page: number; hasMore: boolean }
   | { status: 'error'; message: string };
 
-/** Mindestabstand zwischen zwei Suchanfragen (OFF erlaubt ~10 Suchen/Minute). */
+export interface OffSearchOptions {
+  country?: 'switzerland' | null;
+  /** 1-basiert; für „mehr laden" */
+  page?: number;
+}
+
+/** Treffer pro Seite. Mehr holt der Nutzer über „mehr laden" nach. */
+export const PAGE_SIZE = 24;
+
+/**
+ * Mindestabstand zwischen zwei Suchanfragen. Der klassische Endpunkt verträgt nur ~10 pro
+ * Minute; der Suchdienst der nativen App ist belastbarer.
+ */
 export const SEARCH_MIN_INTERVAL_MS = 6_000;
+const SEARCH_MIN_INTERVAL_NATIVE_MS = 2_000;
 let lastSearchAt = 0;
 
 export function searchCooldownMs(): number {
-  return Math.max(0, lastSearchAt + SEARCH_MIN_INTERVAL_MS - Date.now());
+  const min = isNative ? SEARCH_MIN_INTERVAL_NATIVE_MS : SEARCH_MIN_INTERVAL_MS;
+  return Math.max(0, lastSearchAt + min - Date.now());
+}
+
+class BusyError extends Error {}
+
+/**
+ * JSON holen. In der nativen App über Capacitors HTTP-Brücke: Die gute Suche von Open Food
+ * Facts sendet keine CORS-Header, im Browser ist sie darum gesperrt – nativ nicht.
+ */
+async function getJson(url: string, timeoutMs: number): Promise<any> {
+  if (isNative) {
+    const res = await CapacitorHttp.get({
+      url,
+      headers: { Accept: 'application/json' },
+      connectTimeout: timeoutMs,
+      readTimeout: timeoutMs,
+    });
+    if (res.status === 429 || res.status === 503) throw new BusyError();
+    if (res.status >= 400) throw new Error(String(res.status));
+    return typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
+  }
+  const res = await fetch(url, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(timeoutMs) });
+  if (res.status === 429 || res.status === 503) throw new BusyError();
+  if (!res.ok) throw new Error(String(res.status));
+  return res.json();
 }
 
 /**
- * Freitextsuche (klassischer Endpunkt – der neue Suchdienst sendet keine CORS-Header).
- * Bewusst nicht als Suche-beim-Tippen: OFF erlaubt nur ~10 Suchen pro Minute
- * und antwortet darüber mit 503.
+ * Der alte Endpunkt antwortet oft mit 503 – gemessen etwa bei jeder zweiten Anfrage. Im Browser
+ * kommt das nicht einmal als Status an: Die Fehlerseite trägt keinen CORS-Header, also sieht die
+ * App nur einen Netzwerkfehler. Darum wird bei jedem Fehlschlag nachgefasst, nicht nur bei 503.
+ * Nur eindeutige 4xx sind endgültig.
  */
-export async function searchProducts(query: string, opts: { country?: 'switzerland' | null } = {}): Promise<OffSearchResult> {
+async function getJsonRetrying(url: string, timeoutMs: number, attempts = 4): Promise<any> {
+  let last: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await getJson(url, timeoutMs);
+    } catch (e) {
+      last = e;
+      const status = e instanceof Error && /^\d{3}$/.test(e.message) ? Number(e.message) : undefined;
+      if (status !== undefined && status < 500 && status !== 429) throw e;
+      if (i < attempts - 1) await new Promise((r) => setTimeout(r, 800 * (i + 1)));
+    }
+  }
+  throw last;
+}
+
+/**
+ * Freitextsuche. Zwei Wege, weil kein Dienst beides kann:
+ *
+ * - nativ: der neue Suchdienst (gute Treffer, zuverlässig) für die Codes, danach ein einziger
+ *   Aufruf der v2-Schnittstelle für die Nährwerte aller Treffer. Der Suchdienst liefert keine
+ *   Nährwerte, die v2-Schnittstelle keine Volltextsuche.
+ * - Web: der klassische Endpunkt, der beides liefert, aber häufig mit 503 antwortet – darum
+ *   mit Wiederholung.
+ */
+export async function searchProducts(query: string, opts: OffSearchOptions = {}): Promise<OffSearchResult> {
   const q = query.trim();
   if (q.length < 2) return { status: 'error', message: t('off.errShort') };
+  const page = Math.max(1, opts.page ?? 1);
   const wait = searchCooldownMs();
   if (wait > 0) return { status: 'error', message: t('off.errCooldown', { s: Math.ceil(wait / 1000) }) };
   lastSearchAt = Date.now();
 
+  try {
+    const products = isNative ? await searchModern(q, page, opts) : await searchClassic(q, page, opts);
+    return products;
+  } catch (e) {
+    if (e instanceof Error && e.name === 'TimeoutError') return { status: 'error', message: t('off.errSearchTimeout') };
+    if (e instanceof Error && /^\d{3}$/.test(e.message)) {
+      const code = Number(e.message);
+      if (code < 500 && code !== 429) return { status: 'error', message: t('off.errStatus', { status: code }) };
+    }
+    // Nach mehreren Versuchen: Wer wirklich offline ist, weiss es; alles andere ist Überlastung
+    // auf der Gegenseite und kein Fehler des Nutzers.
+    const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
+    return { status: 'error', message: offline ? t('off.errOffline') : t('off.errBusy') };
+  }
+}
+
+/** Nativ: Suchdienst für die Reihenfolge, v2 für die Nährwerte. */
+async function searchModern(q: string, page: number, opts: OffSearchOptions): Promise<OffSearchResult> {
+  const url = new URL('https://search.openfoodfacts.org/search');
+  url.searchParams.set('q', opts.country === null ? q : `${q} countries_tags:"en:switzerland"`);
+  url.searchParams.set('page', String(page));
+  url.searchParams.set('page_size', String(PAGE_SIZE));
+  url.searchParams.set('langs', getLanguage());
+  url.searchParams.set('fields', 'code');
+
+  let json = await getJsonRetrying(url.toString(), 12_000);
+  let hits: any[] = Array.isArray(json?.hits) ? json.hits : [];
+  // Nichts im eigenen Land gefunden? Dann weltweit, statt eine leere Liste zu zeigen.
+  if (hits.length === 0 && opts.country !== null && page === 1) {
+    url.searchParams.set('q', q);
+    json = await getJsonRetrying(url.toString(), 12_000);
+    hits = Array.isArray(json?.hits) ? json.hits : [];
+  }
+  const codes = hits.map((h) => String(h?.code ?? '')).filter(Boolean);
+  if (codes.length === 0) return { status: 'found', products: [], total: 0, page, hasMore: false };
+
+  const products = await fetchByCodes(codes);
+  const total = Number(json?.count ?? products.length);
+  return { status: 'found', products, total, page, hasMore: page * PAGE_SIZE < total };
+}
+
+/** Nährwerte für mehrere Codes in einem Aufruf; die Reihenfolge der Suche bleibt erhalten. */
+async function fetchByCodes(codes: string[]): Promise<OffProduct[]> {
+  const url = new URL('https://world.openfoodfacts.org/api/v2/search');
+  url.searchParams.set('code', codes.join('|'));
+  url.searchParams.set('fields', FIELDS);
+  url.searchParams.set('page_size', String(codes.length));
+  url.searchParams.set('app_name', APP_NAME);
+  url.searchParams.set('app_version', APP_VERSION);
+
+  const json = await getJsonRetrying(url.toString(), 12_000);
+  const list: any[] = Array.isArray(json?.products) ? json.products : [];
+  const byCode = new Map<string, OffProduct>();
+  for (const raw of list) {
+    const code = String(raw?.code ?? '');
+    if (code) byCode.set(code, parseProduct(code, raw));
+  }
+  return sortUsable(codes.map((c) => byCode.get(c)).filter((p): p is OffProduct => !!p));
+}
+
+/** Web: der klassische Endpunkt liefert Treffer und Nährwerte zusammen. */
+async function searchClassic(q: string, page: number, opts: OffSearchOptions): Promise<OffSearchResult> {
   const url = new URL('https://world.openfoodfacts.org/cgi/search.pl');
   url.searchParams.set('search_terms', q);
   url.searchParams.set('search_simple', '1');
   url.searchParams.set('action', 'process');
   url.searchParams.set('json', '1');
   url.searchParams.set('lc', getLanguage());
-  url.searchParams.set('page_size', '20');
+  url.searchParams.set('page', String(page));
+  url.searchParams.set('page_size', String(PAGE_SIZE));
   url.searchParams.set('fields', FIELDS);
   if (opts.country) {
     url.searchParams.set('tagtype_0', 'countries');
@@ -118,27 +249,18 @@ export async function searchProducts(query: string, opts: { country?: 'switzerla
   url.searchParams.set('app_name', APP_NAME);
   url.searchParams.set('app_version', APP_VERSION);
 
-  let res: Response;
-  try {
-    res = await fetch(url.toString(), { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15_000) });
-  } catch (e) {
-    if (e instanceof Error && e.name === 'TimeoutError') return { status: 'error', message: t('off.errSearchTimeout') };
-    return { status: 'error', message: t('off.errOffline') };
-  }
-  if (res.status === 429 || res.status === 503) {
-    return { status: 'error', message: t('off.errBusy') };
-  }
-  if (!res.ok) return { status: 'error', message: t('off.errStatus', { status: res.status }) };
+  const json = await getJsonRetrying(url.toString(), 15_000);
+  const list: any[] = Array.isArray(json?.products) ? json.products : [];
+  const products = sortUsable(list.map((h) => parseProduct(String(h?.code ?? ''), h)).filter((p) => p.barcode));
+  const total = Number(json?.count ?? products.length);
+  return { status: 'found', products, total, page, hasMore: page * PAGE_SIZE < total };
+}
 
-  const json = await res.json();
-  const list: unknown[] = Array.isArray(json.products) ? json.products : [];
-  const products = list
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .map((h: any) => parseProduct(String(h.code ?? ''), h))
-    .filter((p) => p.barcode && p.name !== t('off.unknownProduct'))
-    // Produkte mit vollständigen Nährwerten zuerst, Reihenfolge (Beliebtheit) sonst beibehalten
+/** Produkte mit vollständigen Nährwerten zuerst; ohne Namen fliegen raus. */
+function sortUsable(products: OffProduct[]): OffProduct[] {
+  return products
+    .filter((p) => p.name !== t('off.unknownProduct'))
     .sort((a, b) => Number(a.incomplete) - Number(b.incomplete));
-  return { status: 'found', products, total: Number(json.count ?? products.length) };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -179,7 +301,14 @@ function parseProduct(code: string, p: any): OffProduct {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function localizedName(p: any): string {
   const lang = getLanguage();
-  return p[`product_name_${lang}`] || p.product_name_de || p.product_name_en || p.product_name || '';
+  const direct = p[`product_name_${lang}`] || p.product_name_de || p.product_name_en || p.product_name;
+  if (typeof direct === 'string' && direct.trim()) return direct;
+  // Schweizer Produkte tragen oft nur einen französischen oder italienischen Namen. Lieber den
+  // als gar keinen – sonst fehlt das Produkt in der Liste, obwohl es die Datenbank kennt.
+  for (const [key, value] of Object.entries(p ?? {})) {
+    if (key.startsWith('product_name_') && typeof value === 'string' && value.trim()) return value;
+  }
+  return '';
 }
 
 function parseBrand(v: unknown): string | undefined {

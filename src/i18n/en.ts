@@ -127,6 +127,8 @@ export const en = {
   'search.offNone': 'Open Food Facts{scope}: nothing found',
   'search.offScopeCH': ' (Switzerland)',
   'search.offFor': ' (for “{q}”)',
+  'search.offMore': 'Load more results',
+  'search.offLoading': 'Loading…',
   'search.offSearchWorldwide': 'Search worldwide',
   'search.per100': 'per 100 {unit}',
   'search.incomplete': 'incomplete',

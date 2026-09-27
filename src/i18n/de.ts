@@ -120,6 +120,8 @@ export const de: Record<MessageKey, string> = {
   'search.offNone': 'Open Food Facts{scope}: nichts gefunden',
   'search.offScopeCH': ' (Schweiz)',
   'search.offFor': ' (für „{q}“)',
+  'search.offMore': 'Mehr Treffer laden',
+  'search.offLoading': 'Lädt…',
   'search.offSearchWorldwide': 'Weltweit suchen',
   'search.per100': 'pro 100 {unit}',
   'search.incomplete': 'unvollständig',

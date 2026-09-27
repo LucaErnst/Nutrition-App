@@ -30,7 +30,7 @@ export function unitLabel(t: ReturnType<typeof useT>, unit: Unit): string {
 type OffState =
   | { kind: 'idle' }
   | { kind: 'loading'; query: string }
-  | { kind: 'results'; query: string; products: OffProduct[]; total: number }
+  | { kind: 'results'; query: string; products: OffProduct[]; total: number; page: number; hasMore: boolean; loadingMore?: boolean }
   | { kind: 'error'; message: string };
 
 export function FoodSearch({ date, mealType, onAdded }: Props) {
@@ -47,8 +47,29 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
     const q = query.trim();
     setOff({ kind: 'loading', query: q });
     const res = await searchProducts(q, { country: worldwide ? null : 'switzerland' });
-    if (res.status === 'found') setOff({ kind: 'results', query: q, products: res.products, total: res.total });
+    if (res.status === 'found') setOff({ kind: 'results', query: q, products: res.products, total: res.total, page: res.page, hasMore: res.hasMore });
     else setOff({ kind: 'error', message: res.message });
+  }
+
+  /** Nächste Seite anhängen – vorher sah man nur die ersten Treffer und sonst nichts. */
+  async function loadMoreOff() {
+    if (off.kind !== 'results' || off.loadingMore) return;
+    const current = off;
+    setOff({ ...current, loadingMore: true });
+    const res = await searchProducts(current.query, { country: worldwide ? null : 'switzerland', page: current.page + 1 });
+    if (res.status === 'found') {
+      const seen = new Set(current.products.map((p) => p.barcode));
+      setOff({
+        ...current,
+        products: [...current.products, ...res.products.filter((p) => !seen.has(p.barcode))],
+        total: res.total,
+        page: res.page,
+        hasMore: res.hasMore,
+        loadingMore: false,
+      });
+    } else {
+      setOff({ kind: 'error', message: res.message });
+    }
   }
 
   async function pickOff(p: OffProduct) {
@@ -226,6 +247,11 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
                   </li>
                 ))}
               </ul>
+              {off.hasMore && (
+                <button type="button" className="btn-link btn-centered" onClick={() => void loadMoreOff()} disabled={off.loadingMore}>
+                  {off.loadingMore ? t('search.offLoading') : t('search.offMore')}
+                </button>
+              )}
             </>
           )}
         </div>
