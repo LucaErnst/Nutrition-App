@@ -3,6 +3,7 @@ import { isNative } from '../lib/native';
 import { lastWidgetSync, syncWidgets } from '../lib/widgets';
 import { clearErrors, formatErrorsForShare, readErrors, subscribeErrors } from '../lib/errorLog';
 import { getLocale, useT } from '../i18n';
+import { useSettings } from '../db/hooks';
 import { CollapsibleCard } from './CollapsibleCard';
 
 let cache = readErrors();
@@ -20,6 +21,7 @@ export function DiagnosticsSection() {
   const t = useT();
   const errors = useSyncExternalStore(subscribe, getSnapshot);
   const [widgetInfo, setWidgetInfo] = useState(() => lastWidgetSync());
+  const review = useSettings()?.review;
 
   async function refreshWidgets() {
     await syncWidgets();
@@ -41,6 +43,16 @@ export function DiagnosticsSection() {
 
   return (
     <CollapsibleCard title={t('diag.title')} summary={errors.length === 0 ? t('diag.none') : t('diag.count', { n: errors.length })}>
+      {isNative && (
+        // In TestFlight zeigt iOS die Bewertungs-Abfrage nie an. Hier steht darum, ob die App
+        // sie angefordert hat – sonst liesse sich nicht unterscheiden, ob die Regel griff.
+        <p className="search-hint">
+          Bewertung:{' '}
+          {review?.at
+            ? `${new Date(review.at).toLocaleDateString(getLocale())} · v${review.version ?? '?'} · ${review.count ?? 1}×`
+            : 'noch nicht gefragt'}
+        </p>
+      )}
       {isNative && (
         <p className="search-hint" style={{ wordBreak: 'break-all' }}>
           Widgets: {widgetInfo ? `${new Date(widgetInfo.at).toLocaleTimeString(getLocale())} · stored=${String(widgetInfo.stored)} · ${widgetInfo.bytes ?? '?'} B · kcal ${widgetInfo.snap?.kcal}/${widgetInfo.snap?.kcalTarget ?? '–'}` : 'noch kein Sync'}{' '}

@@ -19,6 +19,7 @@
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		70B9BA9EDD89C5245F467638 /* WidgetBridgePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CD2035EC37F0856BC17C3C /* WidgetBridgePlugin.swift */; };
 		7C79F1B75D5CE3D05E3A51F4 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92A3AB6DED1F78E38286B014 /* HealthKit.framework */; };
+		836F8C6B1AD33C234B0D6B1F /* ReviewBridgePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000EF3192D905BF9BB416301 /* ReviewBridgePlugin.swift */; };
 		9582B6852FE996820072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6842FE996800072D4E8 /* SceneDelegate.swift */; };
 		9FE812BB1C6C546D2959AC7A /* HealthBridgePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75D4A003015D86078824451 /* HealthBridgePlugin.swift */; };
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
@@ -58,6 +59,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		000EF3192D905BF9BB416301 /* ReviewBridgePlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ReviewBridgePlugin.swift; sourceTree = "<group>"; };
 		2009E2A17B41BD1362CF1D6A /* MainViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		2398B74698CB422FE3CF91C6 /* SeriousWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SeriousWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2694AF75AFF840D0DDFE0463 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 				2009E2A17B41BD1362CF1D6A /* MainViewController.swift */,
 				79D6D32C25E10EFCF384C2E1 /* App.entitlements */,
 				A75D4A003015D86078824451 /* HealthBridgePlugin.swift */,
+				000EF3192D905BF9BB416301 /* ReviewBridgePlugin.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -347,6 +350,7 @@
 				EFB6AF6FBFDA17AFC506E96F /* SharedStore.swift in Sources */,
 				0990D4E1750F9861EA557B5C /* MainViewController.swift in Sources */,
 				9FE812BB1C6C546D2959AC7A /* HealthBridgePlugin.swift in Sources */,
+				836F8C6B1AD33C234B0D6B1F /* ReviewBridgePlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,7 +404,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = SeriousWidgets/SeriousWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = TF4ZWPC2NR;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -552,7 +556,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = TF4ZWPC2NR;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
@@ -577,7 +581,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = TF4ZWPC2NR;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
@@ -602,7 +606,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = SeriousWidgets/SeriousWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = TF4ZWPC2NR;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;

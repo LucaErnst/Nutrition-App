@@ -163,6 +163,8 @@ export interface Settings {
   pro_granted?: 'early_adopter' | 'none';
   /** Einheitensystem; ohne Angabe aus der Gerätesprache abgeleitet */
   units_system?: 'metric' | 'us' | 'uk';
+  /** Wann zuletzt nach einer Bewertung gefragt wurde */
+  review?: { at?: number; version?: string; count?: number };
 }
 
 /** Mahlzeiten-Vorlage, z.B. "Standard-Frühstück": mehrere Posten auf einmal eintragen. */

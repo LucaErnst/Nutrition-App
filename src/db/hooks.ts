@@ -5,6 +5,7 @@ import { MEAL_TYPES, ZERO_MACROS, snapshotOf, type DailyGoal, type FoodItem, typ
 import { addDays } from '../lib/date';
 import { scheduleReminderSync } from '../lib/remindersNative';
 import { scheduleHealthSync, syncHealthWeight } from '../lib/health';
+import { scheduleReviewCheck } from '../lib/review';
 import { macrosFor, resolveSource, sumMacros, type EntryWithFood } from '../lib/nutrition';
 import { activeGoalFor, targetsFor } from '../lib/goals';
 import type { DaySummary } from '../lib/week';
@@ -32,6 +33,7 @@ export async function addMealEntry(entry: Omit<MealEntry, 'id' | 'created_at' | 
   if (food.id) await db.foodItems.update(food.id, { last_amount: entry.amount, last_unit: entry.unit });
   scheduleReminderSync();
   scheduleHealthSync(entry.date);
+  scheduleReviewCheck();
   return id;
 }
 

@@ -52,6 +52,11 @@ export function isPro(): boolean {
   return state.pro;
 }
 
+/** Woher Pro kommt – für die Bewertungs-Abfrage zählt nur ein echter Kauf. */
+export function proSource(): ProSource {
+  return state.source;
+}
+
 /** Nur zum Ansehen der Sperren: Early Adopter können sich vorübergehend als Free-Nutzer sehen (bis zum Neustart). */
 let previewFree = false;
 export function setPreviewFree(v: boolean) {
@@ -151,6 +156,10 @@ export async function purchasePro(): Promise<PurchaseResult> {
     const { Purchases } = await import('@revenuecat/purchases-capacitor');
     const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg });
     applyCustomerInfo(customerInfo);
+    if (state.pro) {
+      const { scheduleReviewCheck } = await import('./review');
+      scheduleReviewCheck(8000);
+    }
     return state.pro ? 'purchased' : 'error';
   } catch (e) {
     const err = e as { code?: string; userCancelled?: boolean; message?: string };
