@@ -7,11 +7,12 @@ import { Onboarding } from './components/Onboarding';
 import { PaywallHost } from './components/Paywall';
 import { useGoals, useSettings, saveSettings } from './db/hooks';
 import { detectUnitSystem, setUnitSystemCache } from './lib/units';
+import { syncReferenceLanguage } from './db/seed';
 const UpdateBanner = lazy(() => import('./components/UpdateBanner').then((m) => ({ default: m.UpdateBanner })));
 import { ToastProvider } from './components/Toast';
 import { IconDiary, IconFood, IconMore, IconWeek, IconWeight } from './components/Icons';
 import type { ComponentType, SVGProps } from 'react';
-import { useT, type MessageKeyOf } from './i18n';
+import { useT, type MessageKeyOf, useI18n } from './i18n';
 import { WeekView } from './components/WeekView';
 const WeightView = lazy(() => import('./components/WeightView').then((m) => ({ default: m.WeightView })));
 
@@ -38,6 +39,7 @@ function Skeleton() {
 
 export default function App() {
   const t = useT();
+  const { lang } = useI18n();
   const settings = useSettings();
   const goals = useGoals();
   const [view, setView] = useState<View>('diary');
@@ -47,6 +49,12 @@ export default function App() {
     if (settings && goals && !settings.onboarding_done && goals.length > 0) void saveSettings({ onboarding_done: true });
   }, [settings, goals]);
   const showOnboarding = !!settings && !!goals && !settings.onboarding_done && goals.length === 0;
+
+  // Grundnahrungsmittel in der Sprache der Oberfläche halten. Beim ersten Start ist die
+  // Sprache aus den Einstellungen noch nicht geladen, darum hier und nicht beim Anlegen.
+  useEffect(() => {
+    void syncReferenceLanguage(lang === 'de' ? 'de' : 'en');
+  }, [lang]);
 
   // Einheitensystem merken, sobald die Einstellungen da sind: Dialoge frieren ihre Vorgabe
   // beim Öffnen ein und dürfen nicht auf die Gerätesprache zurückfallen.

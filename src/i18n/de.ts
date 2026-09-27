@@ -107,6 +107,7 @@ export const de: Record<MessageKey, string> = {
 
   'search.placeholder': 'Lebensmittel suchen…',
   'search.label': 'Lebensmittel suchen',
+  'search.ownHint': 'Tipp: Was du scannst oder von Hand einträgst, bleibt gespeichert und steht beim nächsten Mal zuoberst. Nach ein paar Wochen findest du fast alles mit zwei Tipps.',
   'search.hint': 'Favoriten und häufig verwendete zuerst',
   'search.empty': 'Datenbank ist leer.',
   'search.noneFor': 'Nichts in deiner Datenbank für „{q}“.',

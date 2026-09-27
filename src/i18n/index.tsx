@@ -103,6 +103,13 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     });
     function apply(l: Language) {
       current = l;
+      // Auch merken: Sonst startet die App bis zum Laden der Einstellungen in der
+      // Gerätesprache – und alles, was währenddessen angelegt wird, ist falsch beschriftet.
+      try {
+        localStorage.setItem(STORAGE_KEY, l);
+      } catch {
+        /* ignorieren */
+      }
       setLang(l);
     }
   }, []);

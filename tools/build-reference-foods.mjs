@@ -31,7 +31,8 @@ const COLS = { A: 'code', B: 'de', C: 'en', G: 'kcal', M: 'protein', P: 'fat', S
  * Was draussen bleibt: Industrie-Zuschnitte und Einträge, die niemand sucht. Die langen
  * Handelsklassen-Bezeichnungen würden die Suche zumüllen, ohne je getippt zu werden.
  */
-const NOISE = /\(S [IVX]+\)|Magerfleischanteil|Fettgewebe|Fettwamme|Schwarten|Nitritpökel|Zichorien|Kaffeeersatz/i;
+const NOISE =
+  /\(S [IVX]+\)|Magerfleischanteil|Fettgewebe|Fettwamme|Schwarten|Nitritpökel|Zichorien|Kaffeeersatz|\b(Blut|Milz|Lunge|Euter|Hirn|Hoden|Bries)\b/i;
 const MAX_NAME = 58;
 
 function sharedStrings() {

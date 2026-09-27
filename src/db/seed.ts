@@ -65,8 +65,9 @@ function toFoodItem(row: SeedRow, now: number): FoodItem {
  * natur, gebraten" findet man dort schlecht – diese Tabelle füllt die Lücke und liegt offline
  * in der App.
  */
-const REFERENCE_VERSION = 'bls-4.0';
+const REFERENCE_VERSION = 'bls-4.0-2';
 const REFERENCE_STAMP = 'nutrition-tracker:reference';
+const REFERENCE_LANG = 'nutrition-tracker:reference-lang';
 
 function referenceToFoodItem(r: ReferenceRow, now: number): FoodItem {
   const [key, name, kcal, protein, fat, carbs] = r;
@@ -96,7 +97,8 @@ async function seedReference(): Promise<void> {
   } catch {
     // Privater Modus: dann eben jedes Mal prüfen.
   }
-  const rows = await loadReference(getLanguage() === 'de' ? 'de' : 'en');
+  const lang = getLanguage() === 'de' ? 'de' : 'en';
+  const rows = await loadReference(lang);
   const existing = await db.foodItems.where('source').equals('reference').toArray();
   const known = new Set(existing.map((f) => f.ref_key).filter(Boolean));
   const missing = rows.filter((r) => !known.has(r[0]));
@@ -104,11 +106,56 @@ async function seedReference(): Promise<void> {
   if (missing.length) {
     await db.foodItems.bulkAdd(missing.map((r, i) => referenceToFoodItem(r, now + i)));
   }
+  await dropRetiredReference(existing, new Set(rows.map((r) => r[0])));
   try {
     localStorage.setItem(REFERENCE_STAMP, REFERENCE_VERSION);
+    localStorage.setItem(REFERENCE_LANG, lang);
   } catch {
     // ohne Vermerk wird beim nächsten Start erneut verglichen – teurer, aber korrekt
   }
+}
+
+/**
+ * Entfernt mitgelieferte Lebensmittel, die es in der neuen Tabelle nicht mehr gibt – etwa
+ * Innereien, die nur die Suche zugestellt haben. Angefasst wird nur, was nirgends eingetragen
+ * ist: Ein gelöschtes Lebensmittel darf keinen Tag im Tagebuch beschädigen.
+ */
+async function dropRetiredReference(existing: FoodItem[], current: Set<string>): Promise<void> {
+  const retired = existing.filter((f) => f.ref_key && !current.has(f.ref_key) && f.id !== undefined);
+  if (retired.length === 0) return;
+  const ids = retired.map((f) => f.id!);
+  const used = new Set((await db.mealEntries.where('food_item_id').anyOf(ids).toArray()).map((e) => e.food_item_id));
+  const removable = ids.filter((id) => !used.has(id));
+  if (removable.length) await db.foodItems.bulkDelete(removable);
+}
+
+/**
+ * Benennt die Grundnahrungsmittel in der Sprache der Oberfläche.
+ *
+ * Nötig, weil beim allerersten Start die Sprache aus den Einstellungen noch nicht geladen ist:
+ * Die Tabelle wird dann in der Gerätesprache angelegt und bliebe für immer so. Und wer später
+ * umschaltet, will „Rind Hackfleisch" sehen und nicht „Beef minced meat". Verglichen wird über
+ * den BLS-Code, die eigenen Lebensmittel bleiben unberührt.
+ */
+export async function syncReferenceLanguage(lang: 'de' | 'en'): Promise<number> {
+  try {
+    if (localStorage.getItem(REFERENCE_LANG) === lang) return 0;
+  } catch {
+    // ohne Vermerk halt jedes Mal
+  }
+  const rows = await loadReference(lang);
+  const names = new Map(rows.map((r) => [r[0], r[1]]));
+  const existing = await db.foodItems.where('source').equals('reference').toArray();
+  const changed = existing
+    .filter((f) => f.ref_key && names.has(f.ref_key) && f.name !== names.get(f.ref_key))
+    .map((f) => ({ ...f, name: names.get(f.ref_key!)! }));
+  if (changed.length) await db.foodItems.bulkPut(changed);
+  try {
+    localStorage.setItem(REFERENCE_LANG, lang);
+  } catch {
+    // s.o.
+  }
+  return changed.length;
 }
 
 /** Legt die Referenzdaten und die aktuelle Phase einmalig an. */

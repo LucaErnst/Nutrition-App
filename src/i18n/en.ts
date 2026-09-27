@@ -114,6 +114,7 @@ export const en = {
   // Search
   'search.placeholder': 'Search foods…',
   'search.label': 'Search foods',
+  'search.ownHint': 'Tip: whatever you scan or enter by hand stays saved and comes up first next time. After a few weeks you will find almost everything in two taps.',
   'search.hint': 'Favorites and frequently used first',
   'search.empty': 'Your database is empty.',
   'search.noneFor': 'Nothing in your database for “{q}”.',
