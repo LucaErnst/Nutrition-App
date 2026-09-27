@@ -70,6 +70,80 @@ function backup(lang) {
   };
 }
 
+
+/**
+ * Text über jedem Bild. Die ersten drei erscheinen in der Suche – dort stehen die Argumente,
+ * die uns von den Abo-Apps unterscheiden, nicht die Funktionsliste.
+ */
+const SHOTS = [
+  {
+    name: '01-diary',
+    en: { top: 'Calories & macros.', accent: 'No subscription.', sub: 'Free to use. Pro once, if you want it.' },
+    de: { top: 'Kalorien & Makros.', accent: 'Ohne Abo.', sub: 'Gratis nutzbar. Pro einmalig, wenn du willst.' },
+  },
+  {
+    name: '02-search',
+    en: { top: 'Scan it.', accent: 'Log it. Done.', sub: '3 million products, two seconds.' },
+    de: { top: 'Scannen.', accent: 'Eintragen. Fertig.', sub: '3 Mio. Produkte, zwei Sekunden.' },
+  },
+  {
+    name: '03-week',
+    en: { top: 'The week counts,', accent: 'not the day.', sub: 'One day over target ruins nothing.' },
+    de: { top: 'Die Woche zählt,', accent: 'nicht der Tag.', sub: 'Ein Tag über dem Ziel ruiniert nichts.' },
+  },
+  {
+    name: '04-weight',
+    en: { top: 'The trend beats', accent: 'today’s number.', sub: '7-day average instead of scale anxiety.' },
+    de: { top: 'Der Trend statt', accent: 'der Tageszahl.', sub: '7-Tage-Schnitt statt Waagen-Drama.' },
+  },
+  {
+    name: '05-training',
+    en: { top: 'Training day', accent: '≠ rest day.', sub: 'Two targets, one tap to switch.' },
+    de: { top: 'Trainingstag', accent: '≠ Ruhetag.', sub: 'Zwei Ziele, ein Tipp zum Wechseln.' },
+  },
+  {
+    name: '06-privacy',
+    en: { top: 'No account.', accent: 'No ads.', sub: 'Everything stays on your phone.' },
+    de: { top: 'Kein Konto.', accent: 'Keine Werbung.', sub: 'Alles bleibt auf deinem Gerät.' },
+  },
+];
+
+/** Rahmen um den Screenshot: dunkler Hintergrund, Überschrift, Gerät läuft unten aus dem Bild. */
+function compose(shot, png) {
+  const src = `data:image/png;base64,${png.toString('base64')}`;
+  return `<!doctype html><html><head><meta charset="utf-8"><style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 430px; height: 932px; overflow: hidden;
+      background: #07080b;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Zwei weiche Lichter in den Markenfarben – Gold oben, Violett unten. */
+    .glow-a { position: absolute; top: -140px; left: -90px; width: 420px; height: 420px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(230,196,106,.20), rgba(230,196,106,0) 68%); }
+    .glow-b { position: absolute; bottom: -60px; right: -120px; width: 460px; height: 460px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,92,246,.22), rgba(139,92,246,0) 66%); }
+    .copy { position: relative; padding: 62px 38px 0; text-align: center; }
+    h1 { font-size: 40px; line-height: 1.12; letter-spacing: -0.5px; font-weight: 800; color: #fff; }
+    h1 em { display: block; font-style: normal; color: #e6c46a; }
+    p { margin-top: 14px; font-size: 16px; line-height: 1.35; color: rgba(255,255,255,.62); }
+    /* Gerät läuft unten aus dem Bild: wirkt lebendiger und lässt den Screen grösser wirken. */
+    .phone { position: absolute; left: 50%; top: 246px; transform: translateX(-50%);
+      width: 334px; padding: 5px; border-radius: 48px;
+      background: linear-gradient(160deg, #2b2f38, #14161b);
+      box-shadow: 0 30px 70px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.06); }
+    .phone img { display: block; width: 100%; border-radius: 43px; }
+  </style></head><body>
+    <div class="glow-a"></div><div class="glow-b"></div>
+    <div class="copy">
+      <h1>${shot.top}<em>${shot.accent}</em></h1>
+      <p>${shot.sub}</p>
+    </div>
+    <div class="phone"><img src="${src}"></div>
+  </body></html>`;
+}
+
 async function main() {
   const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { stdio: 'ignore' });
   await new Promise((r) => setTimeout(r, 2500));
@@ -79,7 +153,7 @@ async function main() {
       mkdirSync(`${OUT}/${lang}`, { recursive: true });
       const context = await browser.newContext({
         viewport: { width: 430, height: 932 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true,
-        locale: lang === 'de' ? 'de-CH' : 'en-US', colorScheme: 'light',
+        locale: lang === 'de' ? 'de-CH' : 'en-US', colorScheme: 'dark',
       });
       await context.addInitScript((l) => localStorage.setItem('nutrition-tracker:language', l), lang);
       const page = await context.newPage();
@@ -88,50 +162,66 @@ async function main() {
       await page.goto(BASE);
       await page.getByRole('button', { name: t('Skip, set targets later', 'Überspringen, Ziele später festlegen') }).click();
       await page.getByRole('button', { name: t('More', 'Mehr') }).click();
-      await page.getByRole('button', { name: t('Import backup…', 'Backup importieren…') }).click({ force: true }).catch(() => {});
+      await page.getByRole('button', { name: t('Backup', 'Backup') }).getByRole('button', { name: t('Expand', 'Ausklappen') }).click().catch(() => {});
+      const card = page.locator('section.card').filter({ has: page.getByRole('heading', { name: 'Backup', exact: true }) });
+      await card.getByRole('button', { name: t('Expand', 'Ausklappen') }).click();
       await page.locator('input[type=file]').setInputFiles({ name: 'sample.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(backup(lang))) });
       await page.getByRole('button', { name: t('Replace and restore', 'Ersetzen und wiederherstellen') }).click();
       await page.waitForTimeout(500);
       await page.reload();
-      await page.waitForTimeout(800);
+      await page.waitForTimeout(900);
 
-      const shot = (n) => page.screenshot({ path: `${OUT}/${lang}/${n}.png` });
+      // Rohaufnahmen sammeln (nur im Speicher), danach in den Rahmen setzen.
+      const raw = {};
+      const grab = async (name) => { raw[name] = await page.screenshot(); };
 
-      // 1 Tagebuch
       await page.getByRole('button', { name: t('Diary', 'Tagebuch') }).click();
       await page.waitForTimeout(400);
-      await shot('01-diary');
+      await grab('01-diary');
 
-      // 2 Suche mit Ergebnissen
       await page.getByRole('button', { name: t('Add item to Dinner', 'Posten zu Abendessen hinzufügen') }).click();
       await page.waitForTimeout(400);
-      await shot('02-search');
-
-      // 3 Mengen-Picker mit Chips
-      await page.getByRole('dialog').getByText(t('Cashew nuts', 'Cashewnüsse'), { exact: true }).click();
-      await page.waitForTimeout(300);
-      await shot('03-amount');
+      await grab('02-search');
       await page.keyboard.press('Escape');
 
-      // 4 Woche
       await page.getByRole('button', { name: t('Week', 'Woche') }).click();
       await page.waitForTimeout(500);
-      await shot('04-week');
+      await grab('03-week');
 
-      // 5 Gewicht
       await page.getByRole('button', { name: t('Weight', 'Gewicht') }).click();
-      await page.waitForTimeout(1200);
-      await shot('05-weight');
+      await page.waitForTimeout(1300);
+      await grab('04-weight');
 
-      // 6 Ziele/Mehr
+      // Phasenkarte: zeigt beide Tagesziele nebeneinander – das Argument für Bild 5.
       await page.getByRole('button', { name: t('More', 'Mehr') }).click();
-      await page.waitForTimeout(400);
-      await page.evaluate(() => window.scrollTo(0, 260));
-      await page.waitForTimeout(200);
-      await shot('06-goals');
+      await page.waitForTimeout(500);
+      await grab('05-training');
 
+      // Backup aufklappen: dort steht schwarz auf weiss, dass die Daten auf dem Gerät bleiben.
+      const backupCard = page.locator('section.card').filter({ has: page.getByRole('heading', { name: 'Backup', exact: true }) });
+      await backupCard.getByRole('button', { name: t('Expand', 'Ausklappen') }).click();
+      await page.waitForTimeout(400);
+      // Karte an den oberen Rand holen, sonst sieht Bild 6 aus wie Bild 5.
+      await page.evaluate(() => {
+        const card = [...document.querySelectorAll('section.card')].find((c) => c.querySelector('h2')?.textContent?.trim() === 'Backup');
+        if (card) window.scrollTo(0, card.getBoundingClientRect().top + window.scrollY - 86);
+      });
+      await page.waitForTimeout(350);
+      await grab('06-privacy');
+
+      // Rahmen rendern – eigener Kontext ohne Gerätemerkmale, damit nichts hineinfunkt.
+      const frameCtx = await browser.newContext({ viewport: { width: 430, height: 932 }, deviceScaleFactor: 3 });
+      const framePage = await frameCtx.newPage();
+      for (const shot of SHOTS) {
+        const png = raw[shot.name];
+        if (!png) continue;
+        await framePage.setContent(compose(shot[lang], png));
+        await framePage.waitForTimeout(150);
+        await framePage.screenshot({ path: `${OUT}/${lang}/${shot.name}.png` });
+      }
+      await frameCtx.close();
       await context.close();
-      console.log(`${lang}: 6 Screenshots → ${OUT}/${lang}/`);
+      console.log(`${lang}: ${SHOTS.length} Screenshots → ${OUT}/${lang}/`);
     }
   } finally {
     await browser.close();
@@ -139,4 +229,4 @@ async function main() {
   }
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+main();
