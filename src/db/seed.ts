@@ -1,7 +1,7 @@
 import { db } from './db';
 import type { FoodItem, Unit } from './types';
 import { getLanguage } from '../i18n';
-import REFERENCE from './reference-foods.json';
+import { loadReference, type ReferenceRow } from './reference';
 
 /**
  * Startdaten aus der Spec. Werte sind pro Portion angegeben (so wie in der
@@ -60,41 +60,65 @@ function toFoodItem(row: SeedRow, now: number): FoodItem {
 }
 
 /**
- * Grundnahrungsmittel aus der USDA-Tabelle (FoodData Central, gemeinfrei/CC0). Open Food Facts
- * kennt jedes verpackte Produkt, aber „Pouletbrust roh" findet man dort schlecht – diese
- * Tabelle füllt genau die Lücke und liegt offline in der App.
+ * Grundnahrungsmittel aus dem Bundeslebensmittelschlüssel (Max Rubner-Institut, CC BY 4.0).
+ * Open Food Facts kennt jedes verpackte Produkt, aber „Hafer Flocken" oder „Schweineschnitzel
+ * natur, gebraten" findet man dort schlecht – diese Tabelle füllt die Lücke und liegt offline
+ * in der App.
  */
-function referenceToFoodItem(r: (typeof REFERENCE)[number], now: number): FoodItem {
+const REFERENCE_VERSION = 'bls-4.0';
+const REFERENCE_STAMP = 'nutrition-tracker:reference';
+
+function referenceToFoodItem(r: ReferenceRow, now: number): FoodItem {
+  const [key, name, kcal, protein, fat, carbs] = r;
   return {
-    name: getLanguage() === 'de' ? r.de : r.en,
-    kcal_per_100g: r.kcal,
-    protein_per_100g: r.p,
-    fat_per_100g: r.f,
-    carbs_per_100g: r.c,
+    name,
+    kcal_per_100g: kcal,
+    protein_per_100g: protein,
+    fat_per_100g: fat,
+    carbs_per_100g: carbs,
     unit_type: 'weight',
     source: 'reference',
     saved: 1,
-    ref_key: r.key,
+    ref_key: key,
     created_at: now,
   };
 }
 
+/**
+ * Legt fehlende Grundnahrungsmittel an – auch bei Nutzern, die die App schon hatten.
+ * Verglichen wird über den Schlüssel, nicht über den Namen: Sonst legte ein Sprachwechsel
+ * alles ein zweites Mal an. Der Vermerk im localStorage spart den Download der Tabelle,
+ * wenn sie schon eingespielt ist.
+ */
+async function seedReference(): Promise<void> {
+  try {
+    if (localStorage.getItem(REFERENCE_STAMP) === REFERENCE_VERSION) return;
+  } catch {
+    // Privater Modus: dann eben jedes Mal prüfen.
+  }
+  const rows = await loadReference(getLanguage() === 'de' ? 'de' : 'en');
+  const existing = await db.foodItems.where('source').equals('reference').toArray();
+  const known = new Set(existing.map((f) => f.ref_key).filter(Boolean));
+  const missing = rows.filter((r) => !known.has(r[0]));
+  const now = Date.now();
+  if (missing.length) {
+    await db.foodItems.bulkAdd(missing.map((r, i) => referenceToFoodItem(r, now + i)));
+  }
+  try {
+    localStorage.setItem(REFERENCE_STAMP, REFERENCE_VERSION);
+  } catch {
+    // ohne Vermerk wird beim nächsten Start erneut verglichen – teurer, aber korrekt
+  }
+}
+
 /** Legt die Referenzdaten und die aktuelle Phase einmalig an. */
 export async function seedIfEmpty(): Promise<void> {
-  const existing = await db.foodItems.where('source').equals('reference').toArray();
-  const now = Date.now();
-  if (existing.length === 0) {
+  const count = await db.foodItems.where('source').equals('reference').count();
+  if (count === 0) {
+    const now = Date.now();
     await db.foodItems.bulkAdd(SEED.map((r, i) => toFoodItem(r, now + i)));
   }
-
-  // Fehlende Grundnahrungsmittel nachziehen – auch bei Nutzern, die die App schon hatten.
-  // Verglichen wird über den Schlüssel, nicht über den Namen: Sonst legte ein Sprachwechsel
-  // alles ein zweites Mal an.
-  const known = new Set(existing.map((f) => f.ref_key).filter(Boolean));
-  const missing = REFERENCE.filter((r) => !known.has(r.key));
-  if (missing.length) {
-    await db.foodItems.bulkAdd(missing.map((r, i) => referenceToFoodItem(r, now + 1000 + i)));
-  }
+  await seedReference();
 
   // Die erste Phase entsteht im Onboarding (Zielvorschlag aus Körperdaten).
 }

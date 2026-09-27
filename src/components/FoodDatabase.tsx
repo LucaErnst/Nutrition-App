@@ -4,7 +4,7 @@ import { deleteFoodItem, toggleFavorite, useSavedFoods } from '../db/hooks';
 import { fmt } from '../lib/nutrition';
 import { FoodItemForm } from './FoodItemForm';
 import { Modal } from './Modal';
-import { normalize } from './FoodSearch';
+import { normalize } from '../lib/foodRank';
 import { useT } from '../i18n';
 
 export function FoodDatabase() {

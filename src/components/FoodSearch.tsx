@@ -5,6 +5,7 @@ import { addMealEntry, toggleFavorite, useFoodUsage, useSavedFoods } from '../db
 import { defaultUnit, fmt, macrosFor } from '../lib/nutrition';
 import { offProductToFoodItem, searchProducts, type OffProduct } from '../lib/openfoodfacts';
 import { useT } from '../i18n';
+import { rankFoods } from '../lib/foodRank';
 import { useUnitSystem } from '../db/hooks';
 import { convertAmount, fmtAmount, isPieceUnit, labelFor } from '../lib/units';
 import { UnitSelect } from './UnitSelect';
@@ -18,9 +19,8 @@ interface Props {
   onAdded: () => void;
 }
 
-export function normalize(s: string): string {
-  return s.toLowerCase().replace(/ß/g, 'ss').normalize('NFD').replace(/[̀-ͯ]/g, '');
-}
+/** Anzahl angezeigter Treffer aus der eigenen Datenbank. */
+const MAX_RESULTS = 40;
 
 /** Anzeige-Einheit (Stück wird übersetzt, g/ml bleiben) */
 export function unitLabel(t: ReturnType<typeof useT>, unit: Unit): string {
@@ -78,26 +78,10 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
     setOffProduct(local ?? offProductToFoodItem(p, true));
   }
 
-  const results = useMemo(() => {
-    const q = normalize(query.trim());
-    if (q) {
-      const terms = q.split(/\s+/);
-      return foods.filter((f) => {
-        const hay = normalize(`${f.name} ${f.brand ?? ''}`);
-        return terms.every((tm) => hay.includes(tm));
-      });
-    }
-    // Ohne Suchbegriff: Favoriten, dann häufig genutzte, dann alphabetisch.
-    return [...foods].sort((a, b) => {
-      const fa = a.favorite ?? 0;
-      const fb = b.favorite ?? 0;
-      if (fa !== fb) return fb - fa;
-      const ua = usage?.get(a.id!)?.count ?? 0;
-      const ub = usage?.get(b.id!)?.count ?? 0;
-      if (ua !== ub) return ub - ua;
-      return a.name.localeCompare(b.name);
-    });
-  }, [foods, query, usage]);
+  // Die Datenbank enthält über sechstausend Grundnahrungsmittel – ohne Rangfolge wäre die
+  // Liste unbrauchbar. Angezeigt wird nur der Anfang, der Rest wäre ohnehin nicht gelesen.
+  const ranked = useMemo(() => rankFoods(foods, query, usage), [foods, query, usage]);
+  const results = useMemo(() => ranked.slice(0, MAX_RESULTS), [ranked]);
 
   if (offProduct) {
     return (
