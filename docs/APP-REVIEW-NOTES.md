@@ -26,3 +26,39 @@ Thank you for reviewing Serious Nutrition. Attached is a screen recording (3:20)
 6. REGULATED INDUSTRY / THIRD-PARTY MATERIAL – The app is not a medical device and gives no medical advice (stated in the description); it is a diary/calculator. Product data from Open Food Facts is licensed under the Open Database License (ODbL) and is attributed in the app and in the App Store description ("Product data © Open Food Facts contributors (ODbL)"). No other third-party material is included.
 
 Developer: Luca Ernst, Basel, Switzerland – beseriouscalisthenics@gmail.com
+
+---
+
+# Ergänzung für Version 1.1
+
+Diese Punkte in die Review-Notizen der Version 1.1 übernehmen. Was sich gegenüber 1.0 geändert hat,
+steht zuerst – in 1.0 hiess es „no paid content in this version", und das gilt nicht mehr.
+
+IN-APP PURCHASE – This version submits one non-consumable in-app purchase, "Serious Nutrition Pro"
+(`pro_lifetime`, CHF 15.00). It is a one-time unlock, not a subscription, and there is no trial.
+Purchasing requires no account: the receipt is validated through StoreKit (via RevenueCat) and the
+unlock is stored on the device. "Restore purchases" is on the paywall and under More → Serious
+Nutrition Pro. Free features remain free: diary, barcode scanning, search, water, targets and phases,
+week overview with the weekly budget, reminders, and backup export/import – a user's own data is never
+behind the purchase. Pro unlocks templates, portion sizes, the weight chart, widgets and Apple Health.
+To reach the paywall without buying: More → Serious Nutrition Pro, or tap any locked feature, e.g.
+Diary → a meal's "…" menu → "Save as template".
+
+EARLY ADOPTERS – Users who already had the app before this update keep all Pro features for free. On
+first launch after the update the app checks for existing local data (settings, targets, diary
+entries, weights, own foods) and grants the unlock. A reviewer installing the app fresh will
+therefore see the paywall, which is the intended behaviour.
+
+OFFLINE FOOD TABLE – 1.1 bundles about 6,400 basic foods (names plus energy, protein, fat and
+carbohydrates per 100 g) inside the app, so search works without a network connection. Source: the
+German Nutrient Database (Bundeslebensmittelschlüssel 4.0) published by the Max Rubner-Institut under
+CC BY 4.0. Attribution is shown in the app under More and in the App Store description. This is
+bundled data, not a service – no request is made to obtain it.
+
+LANGUAGE – The app now starts in the device language (English or German) instead of defaulting to
+English; the food names in the bundled table follow that language. It can still be changed under
+More → Language.
+
+EXTERNAL SERVICES – Unchanged: Open Food Facts (openfoodfacts.org) over HTTPS for barcode lookups and
+online product search, plus Apple's StoreKit for the purchase. No accounts, no analytics, no ads, no
+backend of our own.

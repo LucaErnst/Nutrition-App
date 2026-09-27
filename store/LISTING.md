@@ -1,28 +1,39 @@
 # Store-Einträge: Serious Nutrition
 
 Texte für App Store Connect und Google Play Console. Zeichenlimits: Apple Name 30, Untertitel 30,
-Keywords 100, Werbetext 170, Beschreibung 4000; Google Titel 30, Kurzbeschreibung 80, Beschreibung 4000.
+Keywords 100, Werbetext 170, Beschreibung 4000, „Neu in dieser Version" 4000; Google Titel 30,
+Kurzbeschreibung 80, Beschreibung 4000.
+
+**Stand: 27.09.2026, vorbereitet für Version 1.1.** Was nur mit einer neuen Version geändert werden
+kann (Beschreibung, Screenshots, „Neu in dieser Version"), ist hier für die 1.1-Einreichung fertig –
+Reihenfolge und Haken dazu in `docs/RELEASE-1.1.md`.
 
 ## Name
 Serious Nutrition
 
 ## Untertitel (Apple) / Kurzbeschreibung (Google)
-- EN: `Calorie & macro tracker, no account` (33 → Apple: `Calorie & macro tracker`)
+- EN: `Calorie & macro tracker` (Apple, 23) · Google: `Calorie & macro tracker, no account`
 - DE: `Kalorien & Makros, ohne Konto` (Apple, 29) · Google: `Kalorien, Makros, Wasser und Gewicht tracken – ohne Konto, alles lokal.`
 
 ## Keywords (Apple, EN, 100 Zeichen)
-`calorie,macro,tracker,protein,barcode,scanner,nutrition,diet,bulk,cut,water,weight,coach,calisthenics`
+`calorie,macro,tracker,protein,barcode,scanner,offline,diet,bulk,cut,water,weight,coach,calisthenics`
 
-## Werbetext (Apple, EN, ≤170)
-Built by a calisthenics coach for athletes: log meals in seconds, hit your protein, manage the week as a budget. No account, no ads, no subscription.
+99 Zeichen. `nutrition` ist gestrichen: es steht schon im App-Namen und wird dort ohnehin indexiert –
+so passt `offline` hinein, der einzige echte Unterschied zu Lifesum und Lose It!. (Die alte Zeile war
+101 Zeichen und damit über dem Limit.)
+
+## Werbetext (Apple, ≤170) – änderbar ohne neue Version
+- EN: `New: 6,400 basic foods built in, so search works offline. Pick your units: g, kg, ml, oz, lb, st, ft. Pro is a one-time purchase, never a subscription.` (151)
+- DE: `Neu: 6400 Grundnahrungsmittel in der App – die Suche funktioniert offline. Einheiten frei wählbar. Pro ist ein Einmalkauf, kein Abo.` (132)
 
 ## Beschreibung – Englisch
 
 Serious Nutrition is a calorie and macro tracker for people who train with a goal. Built by a calisthenics coach for his own bulk and cut phases – no account, no ads, no data leaving your phone.
 
 TRACK IN SECONDS
-• Scan a barcode – product name and nutrition are filled in automatically (Open Food Facts, 3+ million products)
-• Search your own food database, favorites and frequently used first
+• 6,400 basic foods are built into the app – meat, fish, dairy, grains, vegetables, fruit, nuts, oils – searchable without internet
+• Scan a barcode for branded products – name and nutrition are filled in automatically (Open Food Facts, 3+ million products)
+• Your own foods come first: whatever you scan or type once is saved and sits at the top next time
 • Amount stepper, quick portions like “1 handful” or “last 45 g”
 • Templates: save a breakfast once, add it with one tap
 • Copy yesterday’s meal, undo a delete, quick entry with calories only
@@ -41,20 +52,28 @@ THINK IN WEEKS
 WEIGHT TREND
 • Daily weight with a 7-day moving average, so daily swings don’t fool you
 
+YOUR UNITS
+• Grams and kilograms, millilitres, centilitres and litres
+• Ounces and fluid ounces (US and UK), pounds, stones, feet and inches
+• Body weight and height in the units you actually think in
+
 YOUR DATA STAYS YOURS
 • Everything is stored on your device, no login required
 • Export and import backups as a file
-• English and German
+• Follows your device language: English and German
 
-Product data © Open Food Facts contributors (ODbL). Serious Nutrition is a tracking tool, not medical advice.
+Serious Nutrition Pro unlocks templates, portion sizes, the weight chart, widgets and Apple Health – one payment, no subscription, no trial that turns into one.
+
+Product data © Open Food Facts contributors (ODbL). Basic foods from the German Nutrient Database (Bundeslebensmittelschlüssel 4.0), Max Rubner-Institut, CC BY 4.0. Serious Nutrition is a tracking tool, not medical advice.
 
 ## Beschreibung – Deutsch
 
 Serious Nutrition ist ein Kalorien- und Makro-Tracker für Menschen, die mit einem Ziel trainieren. Von einem Calisthenics-Coach für die eigenen Aufbau- und Defizitphasen gebaut – ohne Konto, ohne Werbung, ohne dass Daten das Handy verlassen.
 
 IN SEKUNDEN EINTRAGEN
-• Barcode scannen – Produktname und Nährwerte werden automatisch übernommen (Open Food Facts, über 3 Mio. Produkte)
-• Eigene Lebensmittel-Datenbank, Favoriten und häufig Verwendetes zuerst
+• 6400 Grundnahrungsmittel sind in der App gespeichert – Fleisch, Fisch, Milchprodukte, Getreide, Gemüse, Früchte, Nüsse, Öle – die Suche funktioniert auch ohne Internet
+• Barcode scannen für Markenprodukte – Name und Nährwerte werden automatisch übernommen (Open Food Facts, über 3 Mio. Produkte)
+• Deine eigenen Lebensmittel zuerst: Was du einmal scannst oder eintippst, bleibt gespeichert und steht beim nächsten Mal zuoberst
 • Mengen-Stepper, Schnellwahl wie „1 Handvoll“ oder „zuletzt 45 g“
 • Vorlagen: Frühstück einmal speichern, mit einem Tipp eintragen
 • Gestern kopieren, Löschen rückgängig machen, Schnell-Eintrag nur mit kcal
@@ -73,12 +92,51 @@ IN WOCHEN DENKEN
 GEWICHTSTREND
 • Tagesgewicht mit gleitendem 7-Tage-Schnitt – Schwankungen täuschen dich nicht mehr
 
+DEINE EINHEITEN
+• Gramm und Kilogramm, Milliliter, Zentiliter und Liter
+• Unzen und Flüssigunzen (US und UK), Pfund, Stone, Fuss und Zoll
+• Körpergewicht und Grösse in den Einheiten, in denen du denkst
+
 DEINE DATEN BLEIBEN DEINE
 • Alles wird auf deinem Gerät gespeichert, kein Login nötig
 • Backups als Datei exportieren und importieren
-• Deutsch und Englisch
+• Sprache richtet sich nach dem Gerät: Deutsch und Englisch
 
-Produktdaten © Open Food Facts Contributors (ODbL). Serious Nutrition ist ein Tracking-Werkzeug, keine medizinische Beratung.
+Serious Nutrition Pro schaltet Vorlagen, Portionsgrössen, Gewichtsdiagramm, Widgets und Apple Health frei – einmal bezahlen, kein Abo, keine Testphase, die sich in eines verwandelt.
+
+Produktdaten © Open Food Facts Contributors (ODbL). Grundnahrungsmittel aus dem Bundeslebensmittelschlüssel 4.0, Max Rubner-Institut, CC BY 4.0. Serious Nutrition ist ein Tracking-Werkzeug, keine medizinische Beratung.
+
+## Neu in dieser Version (1.1)
+
+### Englisch
+
+6,400 basic foods now live inside the app, so search works without internet. Plus the units you think in, and Pro as a one-time purchase.
+
+• Built-in food table: meat, fish, dairy, grains, vegetables, fruit, nuts and oils, from the German Nutrient Database (BLS 4.0)
+• Food names follow the app language – switch to English and the table switches with you
+• Product search finds more and no longer gives up when Open Food Facts is briefly overloaded
+• Units: grams and kilograms, millilitres, centilitres, litres, ounces and fluid ounces (US and UK)
+• Body weight in pounds or stones, height in feet and inches
+• The app now starts in your device language
+• Reminders no longer repeat themselves: 100 texts for every occasion
+• Widgets: your app icon, cleaner medium layout, water and buttons aligned
+• Works on every iPhone display, including switching between two of them
+• Serious Nutrition Pro: one payment, no subscription. Anyone who used the app before this update keeps everything for free.
+
+### Deutsch
+
+6400 Grundnahrungsmittel sind jetzt in der App gespeichert – die Suche funktioniert ohne Internet. Dazu die Einheiten, in denen du denkst, und Pro als Einmalkauf.
+
+• Mitgelieferte Tabelle: Fleisch, Fisch, Milchprodukte, Getreide, Gemüse, Früchte, Nüsse und Öle aus dem Bundeslebensmittelschlüssel (BLS 4.0)
+• Lebensmittelnamen folgen der App-Sprache – stellst du auf Englisch, wechselt die Tabelle mit
+• Produktsuche findet mehr und gibt nicht mehr auf, wenn Open Food Facts kurz überlastet ist
+• Einheiten: Gramm und Kilogramm, Milliliter, Zentiliter, Liter, Unzen und Flüssigunzen (US und UK)
+• Körpergewicht in Pfund oder Stone, Grösse in Fuss und Zoll
+• Die App startet in der Sprache deines Geräts
+• Erinnerungen wiederholen sich nicht mehr: 100 Texte je Anlass
+• Widgets: dein App-Icon, saubereres mittleres Layout, Wasser und Knöpfe bündig
+• Läuft auf allen iPhone-Displays, auch beim Wechsel zwischen zwei Displays
+• Serious Nutrition Pro: einmal bezahlen, kein Abo. Wer die App vor diesem Update benutzt hat, behält alles gratis.
 
 ## URLs
 - Datenschutz: https://lucaernst.github.io/Nutrition-App/legal/privacy-en.html (DE: privacy-de.html)
@@ -94,5 +152,6 @@ Produktdaten © Open Food Facts Contributors (ODbL). Serious Nutrition ist ein T
 - Export-Compliance: nur HTTPS → `ITSAppUsesNonExemptEncryption = false` (bereits gesetzt)
 
 ## Screenshots
-Erzeugen mit `npm run screenshots` (siehe `store/screenshots.ts`): 6,7" (1290×2796) für iPhone, EN und DE,
-mit Beispieldaten. Apple akzeptiert 6,7"-Screenshots auch für 6,5" und kleinere Geräte.
+`store/screenshots/{de,en}` – sechs Bilder je Sprache, 1290×2796 (iPhone 6,7"), dunkel, mit Aussage
+und Gerät. Neu erzeugen mit `npm run screenshots`. Apple akzeptiert 6,7"-Screenshots auch für 6,5"
+und kleinere Geräte. **Bilder lassen sich nur zusammen mit einer neuen Version ersetzen.**
