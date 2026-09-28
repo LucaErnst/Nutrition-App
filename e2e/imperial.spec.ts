@@ -88,3 +88,38 @@ test('Wasser läuft in Flüssigunzen, gespeichert bleiben Milliliter', async ({ 
   );
   expect(storedMl).toBe(2839);
 });
+
+test('Produktsuche fragt amerikanische Regale ab, nicht Schweizer', async ({ page }) => {
+  const OFF = /\/cgi\/search\.pl|search\.openfoodfacts\.org|\/api\/v2\/search/;
+  const urls: string[] = [];
+  await freshUsApp(page);
+  // Nach freshUsApp: dessen leere Antwort wuerde sonst gewinnen (der zuletzt gesetzte
+  // Handler kommt zuerst dran).
+  await page.unroute(OFF);
+  await page.route(OFF, (route) => {
+    urls.push(route.request().url());
+    route.fulfill({
+      json: {
+        count: 1,
+        products: [
+          {
+            code: '0051500255162',
+            product_name: 'Creamy Peanut Butter',
+            brands: 'Jif',
+            nutriments: { 'energy-kcal_100g': 588, proteins_100g: 22, fat_100g: 50, carbohydrates_100g: 22 },
+          },
+        ],
+      },
+    });
+  });
+
+  await page.getByRole('button', { name: 'Skip, set targets later' }).click();
+  await page.getByRole('button', { name: 'Add item to Lunch' }).click();
+  await page.getByRole('searchbox', { name: 'Search foods' }).fill('peanut butter');
+
+  await expect(page.getByText('Creamy Peanut Butter')).toBeVisible();
+  await expect(page.getByText('Open Food Facts (United States)', { exact: false })).toBeVisible();
+  await expect(page.getByText('worldwide instead of United States only')).toBeVisible();
+  expect(urls.join(' ')).toContain('united-states');
+  expect(urls.join(' ')).not.toContain('switzerland');
+});

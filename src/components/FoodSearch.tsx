@@ -3,7 +3,7 @@ import { db } from '../db/db';
 import type { FoodItem, MealType, Unit } from '../db/types';
 import { addMealEntry, toggleFavorite, useFoodUsage, useSavedFoods } from '../db/hooks';
 import { defaultUnit, fmt, macrosFor } from '../lib/nutrition';
-import { offProductToFoodItem, searchProducts, type OffProduct } from '../lib/openfoodfacts';
+import { detectOffCountry, offProductToFoodItem, searchProducts, type OffProduct } from '../lib/openfoodfacts';
 import { useT } from '../i18n';
 import { rankFoods } from '../lib/foodRank';
 import { useUnitSystem } from '../db/hooks';
@@ -48,6 +48,9 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
   const [offProduct, setOffProduct] = useState<FoodItem | null>(null);
   const [off, setOff] = useState<OffState>({ kind: 'idle' });
   const [worldwide, setWorldwide] = useState(false);
+  // Land des Geräts: in der Schweiz Schweizer Regale, in den USA amerikanische.
+  const country = useMemo(() => detectOffCountry(), []);
+  const scope = worldwide || !country ? null : country.slug;
   const foods = useSavedFoods() ?? [];
   const usage = useFoodUsage();
   /** Laufende Nummer des Suchlaufs: eine späte Antwort darf ein neueres Ergebnis nicht überschreiben. */
@@ -57,7 +60,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
     const q = query.trim();
     const id = ++runId.current;
     setOff({ kind: 'loading', query: q });
-    const res = await searchProducts(q, { country: worldwide ? null : 'switzerland' });
+    const res = await searchProducts(q, { country: scope });
     if (id !== runId.current) return;
     if (res.status === 'found') setOff({ kind: 'results', query: q, products: res.products, total: res.total, page: res.page, hasMore: res.hasMore });
     else setOff({ kind: 'error', message: res.message });
@@ -78,7 +81,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
     const current = off;
     const id = runId.current;
     setOff({ ...current, loadingMore: true });
-    const res = await searchProducts(current.query, { country: worldwide ? null : 'switzerland', page: current.page + 1 });
+    const res = await searchProducts(current.query, { country: scope, page: current.page + 1 });
     if (id !== runId.current) return;
     if (res.status === 'found') {
       const seen = new Set(current.products.map((p) => p.barcode));
@@ -218,17 +221,20 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
                 {t('search.offButton', { q })}
               </button>
             )}
-            <label className="checkbox">
-              <input
-                type="checkbox"
-                checked={worldwide}
-                onChange={(e) => {
-                  setWorldwide(e.target.checked);
-                  setOff({ kind: 'idle' });
-                }}
-              />
-              {t('search.offWorldwide')}
-            </label>
+            {/* Ohne erkanntes Land wird ohnehin weltweit gesucht – dann gibt es nichts zu wählen. */}
+            {country && (
+              <label className="checkbox">
+                <input
+                  type="checkbox"
+                  checked={worldwide}
+                  onChange={(e) => {
+                    setWorldwide(e.target.checked);
+                    setOff({ kind: 'idle' });
+                  }}
+                />
+                {t('search.offWorldwide', { country: country.label })}
+              </label>
+            )}
           </div>
           {off.kind === 'loading' && <p className="search-hint">{t('search.offSearching', { q: off.query })}</p>}
           {off.kind === 'error' && (
@@ -245,11 +251,15 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
             <>
               <p className="search-hint">
                 {off.products.length === 0
-                  ? t('search.offNone', { scope: worldwide ? '' : t('search.offScopeCH') })
-                  : t('search.offResults', { scope: worldwide ? '' : t('search.offScopeCH'), shown: off.products.length, total: fmt(off.total) })}
+                  ? t('search.offNone', { scope: scope ? t('search.offScope', { country: country!.label }) : '' })
+                  : t('search.offResults', {
+                      scope: scope ? t('search.offScope', { country: country!.label }) : '',
+                      shown: off.products.length,
+                      total: fmt(off.total),
+                    })}
                 {off.query !== q && t('search.offFor', { q: off.query })}
               </p>
-              {off.products.length === 0 && !worldwide && (
+              {off.products.length === 0 && scope && (
                 <button
                   type="button"
                   className="btn-link"

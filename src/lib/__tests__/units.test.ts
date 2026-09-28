@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { detectOffCountry } from '../openfoodfacts';
 import type { Unit } from '../../db/types';
 import {
   convertAmount,
@@ -174,5 +175,20 @@ describe('Unbekannte Einheiten aus alten Sicherungen', () => {
   it('zeigen ihren eigenen Code an, statt eine falsche Einheit vorzutäuschen', () => {
     expect(labelFor(odd, 'pc')).toBe('piece');
     expect(csvUnitLabel(odd)).toBe('piece');
+  });
+});
+
+describe('Suchland aus der Geräteregion', () => {
+  it('nimmt das Land des Geräts', () => {
+    expect(detectOffCountry(['de-CH', 'de'])?.slug).toBe('switzerland');
+    expect(detectOffCountry(['en-US'])?.slug).toBe('united-states');
+    expect(detectOffCountry(['en-GB'])?.slug).toBe('united-kingdom');
+    expect(detectOffCountry(['de-DE'])?.slug).toBe('germany');
+  });
+
+  it('sucht weltweit, wenn die Region unbekannt oder nicht gelistet ist', () => {
+    expect(detectOffCountry(['ja-JP'])).toBeNull();
+    expect(detectOffCountry(['en'])).toBeNull();
+    expect(detectOffCountry([])).toBeNull();
   });
 });

@@ -1,6 +1,7 @@
 import { CapacitorHttp } from '@capacitor/core';
 import type { FoodItem } from '../db/types';
-import { getLanguage, t } from '../i18n';
+import { getLanguage, getLocale, t } from '../i18n';
+import { regionOf } from './units';
 import { isNative } from './native';
 
 const APP_NAME = 'LucaNutritionTracker';
@@ -86,8 +87,72 @@ export type OffSearchResult =
   | { status: 'found'; products: OffProduct[]; total: number; page: number; hasMore: boolean }
   | { status: 'error'; message: string };
 
+/**
+ * Land, in dem zuerst gesucht wird – als Tag, wie Open Food Facts ihn führt. Vorher stand hier
+ * fest „switzerland": ein Nutzer in den USA bekam Schweizer Produkte und daneben die Auswahl
+ * „weltweit statt nur Schweiz". Regionen ohne Eintrag suchen weltweit; ein geratener Ländername
+ * fände nichts, und nichts zu finden ist schlimmer als eine breite Trefferliste.
+ */
+const COUNTRY_BY_REGION: Record<string, string> = {
+  CH: 'switzerland',
+  DE: 'germany',
+  AT: 'austria',
+  US: 'united-states',
+  GB: 'united-kingdom',
+  UK: 'united-kingdom',
+  IE: 'ireland',
+  FR: 'france',
+  IT: 'italy',
+  ES: 'spain',
+  PT: 'portugal',
+  NL: 'netherlands',
+  BE: 'belgium',
+  LU: 'luxembourg',
+  CA: 'canada',
+  AU: 'australia',
+  NZ: 'new-zealand',
+  PL: 'poland',
+  CZ: 'czech-republic',
+  SE: 'sweden',
+  NO: 'norway',
+  DK: 'denmark',
+  FI: 'finland',
+};
+
+export interface OffCountry {
+  /** Ländername, wie Open Food Facts ihn in den Tags führt, z.B. 'united-states'. */
+  slug: string;
+  /** Anzeigename in der Sprache des Nutzers, z.B. „Vereinigte Staaten". */
+  label: string;
+}
+
+/** Land des Geräts, oder `null` für weltweit. */
+export function detectOffCountry(
+  langs: readonly string[] = typeof navigator === 'undefined'
+    ? []
+    : navigator.languages?.length
+      ? navigator.languages
+      : [navigator.language],
+): OffCountry | null {
+  for (const l of langs) {
+    const region = regionOf(l);
+    if (!region) continue;
+    const slug = COUNTRY_BY_REGION[region];
+    return slug ? { slug, label: regionName(region) } : null;
+  }
+  return null;
+}
+
+function regionName(region: string): string {
+  try {
+    return new Intl.DisplayNames([getLocale()], { type: 'region' }).of(region) ?? region;
+  } catch {
+    return region;
+  }
+}
+
 export interface OffSearchOptions {
-  country?: 'switzerland' | null;
+  country?: string | null;
   /** 1-basiert; für „mehr laden" */
   page?: number;
 }
@@ -189,7 +254,7 @@ export async function searchProducts(query: string, opts: OffSearchOptions = {})
 /** Nativ: Suchdienst für die Reihenfolge, v2 für die Nährwerte. */
 async function searchModern(q: string, page: number, opts: OffSearchOptions): Promise<OffSearchResult> {
   const url = new URL('https://search.openfoodfacts.org/search');
-  url.searchParams.set('q', opts.country === null ? q : `${q} countries_tags:"en:switzerland"`);
+  url.searchParams.set('q', opts.country ? `${q} countries_tags:"en:${opts.country}"` : q);
   url.searchParams.set('page', String(page));
   url.searchParams.set('page_size', String(PAGE_SIZE));
   url.searchParams.set('langs', getLanguage());
@@ -198,7 +263,7 @@ async function searchModern(q: string, page: number, opts: OffSearchOptions): Pr
   let json = await getJsonRetrying(url.toString(), 12_000);
   let hits: any[] = Array.isArray(json?.hits) ? json.hits : [];
   // Nichts im eigenen Land gefunden? Dann weltweit, statt eine leere Liste zu zeigen.
-  if (hits.length === 0 && opts.country !== null && page === 1) {
+  if (hits.length === 0 && opts.country && page === 1) {
     url.searchParams.set('q', q);
     json = await getJsonRetrying(url.toString(), 12_000);
     hits = Array.isArray(json?.hits) ? json.hits : [];
@@ -249,8 +314,16 @@ async function searchClassic(q: string, page: number, opts: OffSearchOptions): P
   url.searchParams.set('app_name', APP_NAME);
   url.searchParams.set('app_version', APP_VERSION);
 
-  const json = await getJsonRetrying(url.toString(), 15_000);
-  const list: any[] = Array.isArray(json?.products) ? json.products : [];
+  let json = await getJsonRetrying(url.toString(), 15_000);
+  let list: any[] = Array.isArray(json?.products) ? json.products : [];
+  // Nichts im eigenen Land gefunden? Dann weltweit, statt eine leere Liste zu zeigen.
+  if (list.length === 0 && opts.country && page === 1) {
+    url.searchParams.delete('tagtype_0');
+    url.searchParams.delete('tag_contains_0');
+    url.searchParams.delete('tag_0');
+    json = await getJsonRetrying(url.toString(), 15_000);
+    list = Array.isArray(json?.products) ? json.products : [];
+  }
   const products = sortUsable(list.map((h) => parseProduct(String(h?.code ?? ''), h)).filter((p) => p.barcode));
   const total = Number(json?.count ?? products.length);
   return { status: 'found', products, total, page, hasMore: page * PAGE_SIZE < total };
