@@ -68,7 +68,8 @@ test('water: add, undo, goal', async ({ page }) => {
   await water.getByRole('button', { name: 'Add 500 ml' }).click();
   await water.getByRole('button', { name: 'Add 250 ml' }).click();
   await expect(water.getByText('0.75 / 3.0 l')).toBeVisible();
-  await expect(water.getByText("2'250 ml left").or(water.getByText('2,250 ml left'))).toBeVisible();
+  // Restmenge in derselben Einheit wie das Ziel, nicht mehr in Millilitern daneben.
+  await expect(water.getByText('2.3 l left')).toBeVisible();
   await water.getByRole('button', { name: 'Remove last entry' }).click();
   await expect(water.getByText('0.5 / 3.0 l')).toBeVisible();
 });

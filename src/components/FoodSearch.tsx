@@ -78,11 +78,16 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
     setOffProduct(local ?? offProductToFoodItem(p, true));
   }
 
+  // Eigene Lebensmittel: gescannt oder von Hand angelegt, nicht mitgeliefert.
+  const own = useMemo(() => foods.filter((f) => f.source !== 'reference'), [foods]);
+  const ownCount = own.length;
   // Die Datenbank enthält über sechstausend Grundnahrungsmittel – ohne Rangfolge wäre die
   // Liste unbrauchbar. Angezeigt wird nur der Anfang, der Rest wäre ohnehin nicht gelesen.
-  const ranked = useMemo(() => rankFoods(foods, query, usage), [foods, query, usage]);
-  // Eigene Lebensmittel: gescannt oder von Hand angelegt, nicht mitgeliefert.
-  const ownCount = useMemo(() => foods.filter((f) => f.source !== 'reference').length, [foods]);
+  // Ohne Suchbegriff stehen nur die eigenen da: was man selbst isst, nicht das Alphabet.
+  const ranked = useMemo(
+    () => rankFoods(query.trim() ? foods : own, query, usage),
+    [foods, own, query, usage],
+  );
   const results = useMemo(() => ranked.slice(0, MAX_RESULTS), [ranked]);
 
   if (offProduct) {
@@ -141,12 +146,12 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
           aria-label={t('search.label')}
         />
       </form>
-      {!query && foods.length > 0 && <p className="search-hint">{t('search.hint')}</p>}
+      {!query && ownCount > 0 && <p className="search-hint">{t('search.hint')}</p>}
       {/* Solange kaum eigene Lebensmittel da sind: erklären, dass die Datenbank mitwächst.
           Wer das weiss, scannt in den ersten Wochen mehr – und tippt danach fast nichts mehr. */}
-      {!query && ownCount < 12 && <p className="search-hint">{t('search.ownHint')}</p>}
+      {!query && ownCount > 0 && ownCount < 12 && <p className="search-hint">{t('search.ownHint')}</p>}
       {results.length === 0 ? (
-        <p className="search-empty">{foods.length === 0 ? t('search.empty') : t('search.noneFor', { q })}</p>
+        <p className="search-empty">{q ? t('search.noneFor', { q }) : t('search.empty')}</p>
       ) : (
         <ul className="search-list">
           {results.map((f) => {

@@ -67,6 +67,14 @@ export function fmt(n: number, digits = 0): string {
 }
 
 /** Wie fmt, aber ohne Auffüllen mit Nullen (0.5 statt 0.50). */
+/**
+ * Restmenge Wasser in derselben Einheit wie das Ziel. „0 / 3.0 l" und daneben „noch 3000 ml"
+ * waren zwei Einheiten in einer Karte; unter einem Liter bleibt Milliliter die natürlichere Zahl.
+ */
+export function waterLeftLabel(ml: number): string {
+  return ml >= 1000 ? `${fmt(ml / 1000, 1)} l` : `${fmt(ml)} ml`;
+}
+
 export function fmtMax(n: number, maxDigits: number): string {
   return n.toLocaleString(getLocale(), { maximumFractionDigits: maxDigits });
 }

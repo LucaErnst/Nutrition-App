@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { FoodItem } from '../../db/types';
-import { amountToGrams, macrosFor, resolveSource, sumMacros } from '../nutrition';
+import { amountToGrams, macrosFor, resolveSource, sumMacros, waterLeftLabel } from '../nutrition';
 
 const quark: FoodItem = {
   name: 'Magerquark', kcal_per_100g: 67.2, protein_per_100g: 12, fat_per_100g: 0.4, carbs_per_100g: 4,
@@ -55,5 +55,17 @@ describe('resolveSource (Snapshot)', () => {
 
   it('liefert undefined, wenn weder Snapshot noch Lebensmittel existieren', () => {
     expect(resolveSource(entry, undefined)).toBeUndefined();
+  });
+});
+
+describe('waterLeftLabel', () => {
+  it('nennt die Restmenge in derselben Einheit wie das Ziel', () => {
+    expect(waterLeftLabel(2750)).toBe('2.8 l');
+    expect(waterLeftLabel(1000)).toBe('1.0 l');
+  });
+
+  it('bleibt unter einem Liter bei Millilitern', () => {
+    expect(waterLeftLabel(750)).toBe('750 ml');
+    expect(waterLeftLabel(0)).toBe('0 ml');
   });
 });

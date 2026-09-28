@@ -1,5 +1,5 @@
 import { addWater, DEFAULT_WATER_GOAL_ML, removeLastWater, useSettings, useWaterForDay } from '../db/hooks';
-import { fmt, fmtMax } from '../lib/nutrition';
+import { fmt, fmtMax, waterLeftLabel } from '../lib/nutrition';
 import { useT } from '../i18n';
 import { useToast } from './Toast';
 
@@ -43,7 +43,7 @@ export function WaterRow({ date }: Props) {
         <div className={`progress-fill ${ml >= goal ? 'water-full' : ''}`} style={{ width: `${pct}%`, background: 'var(--c-water)' }} />
       </div>
       <div className="water-actions">
-        <span className="water-left">{left > 0 ? t('water.left', { n: fmt(left) }) : t('water.goalReached')}</span>
+        <span className="water-left">{left > 0 ? t('water.left', { n: waterLeftLabel(left) }) : t('water.goalReached')}</span>
         <div className="water-buttons">
           {ml > 0 && (
             <button className="btn-icon" onClick={() => void undo()} aria-label={t('water.remove')} title={t('water.remove')}>

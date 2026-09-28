@@ -116,7 +116,7 @@ export const en = {
   'search.label': 'Search foods',
   'search.ownHint': 'Tip: whatever you scan or enter by hand stays saved and comes up first next time. After a few weeks you will find almost everything in two taps.',
   'search.hint': 'Favorites and frequently used first',
-  'search.empty': 'Your database is empty.',
+  'search.empty': 'No foods of your own yet. Type a name – the built-in basic foods are searched too. Whatever you scan or add stays saved and comes up first next time.',
   'search.noneFor': 'Nothing in your database for “{q}”.',
   'search.favAdd': 'Mark {name} as favorite',
   'search.favRemove': 'Remove {name} from favorites',
@@ -209,7 +209,9 @@ export const en = {
   'db.searchPlaceholder': 'Search…',
   'db.searchLabel': 'Search database',
   'db.new': '+ New',
-  'db.count': '{shown} of {total} entries',
+  'db.count': '{shown} of {total} matches',
+  'db.countOwn': '{own} of your own · {ref} basic foods come up when you search',
+  'db.noneOwn': 'No foods of your own yet. Scan a barcode or add one – this is where what you actually eat will live.',
   'db.hint': 'Values per 100 g / ml · Changes apply to new entries; days already logged stay unchanged.',
   'db.none': 'Nothing found.',
   'db.favorite': 'Favorite',
@@ -527,7 +529,7 @@ export const en = {
   'water.remove': 'Remove last entry',
   'water.of': '{amount} / {goal} l',
   'water.goalReached': 'Goal reached',
-  'water.left': '{n} ml left',
+  'water.left': '{n} left',
   'water.avg': 'Water',
 } as const;
 

@@ -1,24 +1,35 @@
 import { useMemo, useState } from 'react';
 import type { FoodItem } from '../db/types';
-import { deleteFoodItem, toggleFavorite, useSavedFoods } from '../db/hooks';
+import { deleteFoodItem, toggleFavorite, useFoodUsage, useSavedFoods } from '../db/hooks';
 import { fmt } from '../lib/nutrition';
 import { FoodItemForm } from './FoodItemForm';
 import { Modal } from './Modal';
-import { normalize } from '../lib/foodRank';
+import { rankFoods } from '../lib/foodRank';
 import { useT } from '../i18n';
+
+/**
+ * Höchstens so viele Zeilen. Die mitgelieferte Tabelle hat über sechstausend Einträge; wer sie
+ * ungefiltert in die Liste hängt, baut 80'000 DOM-Knoten auf und der erste Tastendruck
+ * blockiert eine halbe Sekunde. Gelesen wird ohnehin nur der Anfang.
+ */
+const MAX_ROWS = 60;
 
 export function FoodDatabase() {
   const t = useT();
   const foods = useSavedFoods();
+  const usage = useFoodUsage();
   const [query, setQuery] = useState('');
   const [editing, setEditing] = useState<FoodItem | 'new' | null>(null);
 
-  const results = useMemo(() => {
-    const q = normalize(query.trim());
-    if (!foods) return [];
-    if (!q) return foods;
-    return foods.filter((f) => normalize(`${f.name} ${f.brand ?? ''}`).includes(q));
-  }, [foods, query]);
+  // Selbst gescannt oder angelegt – das ist die Datenbank, die dem Nutzer gehört.
+  const own = useMemo(() => (foods ?? []).filter((f) => f.source !== 'reference'), [foods]);
+  // Ohne Suchbegriff nur die eigenen: sonst steht hier eine alphabetische Fremdliste,
+  // die mit „Amerikaner" und „Apfelschmarren" beginnt, statt dem, was man selbst isst.
+  const ranked = useMemo(
+    () => (foods ? rankFoods(query.trim() ? foods : own, query, usage) : []),
+    [foods, own, query, usage],
+  );
+  const results = useMemo(() => ranked.slice(0, MAX_ROWS), [ranked]);
 
   async function remove(item: FoodItem) {
     if (!confirm(t('db.confirmRemove', { name: item.name }))) return;
@@ -41,7 +52,13 @@ export function FoodDatabase() {
         </button>
       </div>
       <p className="search-hint">
-        {foods ? t('db.count', { shown: results.length, total: foods.length }) : t('common.loading')} · {t('db.hint')}
+        {!foods
+          ? t('common.loading')
+          : query.trim()
+            ? t('db.count', { shown: results.length, total: ranked.length })
+            : t('db.countOwn', { own: own.length, ref: foods.length - own.length })}
+        {/* Der Hinweis auf die Werte gehört nur dorthin, wo auch Werte stehen. */}
+        {results.length > 0 && <> · {t('db.hint')}</>}
       </p>
       <ul className="db-list card">
         {results.map((f) => (
@@ -73,7 +90,9 @@ export function FoodDatabase() {
             </div>
           </li>
         ))}
-        {foods && results.length === 0 && <li className="search-empty">{t('db.none')}</li>}
+        {foods && results.length === 0 && (
+          <li className="search-empty">{query.trim() ? t('db.none') : t('db.noneOwn')}</li>
+        )}
       </ul>
 
       {editing && (
