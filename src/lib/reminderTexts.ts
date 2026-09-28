@@ -1063,7 +1063,7 @@ Numbers now, verdict on Sunday.
   water: lines(`
 You’re not a cactus.
 One glass now. Tomorrow’s training says thanks.
-Drink before thirst shows up. +500 ml, one tap.
+Drink before thirst shows up. One tap, done.
 Stand up, get water, carry on. Still counts.
 Muscle is about 75 % water. Top up.
 Where are you on the water goal? Look, then pour.
@@ -1074,7 +1074,7 @@ A big glass now saves you the slump later.
 Water is the cheapest supplement. Take it.
 Bottle next to you? Then you know what to do.
 Drinking isn’t a task. It’s a reflex you train.
-+250 ml. Now. Then carry on.
+A glass now. Then carry on.
 Hydrated training is better training. Full stop.
 Your water goal is waiting. One glass closer.
 Thirst is an alarm, not a hint. Drink first.
@@ -1124,7 +1124,7 @@ Top up. The water goal doesn’t reach itself.
 Drink up. Sounds trivial, works wonders.
 Water between meals. Now is one of those moments.
 Grab the bottle, empty the glass, log it. Done.
-Two seconds for +500 ml. No effort, real effect.
+Two seconds for a big glass. No effort, real effect.
 A glass now, not when thirst shows up.
 Water is the cheapest performance gain there is.
 Get up, refill, carry on.
@@ -1132,7 +1132,7 @@ You have a goal. The glass is right there.
 Two sips won't do it. A glass will.
 Drinking has the best effort-to-effect ratio of anything today.
 That afternoon headache is often just missing water.
-+250 ml, one tap. No reason to hesitate.
+One glass, one tap. No reason to hesitate.
 How far along are you? Take a look.
 Coffee doesn't replace it. Water does.
 Bottle empty? That's a signal, not a coincidence.

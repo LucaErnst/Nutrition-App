@@ -10,6 +10,9 @@ struct Snapshot: Codable {
     var proteinTarget: Int?
     var waterMl: Int
     var waterGoalMl: Int
+    /// Anzeige-Einheit für Wasser; fehlt in Ständen, die eine ältere App geschrieben hat.
+    var waterUnit: String?
+    var waterSteps: [Int]?
     var weekLeftToday: Int?
     var weekDaysLeft: Int?
     var weekOnTrack: Bool?
@@ -17,13 +20,45 @@ struct Snapshot: Codable {
     var updatedAt: Double
 
     static let placeholder = Snapshot(date: "", lang: "en", kcal: 1497, kcalTarget: 2700, protein: 112, proteinTarget: 160,
-                                      waterMl: 1750, waterGoalMl: 3000, weekLeftToday: 1203, weekDaysLeft: 3, weekOnTrack: true, pro: true, updatedAt: 0)
+                                      waterMl: 1750, waterGoalMl: 3000, waterUnit: "ml", waterSteps: [250, 500],
+                                      weekLeftToday: 1203, weekDaysLeft: 3, weekOnTrack: true, pro: true, updatedAt: 0)
 
     var kcalLeft: Int? { kcalTarget.map { max(0, $0 - kcal) } }
     var proteinLeft: Int? { proteinTarget.map { max(0, $0 - protein) } }
     var kcalProgress: Double { guard let t = kcalTarget, t > 0 else { return 0 }; return min(1, Double(kcal) / Double(t)) }
     var proteinProgress: Double { guard let t = proteinTarget, t > 0 else { return 0 }; return min(1, Double(protein) / Double(t)) }
     var waterProgress: Double { waterGoalMl > 0 ? min(1, Double(waterMl) / Double(waterGoalMl)) : 0 }
+
+    /// Milliliter je Anzeige-Einheit. US- und UK-Flüssigunzen sind verschieden gross.
+    private var mlPerUnit: Double {
+        switch waterUnit {
+        case "floz_us": return 29.5735295625
+        case "floz_uk": return 28.4130625
+        default: return 1000
+        }
+    }
+
+    private var waterUnitLabel: String { waterUnit == nil || waterUnit == "ml" ? "l" : "fl oz" }
+
+    /// „1.8 / 3 l" oder „59 / 101 fl oz" – gerechnet wird hier, weil der Stand nach einem
+    /// Tipp auf „+" lokal weiterläuft und ein fertiger Text aus der App dann veraltet wäre.
+    var waterText: String {
+        let per = mlPerUnit
+        let now = Double(waterMl) / per
+        let goal = Double(waterGoalMl) / per
+        if waterUnitLabel == "l" {
+            return String(format: "%.2g / %.2g l", now, goal)
+        }
+        return String(format: "%.0f / %.0f fl oz", now, goal)
+    }
+
+    /// Stufen der beiden Knöpfe; alte Stände kennen sie nicht.
+    var waterStepsOrDefault: [Int] { waterSteps?.isEmpty == false ? waterSteps! : [250, 500] }
+
+    /// Beschriftung eines Knopfs: „+250" bzw. „+8".
+    func waterStepLabel(_ ml: Int) -> String {
+        waterUnitLabel == "l" ? "+\(ml)" : String(format: "+%.0f", Double(ml) / mlPerUnit)
+    }
     var isGerman: Bool { lang == "de" }
 
     static func todayISO() -> String {

@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import type { FoodItem } from '../../db/types';
-import { amountToGrams, macrosFor, resolveSource, sumMacros, waterLeftLabel } from '../nutrition';
+import {
+  amountToGrams,
+  macrosFor,
+  resolveSource,
+  sumMacros,
+  waterGoalField,
+  waterLeftLabel,
+  waterPair,
+  waterStepLabel,
+  waterSteps,
+} from '../nutrition';
 
 const quark: FoodItem = {
   name: 'Magerquark', kcal_per_100g: 67.2, protein_per_100g: 12, fat_per_100g: 0.4, carbs_per_100g: 4,
@@ -67,5 +77,35 @@ describe('waterLeftLabel', () => {
   it('bleibt unter einem Liter bei Millilitern', () => {
     expect(waterLeftLabel(750)).toBe('750 ml');
     expect(waterLeftLabel(0)).toBe('0 ml');
+  });
+});
+
+describe('Wasser in US- und UK-Einheiten', () => {
+  it('zeigt das Paar in Flüssigunzen, gespeichert bleiben Milliliter', () => {
+    expect(waterPair(0, 3000, 'metric')).toEqual({ amount: '0', goal: '3.0', unit: 'l' });
+    expect(waterPair(946, 2957, 'us')).toEqual({ amount: '32', goal: '100', unit: 'fl oz' });
+  });
+
+  it('nennt die Restmenge in der Einheit des Nutzers', () => {
+    expect(waterLeftLabel(2750, 'metric')).toBe('2.8 l');
+    expect(waterLeftLabel(946, 'us')).toBe('32 fl oz');
+    expect(waterLeftLabel(946, 'uk')).toBe('33 fl oz');
+  });
+
+  it('macht aus den Stufen ein Glas und eine Flasche', () => {
+    expect(waterSteps('metric')).toEqual([250, 500]);
+    expect(waterSteps('us')).toEqual([237, 473]);
+    expect(waterStepLabel(237, 'us')).toBe('8 fl oz');
+    expect(waterStepLabel(250, 'metric')).toBe('250 ml');
+  });
+
+  it('rechnet das Zielfeld hin und zurück, ohne zu driften', () => {
+    const us = waterGoalField('us');
+    expect(us.label).toBe('fl oz');
+    const ml = us.toMl(100);
+    expect(us.toDisplay(ml)).toBe(100);
+    const metric = waterGoalField('metric');
+    expect(metric.toDisplay(3000)).toBe(3000);
+    expect(metric.toMl(3013)).toBe(3000);
   });
 });

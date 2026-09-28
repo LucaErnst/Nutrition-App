@@ -86,7 +86,6 @@ Launch-Tag.
 
 ## 5. Offen, aber kein Hindernis für 1.1
 
-- Wasserziel ist für US/UK-Nutzer weiter nur in ml/l einstellbar (der Rest der App rechnet um)
 - BLV-Anfrage für die Schweizer Nährwertdatenbank liegt fertig in `docs/BLV-ANFRAGE.md` – seit der
   BLS-Tabelle nicht mehr nötig, aber Schweizer Werte wären ein schönes Extra für 1.2
 - Android: Play Console braucht 12 Tester über 14 Tage, bevor dort etwas veröffentlicht werden kann

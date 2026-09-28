@@ -269,8 +269,8 @@ export const en = {
   'more.language': 'Language',
   'more.languageHint': 'Your own food names and templates stay as you entered them.',
   'more.water': 'Water',
-  'more.waterSummary': 'Daily goal {goal} l',
-  'more.waterGoal': 'Daily water goal (ml)',
+  'more.waterSummary': 'Daily goal {goal}',
+  'more.waterGoal': 'Daily water goal ({unit})',
   // Reminders
   'rem.title': 'Reminders',
   'health.title': 'Apple Health',
@@ -457,8 +457,8 @@ export const en = {
   'concl.carbsHigh': 'Carbs high: avg {avg} g, remainder target would be ≈ {target} g.',
   'concl.partial': '{n} of {elapsed} past days logged – the average covers logged days only.',
   'concl.today': 'Today is not finished yet and already counts toward the average.',
-  'concl.waterOk': 'Water: avg {avg} l per day (goal {goal} l).',
-  'concl.waterLow': 'Water below goal: avg {avg} l per day (goal {goal} l).',
+  'concl.waterOk': 'Water: avg {avg} per day (goal {goal}).',
+  'concl.waterLow': 'Water below goal: avg {avg} per day (goal {goal}).',
 
   // Weight
   'weight.enter': 'Log weight',
@@ -519,15 +519,15 @@ export const en = {
   'ob.phaseCut': 'Cut',
   'ob.phaseMaintain': 'Maintenance',
   'ob.phaseBulk': 'Bulk',
-  'ob.waterGoal': 'Water goal (ml)',
+  'ob.waterGoal': 'Water goal ({unit})',
   'ob.start': 'Start tracking',
   'ob.errBody': 'Please enter age, height and weight.',
 
   // Water
   'water.title': 'Water',
-  'water.add': 'Add {n} ml',
+  'water.add': 'Add {n}',
   'water.remove': 'Remove last entry',
-  'water.of': '{amount} / {goal} l',
+  'water.of': '{amount} / {goal} {unit}',
   'water.goalReached': 'Goal reached',
   'water.left': '{n} left',
   'water.avg': 'Water',

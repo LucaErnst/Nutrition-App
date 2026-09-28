@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openSection } from './helpers';
 
 /**
  * Läuft mit locale en-US (siehe playwright.config.ts). Ein Gerät in den USA soll die App
@@ -54,4 +55,35 @@ test('Mengen werden in Unzen vorgeschlagen', async ({ page }) => {
   await page.getByRole('searchbox', { name: 'Search foods' }).fill('Oats');
   await page.getByRole('dialog').getByText('Oats', { exact: true }).click();
   await expect(page.getByRole('dialog').getByRole('combobox', { name: 'Unit' })).toHaveValue('oz');
+});
+
+test('Wasser läuft in Flüssigunzen, gespeichert bleiben Milliliter', async ({ page }) => {
+  await freshUsApp(page);
+  await page.getByRole('button', { name: 'Skip, set targets later' }).click();
+
+  const water = page.getByRole('region', { name: 'Water' });
+  // Voreinstellung 3000 ml sind 101 fl oz.
+  await expect(water.getByText('0 / 101 fl oz')).toBeVisible();
+  await water.getByRole('button', { name: 'Add 8 fl oz' }).click();
+  await expect(water.getByText('8 / 101 fl oz')).toBeVisible();
+  await expect(water.getByText('93 fl oz left')).toBeVisible();
+
+  // Das Ziel wird in Unzen eingestellt, in der Datenbank stehen weiterhin Milliliter.
+  await page.getByRole('button', { name: 'More' }).click();
+  await openSection(page, 'Water');
+  const goal = page.getByRole('spinbutton', { name: 'Daily water goal (fl oz)' });
+  await expect(goal).toHaveValue('101');
+  await page.getByRole('button', { name: '96 fl oz', exact: true }).click();
+  await expect(goal).toHaveValue('96');
+  const storedMl = await page.evaluate(
+    () =>
+      new Promise<number>((resolve) => {
+        const open = indexedDB.open('nutrition-tracker');
+        open.onsuccess = () => {
+          const req = open.result.transaction('settings').objectStore('settings').getAll();
+          req.onsuccess = () => resolve(req.result[0]?.water_goal_ml);
+        };
+      }),
+  );
+  expect(storedMl).toBe(2839);
 });

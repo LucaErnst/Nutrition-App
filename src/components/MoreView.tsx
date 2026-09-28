@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useI18n, useT, type Language } from '../i18n';
-import { fmt } from '../lib/nutrition';
-import { saveSettings, useSettings } from '../db/hooks';
+import { waterGoalField, waterLeftLabel, WATER_GOAL_MAX_ML, WATER_GOAL_MIN_ML } from '../lib/nutrition';
+import { saveSettings, useSettings, useUnitSystem } from '../db/hooks';
 import { GoalsView, TrainingDaysSection } from './GoalsView';
 import { BackupSection } from './BackupSection';
 import { DiagnosticsSection } from './DiagnosticsSection';
@@ -24,14 +24,18 @@ export function MoreView() {
   const { lang, setLanguage } = useI18n();
   const settings = useSettings();
   const waterGoal = settings?.water_goal_ml ?? 3000;
+  // Angezeigt wird die Einheit des Nutzers, gespeichert bleiben Milliliter.
+  const system = useUnitSystem();
+  const field = waterGoalField(system);
   // Lokaler Eingabezustand: gespeichert wird erst beim Verlassen des Felds,
   // sonst springt das Feld beim Tippen auf den alten Wert zurück.
-  const [goalInput, setGoalInput] = useState(String(waterGoal));
-  useEffect(() => setGoalInput(String(waterGoal)), [waterGoal]);
+  const [goalInput, setGoalInput] = useState(String(field.toDisplay(waterGoal)));
+  useEffect(() => setGoalInput(String(field.toDisplay(waterGoal))), [waterGoal, field.label]);
 
-  function commitGoal(v: number) {
-    const clamped = Math.min(10000, Math.max(500, Math.round(v / 50) * 50));
-    setGoalInput(String(clamped));
+  /** `ml` kommt aus den Stufen-Knöpfen, `displayed` aus dem Feld. */
+  function commitGoal(ml: number) {
+    const clamped = Math.min(WATER_GOAL_MAX_ML, Math.max(WATER_GOAL_MIN_ML, ml));
+    setGoalInput(String(field.toDisplay(clamped)));
     if (clamped !== waterGoal) void saveSettings({ water_goal_ml: clamped });
   }
 
@@ -45,40 +49,39 @@ export function MoreView() {
       <BackupSection />
       <UnitsSection />
 
-      <CollapsibleCard title={t('more.water')} summary={t('more.waterSummary', { goal: fmt(waterGoal / 1000, 1) })}>
+      <CollapsibleCard title={t('more.water')} summary={t('more.waterSummary', { goal: waterLeftLabel(waterGoal, system) })}>
         <div className="field" style={{ maxWidth: 260, marginTop: 8, marginInline: 'auto' }}>
-          <span>{t('more.waterGoal')}</span>
+          <span>{t('more.waterGoal', { unit: field.label })}</span>
           <div className="stepper">
-            <button type="button" className="stepper-btn" onClick={() => commitGoal(waterGoal - 250)} aria-label={t('picker.decrease')} disabled={waterGoal <= 500}>
+            <button type="button" className="stepper-btn" onClick={() => commitGoal(waterGoal - field.stepMl)} aria-label={t('picker.decrease')} disabled={waterGoal <= WATER_GOAL_MIN_ML}>
               −
             </button>
             <input
               type="number"
               inputMode="numeric"
-              min={500}
-              max={10000}
-              step={50}
+              min={field.toDisplay(WATER_GOAL_MIN_ML)}
+              max={field.toDisplay(WATER_GOAL_MAX_ML)}
               value={goalInput}
               onChange={(e) => setGoalInput(e.target.value)}
               onBlur={() => {
                 const v = Number(goalInput);
-                if (Number.isFinite(v) && v > 0) commitGoal(v);
-                else setGoalInput(String(waterGoal));
+                if (Number.isFinite(v) && v > 0) commitGoal(field.toMl(v));
+                else setGoalInput(String(field.toDisplay(waterGoal)));
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
               }}
-              aria-label={t('more.waterGoal')}
+              aria-label={t('more.waterGoal', { unit: field.label })}
             />
-            <button type="button" className="stepper-btn" onClick={() => commitGoal(waterGoal + 250)} aria-label={t('picker.increase')} disabled={waterGoal >= 10000}>
+            <button type="button" className="stepper-btn" onClick={() => commitGoal(waterGoal + field.stepMl)} aria-label={t('picker.increase')} disabled={waterGoal >= WATER_GOAL_MAX_ML}>
               +
             </button>
           </div>
         </div>
-        <div className="chips" style={{ marginTop: 10 }} role="group" aria-label={t('more.waterGoal')}>
-          {[2000, 2500, 3000, 3500, 4000].map((ml) => (
+        <div className="chips" style={{ marginTop: 10 }} role="group" aria-label={t('more.waterGoal', { unit: field.label })}>
+          {field.presetsMl.map((ml) => (
             <button key={ml} type="button" className={`chip ${waterGoal === ml ? 'active' : ''}`} onClick={() => commitGoal(ml)}>
-              {fmt(ml / 1000, 1)} l
+              {waterLeftLabel(ml, system)}
             </button>
           ))}
         </div>

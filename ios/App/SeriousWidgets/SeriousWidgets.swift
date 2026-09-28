@@ -148,7 +148,7 @@ struct SmallView: View {
                           value: s.proteinTarget.map { "\(s.protein) / \($0) g" } ?? "\(s.protein) g",
                           progress: s.proteinProgress, color: Brand.protein)
                 MetricRow(label: L.t(de, "Water", "Wasser"),
-                          value: String(format: "%.2g / %.2g l", Double(s.waterMl) / 1000, Double(s.waterGoalMl) / 1000),
+                          value: s.waterText,
                           progress: s.waterProgress, color: Brand.water)
             }
         }
@@ -191,7 +191,7 @@ struct MediumView: View {
                                 .lineLimit(1)
                         }
                         LabelValue(label: L.t(de, "Water", "Wasser"),
-                                   value: String(format: "%.2g / %.2g l", Double(s.waterMl) / 1000, Double(s.waterGoalMl) / 1000))
+                                   value: s.waterText)
                             .frame(width: 132)
                     }
                     GridRow {
@@ -203,8 +203,9 @@ struct MediumView: View {
                                   progress: s.proteinProgress, color: Brand.protein)
                         if #available(iOS 17.0, *) {
                             HStack(spacing: 6) {
-                                WaterButton(ml: 250, de: de)
-                                WaterButton(ml: 500, de: de)
+                                ForEach(s.waterStepsOrDefault.prefix(2), id: \.self) { ml in
+                                    WaterButton(ml: ml, label: s.waterStepLabel(ml), de: de)
+                                }
                             }
                             .frame(width: 132)
                         } else {
@@ -222,10 +223,11 @@ struct MediumView: View {
 @available(iOS 17.0, *)
 struct WaterButton: View {
     let ml: Int
+    let label: String
     let de: Bool
     var body: some View {
         Button(intent: AddWaterIntent(ml: ml)) {
-            Text("+\(ml)")
+            Text(label)
                 .font(.system(size: 12, weight: .semibold))
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 7)

@@ -4,7 +4,7 @@ import { saveSettings, upsertWeight, useUnitSystem } from '../db/hooks';
 import { bodyWeightUnitFor, ftInToCm, heightUnitFor, lbToKg, stoneToKg } from '../lib/units';
 import { useI18n, useT, type Language } from '../i18n';
 import { todayISO } from '../lib/date';
-import { fmt } from '../lib/nutrition';
+import { fmt, waterGoalField } from '../lib/nutrition';
 import { suggestGoals, type Activity, type Phase, type Sex } from '../lib/onboarding';
 import { getLocale } from '../i18n';
 
@@ -44,6 +44,7 @@ export function Onboarding({ onDone }: Props) {
   const system = useUnitSystem();
   const bodyUnit = bodyWeightUnitFor(system);
   const hUnit = heightUnitFor(system);
+  const waterField = waterGoalField(system);
   const heightCm = hUnit === 'cm' ? num(height) : ftInToCm(num(height), num(heightIn));
   const weightKg =
     bodyUnit === 'kg' ? num(weight) : bodyUnit === 'lb' ? lbToKg(num(weight)) : stoneToKg(num(weight), num(weightLb));
@@ -72,7 +73,11 @@ export function Onboarding({ onDone }: Props) {
         fat_max_g: num(fatMax),
       });
       if (weightKg > 0) await upsertWeight(todayISO(), Math.round(weightKg * 10) / 10);
-      await saveSettings({ training_weekdays: trainingDays, water_goal_ml: num(water) || undefined, onboarding_done: true });
+      await saveSettings({
+        training_weekdays: trainingDays,
+        water_goal_ml: num(water) ? waterField.toMl(num(water)) : undefined,
+        onboarding_done: true,
+      });
     } else {
       await saveSettings({ onboarding_done: true });
     }
@@ -93,7 +98,7 @@ export function Onboarding({ onDone }: Props) {
     setProtein(String(g.protein_g));
     setFatMin(String(g.fat_min_g));
     setFatMax(String(g.fat_max_g));
-    setWater(String(g.water_ml));
+    setWater(String(waterField.toDisplay(g.water_ml)));
     setPhaseName(phaseLabel(phase));
     setBmrInfo({ bmr: g.bmr, tdee: g.tdee });
     setStep('result');
@@ -288,8 +293,8 @@ export function Onboarding({ onDone }: Props) {
               </label>
             </div>
             <label className="field" style={{ maxWidth: 200 }}>
-              <span>{t('ob.waterGoal')}</span>
-              <input type="number" inputMode="numeric" min={500} step={250} value={water} onChange={(e) => setWater(e.target.value)} required />
+              <span>{t('ob.waterGoal', { unit: waterField.label })}</span>
+              <input type="number" inputMode="numeric" min={1} value={water} onChange={(e) => setWater(e.target.value)} required />
             </label>
             <div className="ob-actions">
               <button type="submit" className="btn-primary btn-wide">

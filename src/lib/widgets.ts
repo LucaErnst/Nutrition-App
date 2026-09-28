@@ -14,9 +14,10 @@ import { getLanguage } from '../i18n';
 import { isNative } from './native';
 import { todayISO, weekDates, weekStartOf } from './date';
 import { activeGoalFor, targetsFor } from './goals';
-import { macrosFor, resolveSource, sumMacros } from './nutrition';
+import { macrosFor, resolveSource, sumMacros, waterSteps } from './nutrition';
 import { weekBudget } from './week';
 import { isPro } from './pro';
+import { getUnitSystem } from './units';
 import type { DaySummary } from './week';
 
 /** Was das Widget anzeigt – bewusst klein und flach (wird als JSON abgelegt). */
@@ -29,6 +30,14 @@ export interface WidgetSnapshot {
   proteinTarget?: number;
   waterMl: number;
   waterGoalMl: number;
+  /**
+   * Anzeige-Einheit für Wasser im Widget. Gespeichert wird weiter in Millilitern: das Widget
+   * rechnet selbst um, weil es den Stand nach einem Tipp auf „+" lokal fortschreibt und eine
+   * fertige Zeichenkette aus der App dann veraltet wäre.
+   */
+  waterUnit: 'ml' | 'floz_us' | 'floz_uk';
+  /** Stufen der beiden Knöpfe, in Millilitern. */
+  waterSteps: number[];
   /** Wochenbudget: was heute noch drin ist und wie viele Tage (inkl. heute) übrig sind */
   weekLeftToday?: number;
   weekDaysLeft?: number;
@@ -88,6 +97,7 @@ export async function buildSnapshot(): Promise<WidgetSnapshot> {
     return { date, totals, targets: goal ? targetsFor(goal, isTraining) : undefined, tracked: dayEntries.length > 0 };
   });
   const todayDay = days.find((d) => d.date === today)!;
+  const system = getUnitSystem();
   const budget = weekBudget(days, today);
 
   return {
@@ -99,6 +109,8 @@ export async function buildSnapshot(): Promise<WidgetSnapshot> {
     proteinTarget: todayDay.targets ? Math.round(todayDay.targets.protein) : undefined,
     waterMl: water.reduce((s, w) => s + w.ml, 0),
     waterGoalMl: settings?.water_goal_ml ?? DEFAULT_WATER_GOAL_ML,
+    waterUnit: system === 'metric' ? 'ml' : system === 'us' ? 'floz_us' : 'floz_uk',
+    waterSteps: waterSteps(system),
     weekLeftToday: budget ? Math.round(budget.todayLeft) : undefined,
     weekDaysLeft: budget?.daysLeft,
     weekOnTrack: budget ? budget.driftBefore <= 0 : undefined,

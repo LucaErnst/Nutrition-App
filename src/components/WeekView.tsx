@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useDaySummaries, useSettings, useWaterByDate } from '../db/hooks';
+import { useDaySummaries, useSettings, useUnitSystem, useWaterByDate } from '../db/hooks';
 import { addDays, formatShortDate, todayISO, weekDates, weekStartOf, weekdayShort } from '../lib/date';
-import { fmt } from '../lib/nutrition';
+import { fmt, waterDigits, waterLeftLabel, waterUnitLabel, waterValue } from '../lib/nutrition';
 import { summarizeWeek, weekBudget, type Conclusion, type DaySummary } from '../lib/week';
 import { useT } from '../i18n';
 import { WeekBudgetCard } from './WeekBudgetCard';
@@ -26,12 +26,14 @@ export function WeekView({ onOpenDay }: Props) {
   const waterDays = water ? [...water.values()].filter((ml) => ml > 0) : [];
   const waterAvg = waterDays.length ? waterDays.reduce((s, v) => s + v, 0) / waterDays.length : 0;
   const waterGoal = settings?.water_goal_ml ?? 3000;
+  // Wasser folgt dem Einheitensystem: metrisch Liter mit einer Nachkommastelle, sonst ganze Unzen.
+  const system = useUnitSystem();
   const conclusions: Conclusion[] = week ? [...week.conclusions] : [];
   if (week && waterDays.length > 0) {
     conclusions.push({
       kind: waterAvg >= waterGoal ? 'ok' : 'warn',
       key: waterAvg >= waterGoal ? 'concl.waterOk' : 'concl.waterLow',
-      params: { avg: fmt(waterAvg / 1000, 1), goal: fmt(waterGoal / 1000, 1) },
+      params: { avg: waterLeftLabel(waterAvg, system), goal: waterLeftLabel(waterGoal, system) },
     });
   }
 
@@ -74,7 +76,14 @@ export function WeekView({ onOpenDay }: Props) {
               />
               <Stat label={t('macro.carbs')} value={week.avg.carbs} target={week.avgTarget?.carbs} unit="g" color="var(--c-carbs)" prefix="≈ " />
               {waterDays.length > 0 && (
-                <Stat label={t('water.avg')} value={waterAvg / 1000} digits={1} target={waterGoal / 1000} unit="l" color="var(--c-water)" />
+                <Stat
+                  label={t('water.avg')}
+                  value={waterValue(waterAvg, system)}
+                  digits={waterDigits(system)}
+                  target={waterValue(waterGoal, system)}
+                  unit={waterUnitLabel(system)}
+                  color="var(--c-water)"
+                />
               )}
             </div>
             {week.totalTargetKcal !== undefined && (
