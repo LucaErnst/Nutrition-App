@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react';
+import { db } from '../db/db';
 import type { FoodItem } from '../db/types';
 import { deleteFoodItem, toggleFavorite, useFoodUsage, useSavedFoods } from '../db/hooks';
 import { fmt } from '../lib/nutrition';
 import { FoodItemForm } from './FoodItemForm';
 import { Modal } from './Modal';
+import { ProductSearch } from './ProductSearch';
+import { offProductToFoodItem } from '../lib/openfoodfacts';
 import { rankFoods } from '../lib/foodRank';
 import { useT } from '../i18n';
 
@@ -20,6 +23,16 @@ export function FoodDatabase() {
   const usage = useFoodUsage();
   const [query, setQuery] = useState('');
   const [editing, setEditing] = useState<FoodItem | 'new' | null>(null);
+
+  /**
+   * Ein Produkt aus der Suche landet im Formular, nicht sofort in der Datenbank: Name und
+   * Werte stehen drin, wer will, passt sie an und speichert. Ist der Barcode schon gespeichert,
+   * wird der vorhandene Eintrag bearbeitet statt ein zweiter angelegt.
+   */
+  async function pickProduct(p: Parameters<typeof offProductToFoodItem>[0]) {
+    const local = await db.foodItems.where('barcode').equals(p.barcode).first();
+    setEditing(local ?? offProductToFoodItem(p, true));
+  }
 
   // Selbst gescannt oder angelegt – das ist die Datenbank, die dem Nutzer gehört.
   const own = useMemo(() => (foods ?? []).filter((f) => f.source !== 'reference'), [foods]);
@@ -95,8 +108,11 @@ export function FoodDatabase() {
         )}
       </ul>
 
+      {/* Dieselbe Produktsuche wie im Tagebuch: wer hier ein Markenprodukt sucht, soll es finden. */}
+      <ProductSearch query={query} onPick={(p) => void pickProduct(p)} />
+
       {editing && (
-        <Modal title={editing === 'new' ? t('db.newFood') : t('db.editFood')} onClose={() => setEditing(null)}>
+        <Modal title={editing === 'new' || !editing.id ? t('db.newFood') : t('db.editFood')} onClose={() => setEditing(null)}>
           <FoodItemForm item={editing === 'new' ? undefined : editing} onDone={() => setEditing(null)} />
         </Modal>
       )}

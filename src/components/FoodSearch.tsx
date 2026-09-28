@@ -1,15 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { db } from '../db/db';
 import type { FoodItem, MealType, Unit } from '../db/types';
 import { addMealEntry, toggleFavorite, useFoodUsage, useSavedFoods } from '../db/hooks';
 import { defaultUnit, fmt, macrosFor } from '../lib/nutrition';
-import { detectOffCountry, offProductToFoodItem, searchProducts, type OffProduct } from '../lib/openfoodfacts';
+import { offProductToFoodItem, type OffProduct } from '../lib/openfoodfacts';
 import { useT } from '../i18n';
 import { rankFoods } from '../lib/foodRank';
 import { useUnitSystem } from '../db/hooks';
 import { convertAmount, fmtAmount, isPieceUnit, labelFor } from '../lib/units';
 import { UnitSelect } from './UnitSelect';
 import { ProductResult } from './ProductResult';
+import { ProductSearch } from './ProductSearch';
 import { AmountStepper } from './AmountStepper';
 import { PortionChips } from './PortionChips';
 
@@ -22,82 +23,19 @@ interface Props {
 /** Anzahl angezeigter Treffer aus der eigenen Datenbank. */
 const MAX_RESULTS = 40;
 
-/**
- * Ab wie vielen Zeichen von selbst bei Open Food Facts gesucht wird und wie lange nach dem
- * letzten Tastendruck gewartet wird. Die Pause macht aus „skyr" eine Anfrage statt vier –
- * Open Food Facts ist ein Spendenprojekt, und bei jedem Buchstaben anzuklopfen wäre unhöflich.
- */
-const AUTO_SEARCH_MIN_CHARS = 3;
-const AUTO_SEARCH_DELAY_MS = 600;
 
 /** Anzeige-Einheit (Stück wird übersetzt, g/ml bleiben) */
 export function unitLabel(t: ReturnType<typeof useT>, unit: Unit): string {
   return labelFor(unit, t('unit.piece'));
 }
 
-type OffState =
-  | { kind: 'idle' }
-  | { kind: 'loading'; query: string }
-  | { kind: 'results'; query: string; products: OffProduct[]; total: number; page: number; hasMore: boolean; loadingMore?: boolean }
-  | { kind: 'error'; message: string };
-
 export function FoodSearch({ date, mealType, onAdded }: Props) {
   const t = useT();
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<FoodItem | null>(null);
   const [offProduct, setOffProduct] = useState<FoodItem | null>(null);
-  const [off, setOff] = useState<OffState>({ kind: 'idle' });
-  const [worldwide, setWorldwide] = useState(false);
-  // Land des Geräts: in der Schweiz Schweizer Regale, in den USA amerikanische.
-  const country = useMemo(() => detectOffCountry(), []);
-  const scope = worldwide || !country ? null : country.slug;
   const foods = useSavedFoods() ?? [];
   const usage = useFoodUsage();
-  /** Laufende Nummer des Suchlaufs: eine späte Antwort darf ein neueres Ergebnis nicht überschreiben. */
-  const runId = useRef(0);
-
-  async function searchOff() {
-    const q = query.trim();
-    const id = ++runId.current;
-    setOff({ kind: 'loading', query: q });
-    const res = await searchProducts(q, { country: scope });
-    if (id !== runId.current) return;
-    if (res.status === 'found') setOff({ kind: 'results', query: q, products: res.products, total: res.total, page: res.page, hasMore: res.hasMore });
-    else setOff({ kind: 'error', message: res.message });
-  }
-
-  // Produkte kommen von selbst, sobald jemand aufhört zu tippen. Nach einem Fehler wird nicht
-  // von allein wiederholt – sonst läuft die Suche bei einer Störung endlos gegen die Wand.
-  useEffect(() => {
-    if (query.trim().length < AUTO_SEARCH_MIN_CHARS || off.kind !== 'idle') return;
-    const timer = window.setTimeout(() => void searchOff(), AUTO_SEARCH_DELAY_MS);
-    return () => window.clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, off.kind, worldwide]);
-
-  /** Nächste Seite anhängen – vorher sah man nur die ersten Treffer und sonst nichts. */
-  async function loadMoreOff() {
-    if (off.kind !== 'results' || off.loadingMore) return;
-    const current = off;
-    const id = runId.current;
-    setOff({ ...current, loadingMore: true });
-    const res = await searchProducts(current.query, { country: scope, page: current.page + 1 });
-    if (id !== runId.current) return;
-    if (res.status === 'found') {
-      const seen = new Set(current.products.map((p) => p.barcode));
-      setOff({
-        ...current,
-        products: [...current.products, ...res.products.filter((p) => !seen.has(p.barcode))],
-        total: res.total,
-        page: res.page,
-        hasMore: res.hasMore,
-        loadingMore: false,
-      });
-    } else {
-      setOff({ kind: 'error', message: res.message });
-    }
-  }
-
   async function pickOff(p: OffProduct) {
     // Bereits gespeichert (z.B. früher gescannt)? Dann das lokale Item nehmen.
     const local = await db.foodItems.where('barcode').equals(p.barcode).first();
@@ -153,22 +91,13 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
 
   return (
     <div className="search">
-      <form
-        className="scan-code-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (q.length >= 2) void searchOff();
-        }}
-      >
+      <form className="scan-code-form" onSubmit={(e) => e.preventDefault()}>
         <input
           className="search-input"
           type="search"
           placeholder={t('search.placeholder')}
           value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            if (off.kind !== 'idle') setOff({ kind: 'idle' });
-          }}
+          onChange={(e) => setQuery(e.target.value)}
           aria-label={t('search.label')}
         />
       </form>
@@ -211,92 +140,7 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
         </ul>
       )}
 
-      {q.length >= 2 && (
-        <div className="off-search">
-          {/* Die Auswahl bleibt auch neben den Treffern stehen: wer nichts Schweizerisches
-              findet, soll den Bereich umstellen können, ohne die Suche neu zu tippen. */}
-          <div className="off-search-row">
-            {off.kind === 'idle' && (
-              <button type="button" className="btn-secondary" onClick={() => void searchOff()}>
-                {t('search.offButton', { q })}
-              </button>
-            )}
-            {/* Ohne erkanntes Land wird ohnehin weltweit gesucht – dann gibt es nichts zu wählen. */}
-            {country && (
-              <label className="checkbox">
-                <input
-                  type="checkbox"
-                  checked={worldwide}
-                  onChange={(e) => {
-                    setWorldwide(e.target.checked);
-                    setOff({ kind: 'idle' });
-                  }}
-                />
-                {t('search.offWorldwide', { country: country.label })}
-              </label>
-            )}
-          </div>
-          {off.kind === 'loading' && <p className="search-hint">{t('search.offSearching', { q: off.query })}</p>}
-          {off.kind === 'error' && (
-            <>
-              <p className="form-error" role="alert">
-                {off.message}
-              </p>
-              <button type="button" className="btn-link btn-centered" onClick={() => void searchOff()}>
-                {t('search.offRetry')}
-              </button>
-            </>
-          )}
-          {off.kind === 'results' && (
-            <>
-              <p className="search-hint">
-                {off.products.length === 0
-                  ? t('search.offNone', { scope: scope ? t('search.offScope', { country: country!.label }) : '' })
-                  : t('search.offResults', {
-                      scope: scope ? t('search.offScope', { country: country!.label }) : '',
-                      shown: off.products.length,
-                      total: fmt(off.total),
-                    })}
-                {off.query !== q && t('search.offFor', { q: off.query })}
-              </p>
-              {off.products.length === 0 && scope && (
-                <button
-                  type="button"
-                  className="btn-link"
-                  onClick={() => {
-                    setWorldwide(true);
-                    setOff({ kind: 'idle' });
-                  }}
-                >
-                  {t('search.offSearchWorldwide')}
-                </button>
-              )}
-              <ul className="search-list">
-                {off.products.map((p) => (
-                  <li key={p.barcode}>
-                    <button className="search-item" onClick={() => void pickOff(p)}>
-                      <span className="search-item-main">
-                        <span className="search-item-name">{p.name}</span>
-                        <span className="search-item-portion">
-                          {p.brand && `${p.brand} · `}
-                          {t('search.per100', { unit: p.is_liquid ? 'ml' : 'g' })} · {t('macro.p')} {fmt(p.protein_per_100g)} · {t('macro.f')} {fmt(p.fat_per_100g)} · {t('macro.c')} {fmt(p.carbs_per_100g)}
-                          {p.incomplete && ` · ${t('search.incomplete')}`}
-                        </span>
-                      </span>
-                      <span className="search-item-kcal">{fmt(p.kcal_per_100g)} kcal</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              {off.hasMore && (
-                <button type="button" className="btn-link btn-centered" onClick={() => void loadMoreOff()} disabled={off.loadingMore}>
-                  {off.loadingMore ? t('search.offLoading') : t('search.offMore')}
-                </button>
-              )}
-            </>
-          )}
-        </div>
-      )}
+      <ProductSearch query={query} onPick={(p) => void pickOff(p)} />
     </div>
   );
 }

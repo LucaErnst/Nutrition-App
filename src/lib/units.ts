@@ -200,7 +200,7 @@ export function detectUnitSystem(
   return 'metric';
 }
 
-export function regionOf(tag: string | undefined): string | undefined {
+function regionOf(tag: string | undefined): string | undefined {
   const parts = (tag ?? '').toUpperCase().split(/[-_]/);
   // en-US, en-GB, de-CH … – die Region ist der zweistellige Teil.
   return parts.slice(1).find((p) => p.length === 2);

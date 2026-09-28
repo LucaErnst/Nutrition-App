@@ -89,7 +89,7 @@ test('Wasser läuft in Flüssigunzen, gespeichert bleiben Milliliter', async ({ 
   expect(storedMl).toBe(2839);
 });
 
-test('Produktsuche fragt amerikanische Regale ab, nicht Schweizer', async ({ page }) => {
+test('Produktsuche fragt weltweit, ohne Kaestchen zum Anklicken', async ({ page }) => {
   const OFF = /\/cgi\/search\.pl|search\.openfoodfacts\.org|\/api\/v2\/search/;
   const urls: string[] = [];
   await freshUsApp(page);
@@ -103,10 +103,10 @@ test('Produktsuche fragt amerikanische Regale ab, nicht Schweizer', async ({ pag
         count: 1,
         products: [
           {
-            code: '0051500255162',
-            product_name: 'Creamy Peanut Butter',
-            brands: 'Jif',
-            nutriments: { 'energy-kcal_100g': 588, proteins_100g: 22, fat_100g: 50, carbohydrates_100g: 22 },
+            code: '5700381627197',
+            product_name: 'Skyr Vanilla',
+            brands: 'Arla',
+            nutriments: { 'energy-kcal_100g': 63, proteins_100g: 10, fat_100g: 0.2, carbohydrates_100g: 4.5 },
           },
         ],
       },
@@ -115,11 +115,44 @@ test('Produktsuche fragt amerikanische Regale ab, nicht Schweizer', async ({ pag
 
   await page.getByRole('button', { name: 'Skip, set targets later' }).click();
   await page.getByRole('button', { name: 'Add item to Lunch' }).click();
-  await page.getByRole('searchbox', { name: 'Search foods' }).fill('peanut butter');
+  await page.getByRole('searchbox', { name: 'Search foods' }).fill('skyr');
 
-  await expect(page.getByText('Creamy Peanut Butter')).toBeVisible();
-  await expect(page.getByText('Open Food Facts (United States)', { exact: false })).toBeVisible();
-  await expect(page.getByText('worldwide instead of United States only')).toBeVisible();
-  expect(urls.join(' ')).toContain('united-states');
+  await expect(page.getByText('Skyr Vanilla')).toBeVisible();
+  // Kein Land im Aufruf und keine Auswahl in der Oberflaeche.
+  expect(urls.join(' ')).not.toContain('united-states');
   expect(urls.join(' ')).not.toContain('switzerland');
+  await expect(page.getByText('worldwide instead of')).toHaveCount(0);
+});
+
+test('Der Reiter Foods sucht dieselben Produkte wie das Tagebuch', async ({ page }) => {
+  const OFF = /\/cgi\/search\.pl|search\.openfoodfacts\.org|\/api\/v2\/search/;
+  await freshUsApp(page);
+  await page.unroute(OFF);
+  await page.route(OFF, (route) =>
+    route.fulfill({
+      json: {
+        count: 1,
+        products: [
+          {
+            code: '5700381627197',
+            product_name: 'Skyr Vanilla',
+            brands: 'Arla',
+            nutriments: { 'energy-kcal_100g': 63, proteins_100g: 10, fat_100g: 0.2, carbohydrates_100g: 4.5 },
+          },
+        ],
+      },
+    }),
+  );
+
+  await page.getByRole('button', { name: 'Skip, set targets later' }).click();
+  await page.getByRole('button', { name: 'Foods' }).click();
+  await page.getByRole('searchbox', { name: 'Search database' }).fill('skyr');
+
+  // Produkt erscheint von selbst und laesst sich als eigenes Lebensmittel uebernehmen.
+  await page.getByRole('button', { name: /Skyr Vanilla/ }).click();
+  await expect(page.getByRole('dialog').getByLabel('Name')).toHaveValue('Skyr Vanilla');
+  await page.getByRole('dialog').getByRole('button', { name: 'Save' }).click();
+  // Ohne Suchbegriff zeigt der Reiter die eigenen Lebensmittel – das Produkt ist jetzt eines.
+  await page.getByRole('searchbox', { name: 'Search database' }).fill('');
+  await expect(page.getByText('1 of your own', { exact: false })).toBeVisible();
 });
