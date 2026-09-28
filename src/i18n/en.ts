@@ -122,6 +122,7 @@ export const en = {
   'search.favRemove': 'Remove {name} from favorites',
   'search.backToSearch': '‹ Back to search',
   'search.offButton': 'Search “{q}” on Open Food Facts',
+  'search.offRetry': 'Try again',
   'search.offWorldwide': 'worldwide instead of Switzerland only',
   'search.offSearching': 'Searching “{q}” on Open Food Facts…',
   'search.offResults': 'Open Food Facts{scope}: {shown} of {total} results',

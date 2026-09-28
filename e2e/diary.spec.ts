@@ -113,3 +113,28 @@ test('default phase name and number format follow the language', async ({ page }
   await expect(page.locator('.summary-phase')).toHaveText('· Aufbau');
   await expect(page.locator('.summary-remaining')).toContainText("noch 2'350 kcal");
 });
+
+test('Produkte von Open Food Facts erscheinen ohne Knopfdruck', async ({ page }) => {
+  const OFF = /\/cgi\/search\.pl|search\.openfoodfacts\.org|\/api\/v2\/search/;
+  await page.unroute(OFF);
+  await page.route(OFF, (route) =>
+    route.fulfill({
+      json: {
+        count: 1,
+        products: [
+          {
+            code: '7610807000018',
+            product_name: 'Testmarke Skyr Vanille',
+            brands: 'Testmarke',
+            nutriments: { 'energy-kcal_100g': 63, proteins_100g: 10, fat_100g: 0.2, carbohydrates_100g: 4.5 },
+          },
+        ],
+      },
+    }),
+  );
+
+  await page.getByRole('button', { name: 'Add item to Breakfast' }).click();
+  await page.getByRole('searchbox', { name: 'Search foods' }).fill('skyr');
+  // Kein Klick auf „Search … on Open Food Facts": die Suche läuft nach der Tippause von selbst.
+  await expect(page.getByText('Testmarke Skyr Vanille')).toBeVisible();
+});

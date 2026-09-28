@@ -15,8 +15,21 @@ export async function pinEnglish(page: Page) {
   });
 }
 
+/**
+ * Die Produktsuche läuft seit 1.1 von selbst los, sobald drei Zeichen im Feld stehen. In den
+ * Tests darf daraus keine echte Anfrage werden: das Ergebnis hinge am Netz, und Open Food Facts
+ * ist ein Spendenprojekt, das keinen Verkehr aus jedem CI-Lauf braucht. Barcode-Abrufe bleiben
+ * unberührt, die stellt `scan.spec.ts` selbst.
+ */
+export async function stubOffSearch(page: Page) {
+  await page.route(/\/cgi\/search\.pl|search\.openfoodfacts\.org|\/api\/v2\/search/, (route) =>
+    route.fulfill({ json: { count: 0, products: [], hits: [] } }),
+  );
+}
+
 /** Frische App: IndexedDB und localStorage leeren, dann laden (Seed läuft automatisch). */
 export async function freshApp(page: Page) {
+  await stubOffSearch(page);
   await pinEnglish(page);
   await page.goto('/');
   await page.evaluate(async () => {
@@ -48,6 +61,7 @@ export async function freshApp(page: Page) {
 
 /** Frische App ohne Phase – landet im Onboarding. */
 export async function freshAppRaw(page: Page) {
+  await stubOffSearch(page);
   await pinEnglish(page);
   await page.goto('/');
   await page.evaluate(async () => {

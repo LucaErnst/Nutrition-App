@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { db } from '../db/db';
 import type { FoodItem, MealType, Unit } from '../db/types';
 import { addMealEntry, toggleFavorite, useFoodUsage, useSavedFoods } from '../db/hooks';
@@ -22,6 +22,14 @@ interface Props {
 /** Anzahl angezeigter Treffer aus der eigenen Datenbank. */
 const MAX_RESULTS = 40;
 
+/**
+ * Ab wie vielen Zeichen von selbst bei Open Food Facts gesucht wird und wie lange nach dem
+ * letzten Tastendruck gewartet wird. Die Pause macht aus „skyr" eine Anfrage statt vier –
+ * Open Food Facts ist ein Spendenprojekt, und bei jedem Buchstaben anzuklopfen wäre unhöflich.
+ */
+const AUTO_SEARCH_MIN_CHARS = 3;
+const AUTO_SEARCH_DELAY_MS = 600;
+
 /** Anzeige-Einheit (Stück wird übersetzt, g/ml bleiben) */
 export function unitLabel(t: ReturnType<typeof useT>, unit: Unit): string {
   return labelFor(unit, t('unit.piece'));
@@ -42,21 +50,36 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
   const [worldwide, setWorldwide] = useState(false);
   const foods = useSavedFoods() ?? [];
   const usage = useFoodUsage();
+  /** Laufende Nummer des Suchlaufs: eine späte Antwort darf ein neueres Ergebnis nicht überschreiben. */
+  const runId = useRef(0);
 
   async function searchOff() {
     const q = query.trim();
+    const id = ++runId.current;
     setOff({ kind: 'loading', query: q });
     const res = await searchProducts(q, { country: worldwide ? null : 'switzerland' });
+    if (id !== runId.current) return;
     if (res.status === 'found') setOff({ kind: 'results', query: q, products: res.products, total: res.total, page: res.page, hasMore: res.hasMore });
     else setOff({ kind: 'error', message: res.message });
   }
+
+  // Produkte kommen von selbst, sobald jemand aufhört zu tippen. Nach einem Fehler wird nicht
+  // von allein wiederholt – sonst läuft die Suche bei einer Störung endlos gegen die Wand.
+  useEffect(() => {
+    if (query.trim().length < AUTO_SEARCH_MIN_CHARS || off.kind !== 'idle') return;
+    const timer = window.setTimeout(() => void searchOff(), AUTO_SEARCH_DELAY_MS);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, off.kind, worldwide]);
 
   /** Nächste Seite anhängen – vorher sah man nur die ersten Treffer und sonst nichts. */
   async function loadMoreOff() {
     if (off.kind !== 'results' || off.loadingMore) return;
     const current = off;
+    const id = runId.current;
     setOff({ ...current, loadingMore: true });
     const res = await searchProducts(current.query, { country: worldwide ? null : 'switzerland', page: current.page + 1 });
+    if (id !== runId.current) return;
     if (res.status === 'found') {
       const seen = new Set(current.products.map((p) => p.barcode));
       setOff({
@@ -187,22 +210,36 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
 
       {q.length >= 2 && (
         <div className="off-search">
-          {off.kind === 'idle' && (
-            <div className="off-search-row">
+          {/* Die Auswahl bleibt auch neben den Treffern stehen: wer nichts Schweizerisches
+              findet, soll den Bereich umstellen können, ohne die Suche neu zu tippen. */}
+          <div className="off-search-row">
+            {off.kind === 'idle' && (
               <button type="button" className="btn-secondary" onClick={() => void searchOff()}>
                 {t('search.offButton', { q })}
               </button>
-              <label className="checkbox">
-                <input type="checkbox" checked={worldwide} onChange={(e) => setWorldwide(e.target.checked)} />
-                {t('search.offWorldwide')}
-              </label>
-            </div>
-          )}
+            )}
+            <label className="checkbox">
+              <input
+                type="checkbox"
+                checked={worldwide}
+                onChange={(e) => {
+                  setWorldwide(e.target.checked);
+                  setOff({ kind: 'idle' });
+                }}
+              />
+              {t('search.offWorldwide')}
+            </label>
+          </div>
           {off.kind === 'loading' && <p className="search-hint">{t('search.offSearching', { q: off.query })}</p>}
           {off.kind === 'error' && (
-            <p className="form-error" role="alert">
-              {off.message}
-            </p>
+            <>
+              <p className="form-error" role="alert">
+                {off.message}
+              </p>
+              <button type="button" className="btn-link btn-centered" onClick={() => void searchOff()}>
+                {t('search.offRetry')}
+              </button>
+            </>
           )}
           {off.kind === 'results' && (
             <>

@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { openSection } from './helpers';
+import { openSection, stubOffSearch } from './helpers';
 
 /**
  * Läuft mit locale en-US (siehe playwright.config.ts). Ein Gerät in den USA soll die App
  * auf Englisch, in Pfund, Fuss/Zoll und Unzen bekommen – ohne dass jemand etwas einstellt.
  */
 async function freshUsApp(page: import('@playwright/test').Page) {
+  await stubOffSearch(page);
   await page.goto('/');
   await page.evaluate(async () => {
     localStorage.clear();

@@ -115,6 +115,7 @@ export const de: Record<MessageKey, string> = {
   'search.favRemove': '{name} aus Favoriten entfernen',
   'search.backToSearch': '‹ Zurück zur Suche',
   'search.offButton': '„{q}“ bei Open Food Facts suchen',
+  'search.offRetry': 'Nochmals versuchen',
   'search.offWorldwide': 'weltweit statt nur Schweiz',
   'search.offSearching': 'Suche „{q}“ bei Open Food Facts…',
   'search.offResults': 'Open Food Facts{scope}: {shown} von {total} Treffern',
