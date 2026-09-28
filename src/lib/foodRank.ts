@@ -32,6 +32,57 @@ export function matchScore(haystack: string, term: string): number | undefined {
   return (wordStart ? 100 : 400) + Math.min(at, 60);
 }
 
+/**
+ * Amerikanisch gegen britisch. Die mitgelieferte Tabelle ist der deutsche
+ * Bundeslebensmittelschlüssel in britischem Englisch: wer „zucchini" tippt, fand darin nichts,
+ * weil sie dort „courgette" heisst. Jedes Paar gilt in beide Richtungen – die eigene Datenbank
+ * eines Nutzers kann das jeweils andere Wort enthalten.
+ *
+ * Jeder Eintrag ist an `src/db/reference/en.json` gegengeprüft; geraten wird hier nichts.
+ * Mehrdeutiges bleibt draussen: „chips" heisst auf beiden Seiten des Atlantiks etwas anderes,
+ * und „soda" wäre mit Backsoda verwechselbar.
+ */
+const SYNONYMS: readonly (readonly [string, string])[] = [
+  ['zucchini', 'courgette'],
+  ['eggplant', 'aubergine'],
+  ['ground', 'mince'],
+  ['shrimp', 'prawn'],
+  ['cilantro', 'coriander'],
+  ['arugula', 'rocket'],
+  ['rutabaga', 'swede'],
+  ['scallion', 'spring onion'],
+  ['green onion', 'spring onion'],
+  ['beet', 'beetroot'],
+  ['garbanzo', 'chickpea'],
+  ['golden raisin', 'sultana'],
+  ['whole wheat', 'wholemeal'],
+  ['cornstarch', 'maize starch'],
+  ['corn starch', 'maize starch'],
+  ['oatmeal', 'oat flakes'],
+  ['heavy cream', 'whipping cream'],
+  ['cookie', 'biscuit'],
+  ['powdered sugar', 'icing sugar'],
+  ['confectioners sugar', 'icing sugar'],
+];
+
+/** Ganze Wörter ersetzen, sonst wird aus „cornflakes" ein „maizeflakes". */
+function swapWord(text: string, from: string, to: string): string {
+  return text.replace(new RegExp(`\\b${from}\\b`, 'g'), to);
+}
+
+/**
+ * Die Suche und ihre Entsprechungen. „ground beef" wird zusätzlich als „mince beef" gesucht;
+ * die ursprüngliche Eingabe bleibt immer dabei, es geht also nie ein Treffer verloren.
+ */
+export function queryVariants(q: string): string[] {
+  const out = [q];
+  for (const [us, uk] of SYNONYMS) {
+    if (new RegExp(`\\b${us}\\b`).test(q)) out.push(swapWord(q, us, uk));
+    else if (new RegExp(`\\b${uk}\\b`).test(q)) out.push(swapWord(q, uk, us));
+  }
+  return [...new Set(out)];
+}
+
 export function rankFoods<T extends RankableFood>(
   foods: readonly T[],
   query: string,
@@ -41,24 +92,30 @@ export function rankFoods<T extends RankableFood>(
   if (!q) {
     return [...foods].sort((a, b) => byFavorite(a, b) || byUsage(a, b, usage) || a.name.localeCompare(b.name));
   }
-  const terms = q.split(/\s+/);
+  const variants = queryVariants(q);
+  const termSets = variants.map((v) => v.split(/\s+/));
 
   const scored: { food: T; exact: number; score: number }[] = [];
   for (const food of foods) {
     const name = normalize(food.name);
     const hay = normalize(`${food.name} ${food.brand ?? ''}`);
-    let score = 0;
-    let all = true;
-    for (const term of terms) {
-      const s = matchScore(hay, term);
-      if (s === undefined) {
-        all = false;
-        break;
+    // Beste Bewertung über alle Schreibweisen: die Entsprechung darf die Eingabe nicht verdrängen.
+    let best: number | undefined;
+    for (const terms of termSets) {
+      let score = 0;
+      let all = true;
+      for (const term of terms) {
+        const s = matchScore(hay, term);
+        if (s === undefined) {
+          all = false;
+          break;
+        }
+        score += s;
       }
-      score += s;
+      if (all && (best === undefined || score < best)) best = score;
     }
-    if (!all) continue;
-    scored.push({ food, exact: name === q ? 0 : 1, score: score + name.length / 100 });
+    if (best === undefined) continue;
+    scored.push({ food, exact: variants.includes(name) ? 0 : 1, score: best + name.length / 100 });
   }
 
   scored.sort(

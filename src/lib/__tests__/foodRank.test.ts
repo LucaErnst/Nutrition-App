@@ -56,3 +56,38 @@ describe('Reihenfolge der Treffer', () => {
     expect(rankFoods([food('Süsskartoffel')], 'suss')).toHaveLength(1);
   });
 });
+
+describe('Amerikanisch und britisch', () => {
+  const table = [
+    { id: 1, name: 'Courgette raw' },
+    { id: 2, name: 'Aubergine raw' },
+    { id: 3, name: 'Beef mince, raw' },
+    { id: 4, name: 'Oat flakes' },
+    { id: 5, name: 'Ground coffee' },
+    { id: 6, name: 'Cornflakes' },
+    { id: 7, name: 'Maize starch' },
+  ];
+
+  it('findet die britische Bezeichnung über das amerikanische Wort', () => {
+    expect(rankFoods(table, 'zucchini')[0].name).toBe('Courgette raw');
+    expect(rankFoods(table, 'eggplant')[0].name).toBe('Aubergine raw');
+    expect(rankFoods(table, 'ground beef')[0].name).toBe('Beef mince, raw');
+    expect(rankFoods(table, 'oatmeal')[0].name).toBe('Oat flakes');
+    expect(rankFoods(table, 'cornstarch')[0].name).toBe('Maize starch');
+  });
+
+  it('verdrängt die wörtliche Eingabe nicht', () => {
+    // „ground" wird zwar als „mince" mitgesucht, „ground coffee" bleibt aber der beste Treffer.
+    expect(rankFoods(table, 'ground coffee')[0].name).toBe('Ground coffee');
+  });
+
+  it('ersetzt nur ganze Wörter', () => {
+    // Ohne Wortgrenze würde aus „cornflakes" ein „maizeflakes" und der Treffer verschwände.
+    expect(rankFoods(table, 'cornflakes')[0].name).toBe('Cornflakes');
+  });
+
+  it('geht auch andersherum, für eigene Lebensmittel', () => {
+    const own = [{ id: 9, name: 'Zucchini vom Markt' }];
+    expect(rankFoods(own, 'courgette')).toHaveLength(1);
+  });
+});
