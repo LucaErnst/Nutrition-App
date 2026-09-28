@@ -35,7 +35,7 @@ Diese Punkte in die Review-Notizen der Version 1.1 übernehmen. Was sich gegenü
 steht zuerst – in 1.0 hiess es „no paid content in this version", und das gilt nicht mehr.
 
 IN-APP PURCHASE – This version submits one non-consumable in-app purchase, "Serious Nutrition Pro"
-(`pro_lifetime`, CHF 15.00). It is a one-time unlock, not a subscription, and there is no trial.
+(`pro_lifetime`). It is a one-time unlock, not a subscription, and there is no trial.
 Purchasing requires no account: the receipt is validated through StoreKit (via RevenueCat) and the
 unlock is stored on the device. "Restore purchases" is on the paywall and under More → Serious
 Nutrition Pro. Free features remain free: diary, barcode scanning, search, water, targets and phases,

@@ -39,7 +39,8 @@ Schnitt:
 - **Free (Entscheid 21.09.2026):** Tagebuch, Barcode-Scan, Textsuche, Wasser, Ziele/Phasen,
   Wochenübersicht mit Fazit, **Wochenbudget**, Erinnerungen, **Backup/Export** (eigene Daten nie
   hinter der Paywall).
-- **Pro (einmalig, CHF 15.00):** Vorlagen und Kopieren, Portionsgrössen und Schnellwahl,
+- **Pro (einmalig, regulär CHF 25.00; Einführungspreis CHF 15.00 bis 30.11.2026 – Begründung in
+  `marketing/LAUNCH-1.1.md`, Abschnitt 6):** Vorlagen und Kopieren, Portionsgrössen und Schnellwahl,
   Gewichtstrend, Widgets (inkl. Wasser-Button), und alles Neue ab 1.1 (Apple Health usw.).
   Early Adopter behalten alles gratis: Wer die App vor 1.1 benutzt hat – erkennbar an gespeicherten
   Daten auf dem Gerät – bekommt Pro geschenkt, unabhängig davon, wie viel er getrackt hat.
@@ -121,7 +122,8 @@ und Fallback, falls ein Store-Review hängt.
   Bundle-ID und In-App-Purchase-Key (Key-ID 86T3ZCT49W) verbunden; Entitlement
   `serious_nutrition_pro`; Offering `default` mit Package `$rc_lifetime` → Produkt `pro_lifetime`.
   Public SDK-Key steht in `src/lib/pro.ts` (darf im Code sein).
-- App Store Connect: In-App-Kauf `pro_lifetime` (Non-Consumable, CHF 15.00, Apple-ID 6814513884),
+- App Store Connect: In-App-Kauf `pro_lifetime` (Non-Consumable, Apple-ID 6814513884, geht mit
+  CHF 15.00 in die Review, danach Basispreis CHF 25.00 mit Einführungspreis bis 30.11.2026),
   Status „Prepare for Submission“ – wird zusammen mit Version 1.1 eingereicht (erster IAP muss mit
   einer App-Version kommen). Review-Screenshot der Paywall fehlt noch.
 - Paid Apps Agreement: akzeptiert, Bank (BLKB) und W-8BEN eingereicht; bis Apple „Active“ meldet,

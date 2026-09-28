@@ -1,7 +1,8 @@
 # Launch-Plan 1.1 – möglichst viel Wirkung, möglichst wenig Geld
 
 Ausgangslage: 1.0 ist seit dem 23.09.2026 im Store, gratis, ohne Konto. Mit 1.1 kommt
-Pro als Einmalkauf (CHF 15.00). Kein Marketingbudget, ein Kanal im Aufbau
+Pro als Einmalkauf: regulär CHF 25.00, zum Start CHF 15.00 als Einführungspreis bis
+30.11.2026. Kein Marketingbudget, ein Kanal im Aufbau
 (@seriousnutritiontracker, 0 Follower), eine bestehende Reichweite (be_s3rious) und
 Coaching-Kunden.
 
@@ -31,7 +32,7 @@ Store versteht.
 Nicht „noch ein Kalorienzähler". Drei Sätze, die überall gleich lauten:
 
 1. **Kein Abo.** MyFitnessPal kostet rund 80 CHF im Jahr, für immer. Serious Nutrition
-   kostet einmal 15 CHF – oder gar nichts, wenn dir das Tagebuch reicht.
+   kostet einmal 15 CHF zum Start (danach 25) – oder gar nichts, wenn dir das Tagebuch reicht.
 2. **Kein Konto.** Deine Daten verlassen das Handy nicht. Keine Registrierung, keine Mail.
 3. **Von einem Coach gebaut, der damit arbeitet.** Trainings- und Ruhetag getrennt,
    Wochenbudget statt Tagespanik, Phasen-Auswertung nach echten Regeln.
@@ -85,8 +86,10 @@ Abnehm-Gruppen. Dort gelten dieselben Regeln wie auf Reddit: als Mensch auftrete
 ## 5. Wenn du doch etwas ausgeben willst
 
 Apple Search Ads ist der einzige bezahlte Kanal, der sich für Apps oft rechnet. **Aber:**
-Bei 15 CHF Einmalkauf und niedriger Kaufquote muss ein Download unter etwa 1 CHF kosten,
-damit es aufgeht. Darum nicht zum Skalieren nutzen, sondern als Test:
+rechne nach, bevor du zahlst. Bei 25 CHF bleiben nach Mehrwertsteuer und Apple-Abgabe rund
+19.65 CHF je Kauf. Kaufen 3 von 100 Leuten, die die App laden, bringt ein Download im
+Schnitt 59 Rappen. Ein Klickpreis darüber ist ein Verlustgeschäft – und in dieser Kategorie
+liegt er schnell höher. Darum nicht zum Skalieren nutzen, sondern als Test:
 
 - 100 CHF über zwei Wochen, nur auf Suchbegriffe wie „kalorien tracker ohne abo",
   „makro tracker", „calisthenics ernährung"
@@ -104,8 +107,18 @@ Mehr Downloads sind nur die halbe Rechnung. Die andere Hälfte kostet nichts:
   bewiesen hat – etwa wenn die erste Wochenauswertung bereitsteht oder die Phasen-Auswertung
   das erste Urteil hat.
 - **Preis einordnen.** „Einmal 15 CHF statt 80 CHF im Jahr" ist überzeugender als „15 CHF".
-- **Einführungspreis in der Launch-Woche** (z.B. 10 CHF, danach 15) erzeugt einen Grund, jetzt
-  zu kaufen. Im Store als Preisänderung mit Datum planbar.
+- **Einführungspreis mit Enddatum: CHF 15 bis 30.11.2026, danach CHF 25.** Der reguläre Preis
+  ist 25 – das ist der Wert, den Apple Health, Widgets, Vorlagen, Portionen, Trend und CSV
+  zusammen haben, gemessen an 60 bis 80 CHF **pro Jahr** bei Cronometer, MacroFactor und
+  MyFitnessPal. Die 15 sind der Grund, in der Launch-Phase jetzt zu kaufen, statt später.
+  In App Store Connect als geplante Preisänderung mit Enddatum hinterlegen, dann erhöht Apple
+  von selbst und du kannst es nicht vergessen.
+- **Die Zahl gehört in deine Posts, nicht in die Store-Beschreibung.** Die deutsche
+  Store-Sprache sehen auch Deutschland und Österreich, dort steht ein Euro-Preis – „CHF 15"
+  wäre dort schlicht falsch. Im Store nur „Einführungspreis bis 30. November", die konkrete
+  Zahl auf TikTok und Instagram, wo dein Publikum in der Schweiz sitzt.
+- **Wenn du erhöhst, dann wirklich.** Ein angekündigter Preisanstieg, der nie kommt, wirkt
+  beim zweiten Mal nicht mehr. Wer vorher gekauft hat, behält alles – niemand wird bestraft.
 - **Sichtbarkeit der Pro-Funktionen.** Wer die Sperren nie sieht, kauft nicht. Wer bei jedem
   Tippen dagegenstösst, ärgert sich. Die aktuelle Balance (Schloss mit Erklärung, kein
   Nagging) ist richtig – dabei bleiben.

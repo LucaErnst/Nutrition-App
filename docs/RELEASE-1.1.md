@@ -53,18 +53,38 @@ Alle Texte liegen fertig in `store/LISTING.md`. Reihenfolge unten ist die Reihen
       mehr dazu.
 - [ ] Einreichen
 
-## 3. Nach der Freigabe durch Apple
+## 3. Preis setzen – nach Apples Freigabe, vor der Veröffentlichung
+
+Der Kauf geht mit **CHF 15.00** in die Review; während der Review nichts am Preis ändern.
+Regulär ist **CHF 25.00**, die 15 sind der Einführungspreis. Weil die Version manuell
+freigegeben wird, gibt es dafür ein ruhiges Zeitfenster zwischen Apples Freigabe und deinem
+Launch-Tag.
+
+- [ ] In App Store Connect → In-App-Käufe → `pro_lifetime` → **Basispreis auf CHF 25.00**
+- [ ] **Geplante Preisänderung** anlegen: CHF 15.00, Start = Launch-Tag, **Ende = 30.11.2026**.
+      Danach stellt Apple von selbst auf 25 zurück – so kann die Erhöhung nicht vergessen gehen.
+      (Falls sich kein Enddatum setzen lässt: Termin am 30.11. im Kalender, Preis von Hand.)
+- [ ] Verschiebt sich der Launch auf November, das Enddatum auf den 31.12.2026 legen –
+      die Launch-Phase soll rund sechs Wochen dauern, nicht zwei
+- [ ] Preisänderungen brauchen **keine neue Version und keine Review**
+- [ ] Nichts im Code oder in der Beschreibung anpassen: die Paywall zeigt den Preis direkt
+      aus dem Store, die Store-Texte nennen bewusst keine Zahl
+- [ ] Am 30.11. den Werbetext zurücksetzen (er nennt den Einführungspreis, siehe
+      `store/LISTING.md`) – der Werbetext ist jederzeit änderbar, ohne neue Version
+
+## 4. Nach der Freigabe durch Apple
 
 - [ ] Version manuell freigeben – am gewählten Launch-Tag, morgens
 - [ ] Store-Seite in beiden Sprachen anschauen: Screenshots, Beschreibung, Preis des Kaufs
-- [ ] Kauf einmal mit einem echten Konto testen (Sandbox verhält sich anders als der Live-Store).
-      CHF 15.00 gehen dabei wirklich weg; über „Probleme melden" liesse sich das zurückholen.
+- [ ] Kauf einmal mit einem echten Konto testen (Sandbox verhält sich anders als der Live-Store)
+      und dabei prüfen, dass die Paywall den Einführungspreis zeigt. Das Geld geht wirklich weg;
+      über „Probleme melden" liesse es sich zurückholen.
 - [ ] Auf einem Gerät prüfen, das die App vor 1.1 hatte: Pro muss geschenkt sein
       (Mehr → Serious Nutrition Pro zeigt die goldene Karte)
 - [ ] Marketing-Tag starten (`marketing/LAUNCH-1.1.md`): TikTok, Instagram, Bio-Link auf die Store-Seite
 - [ ] Bewertungs-Abfrage im Auge behalten – sie erscheint erst im Live-Store, nie in TestFlight
 
-## 4. Offen, aber kein Hindernis für 1.1
+## 5. Offen, aber kein Hindernis für 1.1
 
 - Wasserziel ist für US/UK-Nutzer weiter nur in ml/l einstellbar (der Rest der App rechnet um)
 - BLV-Anfrage für die Schweizer Nährwertdatenbank liegt fertig in `docs/BLV-ANFRAGE.md` – seit der
