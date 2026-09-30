@@ -1,7 +1,8 @@
 # Checkliste: Version 1.1 veröffentlichen
 
-**Freigabetermin: 11.10.2026.** Eingereicht wird vorher, damit genug Zeit bleibt, falls Apple
-etwas beanstandet. Einführungspreis CHF 15.00 vom 11.10.2026 bis 31.01.2027, danach CHF 25.00 –
+**Eingereicht am 30.09.2026** – Version 1.1 (Build 22) und der In-App-Kauf `pro_lifetime`
+zusammen in einer Einreichung, Status „Waiting for Review". **Freigabetermin: Montag,
+12.10.2026, 11:00 CEST**, automatisch nach Apples Freigabe. Einführungspreis CHF 15.00 vom 12.10.2026 bis 31.01.2027, danach CHF 25.00 –
 der Januar ist der stärkste Monat für Ernährungs-Apps und soll zum tiefen Preis laufen.
 
 Diese Liste existiert, damit beim Go nichts vergessen geht. Vieles davon lässt sich **nur zusammen
@@ -22,49 +23,49 @@ Alle Texte liegen fertig in `store/LISTING.md`. Reihenfolge unten ist die Reihen
 | Werbetext (Promotional Text) | **ja**, jederzeit |
 | Preis, Verfügbarkeit | ja |
 
-## 1. Vor dem Hochladen (mache ich)
+## 1. Vor dem Hochladen (erledigt)
 
-- [ ] `npm test` und `npm run e2e` grün, `npm run build` ohne Fehler
-- [ ] `package.json` auf `1.1.0` (steht sonst unter „Mehr" eine andere Zahl als im Store) – erledigt
-- [ ] Screenshots neu erzeugen, falls sich seit Build 18 etwas am Aussehen geändert hat:
+- [x] `npm test` und `npm run e2e` grün, `npm run build` ohne Fehler
+- [x] `package.json` auf `1.1.0` (steht sonst unter „Mehr" eine andere Zahl als im Store) – erledigt
+- [x] Screenshots neu erzeugen, falls sich seit Build 18 etwas am Aussehen geändert hat:
       `npm run screenshots` → `store/screenshots/{de,en}`, je sechs Bilder, 1290×2796
-- [ ] Web-Version pushen (aktuell 22 Commits lokal): aktualisiert Rechtstexte und die Android-Web-App
+- [x] Web-Version pushen (aktuell 22 Commits lokal): aktualisiert Rechtstexte und die Android-Web-App
       auf https://lucaernst.github.io/Nutrition-App/ – die Links im Store zeigen dorthin
-- [ ] Archiv bauen und hochladen (`docs/NATIVE.md`), Build-Nummer hochzählen
-- [ ] Commit mit der finalen Build-Nummer
+- [x] Archiv bauen und hochladen (`docs/NATIVE.md`), Build-Nummer hochzählen
+- [x] Commit mit der finalen Build-Nummer
 
-## 2. In App Store Connect (Version 1.1 anlegen)
+## 2. In App Store Connect (erledigt am 30.09.2026)
 
-- [ ] „+ Version or Platform" → **1.1**
-- [ ] **Beschreibung DE und EN ersetzen** ← das hier wird am leichtesten vergessen
-- [ ] **„Neu in dieser Version" DE und EN** einfügen
-- [ ] **Screenshots ersetzen**, beide Sprachen, sechs Bilder je Sprache
-- [ ] Keywords aktualisieren (`nutrition` raus, `offline` rein – die alte Zeile war über dem Limit)
-- [ ] Werbetext aktualisieren
-- [ ] Untertitel prüfen (unverändert)
-- [ ] Build auswählen (der zuletzt hochgeladene)
-- [ ] **In-App-Kauf `pro_lifetime` mit der Version einreichen** – im Abschnitt „In-App Purchases and
+- [x] „+ Version or Platform" → **1.1**
+- [x] **Beschreibung DE und EN ersetzen** ← das hier wird am leichtesten vergessen
+- [x] **„Neu in dieser Version" DE und EN** einfügen
+- [x] **Screenshots ersetzen**, beide Sprachen, sechs Bilder je Sprache
+- [x] Keywords aktualisieren (`nutrition` raus, `offline` rein – die alte Zeile war über dem Limit)
+- [x] Werbetext aktualisieren
+- [x] Untertitel prüfen (unverändert)
+- [x] Build auswählen (der zuletzt hochgeladene)
+- [x] **In-App-Kauf `pro_lifetime` mit der Version einreichen** – im Abschnitt „In-App Purchases and
       Subscriptions" der Version hinzufügen. Er liegt als „Item Ready to Submit" bereit. Ohne diesen
       Schritt geht die Version durch und der Kauf bleibt liegen: Käufer sehen dann „Store nicht
       erreichbar".
-- [ ] Review-Notizen aus `docs/APP-REVIEW-NOTES.md` (Abschnitt 1.1) einsetzen – in 1.0 stand dort
+- [x] Review-Notizen aus `docs/APP-REVIEW-NOTES.md` (Abschnitt 1.1) einsetzen – in 1.0 stand dort
       „no paid content in this version", das stimmt jetzt nicht mehr
-- [ ] App Privacy prüfen: weiterhin „Data Not Collected"
-- [ ] Export-Compliance: nur HTTPS, `ITSAppUsesNonExemptEncryption = false` ist gesetzt
-- [ ] Altersfreigabe unverändert (4+)
-- [ ] **Freigabe terminieren:** „Automatically release this version after App Review, **no earlier
-      than**" → **11.10.2026**, morgens. Das Datum lässt sich bis zum Auslösen jederzeit ändern.
+- [x] App Privacy prüfen: weiterhin „Data Not Collected"
+- [x] Export-Compliance: nur HTTPS, `ITSAppUsesNonExemptEncryption = false` ist gesetzt
+- [x] Altersfreigabe unverändert (4+)
+- [x] **Freigabe terminieren:** „Automatically release this version after App Review, **no earlier
+      than**" → **12.10.2026**, morgens. Das Datum lässt sich bis zum Auslösen jederzeit ändern.
       Ohne diese Einstellung geht die Version in der Nacht nach Apples Freigabe live.
-- [ ] Einreichen
+- [x] Einreichen
 
 ## 3. Preis setzen – nach Apples Freigabe, vor der Veröffentlichung
 
 Der Kauf geht mit **CHF 15.00** in die Review; während der Review nichts am Preis ändern.
 Regulär ist **CHF 25.00**, die 15 sind der Einführungspreis. Zwischen Apples Freigabe und dem
-11.10.2026 bleibt dafür ein ruhiges Zeitfenster.
+12.10.2026 bleibt dafür ein ruhiges Zeitfenster.
 
 - [ ] In App Store Connect → In-App-Käufe → `pro_lifetime` → **Basispreis auf CHF 25.00**
-- [ ] **Geplante Preisänderung** anlegen: CHF 15.00, Start = **11.10.2026**, **Ende = 31.01.2027**.
+- [ ] **Geplante Preisänderung** anlegen: CHF 15.00, Start = **12.10.2026**, **Ende = 31.01.2027**.
       Danach stellt Apple von selbst auf 25 zurück – so kann die Erhöhung nicht vergessen gehen.
       (Falls sich kein Enddatum setzen lässt: Termin am 31.01.2027 im Kalender, Preis von Hand.)
 - [ ] Preisänderungen brauchen **keine neue Version und keine Review**
@@ -75,7 +76,7 @@ Regulär ist **CHF 25.00**, die 15 sind der Einführungspreis. Zwischen Apples F
 
 ## 4. Nach der Freigabe durch Apple
 
-- [ ] Am 11.10.2026 prüfen, dass die Version tatsächlich live gegangen ist
+- [ ] Am 12.10.2026 prüfen, dass die Version tatsächlich live gegangen ist
 - [ ] Store-Seite in beiden Sprachen anschauen: Screenshots, Beschreibung, Preis des Kaufs
 - [ ] Kauf einmal mit einem echten Konto testen (Sandbox verhält sich anders als der Live-Store)
       und dabei prüfen, dass die Paywall den Einführungspreis zeigt. Das Geld geht wirklich weg;

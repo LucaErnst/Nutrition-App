@@ -2,7 +2,7 @@
 
 Ausgangslage: 1.0 ist seit dem 23.09.2026 im Store, gratis, ohne Konto. Mit 1.1 kommt
 Pro als Einmalkauf: regulär CHF 25.00, zum Start CHF 15.00 als Einführungspreis bis
-31.01.2027. Launch-Tag ist der 11.10.2026. Kein Marketingbudget, ein Kanal im Aufbau
+31.01.2027. Launch-Tag ist der 12.10.2026. Kein Marketingbudget, ein Kanal im Aufbau
 (@seriousnutritiontracker, 0 Follower), eine bestehende Reichweite (be_s3rious) und
 Coaching-Kunden.
 
