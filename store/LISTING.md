@@ -23,8 +23,8 @@ so passt `offline` hinein, der einzige echte Unterschied zu Lifesum und Lose It!
 101 Zeichen und damit über dem Limit.)
 
 ## Werbetext (Apple, ≤170) – änderbar ohne neue Version
-- EN: `New: 6,400 basic foods built in, so search works offline. Pro is a one-time purchase, never a subscription – at the launch price until November 30.` (147)
-- DE: `Neu: 6400 Grundnahrungsmittel in der App – die Suche funktioniert offline. Pro ist ein Einmalkauf, kein Abo – zum Einführungspreis bis 30. November.` (148)
+- EN: `New: 6,900 basic foods built in, Swiss dishes included, so search works offline. Pro is a one-time purchase – at the launch price until November 30.` (148)
+- DE: `Neu: 6900 Grundnahrungsmittel in der App, Schweizer Küche inklusive – die Suche funktioniert offline. Pro: Einmalkauf zum Einführungspreis bis 30. November.` (156)
 
 Bewusst **ohne Zahl**: Die deutsche Store-Sprache sehen auch Deutschland und Österreich, wo ein
 Euro-Preis gilt. Die konkreten 15 Franken gehören in die eigenen Posts, nicht in den Store.
@@ -35,7 +35,8 @@ Nach dem 30.11.2026 diesen Text zurücksetzen (geht jederzeit, ohne neue Version
 Serious Nutrition is a calorie and macro tracker for people who train with a goal. Built by a calisthenics coach for his own bulk and cut phases – no account, no ads, no data leaving your phone.
 
 TRACK IN SECONDS
-• 6,400 basic foods are built into the app – meat, fish, dairy, grains, vegetables, fruit, nuts, oils – searchable without internet
+• 6,900 basic foods are built into the app – meat, fish, dairy, grains, vegetables, fruit, nuts, oils – searchable without internet
+• Swiss dishes included: Älplermagronen, Birchermüesli, Cervelat, Sbrinz, Wähe – with official Swiss values
 • Scan a barcode for branded products – name and nutrition are filled in automatically (Open Food Facts, 3+ million products)
 • Your own foods come first: whatever you scan or type once is saved and sits at the top next time
 • Amount stepper, quick portions like “1 handful” or “last 45 g”
@@ -68,14 +69,15 @@ YOUR DATA STAYS YOURS
 
 Serious Nutrition Pro unlocks templates, portion sizes, the weight chart, widgets and Apple Health – one payment, no subscription, no trial that turns into one.
 
-Product data © Open Food Facts contributors (ODbL). Basic foods from the German Nutrient Database (Bundeslebensmittelschlüssel 4.0), Max Rubner-Institut, CC BY 4.0. Serious Nutrition is a tracking tool, not medical advice.
+Product data © Open Food Facts contributors (ODbL). Basic foods from the German Nutrient Database (Bundeslebensmittelschlüssel 4.0), Max Rubner-Institut, CC BY 4.0, and the Swiss Food Composition Database V 7.1, Federal Food Safety and Veterinary Office FSVO. Serious Nutrition is a tracking tool, not medical advice.
 
 ## Beschreibung – Deutsch
 
 Serious Nutrition ist ein Kalorien- und Makro-Tracker für Menschen, die mit einem Ziel trainieren. Von einem Calisthenics-Coach für die eigenen Aufbau- und Defizitphasen gebaut – ohne Konto, ohne Werbung, ohne dass Daten das Handy verlassen.
 
 IN SEKUNDEN EINTRAGEN
-• 6400 Grundnahrungsmittel sind in der App gespeichert – Fleisch, Fisch, Milchprodukte, Getreide, Gemüse, Früchte, Nüsse, Öle – die Suche funktioniert auch ohne Internet
+• 6900 Grundnahrungsmittel sind in der App gespeichert – Fleisch, Fisch, Milchprodukte, Getreide, Gemüse, Früchte, Nüsse, Öle – die Suche funktioniert auch ohne Internet
+• Schweizer Küche ist dabei: Älplermagronen, Birchermüesli, Cervelat, Sbrinz, Wähe – mit amtlichen Schweizer Werten
 • Barcode scannen für Markenprodukte – Name und Nährwerte werden automatisch übernommen (Open Food Facts, über 3 Mio. Produkte)
 • Deine eigenen Lebensmittel zuerst: Was du einmal scannst oder eintippst, bleibt gespeichert und steht beim nächsten Mal zuoberst
 • Mengen-Stepper, Schnellwahl wie „1 Handvoll“ oder „zuletzt 45 g“
@@ -108,15 +110,16 @@ DEINE DATEN BLEIBEN DEINE
 
 Serious Nutrition Pro schaltet Vorlagen, Portionsgrössen, Gewichtsdiagramm, Widgets und Apple Health frei – einmal bezahlen, kein Abo, keine Testphase, die sich in eines verwandelt.
 
-Produktdaten © Open Food Facts Contributors (ODbL). Grundnahrungsmittel aus dem Bundeslebensmittelschlüssel 4.0, Max Rubner-Institut, CC BY 4.0. Serious Nutrition ist ein Tracking-Werkzeug, keine medizinische Beratung.
+Produktdaten © Open Food Facts Contributors (ODbL). Grundnahrungsmittel aus dem Bundeslebensmittelschlüssel 4.0, Max Rubner-Institut, CC BY 4.0, und aus der Schweizer Nährwertdatenbank V 7.1 des Bundesamts für Lebensmittelsicherheit und Veterinärwesen BLV. Serious Nutrition ist ein Tracking-Werkzeug, keine medizinische Beratung.
 
 ## Neu in dieser Version (1.1)
 
 ### Englisch
 
-6,400 basic foods now live inside the app, so search works without internet. Plus the units you think in, and Pro as a one-time purchase.
+6,900 basic foods now live inside the app, Swiss dishes included, so search works without internet. Plus the units you think in, and Pro as a one-time purchase.
 
 • Built-in food table: meat, fish, dairy, grains, vegetables, fruit, nuts and oils, from the German Nutrient Database (BLS 4.0)
+• Swiss dishes with official values: Älplermagronen, Birchermüesli, Cervelat, Sbrinz, Wähe – from the Swiss Food Composition Database, used with permission of the FSVO
 • Food names follow the app language – switch to English and the table switches with you
 • Product search finds more and no longer gives up when Open Food Facts is briefly overloaded
 • Units: grams and kilograms, millilitres, centilitres, litres, ounces and fluid ounces (US and UK)
@@ -129,9 +132,10 @@ Produktdaten © Open Food Facts Contributors (ODbL). Grundnahrungsmittel aus dem
 
 ### Deutsch
 
-6400 Grundnahrungsmittel sind jetzt in der App gespeichert – die Suche funktioniert ohne Internet. Dazu die Einheiten, in denen du denkst, und Pro als Einmalkauf.
+6900 Grundnahrungsmittel sind jetzt in der App gespeichert, Schweizer Küche inklusive – die Suche funktioniert ohne Internet. Dazu die Einheiten, in denen du denkst, und Pro als Einmalkauf.
 
 • Mitgelieferte Tabelle: Fleisch, Fisch, Milchprodukte, Getreide, Gemüse, Früchte, Nüsse und Öle aus dem Bundeslebensmittelschlüssel (BLS 4.0)
+• Schweizer Gerichte mit amtlichen Werten: Älplermagronen, Birchermüesli, Cervelat, Sbrinz, Wähe – aus der Schweizer Nährwertdatenbank, mit Genehmigung des BLV
 • Lebensmittelnamen folgen der App-Sprache – stellst du auf Englisch, wechselt die Tabelle mit
 • Produktsuche findet mehr und gibt nicht mehr auf, wenn Open Food Facts kurz überlastet ist
 • Einheiten: Gramm und Kilogramm, Milliliter, Zentiliter, Liter, Unzen und Flüssigunzen (US und UK)

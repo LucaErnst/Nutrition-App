@@ -372,7 +372,7 @@ export const en = {
   'more.privacy': 'Privacy policy',
   'more.terms': 'Terms of use',
   'more.support': 'Support',
-  'more.about': '{app} · Version {version} · Data: local (IndexedDB) · Product data: Open Food Facts · Basic foods: German Nutrient Database (BLS 4.0), Max Rubner-Institut, CC BY 4.0',
+  'more.about': '{app} · Version {version} · Data: local (IndexedDB) · Product data: Open Food Facts · Basic foods: German Nutrient Database (BLS 4.0), Max Rubner-Institut, CC BY 4.0 · Swiss Food Composition Database V 7.1, Federal Food Safety and Veterinary Office FSVO',
 
   // Backup
   'backup.title': 'Backup',

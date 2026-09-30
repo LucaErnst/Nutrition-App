@@ -65,7 +65,7 @@ function toFoodItem(row: SeedRow, now: number): FoodItem {
  * natur, gebraten" findet man dort schlecht – diese Tabelle füllt die Lücke und liegt offline
  * in der App.
  */
-const REFERENCE_VERSION = 'bls-4.0-2';
+const REFERENCE_VERSION = 'bls-4.0-ch-7.1';
 const REFERENCE_STAMP = 'nutrition-tracker:reference';
 const REFERENCE_LANG = 'nutrition-tracker:reference-lang';
 
@@ -119,6 +119,9 @@ async function seedReference(): Promise<void> {
  * Entfernt mitgelieferte Lebensmittel, die es in der neuen Tabelle nicht mehr gibt – etwa
  * Innereien, die nur die Suche zugestellt haben. Angefasst wird nur, was nirgends eingetragen
  * ist: Ein gelöschtes Lebensmittel darf keinen Tag im Tagebuch beschädigen.
+ *
+ * Die Startliste oben (`SEED`) hat keinen Schlüssel und bleibt deshalb unberührt – sie ist
+ * gewollt und gibt einer frisch installierten App etwas zum Antippen.
  */
 async function dropRetiredReference(existing: FoodItem[], current: Set<string>): Promise<void> {
   const retired = existing.filter((f) => f.ref_key && !current.has(f.ref_key) && f.id !== undefined);

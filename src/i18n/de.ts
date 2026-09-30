@@ -356,7 +356,7 @@ export const de: Record<MessageKey, string> = {
   'more.privacy': 'Datenschutzerklärung',
   'more.terms': 'Nutzungsbedingungen',
   'more.support': 'Support',
-  'more.about': '{app} · Version {version} · Daten: lokal (IndexedDB) · Produktdaten: Open Food Facts · Grundnahrungsmittel: Bundeslebensmittelschlüssel (BLS 4.0), Max Rubner-Institut, CC BY 4.0',
+  'more.about': '{app} · Version {version} · Daten: lokal (IndexedDB) · Produktdaten: Open Food Facts · Grundnahrungsmittel: Bundeslebensmittelschlüssel (BLS 4.0), Max Rubner-Institut, CC BY 4.0 · Schweizer Nährwertdatenbank V 7.1, Bundesamt für Lebensmittelsicherheit und Veterinärwesen BLV',
 
   'backup.title': 'Backup',
   'backup.hint': 'Alle Daten liegen nur auf diesem Gerät. Exportiere regelmässig ein Backup (z.B. in iCloud Drive) – damit kannst du auch auf ein anderes Gerät umziehen.',
