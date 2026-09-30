@@ -142,7 +142,7 @@ Produktdaten © Open Food Facts Contributors (ODbL). Grundnahrungsmittel aus dem
 • Körpergewicht in Pfund oder Stone, Grösse in Fuss und Zoll
 • Die App startet in der Sprache deines Geräts
 • Erinnerungen wiederholen sich nicht mehr: 100 Texte je Anlass
-• Widgets: dein App-Icon, saubereres mittleres Layout, Wasser und Knöpfe bündig
+• Widgets: dein App-Icon, sauberes mittleres Layout, Wasser und Knöpfe bündig
 • Läuft auf allen iPhone-Displays, auch beim Wechsel zwischen zwei Displays
 • Serious Nutrition Pro: einmal bezahlen, kein Abo. Wer die App vor diesem Update benutzt hat, behält alles gratis.
 
