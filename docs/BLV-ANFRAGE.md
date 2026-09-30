@@ -55,11 +55,32 @@ Serious Nutrition im App Store: https://apps.apple.com/ch/app/serious-nutrition/
 
 ---
 
-## Wenn die Antwort kommt
+## Die Antwort: Zustimmung (30.09.2026)
 
-- **Zustimmung:** `tools/build-reference-foods.mjs` um eine zweite Quelle erweitern (die
-  Tabelle liegt als XLSX vor, `https://naehrwertdaten.ch/wp-content/uploads/.../Schweizer_Nahrwertdatenbank.xlsx`),
-  Einträge mit einem eigenen Schlüsselpräfix versehen, Quellenangabe unter „Mehr" ergänzen.
-  Aufwand rund eine Stunde.
-- **Absage oder Auflagen:** Antwort hier ablegen, damit später nachvollziehbar bleibt, warum
-  die Daten nicht in der App sind.
+Raphaël Reinert, Collaborateur scientifique beim BLV, per Mail:
+
+> Sie können die Daten der Schweizer Nährwertdatenbank verwenden. Auch die von Ihnen vorgesehene
+> Quellenangabe ist in Ordnung. Wenn Sie möchten, können Sie die Versionsnummer ergänzen
+> (derzeit 7.1). Die Quellenangabe muss nicht im App Store erscheinen.
+
+Damit ist die Nutzung geklärt. Auflagen: Quellenangabe in der App, Versionsnummer optional.
+
+## Was die Daten enthalten (geprüft am 30.09.2026)
+
+- **Version 7.1 vom 01.07.2026**, als XLSX, deutsch und englisch getrennt, gleiche IDs in
+  Spalte A – verbindbar wie beim BLS:
+  - DE: `https://naehrwertdaten.ch/wp-content/uploads/2026/07/Schweizer_Nahrwertdatenbank.xlsx`
+  - EN: `https://naehrwertdaten.ch/wp-content/uploads/2026/07/Swiss_food_composition_database.xlsx`
+- **1216 generische Lebensmittel** (Blatt 1) und 29 Markenprodukte (Blatt 2).
+- Spalten: `D` Name, `E` Synonyme, `F` Kategorie, `L` kcal, `O` Fett, `AP` Kohlenhydrate
+  (verfügbar), `BB` Protein – alles je 100 g essbarer Anteil.
+- **546 Einträge fehlen im BLS**, und es sind genau die richtigen: Älplermagronen,
+  Birchermüesli, Bauernschüblig, Baumnuss, Wähe, Biber, Cervelat. Der Rest überschneidet sich
+  mit dem BLS (Milch, Brot, Fleisch) und würde die Suche nur verdoppeln.
+
+## Quellenangabe für die App
+
+> Quelle: Schweizer Nährwertdatenbank V 7.1, Bundesamt für Lebensmittelsicherheit und
+> Veterinärwesen BLV
+
+Gehört unter „Mehr" zu den bestehenden Angaben (Open Food Facts, BLS). Im App Store nicht nötig.
