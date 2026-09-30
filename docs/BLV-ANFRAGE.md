@@ -84,3 +84,33 @@ Damit ist die Nutzung geklärt. Auflagen: Quellenangabe in der App, Versionsnumm
 > Veterinärwesen BLV
 
 Gehört unter „Mehr" zu den bestehenden Angaben (Open Food Facts, BLS). Im App Store nicht nötig.
+
+## Antwortmail (30.09.2026)
+
+**An:** Raphaël Reinert, BLV
+**Betreff:** Re: Anfrage zur Nutzung der Schweizer Nährwertdatenbank
+
+Sehr geehrter Herr Reinert
+
+Herzlichen Dank für Ihre rasche und unkomplizierte Antwort.
+
+Die Daten sind inzwischen eingebaut. Konkret habe ich rund 500 Einträge übernommen – jene
+Lebensmittel, die in der von mir bisher verwendeten deutschen Nährwerttabelle fehlen, also vor
+allem Schweizer Gerichte und Produkte: Älplermagronen, Birchermüesli, Cervelat, Sbrinz,
+Baumnuss, Wähen. Pro Eintrag sind es Bezeichnung sowie Energie, Protein, Fett und Kohlenhydrate
+je 100 g. Die Werte liegen in der App gespeichert, damit die Suche auch ohne Internetverbindung
+funktioniert.
+
+Die Quellenangabe habe ich wie besprochen mit der Versionsnummer ergänzt. Sie steht in der App
+unter «Mehr»:
+
+«Schweizer Nährwertdatenbank V 7.1, Bundesamt für Lebensmittelsicherheit und Veterinärwesen BLV»
+
+Die Version mit den Schweizer Daten erscheint im Oktober im App Store. Bei Fragen oder falls
+Ihnen an der Umsetzung etwas auffällt, melden Sie sich gerne jederzeit.
+
+Freundliche Grüsse
+
+Luca Ernst
+Serious Nutrition
+lappino25@me.com

@@ -49,11 +49,13 @@ first launch after the update the app checks for existing local data (settings, 
 entries, weights, own foods) and grants the unlock. A reviewer installing the app fresh will
 therefore see the paywall, which is the intended behaviour.
 
-OFFLINE FOOD TABLE – 1.1 bundles about 6,400 basic foods (names plus energy, protein, fat and
-carbohydrates per 100 g) inside the app, so search works without a network connection. Source: the
-German Nutrient Database (Bundeslebensmittelschlüssel 4.0) published by the Max Rubner-Institut under
-CC BY 4.0. Attribution is shown in the app under More and in the App Store description. This is
-bundled data, not a service – no request is made to obtain it.
+OFFLINE FOOD TABLE – 1.1 bundles about 6,900 basic foods (names plus energy, protein, fat and
+carbohydrates per 100 g) inside the app, so search works without a network connection. Two sources:
+the German Nutrient Database (Bundeslebensmittelschlüssel 4.0) published by the Max Rubner-Institut
+under CC BY 4.0, and about 500 entries from the Swiss Food Composition Database V 7.1 published by
+the Swiss Federal Food Safety and Veterinary Office (FSVO), used with their written permission of
+30 September 2026. Attribution for both is shown in the app under More and in the App Store
+description. This is bundled data, not a service – no request is made to obtain it.
 
 LANGUAGE – The app now starts in the device language (English or German) instead of defaulting to
 English; the food names in the bundled table follow that language. It can still be changed under

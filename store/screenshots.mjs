@@ -34,7 +34,9 @@ function backup(lang) {
   const name = (f) => f[lang];
   const foodItems = FOODS.map((f, i) => ({
     id: f.id, name: name(f), brand: f.brand, kcal_per_100g: f.kcal, protein_per_100g: f.p, fat_per_100g: f.f, carbs_per_100g: f.c,
-    unit_type: f.unit, piece_weight_g: f.piece, default_amount: f.amt, source: f.barcode ? 'openfoodfacts' : 'reference', barcode: f.barcode,
+    unit_type: f.unit, piece_weight_g: f.piece, default_amount: f.amt, // Eigene Lebensmittel, nicht mitgelieferte: Die Suche zeigt ohne Suchbegriff nur, was
+    // jemand selbst gescannt oder eingetragen hat – so sieht ein Tagebuch nach ein paar Wochen aus.
+    source: f.barcode ? 'openfoodfacts' : 'manual', barcode: f.barcode,
     saved: 1, favorite: i < 3 ? 1 : 0, portions: f.portions, created_at: now - 1e7 + i, last_amount: f.amt, last_unit: f.unit === 'piece' ? 'Stück' : 'g',
   }));
   const snap = (f) => ({ name: name(f), brand: f.brand, kcal_per_100g: f.kcal, protein_per_100g: f.p, fat_per_100g: f.f, carbs_per_100g: f.c, unit_type: f.unit, piece_weight_g: f.piece });
@@ -180,7 +182,9 @@ async function main() {
       await grab('01-diary');
 
       await page.getByRole('button', { name: t('Add item to Dinner', 'Posten zu Abendessen hinzufügen') }).click();
-      await page.waitForTimeout(400);
+      // Die Liste kommt aus der Datenbank mit knapp 7000 Einträgen – vor dem Auslösen warten,
+      // sonst zeigt das Bild eine halb gefüllte Trefferliste.
+      await page.waitForTimeout(1500);
       await grab('02-search');
       await page.keyboard.press('Escape');
 

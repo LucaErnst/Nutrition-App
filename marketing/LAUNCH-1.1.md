@@ -2,7 +2,7 @@
 
 Ausgangslage: 1.0 ist seit dem 23.09.2026 im Store, gratis, ohne Konto. Mit 1.1 kommt
 Pro als Einmalkauf: regulär CHF 25.00, zum Start CHF 15.00 als Einführungspreis bis
-30.11.2026. Kein Marketingbudget, ein Kanal im Aufbau
+31.01.2027. Launch-Tag ist der 11.10.2026. Kein Marketingbudget, ein Kanal im Aufbau
 (@seriousnutritiontracker, 0 Follower), eine bestehende Reichweite (be_s3rious) und
 Coaching-Kunden.
 
@@ -107,7 +107,7 @@ Mehr Downloads sind nur die halbe Rechnung. Die andere Hälfte kostet nichts:
   bewiesen hat – etwa wenn die erste Wochenauswertung bereitsteht oder die Phasen-Auswertung
   das erste Urteil hat.
 - **Preis einordnen.** „Einmal 15 CHF statt 80 CHF im Jahr" ist überzeugender als „15 CHF".
-- **Einführungspreis mit Enddatum: CHF 15 bis 30.11.2026, danach CHF 25.** Der reguläre Preis
+- **Einführungspreis mit Enddatum: CHF 15 bis 31.01.2027, danach CHF 25.** Der reguläre Preis
   ist 25 – das ist der Wert, den Apple Health, Widgets, Vorlagen, Portionen, Trend und CSV
   zusammen haben, gemessen an 60 bis 80 CHF **pro Jahr** bei Cronometer, MacroFactor und
   MyFitnessPal. Die 15 sind der Grund, in der Launch-Phase jetzt zu kaufen, statt später.
@@ -115,7 +115,7 @@ Mehr Downloads sind nur die halbe Rechnung. Die andere Hälfte kostet nichts:
   von selbst und du kannst es nicht vergessen.
 - **Die Zahl gehört in deine Posts, nicht in die Store-Beschreibung.** Die deutsche
   Store-Sprache sehen auch Deutschland und Österreich, dort steht ein Euro-Preis – „CHF 15"
-  wäre dort schlicht falsch. Im Store nur „Einführungspreis bis 30. November", die konkrete
+  wäre dort schlicht falsch. Im Store nur „Einführungspreis bis 31. Januar", die konkrete
   Zahl auf TikTok und Instagram, wo dein Publikum in der Schweiz sitzt.
 - **Wenn du erhöhst, dann wirklich.** Ein angekündigter Preisanstieg, der nie kommt, wirkt
   beim zweiten Mal nicht mehr. Wer vorher gekauft hat, behält alles – niemand wird bestraft.

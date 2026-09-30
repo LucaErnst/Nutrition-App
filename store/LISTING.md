@@ -23,12 +23,12 @@ so passt `offline` hinein, der einzige echte Unterschied zu Lifesum und Lose It!
 101 Zeichen und damit über dem Limit.)
 
 ## Werbetext (Apple, ≤170) – änderbar ohne neue Version
-- EN: `New: 6,900 basic foods built in, Swiss dishes included, so search works offline. Pro is a one-time purchase – at the launch price until November 30.` (148)
-- DE: `Neu: 6900 Grundnahrungsmittel in der App, Schweizer Küche inklusive – die Suche funktioniert offline. Pro: Einmalkauf zum Einführungspreis bis 30. November.` (156)
+- EN: `New: 6,900 basic foods built in, Swiss dishes included, so search works offline. Pro is a one-time purchase – at the launch price until January 31.` (147)
+- DE: `Neu: 6900 Grundnahrungsmittel in der App, Schweizer Küche inklusive – die Suche funktioniert offline. Pro: Einmalkauf zum Einführungspreis bis 31. Januar.` (154)
 
 Bewusst **ohne Zahl**: Die deutsche Store-Sprache sehen auch Deutschland und Österreich, wo ein
 Euro-Preis gilt. Die konkreten 15 Franken gehören in die eigenen Posts, nicht in den Store.
-Nach dem 30.11.2026 diesen Text zurücksetzen (geht jederzeit, ohne neue Version).
+Nach dem 31.01.2027 diesen Text zurücksetzen (geht jederzeit, ohne neue Version).
 
 ## Beschreibung – Englisch
 

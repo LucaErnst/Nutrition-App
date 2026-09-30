@@ -1,5 +1,9 @@
 # Checkliste: Version 1.1 veröffentlichen
 
+**Freigabetermin: 11.10.2026.** Eingereicht wird vorher, damit genug Zeit bleibt, falls Apple
+etwas beanstandet. Einführungspreis CHF 15.00 vom 11.10.2026 bis 31.01.2027, danach CHF 25.00 –
+der Januar ist der stärkste Monat für Ernährungs-Apps und soll zum tiefen Preis laufen.
+
 Diese Liste existiert, damit beim Go nichts vergessen geht. Vieles davon lässt sich **nur zusammen
 mit einer neuen Version** ändern (Beschreibung, Screenshots, „Neu in dieser Version") – wird es
 vergessen, steht es bis zur 1.2 falsch im Store.
@@ -48,33 +52,30 @@ Alle Texte liegen fertig in `store/LISTING.md`. Reihenfolge unten ist die Reihen
 - [ ] App Privacy prüfen: weiterhin „Data Not Collected"
 - [ ] Export-Compliance: nur HTTPS, `ITSAppUsesNonExemptEncryption = false` ist gesetzt
 - [ ] Altersfreigabe unverändert (4+)
-- [ ] **Freigabe auf „manuell" stellen** („Manually release this version"). Sonst geht die Version in
-      der Nacht nach der Freigabe live, und der Launch-Tag aus `marketing/LAUNCH-1.1.md` passt nicht
-      mehr dazu.
+- [ ] **Freigabe terminieren:** „Automatically release this version after App Review, **no earlier
+      than**" → **11.10.2026**, morgens. Das Datum lässt sich bis zum Auslösen jederzeit ändern.
+      Ohne diese Einstellung geht die Version in der Nacht nach Apples Freigabe live.
 - [ ] Einreichen
 
 ## 3. Preis setzen – nach Apples Freigabe, vor der Veröffentlichung
 
 Der Kauf geht mit **CHF 15.00** in die Review; während der Review nichts am Preis ändern.
-Regulär ist **CHF 25.00**, die 15 sind der Einführungspreis. Weil die Version manuell
-freigegeben wird, gibt es dafür ein ruhiges Zeitfenster zwischen Apples Freigabe und deinem
-Launch-Tag.
+Regulär ist **CHF 25.00**, die 15 sind der Einführungspreis. Zwischen Apples Freigabe und dem
+11.10.2026 bleibt dafür ein ruhiges Zeitfenster.
 
 - [ ] In App Store Connect → In-App-Käufe → `pro_lifetime` → **Basispreis auf CHF 25.00**
-- [ ] **Geplante Preisänderung** anlegen: CHF 15.00, Start = Launch-Tag, **Ende = 30.11.2026**.
+- [ ] **Geplante Preisänderung** anlegen: CHF 15.00, Start = **11.10.2026**, **Ende = 31.01.2027**.
       Danach stellt Apple von selbst auf 25 zurück – so kann die Erhöhung nicht vergessen gehen.
-      (Falls sich kein Enddatum setzen lässt: Termin am 30.11. im Kalender, Preis von Hand.)
-- [ ] Verschiebt sich der Launch auf November, das Enddatum auf den 31.12.2026 legen –
-      die Launch-Phase soll rund sechs Wochen dauern, nicht zwei
+      (Falls sich kein Enddatum setzen lässt: Termin am 31.01.2027 im Kalender, Preis von Hand.)
 - [ ] Preisänderungen brauchen **keine neue Version und keine Review**
 - [ ] Nichts im Code oder in der Beschreibung anpassen: die Paywall zeigt den Preis direkt
       aus dem Store, die Store-Texte nennen bewusst keine Zahl
-- [ ] Am 30.11. den Werbetext zurücksetzen (er nennt den Einführungspreis, siehe
+- [ ] Am 31.01.2027 den Werbetext zurücksetzen (er nennt den Einführungspreis, siehe
       `store/LISTING.md`) – der Werbetext ist jederzeit änderbar, ohne neue Version
 
 ## 4. Nach der Freigabe durch Apple
 
-- [ ] Version manuell freigeben – am gewählten Launch-Tag, morgens
+- [ ] Am 11.10.2026 prüfen, dass die Version tatsächlich live gegangen ist
 - [ ] Store-Seite in beiden Sprachen anschauen: Screenshots, Beschreibung, Preis des Kaufs
 - [ ] Kauf einmal mit einem echten Konto testen (Sandbox verhält sich anders als der Live-Store)
       und dabei prüfen, dass die Paywall den Einführungspreis zeigt. Das Geld geht wirklich weg;
