@@ -29,3 +29,6 @@ test-results
 playwright-report
 marketing/clips/
 marketing/demo-backup.json
+marketing/launch/final/
+marketing/launch/broll/
+~$*
