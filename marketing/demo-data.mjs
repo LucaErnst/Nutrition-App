@@ -101,7 +101,9 @@ const backup = {
   // units_system fest auf metrisch: die Aufnahme läuft mit locale en-US, sonst stünden dort
   // Unzen und Pfund – und Luca spricht in den Skripten von Gramm und Kilo.
   settings: [{ id: 1, training_weekdays: [1, 2, 4, 5], language: 'en', units_system: 'metric', water_goal_ml: 3000, onboarding_done: true, last_backup_at: Date.now() }],
-  templates: [], water,
+  // Eine Frühstücksvorlage für den Clip „Same breakfast every day?“
+  templates: [{ id: 1, name: 'My breakfast', items: [{ food_item_id: 1, amount: 80, unit: 'g' }, { food_item_id: 2, amount: 250, unit: 'g' }, { food_item_id: 3, amount: 120, unit: 'g' }], created_at: Date.now() - 20 * 864e5 }],
+  water,
 };
 fs.writeFileSync(new URL('./demo-backup.json', import.meta.url), JSON.stringify(backup));
 console.log(`demo-backup.json: ${mealEntries.length} Einträge, ${weights.length} Gewichte, ${water.length} Wasser`);

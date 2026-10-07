@@ -9,6 +9,7 @@ import { mkdirSync } from 'node:fs';
 const PORT = 4174;
 const BASE = `http://localhost:${PORT}`;
 const OUT = 'store/screenshots';
+const OUT_CREATIVE = 'store/creative';
 
 const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const daysAgo = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return iso(d); };
@@ -111,6 +112,62 @@ const SHOTS = [
 ];
 
 /** Rahmen um den Screenshot: dunkler Hintergrund, Überschrift, Gerät läuft unten aus dem Bild. */
+/*
+ * Creative Assets: das breite Bild oben auf der Produktseite und das Bild neben dem Namen in
+ * der Suche. Apple hat beides am 05.10.2026 freigeschaltet. Masse laut App Store Connect:
+ * Header 21:9 (3840 × 1646), Suche 3:2 (1920 × 1280 bis 3840 × 2560), kein Alphakanal.
+ *
+ * Nicht dieselbe Komposition wie die Screenshots: Hochkant und Querformat vertragen keinen
+ * gemeinsamen Entwurf. Hier steht die Aussage links, die Ger\u00e4te stehen rechts.
+ */
+const CREATIVE = {
+  en: { top: 'Calories & macros.', accent: 'No subscription.', sub: 'Free. No account. Nothing leaves your phone.' },
+  de: { top: 'Kalorien & Makros.', accent: 'Ohne Abo.', sub: 'Gratis. Kein Konto. Nichts verl\u00e4sst dein Handy.' },
+};
+
+/** Gemeinsame Grundlage beider Querformate; `kind` bestimmt nur die Proportionen. */
+function composeWide(kind, text, shots) {
+  const img = (png) => `data:image/png;base64,${png.toString('base64')}`;
+  const wide = kind === 'header';
+  // Im Suchergebnis wird das Bild klein gezeigt \u2013 dort tr\u00e4gt nur die Schlagzeile.
+  const sub = wide ? `<p>${text.sub}</p>` : '';
+  const second = wide && shots[1] ? `<div class="phone back"><img src="${img(shots[1])}"></div>` : '';
+  return `<!doctype html><html><head><meta charset="utf-8"><style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: ${wide ? 1920 : 1440}px; height: ${wide ? 823 : 960}px; overflow: hidden;
+      background: #07080b; position: relative;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .glow-a { position: absolute; top: ${wide ? -280 : -240}px; left: ${wide ? -200 : -180}px;
+      width: ${wide ? 900 : 760}px; height: ${wide ? 900 : 760}px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(230,196,106,.20), rgba(230,196,106,0) 68%); }
+    .glow-b { position: absolute; bottom: ${wide ? -300 : -280}px; right: ${wide ? -180 : -200}px;
+      width: ${wide ? 980 : 820}px; height: ${wide ? 980 : 820}px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,92,246,.22), rgba(139,92,246,0) 66%); }
+    .copy { position: absolute; left: ${wide ? 112 : 88}px; top: 50%; transform: translateY(-50%);
+      width: ${wide ? 880 : 820}px; z-index: 2; }
+    /* Im 3:2 ist weniger Breite da: etwas kleiner setzen, sonst bricht \u201eCalories & macros.\u201c
+       in drei Zeilen und die erste h\u00e4ngt als \u201eCalories &\u201c in der Luft. */
+    h1 { font-size: ${wide ? 92 : 74}px; line-height: 1.08; letter-spacing: -1.5px; font-weight: 800; color: #fff; }
+    h1 em { display: block; font-style: normal; color: #e6c46a; }
+    p { margin-top: 26px; font-size: 30px; line-height: 1.35; color: rgba(255,255,255,.6); }
+    /* Ger\u00e4te laufen rechts unten aus dem Bild \u2013 der Screen wirkt dadurch gr\u00f6sser. */
+    .phone { position: absolute; padding: 5px; border-radius: 52px;
+      background: linear-gradient(160deg, #2b2f38, #14161b);
+      box-shadow: 0 40px 90px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.07); }
+    .phone img { display: block; width: 100%; border-radius: 47px; }
+    .phone.front { width: ${wide ? 372 : 404}px; right: ${wide ? 188 : 96}px; top: ${wide ? 96 : 150}px; z-index: 2; }
+    .phone.back { width: 318px; right: 492px; top: 184px; opacity: .72; transform: rotate(-5deg); z-index: 1; }
+  </style></head><body>
+    <div class="glow-a"></div><div class="glow-b"></div>
+    <div class="copy"><h1>${text.top}<em>${text.accent}</em></h1>${sub}</div>
+    ${second}
+    <div class="phone front"><img src="${img(shots[0])}"></div>
+  </body></html>`;
+}
+
 function compose(shot, png) {
   const src = `data:image/png;base64,${png.toString('base64')}`;
   return `<!doctype html><html><head><meta charset="utf-8"><style>
@@ -224,8 +281,21 @@ async function main() {
         await framePage.screenshot({ path: `${OUT}/${lang}/${shot.name}.png` });
       }
       await frameCtx.close();
+
+      // Creative Assets: Header 21:9 und Suchergebnis 3:2, beide aus denselben Rohaufnahmen.
+      mkdirSync(`${OUT_CREATIVE}/${lang}`, { recursive: true });
+      const shots = [raw['01-diary'], raw['03-week']].filter(Boolean);
+      for (const [kind, w, h] of [['header', 1920, 823], ['search', 1440, 960]]) {
+        const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 2 });
+        const pg = await ctx.newPage();
+        await pg.setContent(composeWide(kind, CREATIVE[lang], shots));
+        await pg.waitForTimeout(200);
+        await pg.screenshot({ path: `${OUT_CREATIVE}/${lang}/${kind}.png` });
+        await ctx.close();
+      }
+
       await context.close();
-      console.log(`${lang}: ${SHOTS.length} Screenshots → ${OUT}/${lang}/`);
+      console.log(`${lang}: ${SHOTS.length} Screenshots → ${OUT}/${lang}/, 2 Creative Assets → ${OUT_CREATIVE}/${lang}/`);
     }
   } finally {
     await browser.close();

@@ -28,7 +28,10 @@ async function typeSlow(page, locator, text) {
   for (const ch of text) { await page.keyboard.type(ch); await page.waitForTimeout(120); }
 }
 
+const ONLY = process.argv.slice(2);
+
 async function scene(name, fn) {
+  if (ONLY.length && !ONLY.includes(name)) return null;
   const browser = await chromium.launch();
   const ctx = await browser.newContext({
     viewport: VIEW, deviceScaleFactor: 2, colorScheme: 'dark', locale: 'de-CH', acceptDownloads: true,
@@ -118,4 +121,37 @@ const protein = await scene('protein', async (page) => {
   await page.waitForTimeout(2200);
 });
 
-console.log([diary, cervelat, backup, protein].join('\n'));
+// Clip 6 Daily calories: Woche als Budget
+const week = await scene('week', async (page) => {
+  await tap(page, page.getByRole('button', { name: 'Week' }), 1200);
+  await page.getByText('Weekly budget').first().evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+  await page.waitForTimeout(2600);
+  await page.evaluate(() => document.querySelector('.day-bars')?.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+  await page.waitForTimeout(2400);
+});
+
+// Clip 7 Scale lies: Gewicht mit 7-Tage-Trend
+const weight = await scene('weight', async (page) => {
+  await tap(page, page.getByRole('button', { name: 'Weight' }), 1500);
+  await tap(page, page.getByRole('radiogroup', { name: 'Range' }).getByText('30 days'), 1800);
+  await tap(page, page.getByRole('radiogroup', { name: 'Range' }).getByText('90 days'), 2600);
+});
+
+// Clip 8 Training day: Umschalter, Ziele springen
+const training = await scene('training', async (page) => {
+  await page.waitForTimeout(900);
+  await tap(page, page.locator('.segmented-sm label', { hasText: 'Rest day' }), 1800);
+  await tap(page, page.locator('.segmented-sm label', { hasText: 'Training' }), 1800);
+  await tap(page, page.locator('.segmented-sm label', { hasText: 'Rest day' }), 1500);
+});
+
+// Clip 10 Same breakfast: morgen, Vorlage antippen, Mittag von gestern kopieren
+const template = await scene('template', async (page) => {
+  await tap(page, page.getByRole('button', { name: 'Next day' }), 1000);
+  await tap(page, page.getByRole('button', { name: 'Add item to Breakfast' }), 800);
+  await tap(page, page.getByRole('dialog').getByText('Templates', { exact: true }), 900);
+  await tap(page, page.getByRole('dialog').getByText('My breakfast'), 1600);
+  await tap(page, page.getByRole('button', { name: /^Copy from yesterday/ }).first(), 2200);
+});
+
+console.log([diary, cervelat, backup, protein, week, weight, training, template].filter(Boolean).join('\n'));

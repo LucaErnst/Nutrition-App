@@ -32,7 +32,18 @@ const CLIPS = [
     name: '4-no-account', capTop: 1050, hook: 'No account. No ads.\nNo subscription. Why?',
     fix: { 'a': 'the', 'file?': 'file.' },
   },
+  // Block B und C (Drehtag 2). text: Korrekturen über ganze Untertitel-Häppchen.
+  {
+    name: '5-wifi', hook: 'Your tracker needs wifi.\nMine doesn’t.',
+    text: [['7000', '7,000'], ['Once it in,', 'Once it’s in,']],
+  },
+  { name: '6-daily', hook: 'Stop counting\ndaily calories.', text: [['Tuesday is over,', 'Tuesday’s over?'], ['fine.', 'Fine.']] },
+  { name: '7-scale', hook: 'Your scale lies.\nEvery morning.', text: [['1 kilo', 'one kilo'], ['seven day', '7-day']] },
+  { name: '8-training', hook: 'Training day\nis not a rest day.' },
+  { name: '9-no-time', hook: '“I don’t have time\nto track.”' },
+  { name: '10-breakfast', hook: 'Same breakfast every day?', text: [['Trekking', 'Tracking']] },
 ];
+const ONLY = process.argv.slice(2);
 
 // Schnittliste und App-Einblendung kommen aus dem Rohschnitt (meta.json): die Einblendung liegt dort,
 // wo Luca mitten im Wort zum Text schaut.
@@ -78,11 +89,12 @@ async function png(file, html) {
   return file;
 }
 
-for (const c of CLIPS) {
+for (const c of CLIPS.filter((x) => !ONLY.length || ONLY.includes(x.name))) {
   const rough = path.join(WORK, `rough-${c.name}.mov`);
   const end = dur(rough);
   const words = JSON.parse(fs.readFileSync(path.join(WORK, `rough-${c.name}.words.json`), 'utf8'));
   const caps = groups(words, c.fix, end);
+  for (const g of caps) for (const [from, to] of c.text ?? []) g.text = g.text.replace(from, to);
   const overlays = [];
   overlays.push({ file: await png(path.join(PNG, `${c.name}-hook.png`), hookHtml(c.hook)), from: 0, to: 2.8 });
   for (const [i, g] of caps.entries()) {
@@ -97,7 +109,7 @@ for (const c of CLIPS) {
   let fc = `[1:v]setpts=PTS-STARTPTS+${b.from_}/TB,fps=30[br];[0:v][br]overlay=0:0:eof_action=pass:enable='between(t,${b.from_},${bTo})'[v0]`;
   overlays.forEach((o, i) => {
     inputs.push('-i', o.file);
-    fc += `;[v${i}][${i + 2}:v]overlay=0:0:enable='between(t,${o.from.toFixed(2)},${o.to.toFixed(2)})'[v${i + 1}]`;
+    fc += `;[v${i}][${i + 2}:v]overlay=0:0:enable='gte(t,${o.from.toFixed(3)})*lt(t,${o.to.toFixed(3)})'[v${i + 1}]`;
   });
   fc += `;[0:a]highpass=f=90,equalizer=f=250:t=q:w=1.2:g=-3,equalizer=f=3500:t=q:w=1.0:g=4,highshelf=f=7500:g=5,deesser=i=0.25,acompressor=threshold=-22dB:ratio=3:attack=8:release=120:makeup=3,loudnorm=I=-14:TP=-1.5:LRA=9,aresample=48000[a]`;
   const out = path.join(OUT, `${c.name}.mp4`);
