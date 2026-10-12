@@ -20,7 +20,10 @@ nicht: kein Build, keine Review.
   und `VENDOR_NUMBER`, RevenueCat-Forwarding-URL gespeichert.
 - Befund: In App Store Connect war bis 12.10. **keine** Server-Notification-URL eingetragen, auch
   nicht die von RevenueCat.
-- Offen bei Luca: Secret `ASC_PRIVATE_KEY`; in App Store Connect Production- und Sandbox-URL =
+- Tagesbericht gegen echte Berichte geprüft (11.9.–10.10.: 6 Downloads, alle CH/SK, Typ `1`).
+  Apple setzt „Parent Identifier“ bei Downloads auf ein Leerzeichen; gezählt wird deshalb nach Produkttyp.
+  `ASC_PRIVATE_KEY` gesetzt.
+- Offen bei Luca: in App Store Connect Production- und Sandbox-URL =
   RevenueCat-URL (steht in RevenueCat unter Apps → App Store → „Apple Server Notification URL“),
   Version 2; ntfy-Topic auf dem iPhone abonnieren; Sandbox-Kauf als Test.
 
