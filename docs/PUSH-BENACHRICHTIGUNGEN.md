@@ -1,6 +1,6 @@
 # Push aufs iPhone bei Käufen und Downloads
 
-Angelegt am 12.10.2026. **Gebaut am 12.10.2026, noch nicht deployt.** Eigenes Projekt neben der App:
+Angelegt am 12.10.2026. **Gebaut und deployt am 12.10.2026.** Eigenes Projekt neben der App:
 `~/Downloads/serious-nutrition-push/` (eigenes Git, Anleitung im README). Die App selbst ändert sich
 nicht: kein Build, keine Review.
 
@@ -14,8 +14,15 @@ nicht: kein Build, keine Review.
   reicht dafür nicht. Einfacher: Sandbox-Kauf in TestFlight.
 - **Tagesbericht:** Um 08:07 Zürich ist der neueste fertige Bericht von vorgestern (Pacific Time).
   Der Push nennt das Datum („Sa 10.10.“) statt „Gestern“.
-- Offen bei Luca: ntfy-Topic, `wrangler login`, Secrets (`NTFY_TOPIC`, `VENDOR_NUMBER`,
-  `ASC_PRIVATE_KEY`), Deploy, Forwarding-URL in RevenueCat.
+- Worker-URL: `https://serious-nutrition-push.serious-nutrition-push.workers.dev/apple`
+  (Cloudflare-Konto beseriouscalisthenics@gmail.com). Vendor Number 94868361.
+- Erledigt: `wrangler login`, Deploy, Secrets `NTFY_TOPIC` (Topic in `serious-nutrition-push/.ntfy-topic`)
+  und `VENDOR_NUMBER`, RevenueCat-Forwarding-URL gespeichert.
+- Befund: In App Store Connect war bis 12.10. **keine** Server-Notification-URL eingetragen, auch
+  nicht die von RevenueCat.
+- Offen bei Luca: Secret `ASC_PRIVATE_KEY`; in App Store Connect Production- und Sandbox-URL =
+  RevenueCat-URL (steht in RevenueCat unter Apps → App Store → „Apple Server Notification URL“),
+  Version 2; ntfy-Topic auf dem iPhone abonnieren; Sandbox-Kauf als Test.
 
 ## Ziel
 
