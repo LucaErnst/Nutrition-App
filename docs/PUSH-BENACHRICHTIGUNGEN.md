@@ -1,7 +1,21 @@
 # Push aufs iPhone bei Käufen und Downloads
 
-Angelegt am 12.10.2026. Noch nicht gebaut. Eigenes kleines Projekt neben der App, z. B.
-`~/Downloads/serious-nutrition-push/`. Die App selbst ändert sich nicht: kein Build, keine Review.
+Angelegt am 12.10.2026. **Gebaut am 12.10.2026, noch nicht deployt.** Eigenes Projekt neben der App:
+`~/Downloads/serious-nutrition-push/` (eigenes Git, Anleitung im README). Die App selbst ändert sich
+nicht: kein Build, keine Review.
+
+## Stand 12.10.2026
+
+- Worker fertig, 12 Tests grün, Bundle baut, in `wrangler dev` geprüft: gefälschte Kette → 400.
+- **RevenueCat:** Die App kauft über RevenueCat. Apple erlaubt nur eine Notification-URL. Darum bleibt
+  RevenueCat Empfänger und leitet per „Apple Server Notification Forwarding URL“ an `<Worker>/apple`
+  weiter. Die Signatur bleibt dabei prüfbar.
+- **Test:** „Request a Test Notification“ braucht einen In-App-Purchase-Key, der Team-Key (Rolle Sales)
+  reicht dafür nicht. Einfacher: Sandbox-Kauf in TestFlight.
+- **Tagesbericht:** Um 08:07 Zürich ist der neueste fertige Bericht von vorgestern (Pacific Time).
+  Der Push nennt das Datum („Sa 10.10.“) statt „Gestern“.
+- Offen bei Luca: ntfy-Topic, `wrangler login`, Secrets (`NTFY_TOPIC`, `VENDOR_NUMBER`,
+  `ASC_PRIVATE_KEY`), Deploy, Forwarding-URL in RevenueCat.
 
 ## Ziel
 
@@ -31,9 +45,9 @@ Angelegt am 12.10.2026. Noch nicht gebaut. Eigenes kleines Projekt neben der App
 
 - Cloudflare-Konto anlegen (falls keins da) und `npx wrangler login` bestätigen
 - ntfy-App aufs iPhone, Topic abonnieren
-- Secrets setzen: `ASC_PRIVATE_KEY`, `NTFY_TOPIC`
-- Nach dem Deploy die Worker-URL in App Store Connect eintragen: App-Informationen →
-  App Store Server Notifications → Production Server URL (Version 2)
+- Secrets setzen: `ASC_PRIVATE_KEY`, `NTFY_TOPIC`, `VENDOR_NUMBER`
+- Nach dem Deploy `<Worker-URL>/apple` in RevenueCat als Forwarding-URL eintragen (nicht direkt in
+  App Store Connect, sonst verliert RevenueCat die Meldungen)
 
 ## Vorher prüfen
 
