@@ -76,7 +76,7 @@ Regulär ist **CHF 25.00**, die 15 sind der Einführungspreis. Zwischen Apples F
 
 ## 4. Nach der Freigabe durch Apple
 
-- [ ] Am 12.10.2026 prüfen, dass die Version tatsächlich live gegangen ist
+- [x] Am 12.10.2026 prüfen, dass die Version tatsächlich live gegangen ist (13:20: „Ready for Distribution", Store-Seite CH zeigt 1.1)
 - [ ] Store-Seite in beiden Sprachen anschauen: Screenshots, Beschreibung, Preis des Kaufs
 - [ ] Kauf einmal mit einem echten Konto testen (Sandbox verhält sich anders als der Live-Store)
       und dabei prüfen, dass die Paywall den Einführungspreis zeigt. Das Geld geht wirklich weg;

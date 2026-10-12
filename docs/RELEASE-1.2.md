@@ -50,6 +50,12 @@ deutschen. Folgen für den Bau:
       `dropRetiredReference` (siehe `handoff.md` Punkt 5).
 - [ ] Veralteter Kommentar in `src/db/types.ts:72`: spricht von der „USDA-Tabelle", gemeint ist
       seit Build 17 der BLS. Wird mit A1 wieder teilweise richtig, dann sauber formulieren.
+- [ ] Store-Seite zeigt unter „Sprachen" nur **Englisch** (gesehen am 12.10.2026 auf der Live-Seite
+      von 1.1). Apple liest die Sprachen aus den `.lproj`-Ordnern im Bundle, nicht aus
+      `CFBundleLocalizations`. Im Projekt gibt es nur `Base.lproj`, `knownRegions` kennt nur `en`.
+      Lösung: in Xcode Deutsch als Lokalisierung hinzufügen und eine `de.lproj/InfoPlist.strings`
+      (z. B. mit `CFBundleDisplayName`) ins Ziel „App" legen. Danach im `.ipa` prüfen, dass
+      `de.lproj` drin ist.
 
 - [x] Schalter „App als Free-Nutzer ansehen" unter Mehr → Pro war im Store-Build für alle Early
       Adopter sichtbar (gemeldet von Luca am 12.10.2026). Keine Lücke, aber verwirrend, und in der

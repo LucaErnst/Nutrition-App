@@ -24,8 +24,9 @@ Entscheidung misst sich daran.
 
 **App Store**
 - **1.0** ist seit 23.09.2026 live.
-- **1.1 (Build 22)** wurde am 30.09. eingereicht, hat die Prüfung bestanden und steht auf
-  „Pending Developer Release". Freigabe läuft **automatisch am 12.10.2026, 11:00 CEST**.
+- **1.1 (Build 22) ist live** seit 12.10.2026, 11:00 (geprüft 13:20: „Ready for Distribution",
+  Store-Seite CH zeigt 1.1, 1 Bewertung, 5.0). Store zeigt unter „Sprachen" nur Englisch, Fix für
+  1.2 in `docs/RELEASE-1.2.md` A2.
 - In-App-Kauf `pro_lifetime` (Non-Consumable, Apple-ID 6814513884) ist **freigegeben**, Preis
   CHF 15. Eine geplante globale Preisänderung auf **CHF 25 ab 01.02.2027** liegt bestätigt für
   175 Länder in App Store Connect.
@@ -34,7 +35,7 @@ Entscheidung misst sich daran.
 
 **Code**
 - Version 1.1.0, iOS-Build 22. 131 Unit-Tests und 34 e2e-Tests grün, Lint sauber.
-- **42 Commits liegen lokal und sind nicht gepusht.** Luca wollte zuerst testen; seither nie
+- **52 Commits liegen lokal und sind nicht gepusht.** Luca wollte zuerst testen; seither nie
   freigegeben. Vor einem Push fragen – die Web-Version unter
   `lucaernst.github.io/Nutrition-App/` aktualisiert sich daraus.
 
@@ -129,20 +130,19 @@ Alles für 1.1, in der Reihenfolge der Entstehung:
 
 ## 6. Nächste Schritte
 
-1. **12.10., morgens:** prüfen, dass 1.1 wirklich live ist (Status wechselt auf „Ready for
-   Distribution"). Danach Kauf einmal mit echtem Konto testen und auf einem Gerät prüfen, das die
+1. ~~Prüfen, dass 1.1 live ist~~ (erledigt 12.10., 13:20). Offen: Kauf einmal mit echtem Konto testen und auf einem Gerät prüfen, das die
    App vor 1.1 hatte – dort muss Pro geschenkt sein.
 2. **Nach dem Launch:** Creative Assets hochladen (Asset Library → „Upload Creative Assets"),
    Apple prüft sie, dann unter „Header and Search Results" zuordnen. Vorher nicht, solange die
    Version auf Freigabe wartet.
-3. **Web-Version pushen** – 42 Commits warten. Vorher fragen.
+3. **Web-Version pushen** – 52 Commits warten. Vorher fragen.
 4. **TikTok:** Clips nach `marketing/Drehtag-TikTok.docx` drehen, Bio-Link auf die Store-Seite,
    Instagram verknüpfen, Metricool neu verbinden.
 5. **31.01.2027:** Werbetext zurücksetzen, er nennt den Einführungspreis.
 6. **Instagram @seriousnutrition.app:** 12. bis 25.10. ist geplant. Bio-Link ist gesetzt. Luca
    und pinnt die Kommentare aus `APP-ACCOUNT.md`. Ab 26.10. neue Posts planen. Browser: immer Chrome.
-7. **Push aufs iPhone bei Käufen/Downloads:** Plan und Zugangs-IDs in `docs/PUSH-BENACHRICHTIGUNGEN.md`.
-   In einer frischen Sitzung bauen (Cloudflare Worker + ntfy). Die `.p8`-Datei gibt Luca nie in den Chat.
+7. **Push aufs iPhone bei Käufen/Downloads:** gebaut und getestet, läuft über Telegram (Worker deployt,
+   RevenueCat-Weiterleitung gesetzt). Stand in `docs/PUSH-BENACHRICHTIGUNGEN.md`. Die `.p8`-Datei gibt Luca nie in den Chat.
 8. **1.2 planen:** `docs/RELEASE-1.2.md`. Fest vorgemerkt: USDA FoodData Central (SR Legacy, CC0)
    für US-Nutzer, nur in englischer App-Sprache sichtbar (entschieden 10.10.).
 
