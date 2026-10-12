@@ -35,8 +35,7 @@ Entscheidung misst sich daran.
 
 **Code**
 - Version 1.1.0, iOS-Build 22. 131 Unit-Tests und 34 e2e-Tests grün, Lint sauber.
-- **52 Commits liegen lokal und sind nicht gepusht.** Luca wollte zuerst testen; seither nie
-  freigegeben. Vor einem Push fragen – die Web-Version unter
+- Alles gepusht (12.10.). Vor jedem weiteren Push fragen – die Web-Version unter
   `lucaernst.github.io/Nutrition-App/` aktualisiert sich daraus.
 
 **Daten**
@@ -65,7 +64,7 @@ Entscheidung misst sich daran.
 | `docs/RELEASE-1.2.md` | Planung 1.2 (USDA-Daten, bekannte Fehler) und Liste aller Stellen, die danach wieder stimmen müssen |
 | `docs/PUSH-BENACHRICHTIGUNGEN.md` | Plan für Kauf-Push und Tagesbericht, Key ID und Issuer ID |
 | `store/LISTING.md` | Alle Store-Texte, Stand = eingereicht. Zeichenzahlen stehen dabei. |
-| `store/creative/{de,en}/` | Header (3840 × 1646) und Suchbild (2880 × 1920), erzeugt, **nicht hochgeladen** |
+| `store/creative/{de,en}/` | Header (3840 × 1646) und Suchbild (2880 × 1920), hochgeladen, warten auf Apple |
 | `store/screenshots.mjs` | Erzeugt Screenshots und Creative Assets in einem Lauf (`npm run screenshots`) |
 | `marketing/Drehtag-TikTok.docx` | 14 Drehbücher in Drehreihenfolge plus Kalender |
 | `marketing/LAUNCH-1.1.md` | Launch-Plan, Preislogik, Kanäle |
@@ -132,10 +131,10 @@ Alles für 1.1, in der Reihenfolge der Entstehung:
 
 1. ~~Prüfen, dass 1.1 live ist~~ (erledigt 12.10., 13:20). Offen: Kauf einmal mit echtem Konto testen und auf einem Gerät prüfen, das die
    App vor 1.1 hatte – dort muss Pro geschenkt sein.
-2. **Nach dem Launch:** Creative Assets hochladen (Asset Library → „Upload Creative Assets"),
-   Apple prüft sie, dann unter „Header and Search Results" zuordnen. Vorher nicht, solange die
-   Version auf Freigabe wartet.
-3. **Web-Version pushen** – 52 Commits warten. Vorher fragen.
+2. **Creative Assets:** am 12.10. hochgeladen und eingereicht (alle vier „Waiting for Review").
+   Nach Apples Freigabe unter Produktseite → „Header and Search Results" zuordnen. In der Library
+   sind die Dateien ohne Nummer deutsch, „(21)"/„(22)" englisch.
+3. ~~Web-Version pushen~~ – erledigt 12.10., Pages-Deploy erfolgreich.
 4. **TikTok:** Clips nach `marketing/Drehtag-TikTok.docx` drehen, Bio-Link auf die Store-Seite,
    Instagram verknüpfen, Metricool neu verbinden.
 5. **31.01.2027:** Werbetext zurücksetzen, er nennt den Einführungspreis.

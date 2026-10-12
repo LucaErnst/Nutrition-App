@@ -92,10 +92,12 @@ Apple hat am 05.10.2026 die **Creative Assets** freigeschaltet: ein breites Bild
 Produktseite und eines neben dem Namen in der Suche. Die Bilder liegen fertig in
 `store/creative/{de,en}` (Header 3840 × 1646, Suche 2880 × 1920, ohne Alphakanal).
 
-- [ ] **Erst nach dem 12.10. zuordnen.** Solange die Version auf „Pending Developer Release"
+- [x] **Erst nach dem 12.10. zuordnen.** Solange die Version auf „Pending Developer Release"
       steht, lässt sich laut App Store Connect nur ein Teil der Angaben ändern; um das zu klären,
       müsste man die Freigabe zurücknehmen. Das Risiko lohnt für ein Banner nicht.
-- [ ] Hochladen über Asset Library → „Upload Creative Assets". Apple prüft sie separat.
+- [x] Hochladen über Asset Library → „Upload Creative Assets". Apple prüft sie separat.
+      Erledigt 12.10.2026, 13:27: alle vier „Waiting for Review". Namen in der Library:
+      `header.png` / `search.png` = Deutsch, `header.png (21)` / `search.png (22)` = Englisch.
 - [ ] Danach unter Produktseite → „Header and Search Results" zuordnen.
 
 ## 6. Offen, aber kein Hindernis für 1.1
