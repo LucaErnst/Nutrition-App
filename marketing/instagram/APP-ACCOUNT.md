@@ -24,7 +24,7 @@ gedreht. An diesen Tagen springt ein Karussell mit passendem Thema ein bzw. Clip
   Your data stays on your phone.
   Free on the App Store ↓
   ```
-- **Offen, nur in der Handy-App möglich:** Link `https://apps.apple.com/app/id6814075860`
+- Link: `https://apps.apple.com/app/id6814075860` (von Luca am Handy gesetzt, 12.10.2026)
 
 ## Kalender
 

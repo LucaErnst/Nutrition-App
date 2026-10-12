@@ -1,6 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 11.10.2026. Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll
+Stand: 12.10.2026, Launch-Tag. Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll
 ohne Rückfragen weiterarbeiten können.
 
 **So wird sie benutzt:** In einer neuen Sitzung sagen: *„Lies handoff.md und mach dort weiter, wo
@@ -50,7 +50,7 @@ Entscheidung misst sich daran.
 - **Instagram @seriousnutrition.app** (neu, 11.10.): Profil eingerichtet (Bild, Name, Bio, Business,
   Kategorie App Page). Plan mit allen Captions in `marketing/instagram/APP-ACCOUNT.md`, von Luca
   freigegeben: 11 Reels + 6 Karussells, 12. bis 25.10. **Alle 17 Posts geplant** in der Meta Business Suite
-  (11.10.), Vorgehen in `APP-ACCOUNT.md`. Link in der Bio fehlt noch (nur Handy-App).
+  (11.10.), Vorgehen in `APP-ACCOUNT.md`. Bio-Link gesetzt (12.10.).
 - App-Store-Keywords geprüft (10.10.): Einstellungen korrekt (English U.S.), schwache Platzierung
   liegt an 0 Bewertungen. Neuer Keyword-Vorschlag steht in `docs/RELEASE-1.2.md`.
 
@@ -62,6 +62,7 @@ Entscheidung misst sich daran.
 |---|---|
 | `docs/RELEASE-1.1.md` | Die Launch-Checkliste. Abschnitte 1–3 erledigt, 4 und 5 offen. **Zuerst hier nachschauen.** |
 | `docs/RELEASE-1.2.md` | Planung 1.2 (USDA-Daten, bekannte Fehler) und Liste aller Stellen, die danach wieder stimmen müssen |
+| `docs/PUSH-BENACHRICHTIGUNGEN.md` | Plan für Kauf-Push und Tagesbericht, Key ID und Issuer ID |
 | `store/LISTING.md` | Alle Store-Texte, Stand = eingereicht. Zeichenzahlen stehen dabei. |
 | `store/creative/{de,en}/` | Header (3840 × 1646) und Suchbild (2880 × 1920), erzeugt, **nicht hochgeladen** |
 | `store/screenshots.mjs` | Erzeugt Screenshots und Creative Assets in einem Lauf (`npm run screenshots`) |
@@ -138,9 +139,11 @@ Alles für 1.1, in der Reihenfolge der Entstehung:
 4. **TikTok:** Clips nach `marketing/Drehtag-TikTok.docx` drehen, Bio-Link auf die Store-Seite,
    Instagram verknüpfen, Metricool neu verbinden.
 5. **31.01.2027:** Werbetext zurücksetzen, er nennt den Einführungspreis.
-6. **Instagram @seriousnutrition.app:** 12. bis 25.10. ist geplant. Luca setzt den Bio-Link am Handy
+6. **Instagram @seriousnutrition.app:** 12. bis 25.10. ist geplant. Bio-Link ist gesetzt. Luca
    und pinnt die Kommentare aus `APP-ACCOUNT.md`. Ab 26.10. neue Posts planen. Browser: immer Chrome.
-7. **1.2 planen:** `docs/RELEASE-1.2.md`. Fest vorgemerkt: USDA FoodData Central (SR Legacy, CC0)
+7. **Push aufs iPhone bei Käufen/Downloads:** Plan und Zugangs-IDs in `docs/PUSH-BENACHRICHTIGUNGEN.md`.
+   In einer frischen Sitzung bauen (Cloudflare Worker + ntfy). Die `.p8`-Datei gibt Luca nie in den Chat.
+8. **1.2 planen:** `docs/RELEASE-1.2.md`. Fest vorgemerkt: USDA FoodData Central (SR Legacy, CC0)
    für US-Nutzer, nur in englischer App-Sprache sichtbar (entschieden 10.10.).
 
 **Offene Entscheidungen von Luca**
