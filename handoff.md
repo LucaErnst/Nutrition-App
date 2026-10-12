@@ -1,6 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 07.10.2026. Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll
+Stand: 11.10.2026. Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll
 ohne Rückfragen weiterarbeiten können.
 
 **So wird sie benutzt:** In einer neuen Sitzung sagen: *„Lies handoff.md und mach dort weiter, wo
@@ -44,8 +44,15 @@ Entscheidung misst sich daran.
   Bundeslebensmittelschlüssel 4.0.
 
 **Marketing**
-- TikTok @seriousnutritiontracker, praktisch bei null. 14 Drehbücher liegen bereit, noch nichts
-  gedreht. Posting-Kalender vom 12. bis 25.10. steht.
+- TikTok @seriousnutritiontracker, praktisch bei null. Fertig geschnitten: 11 Launch-Clips
+  (`marketing/launch/final/`, unter 10 MB in `final/upload/`) und 6 Karussell-Videos
+  (`marketing/instagram/tiktok/`). Noch nicht gedreht: Clips 11, 12, 13, D „Gestern kopieren".
+- **Instagram @seriousnutrition.app** (neu, 11.10.): Profil eingerichtet (Bild, Name, Bio, Business,
+  Kategorie App Page). Plan mit allen Captions in `marketing/instagram/APP-ACCOUNT.md`, von Luca
+  freigegeben: 11 Reels + 6 Karussells, 12. bis 25.10. **Alle 17 Posts geplant** in der Meta Business Suite
+  (11.10.), Vorgehen in `APP-ACCOUNT.md`. Link in der Bio fehlt noch (nur Handy-App).
+- App-Store-Keywords geprüft (10.10.): Einstellungen korrekt (English U.S.), schwache Platzierung
+  liegt an 0 Bewertungen. Neuer Keyword-Vorschlag steht in `docs/RELEASE-1.2.md`.
 
 ---
 
@@ -54,6 +61,7 @@ Entscheidung misst sich daran.
 | Datei | Wofür |
 |---|---|
 | `docs/RELEASE-1.1.md` | Die Launch-Checkliste. Abschnitte 1–3 erledigt, 4 und 5 offen. **Zuerst hier nachschauen.** |
+| `docs/RELEASE-1.2.md` | Planung 1.2 (USDA-Daten, bekannte Fehler) und Liste aller Stellen, die danach wieder stimmen müssen |
 | `store/LISTING.md` | Alle Store-Texte, Stand = eingereicht. Zeichenzahlen stehen dabei. |
 | `store/creative/{de,en}/` | Header (3840 × 1646) und Suchbild (2880 × 1920), erzeugt, **nicht hochgeladen** |
 | `store/screenshots.mjs` | Erzeugt Screenshots und Creative Assets in einem Lauf (`npm run screenshots`) |
@@ -130,6 +138,10 @@ Alles für 1.1, in der Reihenfolge der Entstehung:
 4. **TikTok:** Clips nach `marketing/Drehtag-TikTok.docx` drehen, Bio-Link auf die Store-Seite,
    Instagram verknüpfen, Metricool neu verbinden.
 5. **31.01.2027:** Werbetext zurücksetzen, er nennt den Einführungspreis.
+6. **Instagram @seriousnutrition.app:** 12. bis 25.10. ist geplant. Luca setzt den Bio-Link am Handy
+   und pinnt die Kommentare aus `APP-ACCOUNT.md`. Ab 26.10. neue Posts planen. Browser: immer Chrome.
+7. **1.2 planen:** `docs/RELEASE-1.2.md`. Fest vorgemerkt: USDA FoodData Central (SR Legacy, CC0)
+   für US-Nutzer, nur in englischer App-Sprache sichtbar (entschieden 10.10.).
 
 **Offene Entscheidungen von Luca**
 - Ab Februar kostet Pro in Deutschland/Österreich **EUR 34.99** (Apples Umrechnung von CHF 25).
