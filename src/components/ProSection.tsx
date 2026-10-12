@@ -8,13 +8,13 @@ import { openPaywall } from './Paywall';
 export function ProSection() {
   const t = useT();
   const { pro, source, price } = useProState();
-  // Wer die App vor 1.1 hatte, darf sich die gesperrte Ansicht jederzeit anschauen – auch
-  // nach einem (Sandbox-)Kauf, der den Status auf 'purchase' schiebt. Echte Neukunden
-  // bekommen den Schalter nie zu sehen.
+  // Nur zum Testen der Sperren: Early Adopter können sich die Free-Ansicht anschauen – auch
+  // nach einem (Sandbox-)Kauf, der den Status auf 'purchase' schiebt. Nie im Store-Build:
+  // dort hielten Early Adopter ihr Pro für verloren und könnten es ein zweites Mal kaufen.
   const wasEarlyAdopter = useSettings()?.pro_granted === 'early_adopter';
   if (!isNative) return null;
 
-  const previewToggle = (wasEarlyAdopter || isPreviewFree()) && (
+  const previewToggle = import.meta.env.DEV && (wasEarlyAdopter || isPreviewFree()) && (
     <button className="btn-link btn-centered" onClick={() => setPreviewFree(!isPreviewFree())} style={{ marginTop: 8 }}>
       {isPreviewFree() ? t('pro.previewOff') : t('pro.previewOn')}
     </button>

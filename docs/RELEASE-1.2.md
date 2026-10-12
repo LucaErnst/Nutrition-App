@@ -51,7 +51,18 @@ deutschen. Folgen für den Bau:
 - [ ] Veralteter Kommentar in `src/db/types.ts:72`: spricht von der „USDA-Tabelle", gemeint ist
       seit Build 17 der BLS. Wird mit A1 wieder teilweise richtig, dann sauber formulieren.
 
+- [x] Schalter „App als Free-Nutzer ansehen" unter Mehr → Pro war im Store-Build für alle Early
+      Adopter sichtbar (gemeldet von Luca am 12.10.2026). Keine Lücke, aber verwirrend, und in der
+      Free-Ansicht wäre ein zweiter Kauf möglich. Behoben in `src/components/ProSection.tsx`: nur noch
+      in Entwicklungs-Builds (`import.meta.env.DEV`). **Geht erst mit dem nächsten Build raus.**
+
 ### A3. Weitere Ideen (noch nicht entschieden)
+
+- **Live Activity / Dynamic Island:** übrige Kalorien und Protein-Ring kompakt in der Insel,
+  ausgeklappt alle Makros und Wasser, dazu eine Karte auf dem Sperrbildschirm. Start beim ersten
+  Eintrag, Aktualisierung bei jedem Eintrag, kein Server nötig. Erweiterung des Ziels
+  `SeriousWidgets` (ActivityKit). Grenzen: höchstens 8 h in der Insel, Insel erst ab iPhone 14 Pro,
+  Schalter in der App nötig.
 
 - Hier sammeln, was bis zur Planung von 1.2 dazukommt.
 
