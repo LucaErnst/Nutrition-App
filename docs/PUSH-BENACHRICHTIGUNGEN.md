@@ -4,40 +4,30 @@ Angelegt am 12.10.2026. **Gebaut und deployt am 12.10.2026.** Eigenes Projekt ne
 `~/Downloads/serious-nutrition-push/` (eigenes Git, Anleitung im README). Die App selbst ändert sich
 nicht: kein Build, keine Review.
 
-## Stand 12.10.2026
+## Stand 12.10.2026: läuft
 
-- Worker fertig, 12 Tests grün, Bundle baut, in `wrangler dev` geprüft: gefälschte Kette → 400.
-- **RevenueCat:** Die App kauft über RevenueCat. Apple erlaubt nur eine Notification-URL. Darum bleibt
-  RevenueCat Empfänger und leitet per „Apple Server Notification Forwarding URL“ an `<Worker>/apple`
-  weiter. Die Signatur bleibt dabei prüfbar.
-- **Test:** „Request a Test Notification“ braucht einen In-App-Purchase-Key, der Team-Key (Rolle Sales)
-  reicht dafür nicht. Einfacher: Sandbox-Kauf in TestFlight.
-- **Tagesbericht:** Um 08:07 Zürich ist der neueste fertige Bericht von vorgestern (Pacific Time).
-  Der Push nennt das Datum („Sa 10.10.“) statt „Gestern“.
-- Worker-URL: `https://serious-nutrition-push.serious-nutrition-push.workers.dev/apple`
-  (Cloudflare-Konto beseriouscalisthenics@gmail.com). Vendor Number 94868361.
-- Erledigt: `wrangler login`, Deploy, Secrets `NTFY_TOPIC` (Topic in `serious-nutrition-push/.ntfy-topic`)
-  und `VENDOR_NUMBER`, RevenueCat-Forwarding-URL gespeichert.
-- Befund: In App Store Connect war bis 12.10. **keine** Server-Notification-URL eingetragen, auch
-  nicht die von RevenueCat.
-- Tagesbericht gegen echte Berichte geprüft (11.9.–10.10.: 6 Downloads, alle CH/SK, Typ `1`).
-  Apple setzt „Parent Identifier“ bei Downloads auf ein Leerzeichen; gezählt wird deshalb nach Produkttyp.
-  `ASC_PRIVATE_KEY` gesetzt.
-- Offen bei Luca: in App Store Connect Production- und Sandbox-URL =
-  RevenueCat-URL (steht in RevenueCat unter Apps → App Store → „Apple Server Notification URL“),
-  Version 2; ntfy-Topic auf dem iPhone abonnieren; Sandbox-Kauf als Test.
-
-## Ziel
-
-1. **Pro-Kauf in Echtzeit:** „Pro gekauft · CHF 15 · Schweiz", Sekunden nach dem Kauf.
-2. **Tagesbericht jeden Morgen:** „Gestern: 23 Downloads, 2× Pro, CHF 30".
+- Worker: `https://serious-nutrition-push.serious-nutrition-push.workers.dev/apple`
+  (Cloudflare-Konto beseriouscalisthenics@gmail.com, Gratis-Plan). Vendor Number 94868361.
+- Kette getestet mit Apples Test-Notification: Apple → RevenueCat (Production- und Sandbox-URL in
+  App Store Connect) → Forwarding-URL in RevenueCat → Worker (Signatur geprüft) → Telegram. ✅
+- Tagesbericht gegen echte Berichte geprüft (11.9.–10.10.: 6 Downloads, alle Typ `1`). Apple setzt
+  „Parent Identifier“ bei Downloads auf ein Leerzeichen, darum wird nach Produkttyp gezählt.
+  Um 08:07 Zürich ist der neueste Bericht von vorgestern (Pacific Time); der Push nennt das Datum.
+- Secrets: `ASC_PRIVATE_KEY`, `VENDOR_NUMBER`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`
+  (`NTFY_TOPIC`/`NTFY_TOKEN` sind Überbleibsel, ungenutzt).
+- **ntfy.sh verworfen:** Gratis-Limit (250/Tag) gilt pro IP, auch mit Konto; Cloudflare-IPs sind
+  geteilt und ausgeschöpft (429 „daily message quota reached“), Verbindungen hängen zeitweise.
+- **Testkauf in TestFlight löst keine Meldung aus:** Das Sandbox-Konto hat `pro_lifetime` schon am
+  24.09. gekauft, ein erneuter Kauf stellt nur wieder her. Test stattdessen:
+  `npm run test:notification -- ~/Downloads/SubscriptionKey_86T3ZCT49W.p8` (In-App-Purchase-Key).
+- Ein echter Kauf ist noch nicht durchgelaufen; die Kauf-Nachricht ist per Unit-Test abgedeckt.
 
 ## Bausteine
 
 | Teil | Wie |
 |---|---|
 | Server | Cloudflare Worker (gratis), ein Worker für beides |
-| Push aufs iPhone | ntfy (App gratis), Topic mit zufälligem, langem Namen |
+| Push aufs iPhone | Telegram-Bot @seriousnutrition_push_bot (ntfy.sh verworfen, siehe unten) |
 | Kauf-Meldung | App Store Server Notifications V2 an `POST /apple`. Signatur (JWS, x5c-Kette bis Apple Root CA G3) im Worker prüfen, dann nur Land, Preis, Zeit, Typ an ntfy |
 | Tagesbericht | Cron-Trigger im Worker, ca. 08:07. App Store Connect API, Sales Report DAILY, Vortag. JWT ES256 mit dem `.p8`-Schlüssel |
 
@@ -54,8 +44,6 @@ nicht: kein Build, keine Review.
 ## Was Luca selbst machen muss
 
 - Cloudflare-Konto anlegen (falls keins da) und `npx wrangler login` bestätigen
-- ntfy-App aufs iPhone, Topic abonnieren
-- Secrets setzen: `ASC_PRIVATE_KEY`, `NTFY_TOPIC`, `VENDOR_NUMBER`
 - Nach dem Deploy `<Worker-URL>/apple` in RevenueCat als Forwarding-URL eintragen (nicht direkt in
   App Store Connect, sonst verliert RevenueCat die Meldungen)
 
