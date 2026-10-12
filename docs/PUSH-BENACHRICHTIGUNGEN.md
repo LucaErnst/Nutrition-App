@@ -28,7 +28,7 @@ nicht: kein Build, keine Review.
 |---|---|
 | Server | Cloudflare Worker (gratis), ein Worker für beides |
 | Push aufs iPhone | Telegram-Bot @seriousnutrition_push_bot (ntfy.sh verworfen, siehe unten) |
-| Kauf-Meldung | App Store Server Notifications V2 an `POST /apple`. Signatur (JWS, x5c-Kette bis Apple Root CA G3) im Worker prüfen, dann nur Land, Preis, Zeit, Typ an ntfy |
+| Kauf-Meldung | App Store Server Notifications V2 an `POST /apple`. Signatur (JWS, x5c-Kette bis Apple Root CA G3) im Worker prüfen, dann nur Land, Preis, Zeit, Typ an Telegram |
 | Tagesbericht | Cron-Trigger im Worker, ca. 08:07. App Store Connect API, Sales Report DAILY, Vortag. JWT ES256 mit dem `.p8`-Schlüssel |
 
 ## Zugangsdaten
