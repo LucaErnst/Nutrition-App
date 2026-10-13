@@ -64,7 +64,7 @@ Entscheidung misst sich daran.
 | `docs/RELEASE-1.2.md` | Planung 1.2 (USDA-Daten, bekannte Fehler) und Liste aller Stellen, die danach wieder stimmen müssen |
 | `docs/PUSH-BENACHRICHTIGUNGEN.md` | Plan für Kauf-Push und Tagesbericht, Key ID und Issuer ID |
 | `store/LISTING.md` | Alle Store-Texte, Stand = eingereicht. Zeichenzahlen stehen dabei. |
-| `store/creative/{de,en}/` | Header (3840 × 1646) und Suchbild (2880 × 1920), von Apple freigegeben, Zuordnung offen |
+| `store/creative/{de,en}/` | Header (3840 × 1646) und Suchbild (2880 × 1920), live seit 13.10. (beide Sprachen) |
 | `store/screenshots.mjs` | Erzeugt Screenshots und Creative Assets in einem Lauf (`npm run screenshots`) |
 | `marketing/Drehtag-TikTok.docx` | 14 Drehbücher in Drehreihenfolge plus Kalender |
 | `marketing/LAUNCH-1.1.md` | Launch-Plan, Preislogik, Kanäle |
@@ -131,12 +131,9 @@ Alles für 1.1, in der Reihenfolge der Entstehung:
 
 1. ~~Prüfen, dass 1.1 live ist~~ (erledigt 12.10., 13:20). Offen: Kauf einmal mit echtem Konto testen und auf einem Gerät prüfen, das die
    App vor 1.1 hatte – dort muss Pro geschenkt sein.
-2. **Creative Assets:** alle vier am 13.10. von Apple **freigegeben** (Approved). Zuordnen unter
-   Version 1.1 → Produktseite → „Header and Search Results", je Sprache (Sprachumschalter oben
-   rechts): Header und Suchbild über „Browse Assets" wählen, dann „Publish". Ohne Nummer = deutsch,
-   „(21)"/„(22)" = englisch. **Publish klickt Luca selbst** – der Auto-Modus blockiert ihn für Claude
-   (wie schon beim Einreichen). Stand 13.10.: **Header Englisch veröffentlicht.** Offen: Suchbild
-   Englisch, Header und Suchbild Deutsch.
+2. ~~Creative Assets~~ – erledigt 13.10.: Header und Suchbild in Deutsch und Englisch auf der
+   Produktseite von 1.1 zugeordnet und live. In der Asset Library: ohne Nummer = deutsch,
+   „(21)"/„(22)" = englisch. „Publish" in App Store Connect blockiert der Auto-Modus für Claude.
 3. ~~Web-Version pushen~~ – erledigt 12.10., Pages-Deploy erfolgreich.
 4. **TikTok:** Clips nach `marketing/Drehtag-TikTok.docx` drehen. Website-Link geht erst ab 1'000
    Followern (Unternehmenskonto ging nicht); bis dahin Instagram im Profil verknüpfen,

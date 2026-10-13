@@ -98,7 +98,7 @@ Produktseite und eines neben dem Namen in der Suche. Die Bilder liegen fertig in
 - [x] Hochladen über Asset Library → „Upload Creative Assets". Apple prüft sie separat.
       Erledigt 12.10.2026, 13:27: alle vier „Waiting for Review". Namen in der Library:
       `header.png` / `search.png` = Deutsch, `header.png (21)` / `search.png (22)` = Englisch.
-- [ ] Danach unter Produktseite → „Header and Search Results" zuordnen. (13.10.: alle vier Approved; Header EN veröffentlicht, Suchbild EN und beide DE offen)
+- [x] Danach unter Produktseite → „Header and Search Results" zuordnen. (13.10.: alle vier zugeordnet, DE und EN)
 
 ## 6. Offen, aber kein Hindernis für 1.1
 
