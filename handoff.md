@@ -135,7 +135,8 @@ Alles für 1.1, in der Reihenfolge der Entstehung:
    Nach Apples Freigabe unter Produktseite → „Header and Search Results" zuordnen. In der Library
    sind die Dateien ohne Nummer deutsch, „(21)"/„(22)" englisch.
 3. ~~Web-Version pushen~~ – erledigt 12.10., Pages-Deploy erfolgreich.
-4. **TikTok:** Clips nach `marketing/Drehtag-TikTok.docx` drehen, Bio-Link auf die Store-Seite,
+4. **TikTok:** Clips nach `marketing/Drehtag-TikTok.docx` drehen. Website-Link geht erst ab 1'000
+   Followern (Unternehmenskonto ging nicht); bis dahin Instagram im Profil verknüpfen,
    Instagram verknüpfen, Metricool neu verbinden.
 5. **31.01.2027:** Werbetext zurücksetzen, er nennt den Einführungspreis.
 6. **Instagram @seriousnutrition.app:** 12. bis 25.10. ist geplant. Bio-Link ist gesetzt. Luca
@@ -144,6 +145,8 @@ Alles für 1.1, in der Reihenfolge der Entstehung:
    RevenueCat-Weiterleitung gesetzt). Stand in `docs/PUSH-BENACHRICHTIGUNGEN.md`. Die `.p8`-Datei gibt Luca nie in den Chat.
 8. **1.2 planen:** `docs/RELEASE-1.2.md`. Fest vorgemerkt: USDA FoodData Central (SR Legacy, CC0)
    für US-Nutzer, nur in englischer App-Sprache sichtbar (entschieden 10.10.).
+   Ausserdem Schritte aus Apple Health lesen, nur als Erklärung im Wochenfazit, ohne Schrittziel
+   und ohne Einfluss auf Kalorienziele (entschieden 13.10., A3).
 
 **Offene Entscheidungen von Luca**
 - Ab Februar kostet Pro in Deutschland/Österreich **EUR 34.99** (Apples Umrechnung von CHF 25).

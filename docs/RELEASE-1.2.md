@@ -62,7 +62,34 @@ deutschen. Folgen für den Bau:
       Free-Ansicht wäre ein zweiter Kauf möglich. Behoben in `src/components/ProSection.tsx`: nur noch
       in Entwicklungs-Builds (`import.meta.env.DEV`). **Geht erst mit dem nächsten Build raus.**
 
-### A3. Weitere Ideen (noch nicht entschieden)
+### A3. Schritte aus Apple Health (entschieden 13.10.2026)
+
+Schritte **lesen**, nicht selbst zählen: Health kennt sie schon, inklusive Apple Watch, und
+rechnet Doppelzählungen heraus. Kein eigener Zähler über CoreMotion.
+
+- **Leitlinie:** Schritte erklären, sie steuern nicht. Sie verändern **nie** Kalorien- oder
+  Makroziele, kein „verdiente Kalorien". Das widerspräche Trend-Zielen und Wochenbudget
+  (`docs/COACHING-RULES.md`).
+- **Kein Schrittziel.** Luca hat es am 13.10.2026 bewusst weggelassen; erst wieder prüfen, wenn
+  Nutzer danach fragen.
+- **Native:** `stepCount` (`HKQuantityTypeIdentifier.stepCount`) in `ios/App/App/HealthBridgePlugin.swift`
+  zu den Lesetypen; neue Methode für die Tagessumme über einen Zeitraum per
+  `HKStatisticsCollectionQuery` mit `.cumulativeSum` (nicht Samples addieren, sonst zählen iPhone
+  und Watch doppelt). Bestehende Nutzer werden beim nächsten Öffnen einmal neu gefragt, das ist
+  normal.
+- **App:** `src/lib/health.ts` um das Lesen erweitern, wie `readActiveEnergy`. Nur mit Pro und
+  `health_enabled`, in der Web-Version unsichtbar.
+- **Anzeige:** Wochenschnitt der Schritte in der Wochenansicht (`src/lib/week.ts`). Tageswert
+  optional in der Tagesübersicht neben der aktiven Energie.
+- **Fazit:** Hinweis, wenn der Gewichtstrend stockt **und** die Schritte deutlich unter dem Schnitt
+  der vier Wochen davor liegen (Schwelle festlegen, Vorschlag −20 %). Beispiel: „Gewicht stagniert,
+  Schritte −25 % gegenüber deinem Schnitt." Texte in `src/i18n/de.ts` und `en.ts`.
+- **Datenlücken:** Tage ohne Health-Daten zählen nicht als 0, sonst fällt der Schnitt falsch.
+- **Tests:** Unit-Tests für Wochenschnitt und Fazit-Regel (inkl. Lücken), e2e: ohne Health keine
+  Schrittanzeige.
+- **Store:** Danach Beschreibung („Apple Health"-Absatz) und B-Teil prüfen.
+
+### A4. Weitere Ideen (noch nicht entschieden)
 
 - **Live Activity / Dynamic Island:** übrige Kalorien und Protein-Ring kompakt in der Insel,
   ausgeklappt alle Makros und Wasser, dazu eine Karte auf dem Sperrbildschirm. Start beim ersten

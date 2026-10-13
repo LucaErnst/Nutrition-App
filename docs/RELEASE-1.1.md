@@ -81,7 +81,7 @@ Regulär ist **CHF 25.00**, die 15 sind der Einführungspreis. Zwischen Apples F
 - [ ] Kauf einmal mit einem echten Konto testen (Sandbox verhält sich anders als der Live-Store)
       und dabei prüfen, dass die Paywall den Einführungspreis zeigt. Das Geld geht wirklich weg;
       über „Probleme melden" liesse es sich zurückholen.
-- [ ] Auf einem Gerät prüfen, das die App vor 1.1 hatte: Pro muss geschenkt sein
+- [x] Auf einem Gerät prüfen, das die App vor 1.1 hatte: Pro muss geschenkt sein (Luca, 12.10.: ok)
       (Mehr → Serious Nutrition Pro zeigt die goldene Karte)
 - [ ] Marketing-Tag starten (`marketing/LAUNCH-1.1.md`): TikTok, Instagram, Bio-Link auf die Store-Seite
 - [ ] Bewertungs-Abfrage im Auge behalten – sie erscheint erst im Live-Store, nie in TestFlight
