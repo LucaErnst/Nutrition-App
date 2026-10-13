@@ -147,6 +147,7 @@ Alles für 1.1, in der Reihenfolge der Entstehung:
    für US-Nutzer, nur in englischer App-Sprache sichtbar (entschieden 10.10.).
    Ausserdem Schritte aus Apple Health lesen, nur als Erklärung im Wochenfazit, ohne Schrittziel
    und ohne Einfluss auf Kalorienziele (entschieden 13.10., A3).
+   Und Hinweise beim ersten Kontakt statt einer Einführungstour (entschieden 13.10., A4).
 
 **Offene Entscheidungen von Luca**
 - Ab Februar kostet Pro in Deutschland/Österreich **EUR 34.99** (Apples Umrechnung von CHF 25).

@@ -89,7 +89,34 @@ rechnet Doppelzählungen heraus. Kein eigener Zähler über CoreMotion.
   Schrittanzeige.
 - **Store:** Danach Beschreibung („Apple Health"-Absatz) und B-Teil prüfen.
 
-### A4. Weitere Ideen (noch nicht entschieden)
+### A4. Erste Schritte: Hinweise im Moment statt Tour (entschieden 13.10.2026)
+
+Keine Folien-Tour und keine Spotlight-Tour nach dem Onboarding: Die werden weggetippt, und nach drei
+Einrichtungsschritten ist das zu viel. Stattdessen erklärt die App ihre Besonderheiten dort, wo man
+sie zum ersten Mal sieht. Das Eintragen selbst braucht keine Erklärung.
+
+- **Leerer erster Tag:** Leerzustand mit Pfeil zum Plus, z. B. „Trag dein erstes Lebensmittel ein,
+  auch ohne Internet."
+- **Einmalige Hinweise** (je eine Zeile, mit einem Tipp wegklickbar):
+  - Tagesübersicht: Trainings- oder Ruhetag umschalten, die Ziele passen sich an.
+  - Erster Besuch der Wochenansicht: Wochenbudget, ein Tag über Ziel ist okay.
+  - Nach dem dritten Gewichtseintrag: Der 7-Tage-Trend zählt, nicht der Einzelwert.
+  - Nach dem ersten wiederholten Frühstück: als Vorlage speichern (Pro; für Free als Hinweis auf
+    Pro, nicht als Sperre formulieren).
+- **Speichern:** gesehene Hinweise lokal in den Einstellungen (z. B. `tips_seen: string[]` in
+  `src/db/types.ts`, neben `onboarding_done`). Unter „Mehr" ein Schalter „Hinweise wieder zeigen".
+- **Bestehende Nutzer:** Wer vor 1.2 schon Einträge hat, bekommt die Hinweise **nicht**
+  (Leerzustand bleibt). Sonst wirkt das Update wie ein Rückschritt.
+- **Ton:** Coach, kurz, kein Ausrufezeichen-Marketing. Texte in `src/i18n/de.ts` und `en.ts`.
+- **Tests:** e2e: frischer Start zeigt Leerzustand, Hinweis verschwindet nach Tipp und bleibt nach
+  Neuladen weg; Nutzer mit Daten sieht keine Hinweise. Bestehende e2e-Tests dürfen nicht an
+  Hinweis-Overlays hängen bleiben (Hinweise in den Test-Fixtures als gesehen markieren).
+- **Messen geht nicht** (keine Analytics, Absicht). Wirkung über Rückmeldungen und Bewertungen
+  beurteilen.
+- **Store:** Screenshots nach dem Bau prüfen, dass kein Hinweis darauf steht
+  (`store/screenshots.mjs`: Hinweise als gesehen setzen).
+
+### A5. Weitere Ideen (noch nicht entschieden)
 
 - **Live Activity / Dynamic Island:** übrige Kalorien und Protein-Ring kompakt in der Insel,
   ausgeklappt alle Makros und Wasser, dazu eine Karte auf dem Sperrbildschirm. Start beim ersten
