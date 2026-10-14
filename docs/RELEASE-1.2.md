@@ -161,8 +161,29 @@ oder später neu rechnen will (anderes Gewicht, neue Phase), kommt nicht mehr hi
   „Aktuelle Phase anpassen". Nie still bestehende Ziele ändern.
 - **Aktuelles Gewicht vorbelegen** aus dem 7-Tage-Schnitt, falls vorhanden.
 - **Free.** Ist heute im Onboarding auch gratis.
-- **Tests:** vorhandene Unit-Tests in `onboarding.test.ts` decken die Formel ab; neu e2e: Rechner
-  aus Mehr öffnen, Werte eingeben, als Phase übernehmen.
+
+**Rechnung realistischer machen (entschieden 14.10.2026).** Mifflin-St Jeor mit Geschlecht, Alter,
+Grösse und Gewicht bleibt (genaueste Formel ohne Körperfettmessung). Geändert wird in
+`src/lib/onboarding.ts`:
+
+1. **Alltag und Training trennen.** Heute steckt beides in `Activity` (4 Stufen, Faktor 1,35–1,8).
+   Neu zwei Fragen: *Alltag* (sitzend / gemischt / stehend / körperlich, Faktor auf den Grundumsatz)
+   und *Trainingstage pro Woche* (wird schon gefragt, fliesst bisher nur in die Verteilung
+   Trainings-/Ruhetag). Training als Zuschlag pro Woche, über die Tage verteilt. Faktoren und
+   Zuschlag aus einer Quelle (z. B. FAO/WHO-PAL-Werte) übernehmen und im Code nennen.
+2. **Untergrenze:** Kein Tagesziel unter dem Grundumsatz. Greift die Grenze, Hinweis im Ergebnis
+   („Langsameres Defizit, dafür haltbar").
+3. **Protein bei hohem BMI:** ab BMI > 30 Protein auf ein Referenzgewicht aus der Grösse rechnen
+   (z. B. Gewicht bei BMI 25), nicht auf das volle Körpergewicht. Fett ebenso.
+4. **Herleitung als Tabelle im Ergebnis:** Grundumsatz → + Alltag → + Training → = Erhaltung →
+   ± Phase → Ziel (Trainings- und Ruhetag). Jede Zeile mit kcal, damit sichtbar ist, welche Eingabe
+   wie viel ausmacht. Gilt im Onboarding und im Rechner unter Mehr.
+
+- **Bestehende Nutzer:** Ihre Ziele bleiben unberührt; die neue Rechnung greift nur, wenn sie den
+  Rechner öffnen.
+- **Tests:** `onboarding.test.ts` erweitern: Mann/Frau-Differenz (166 kcal), Alter −5 kcal/Jahr,
+  Untergrenze greift bei kleiner Frau im Defizit, Protein bei BMI 35 begrenzt, Summe der Tabelle =
+  Ziel. e2e: Rechner aus Mehr öffnen, Werte eingeben, Herleitung sichtbar, als Phase übernehmen.
 
 ### A7. Weitere Ideen (noch nicht entschieden)
 
