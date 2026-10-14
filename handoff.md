@@ -134,14 +134,14 @@ Alles für 1.1, in der Reihenfolge der Entstehung:
 2. ~~Creative Assets~~ – erledigt 13.10.: Header und Suchbild in Deutsch und Englisch auf der
    Produktseite von 1.1 zugeordnet und live. In der Asset Library: ohne Nummer = deutsch,
    „(21)"/„(22)" = englisch. „Publish" in App Store Connect blockiert der Auto-Modus für Claude.
-2a. **Eigene Produktseiten pro Kanal** (14.10. angelegt, Kopie der 1.1-Seite). **Luca klickt „Add for
-   Review"** (Custom Product Pages → TikTok / Instagram). Nach Freigabe die Links setzen: TikTok-
+2a. **Eigene Produktseiten pro Kanal** (14.10. angelegt, Kopie der 1.1-Seite). Von Luca am 14.10.
+   eingereicht, **warten auf Apple**. Nach Freigabe die Links setzen: TikTok-
    Bio/Captions bzw. Instagram-Bio statt des normalen Store-Links. Downloads je Kanal dann in App
    Analytics → Quelle „Custom Product Page".
    - TikTok: `https://apps.apple.com/app/id6814075860?ppid=5c0820eb-b801-44fe-b199-7b4033937436`
    - Instagram: `https://apps.apple.com/app/id6814075860?ppid=253c4913-4ce0-4765-ad5e-e3a31c94940c`
 2b. **Screenshot 7** („Schweizer Küche. Auch offline." / „Built-in foods. Works offline.") in der Asset
-   Library als `07-offline-de.png` / `07-offline-en.png`, wartet auf „Add for Review" (Luca). Nach
+   Library als `07-offline-de.png` / `07-offline-en.png`, von Luca am 14.10. eingereicht. Nach
    Freigabe auf der Produktseite als 7. Bild je Sprache anhängen. Erzeugt von `npm run screenshots`;
    die Bilder 1–6 und Header dabei **nicht** neu committen (ändern sich nur durchs Datum).
 3. ~~Web-Version pushen~~ – erledigt 12.10., Pages-Deploy erfolgreich.
