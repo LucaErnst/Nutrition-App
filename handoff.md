@@ -158,6 +158,7 @@ Alles für 1.1, in der Reihenfolge der Entstehung:
    Ausserdem Schritte aus Apple Health lesen, nur als Erklärung im Wochenfazit, ohne Schrittziel
    und ohne Einfluss auf Kalorienziele (entschieden 13.10., A3).
    Und Hinweise beim ersten Kontakt statt einer Einführungstour (entschieden 13.10., A4).
+   Ideen vom 14.10.: Stückzahl für Grundnahrungsmittel (A5), Bedarfsrechner jederzeit erreichbar (A6).
 
 **Offene Entscheidungen von Luca**
 - Ab Februar kostet Pro in Deutschland/Österreich **EUR 34.99** (Apples Umrechnung von CHF 25).

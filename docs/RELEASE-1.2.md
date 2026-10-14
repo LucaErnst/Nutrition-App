@@ -122,7 +122,49 @@ sie zum ersten Mal sieht. Das Eintragen selbst braucht keine Erklärung.
 - **Store:** Screenshots nach dem Bau prüfen, dass kein Hinweis darauf steht
   (`store/screenshots.mjs`: Hinweise als gesehen setzen).
 
-### A5. Weitere Ideen (noch nicht entschieden)
+### A5. Stückzahl für Grundnahrungsmittel (Idee Luca, 14.10.2026)
+
+Ziel: „Banane 1 Stk." oder „Eier 3 Stk." eintragen, ohne Gramm zu kennen.
+
+**Stand 1.1:** Stück gibt es schon, aber nur für **eigene** Lebensmittel (`unit_type: 'piece'` mit
+`piece_weight_g` in `src/components/FoodItemForm.tsx`). Die 6'900 mitgelieferten Einträge sind alle
+`'weight'`. Wer „Ei" sucht, muss Gramm eingeben.
+
+- **Stückgewichte für häufige Lebensmittel** als eigene kleine Tabelle (Schlüssel = `ref_key`),
+  z. B. Ei (M) 60 g, Banane 120 g, Apfel 150 g, Scheibe Brot 40 g, Toastscheibe 25 g, Kiwi 75 g.
+  Rund 50–100 Einträge reichen für den Alltag. Quelle für jeden Wert notieren (Datentreue,
+  `docs/COACHING-RULES.md`), keine geschätzten Werte ohne Beleg.
+- **Eingabe:** Bei solchen Einträgen im Mengen-Stepper Umschalter „g | Stk." mit Stück als Vorgabe.
+  Gespeichert bleibt wie heute die Menge im Snapshot, damit alte Tage unverändert bleiben.
+- **Zahl im Namen anzeigen:** „3 Stk. (180 g)", damit klar ist, womit gerechnet wird.
+- **Eigene Korrektur:** Stückgewicht pro Lebensmittel änderbar (ein grosses Ei ist 70 g).
+- **Free oder Pro?** Vorschlag: **Free**. Portionsgrössen bleiben Pro; Stück ist so grundlegend,
+  dass es ohne Kauf gehen muss, sonst wirkt die App kaputt.
+- **Tests:** Unit-Test Umrechnung Stk. ↔ g, e2e: „Ei" suchen, 3 Stk. eintragen, kcal stimmen.
+
+### A6. Bedarfsrechner jederzeit erreichbar (Idee Luca, 14.10.2026)
+
+Ziel: Wer keine Ahnung hat, gibt Grösse, Alter, Geschlecht, Gewicht und Aktivität ein und bekommt
+seinen Bedarf.
+
+**Stand 1.1:** Der Rechner ist schon da – aber **nur im Onboarding** (`src/lib/onboarding.ts`,
+`bmrMifflin` + `suggestGoals`, Mifflin-St Jeor mit Aktivitätsfaktor). Wer dort „Überspringen" tippt
+oder später neu rechnen will (anderes Gewicht, neue Phase), kommt nicht mehr hin.
+
+- **Einstieg:** in Mehr → Ziele/Phase ein Knopf „Bedarf berechnen", dazu bei leerer Phase ein
+  Hinweis (passt zu A4). Öffnet denselben Ablauf wie das Onboarding (Körperdaten → Vorschlag),
+  Komponente aus `Onboarding.tsx` herauslösen statt kopieren.
+- **Ergebnis erklären:** Grundumsatz, Gesamtbedarf und das vorgeschlagene Ziel je Phase (Aufbau,
+  Defizit, Erhalt) in einem Satz. Werte sind ein **Startpunkt**; nach 2–3 Wochen zählt der
+  Gewichtstrend (Coaching-Regeln). Das gehört sichtbar dazu, sonst wirkt die Zahl wie eine Messung.
+- **Übernehmen statt Überschreiben:** Vorschlag zeigen, „Als neue Phase übernehmen" oder
+  „Aktuelle Phase anpassen". Nie still bestehende Ziele ändern.
+- **Aktuelles Gewicht vorbelegen** aus dem 7-Tage-Schnitt, falls vorhanden.
+- **Free.** Ist heute im Onboarding auch gratis.
+- **Tests:** vorhandene Unit-Tests in `onboarding.test.ts` decken die Formel ab; neu e2e: Rechner
+  aus Mehr öffnen, Werte eingeben, als Phase übernehmen.
+
+### A7. Weitere Ideen (noch nicht entschieden)
 
 - **Live Activity / Dynamic Island:** übrige Kalorien und Protein-Ring kompakt in der Insel,
   ausgeklappt alle Makros und Wasser, dazu eine Karte auf dem Sperrbildschirm. Start beim ersten
