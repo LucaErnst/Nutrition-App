@@ -1,5 +1,6 @@
 import { db } from '../db/db';
 import { backfillSnapshots } from '../db/hooks';
+import { refreshReferenceAfterRestore } from '../db/seed';
 import { scheduleReminderSync } from './remindersNative';
 import { t } from '../i18n';
 import { isNative, shareFile } from './native';
@@ -124,6 +125,7 @@ export async function restoreBackup(b: Backup): Promise<void> {
   });
   // Backups aus Versionen vor 0.4 haben keine Snapshots
   await backfillSnapshots();
+  await refreshReferenceAfterRestore();
   scheduleReminderSync();
 }
 

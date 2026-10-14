@@ -161,6 +161,23 @@ export async function syncReferenceLanguage(lang: 'de' | 'en'): Promise<number> 
   return changed.length;
 }
 
+/**
+ * Nach dem Wiederherstellen eines Backups: Die Lebensmittel-Tabelle stammt jetzt aus der Datei,
+ * die Vermerke im localStorage aber noch vom Gerät. Ein Backup aus 1.0 kennt die mitgelieferte
+ * Tabelle nicht – ohne diesen Abgleich wäre sie bis zur nächsten Tabellen-Version verschwunden.
+ * Erst umbenennen, dann ergänzen, sonst kämen fehlende Einträge in der falschen Sprache dazu.
+ */
+export async function refreshReferenceAfterRestore(): Promise<void> {
+  try {
+    localStorage.removeItem(REFERENCE_STAMP);
+    localStorage.removeItem(REFERENCE_LANG);
+  } catch {
+    // ohne localStorage wird ohnehin bei jedem Start verglichen
+  }
+  await syncReferenceLanguage(getLanguage() === 'de' ? 'de' : 'en');
+  await seedReference();
+}
+
 /** Legt die Referenzdaten und die aktuelle Phase einmalig an. */
 export async function seedIfEmpty(): Promise<void> {
   const count = await db.foodItems.where('source').equals('reference').count();

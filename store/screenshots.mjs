@@ -109,6 +109,12 @@ const SHOTS = [
     en: { top: 'No account.', accent: 'No ads.', sub: 'Everything stays on your phone.' },
     de: { top: 'Kein Konto.', accent: 'Keine Werbung.', sub: 'Alles bleibt auf deinem Gerät.' },
   },
+  {
+    // Aufgenommen ohne Netz: die Treffer kommen aus der mitgelieferten Tabelle (BLS + BLV).
+    name: '07-offline',
+    en: { top: 'Built-in foods.', accent: 'Works offline.', sub: 'Thousands of basics, no signal needed.' },
+    de: { top: 'Schweizer Küche.', accent: 'Auch offline.', sub: 'Amtliche Schweizer Werte, direkt in der App.' },
+  },
 ];
 
 /** Rahmen um den Screenshot: dunkler Hintergrund, Überschrift, Gerät läuft unten aus dem Bild. */
@@ -269,6 +275,21 @@ async function main() {
       });
       await page.waitForTimeout(350);
       await grab('06-privacy');
+
+      // Ohne Netz suchen: zeigt, dass die Grundnahrungsmittel in der App liegen. „Rösti" trifft
+      // in beiden Sprachen mehrere Einträge, im Deutschen aus der Schweizer Nährwertdatenbank.
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.getByRole('button', { name: t('Diary', 'Tagebuch') }).click();
+      await page.waitForTimeout(400);
+      await context.setOffline(true);
+      await page.getByRole('button', { name: t('Add item to Dinner', 'Posten zu Abendessen hinzufügen') }).click();
+      await page.waitForTimeout(800);
+      await page.getByPlaceholder(t('Search foods…', 'Lebensmittel suchen…')).fill('Rösti');
+      await page.waitForTimeout(1500);
+      await page.getByPlaceholder(t('Search foods…', 'Lebensmittel suchen…')).blur();
+      await page.waitForTimeout(300);
+      await grab('07-offline');
+      await context.setOffline(false);
 
       // Rahmen rendern – eigener Kontext ohne Gerätemerkmale, damit nichts hineinfunkt.
       const frameCtx = await browser.newContext({ viewport: { width: 430, height: 932 }, deviceScaleFactor: 3 });

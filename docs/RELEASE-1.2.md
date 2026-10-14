@@ -57,6 +57,12 @@ deutschen. Folgen für den Bau:
       (z. B. mit `CFBundleDisplayName`) ins Ziel „App" legen. Danach im `.ipa` prüfen, dass
       `de.lproj` drin ist.
 
+- [x] Backup wiederherstellen löschte die mitgelieferten Grundnahrungsmittel, wenn das Backup
+      sie nicht enthielt (Backups aus 1.0), und der Vermerk im localStorage verhinderte das
+      Nachladen. Gefunden am 14.10.2026 beim Erzeugen von Screenshot 7. Behoben in
+      `src/db/seed.ts` (`refreshReferenceAfterRestore`), aufgerufen in `restoreBackup`; e2e-Test in
+      `e2e/week-weight-backup.spec.ts`. **Geht erst mit dem nächsten Build raus** (Web sofort mit Push).
+
 - [x] Schalter „App als Free-Nutzer ansehen" unter Mehr → Pro war im Store-Build für alle Early
       Adopter sichtbar (gemeldet von Luca am 12.10.2026). Keine Lücke, aber verwirrend, und in der
       Free-Ansicht wäre ein zweiter Kauf möglich. Behoben in `src/components/ProSection.tsx`: nur noch

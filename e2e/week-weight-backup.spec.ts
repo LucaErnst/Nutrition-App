@@ -53,3 +53,26 @@ test('backup export produces a JSON file incl. water', async ({ page }) => {
   expect(json.mealEntries[0].snapshot.name).toBe('Low-fat quark');
   expect(json.water).toHaveLength(1);
 });
+
+// Backups aus 1.0 kennen die mitgelieferte Tabelle nicht. Das Wiederherstellen leert alle
+// Lebensmittel – danach müssen die Grundnahrungsmittel trotzdem wieder da sein.
+test('restoring a backup without built-in foods brings them back', async ({ page }) => {
+  const old = {
+    app: 'nutrition-tracker', version: 1, exported_at: new Date().toISOString(),
+    foodItems: [{ id: 1, name: 'My protein bar', kcal_per_100g: 380, protein_per_100g: 33, fat_per_100g: 12, carbs_per_100g: 35,
+      unit_type: 'weight', source: 'manual', saved: 1, created_at: Date.now() }],
+    mealEntries: [], goals: [], weights: [], days: [], templates: [], water: [],
+    settings: [{ id: 1, training_weekdays: [1, 2, 4, 5], language: 'en', water_goal_ml: 3000, onboarding_done: true }],
+  };
+  await page.getByRole('button', { name: 'More' }).click();
+  await openSection(page, 'Backup');
+  await page.locator('input[type=file]').setInputFiles({ name: 'old.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(old)) });
+  await page.getByRole('button', { name: 'Replace and restore' }).click();
+  await page.waitForTimeout(500);
+  await page.reload();
+
+  await page.getByRole('button', { name: 'Diary' }).click();
+  await page.getByRole('button', { name: 'Add item to Dinner' }).click();
+  await page.getByPlaceholder('Search foods…').fill('Bernese');
+  await expect(page.getByRole('dialog').getByText('Bernese rösti fried grated potatoes')).toBeVisible();
+});
