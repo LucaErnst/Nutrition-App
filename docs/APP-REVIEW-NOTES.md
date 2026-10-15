@@ -64,3 +64,35 @@ More → Language.
 EXTERNAL SERVICES – Unchanged: Open Food Facts (openfoodfacts.org) over HTTPS for barcode lookups and
 online product search, plus Apple's StoreKit for the purchase. No accounts, no analytics, no ads, no
 backend of our own.
+
+# Ergänzung für Version 1.2
+
+Text für das Feld „Notes" bei der Einreichung von 1.2 (Englisch, an den 1.1-Text anhängen):
+
+```
+WHAT'S NEW IN 1.2 – Bundled data so the app works offline, plus small additions.
+
+BUNDLED PRODUCTS – 1.2 ships an extract of about 290,000 branded products from Open Food Facts
+(the most-scanned products worldwide plus the most-scanned of every country), with name, brand and
+energy, protein, fat and carbohydrates per 100 g. Barcode scans and product search check this
+extract first, without a network request; only products not in it are looked up online as before.
+The extract is licensed under the Open Database License (ODbL), contents under DbCL. Attribution is
+shown under More, in the description and in the terms of use.
+
+AMERICAN FOODS – When the app language is English, about 6,300 basic foods from USDA FoodData
+Central (SR Legacy, public domain) are added to the bundled food table. Piece weights for 47 common
+foods (egg, banana, apple …) also come from USDA SR Legacy.
+
+APPLE HEALTH – The app now also READS the step count (HKQuantityTypeIdentifierStepCount), in
+addition to body mass and active energy. Steps are only displayed (diary and weekly summary); they
+never leave the device and never change the user's targets. Health access remains optional and is
+part of Pro.
+
+NEEDS CALCULATOR – Under More → Phases → "Calculate needs". Estimates calorie needs from sex, age,
+height, weight, everyday activity and training days (Mifflin-St Jeor, activity factors from the
+German Nutrition Society DGE). It is labelled as a starting point, not medical advice, and only
+pre-fills a form the user saves.
+
+PRIVACY – Unchanged: no accounts, no analytics, no data collection. Fewer requests to Open Food
+Facts than before, because most lookups are answered from the bundled extract.
+```
