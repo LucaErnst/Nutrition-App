@@ -2,6 +2,7 @@ import { db } from './db';
 import type { FoodItem, Unit } from './types';
 import { getLanguage } from '../i18n';
 import { loadReference, type ReferenceRow } from './reference';
+import { PIECE_WEIGHTS } from './pieceWeights';
 
 /**
  * Startdaten aus der Spec. Werte sind pro Portion angegeben (so wie in der
@@ -96,7 +97,8 @@ async function backfillSeedKeys(): Promise<void> {
  * natur, gebraten" findet man dort schlecht – diese Tabelle füllt die Lücke und liegt offline
  * in der App.
  */
-const REFERENCE_VERSION = 'bls-4.0-ch-7.1';
+// „-pc1": Stückgewichte (1.2). Eine neue Endung lässt bestehende Installationen einmal abgleichen.
+const REFERENCE_VERSION = 'bls-4.0-ch-7.1-pc1';
 const REFERENCE_STAMP = 'nutrition-tracker:reference';
 const REFERENCE_LANG = 'nutrition-tracker:reference-lang';
 
@@ -108,12 +110,29 @@ function referenceToFoodItem(r: ReferenceRow, now: number): FoodItem {
     protein_per_100g: protein,
     fat_per_100g: fat,
     carbs_per_100g: carbs,
-    unit_type: 'weight',
+    ...pieceFields(key),
     source: 'reference',
     saved: 1,
     ref_key: key,
     created_at: now,
   };
+}
+
+/** Stück statt Gramm, wenn es für den Eintrag ein belegtes Stückgewicht gibt. */
+function pieceFields(key: string): Pick<FoodItem, 'unit_type' | 'piece_weight_g' | 'default_amount'> {
+  const g = PIECE_WEIGHTS[key];
+  return g ? { unit_type: 'piece', piece_weight_g: g, default_amount: 1 } : { unit_type: 'weight' };
+}
+
+/**
+ * Installationen vor 1.2: Die Einträge liegen schon als Gramm vor. Stückgewicht nachtragen,
+ * aber nur, wo noch keines gesetzt ist – ein selbst korrigiertes Gewicht bleibt.
+ */
+async function backfillPieceWeights(existing: FoodItem[]): Promise<void> {
+  const updates = existing
+    .filter((f) => f.ref_key && PIECE_WEIGHTS[f.ref_key] && f.unit_type === 'weight' && !f.piece_weight_g)
+    .map((f) => ({ ...f, ...pieceFields(f.ref_key!) }));
+  if (updates.length) await db.foodItems.bulkPut(updates);
 }
 
 /**
@@ -138,6 +157,7 @@ async function seedReference(): Promise<void> {
     await db.foodItems.bulkAdd(missing.map((r, i) => referenceToFoodItem(r, now + i)));
   }
   await dropRetiredReference(existing, new Set(rows.map((r) => r[0])));
+  await backfillPieceWeights(existing);
   try {
     localStorage.setItem(REFERENCE_STAMP, REFERENCE_VERSION);
     localStorage.setItem(REFERENCE_LANG, lang);

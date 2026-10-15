@@ -150,3 +150,10 @@ test('Produkte von Open Food Facts erscheinen ohne Knopfdruck', async ({ page })
   // Kein Klick auf „Search … on Open Food Facts": die Suche läuft nach der Tippause von selbst.
   await expect(page.getByText('Testmarke Skyr Vanille')).toBeVisible();
 });
+
+// Grundnahrungsmittel mit belegtem Stückgewicht (USDA) lassen sich in Stück eintragen.
+test('built-in egg is logged by the piece', async ({ page }) => {
+  await addFromSearch(page, 'Breakfast', 'Chicken egg raw', '3');
+  // 135 kcal/100 g × 3 × 50 g = 202.5
+  await expect(kcalTotal(page)).toHaveText('203');
+});

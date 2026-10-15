@@ -2,11 +2,11 @@ import { useState } from 'react';
 import type { MealType } from '../db/types';
 import { usePro } from '../lib/pro';
 import { openPaywall, ProBadge } from './Paywall';
-import { copyMeal, deleteMealEntry, restoreMealEntry, saveTemplate, updateMealEntryAmount, useCopySources } from '../db/hooks';
+import { copyMeal, deleteMealEntry, restoreMealEntry, saveTemplate, updateMealEntryAmount, useCopySources, useUnitSystem } from '../db/hooks';
 import { addDays } from '../lib/date';
 import { fmt, sumMacros, type EntryWithFood } from '../lib/nutrition';
 import { mealLabel, useT } from '../i18n';
-import { fmtAmount, labelFor } from '../lib/units';
+import { fmtAmount, isPieceUnit, labelFor } from '../lib/units';
 import { AddEntryDialog } from './AddEntryDialog';
 import { AmountStepper } from './AmountStepper';
 import { useToast } from './Toast';
@@ -169,6 +169,9 @@ function EntryRow({ item }: { item: EntryWithFood }) {
   }
 
   const unitLabel = labelFor(entry.unit, t('unit.piece'));
+  // „3 Stück (150 g)": zeigt, womit gerechnet wird. Gramm nur im metrischen System.
+  const system = useUnitSystem();
+  const pieceGrams = isPieceUnit(entry.unit) && food.piece_weight_g && system === 'metric' ? entry.amount * food.piece_weight_g : 0;
 
   return (
     <li className="entry">
@@ -201,6 +204,7 @@ function EntryRow({ item }: { item: EntryWithFood }) {
           ) : (
             <button className="btn-link" onClick={() => setEditing(true)} title={t('slot.changeAmount')}>
               {fmtAmount(entry.amount, entry.unit)} {unitLabel}
+              {pieceGrams > 0 && ` (${fmt(pieceGrams)} g)`}
             </button>
           )}
         </span>
