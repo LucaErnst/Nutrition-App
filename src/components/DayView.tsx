@@ -83,7 +83,7 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
 
         {budget && <WeekBudgetCard budget={budget} isCurrent compact />}
 
-        <Tip id="day-type" when={!!goal}>
+        <Tip id="day-type" when={!!goal && !!entryCount}>
           {t('tip.dayType')}
         </Tip>
 
