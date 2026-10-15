@@ -121,6 +121,8 @@ export const en = {
   'search.favAdd': 'Mark {name} as favorite',
   'search.favRemove': 'Remove {name} from favorites',
   'search.backToSearch': '‹ Back to search',
+  'search.localProducts': 'Products in the app ({n}) – no internet needed',
+  'search.localProductsLabel': 'Products in the app',
   'search.offButton': 'Search “{q}” on Open Food Facts',
   'search.offRetry': 'Try again',
   'search.offSearching': 'Searching “{q}” on Open Food Facts…',

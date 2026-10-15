@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { addFromSearch, freshApp, kcalTotal, openSection } from './helpers';
+import { addFromSearch, freshApp, kcalTotal, openSection, stubLocalProducts } from './helpers';
 
 test.beforeEach(async ({ page }) => {
   await freshApp(page);
@@ -156,4 +156,23 @@ test('built-in egg is logged by the piece', async ({ page }) => {
   await addFromSearch(page, 'Breakfast', 'Chicken egg raw', '3');
   // 135 kcal/100 g × 3 × 50 g = 202.5
   await expect(kcalTotal(page)).toHaveText('203');
+});
+
+// Mitgelieferte Produkte (1.2): erscheinen sofort, ohne dass der Server gefragt wird
+test('bundled products show instantly without asking the server', async ({ page }) => {
+  await stubLocalProducts(page, [
+    ['7612345678901', 'Bundled Protein Pudding', 'Testbrand', 80, 10, 1.5, 6, 200, 0],
+    ['7612345678902', 'Bundled Protein Bar', 'Testbrand', 360, 30, 12, 30, 60, 0],
+  ]);
+  let serverAsked = false;
+  await page.route(/search\.openfoodfacts\.org|\/api\/v2\/search|\/cgi\/search\.pl/, (route) => {
+    serverAsked = true;
+    return route.fulfill({ json: { count: 0, products: [], hits: [] } });
+  });
+  await page.getByRole('button', { name: 'Add item to Breakfast' }).click();
+  await page.getByRole('searchbox', { name: 'Search foods' }).fill('bundled protein');
+  await expect(page.getByText('Products in the app (2)', { exact: false })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Bundled Protein Pudding/ })).toBeVisible();
+  // Zwei Treffer sind weniger als fünf: online wird zusätzlich gesucht
+  await expect.poll(() => serverAsked).toBe(true);
 });

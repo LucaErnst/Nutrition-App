@@ -25,6 +25,17 @@ export async function stubOffSearch(page: Page) {
   await page.route(/\/cgi\/search\.pl|search\.openfoodfacts\.org|\/api\/v2\/search/, (route) =>
     route.fulfill({ json: { count: 0, products: [], hits: [] } }),
   );
+  // Die mitgelieferten Produkte (1.2, ~290'000) machen Suchergebnisse vom Datenstand abhängig.
+  // Tests bekommen standardmässig keine; wer sie braucht, liefert eine kleine Datei selbst.
+  await page.route('**/data/off-products.tsv.gz', (route) => route.fulfill({ status: 404, body: '' }));
+}
+
+/** Kleine Ersatzdatei für die mitgelieferten Produkte, Format wie tools/build-off-products.mjs. */
+export async function stubLocalProducts(page: Page, rows: (string | number)[][]) {
+  await page.unroute('**/data/off-products.tsv.gz');
+  await page.route('**/data/off-products.tsv.gz', (route) =>
+    route.fulfill({ status: 200, contentType: 'text/plain', body: rows.map((r) => r.join('\t')).join('\n') + '\n' }),
+  );
 }
 
 /** Frische App: IndexedDB und localStorage leeren, dann laden (Seed läuft automatisch). */

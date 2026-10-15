@@ -114,6 +114,8 @@ export const de: Record<MessageKey, string> = {
   'search.favAdd': '{name} als Favorit markieren',
   'search.favRemove': '{name} aus Favoriten entfernen',
   'search.backToSearch': '‹ Zurück zur Suche',
+  'search.localProducts': 'Produkte in der App ({n}) – ohne Internet',
+  'search.localProductsLabel': 'Produkte in der App',
   'search.offButton': '„{q}“ bei Open Food Facts suchen',
   'search.offRetry': 'Nochmals versuchen',
   'search.offSearching': 'Suche „{q}“ bei Open Food Facts…',

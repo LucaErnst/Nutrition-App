@@ -8,6 +8,7 @@ import { ScanTab } from './ScanTab';
 import { TemplatesTab } from './TemplatesTab';
 import { usePro } from '../lib/pro';
 import { openPaywall } from './Paywall';
+import { warmLocalProducts } from '../lib/offLocal';
 
 interface Props {
   date: string;
@@ -22,6 +23,9 @@ export function AddEntryDialog({ date, mealType, onClose }: Props) {
   const [tab, setTab] = useState<Tab>('search');
   const pro = usePro();
   useScrollLock();
+
+  // Mitgelieferte Produkte vorladen, bevor jemand tippt oder scannt.
+  useEffect(() => warmLocalProducts(), []);
 
   useEffect(() => {
     function onKey(ev: KeyboardEvent) {

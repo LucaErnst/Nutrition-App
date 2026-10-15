@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { searchLocalProducts } from '../lib/offLocal';
 import { searchProducts, type OffProduct } from '../lib/openfoodfacts';
 import { fmt } from '../lib/nutrition';
 import { useT } from '../i18n';
@@ -16,6 +17,8 @@ import { useT } from '../i18n';
 /** Ab wie vielen Zeichen von selbst gesucht wird und wie lange nach dem letzten Tastendruck. */
 const AUTO_SEARCH_MIN_CHARS = 3;
 const AUTO_SEARCH_DELAY_MS = 600;
+/** Ab so vielen mitgelieferten Treffern sucht die App nicht mehr von selbst online. */
+const LOCAL_ENOUGH = 5;
 
 type OffState =
   | { kind: 'idle' }
@@ -75,19 +78,58 @@ export function ProductSearch({ query, onPick }: Props) {
     }
   }
 
+  // Mitgelieferte Produkte (1.2): sofort, ohne Netz. Online kommt danach dazu, ohne Doppelte.
+  const [local, setLocal] = useState<{ query: string; products: OffProduct[] }>({ query: '', products: [] });
+  useEffect(() => {
+    if (q.length < 2) return;
+    let alive = true;
+    void searchLocalProducts(q).then((products) => alive && setLocal({ query: q, products }));
+    return () => {
+      alive = false;
+    };
+  }, [q]);
+  const localProducts = local.query === q ? local.products : [];
+  const localCodes = new Set(localProducts.map((p) => p.barcode));
+
   // Produkte kommen von selbst, sobald jemand aufhört zu tippen. Nach einem Fehler wird nicht
   // von allein wiederholt – sonst läuft die Suche bei einer Störung endlos gegen die Wand.
   useEffect(() => {
-    if (q.length < AUTO_SEARCH_MIN_CHARS || off.kind !== 'idle') return;
+    // Liefert die App schon genug Treffer, fragt sie den Server nicht von selbst – das schont
+    // Open Food Facts und vermeidet die Ladeanzeige. Der Knopf bleibt für alles Weitere.
+    if (q.length < AUTO_SEARCH_MIN_CHARS || off.kind !== 'idle' || local.query !== q || local.products.length >= LOCAL_ENOUGH) return;
     const timer = window.setTimeout(() => void search(), AUTO_SEARCH_DELAY_MS);
     return () => window.clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q, off.kind]);
+  }, [q, off.kind, local]);
+
+  const item = (p: OffProduct) => (
+    <li key={p.barcode}>
+      <button className="search-item" onClick={() => onPick(p)}>
+        <span className="search-item-main">
+          <span className="search-item-name">{p.name}</span>
+          <span className="search-item-portion">
+            {p.brand && `${p.brand} · `}
+            {t('search.per100', { unit: p.is_liquid ? 'ml' : 'g' })} · {t('macro.p')} {fmt(p.protein_per_100g)} · {t('macro.f')} {fmt(p.fat_per_100g)} · {t('macro.c')} {fmt(p.carbs_per_100g)}
+            {p.incomplete && ` · ${t('search.incomplete')}`}
+          </span>
+        </span>
+        <span className="search-item-kcal">{fmt(p.kcal_per_100g)} kcal</span>
+      </button>
+    </li>
+  );
 
   if (q.length < 2) return null;
 
   return (
     <div className="off-search">
+      {localProducts.length > 0 && (
+        <>
+          <p className="search-hint">{t('search.localProducts', { n: localProducts.length })}</p>
+          <ul className="search-list" aria-label={t('search.localProductsLabel')}>
+            {localProducts.map(item)}
+          </ul>
+        </>
+      )}
       {off.kind === 'idle' && (
         <div className="off-search-row">
           <button type="button" className="btn-secondary" onClick={() => void search()}>
@@ -114,23 +156,7 @@ export function ProductSearch({ query, onPick }: Props) {
               : t('search.offResults', { shown: off.products.length, total: fmt(off.total) })}
             {off.query !== q && t('search.offFor', { q: off.query })}
           </p>
-          <ul className="search-list">
-            {off.products.map((p) => (
-              <li key={p.barcode}>
-                <button className="search-item" onClick={() => onPick(p)}>
-                  <span className="search-item-main">
-                    <span className="search-item-name">{p.name}</span>
-                    <span className="search-item-portion">
-                      {p.brand && `${p.brand} · `}
-                      {t('search.per100', { unit: p.is_liquid ? 'ml' : 'g' })} · {t('macro.p')} {fmt(p.protein_per_100g)} · {t('macro.f')} {fmt(p.fat_per_100g)} · {t('macro.c')} {fmt(p.carbs_per_100g)}
-                      {p.incomplete && ` · ${t('search.incomplete')}`}
-                    </span>
-                  </span>
-                  <span className="search-item-kcal">{fmt(p.kcal_per_100g)} kcal</span>
-                </button>
-              </li>
-            ))}
-          </ul>
+          <ul className="search-list">{off.products.filter((p) => !localCodes.has(p.barcode)).map(item)}</ul>
           {off.hasMore && (
             <button type="button" className="btn-link btn-centered" onClick={() => void loadMore()} disabled={off.loadingMore}>
               {off.loadingMore ? t('search.offLoading') : t('search.offMore')}

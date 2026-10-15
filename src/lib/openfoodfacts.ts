@@ -2,6 +2,7 @@ import { CapacitorHttp } from '@capacitor/core';
 import type { FoodItem } from '../db/types';
 import { getLanguage, t } from '../i18n';
 import { isNative } from './native';
+import { findLocalProduct } from './offLocal';
 
 const APP_NAME = 'LucaNutritionTracker';
 const APP_VERSION = __APP_VERSION__;
@@ -50,6 +51,10 @@ export type OffResult =
 export async function lookupBarcode(barcode: string): Promise<OffResult> {
   const code = barcode.replace(/\D/g, '');
   if (!code) return { status: 'error', message: t('off.errInvalid') };
+
+  // Erst die mitgelieferten Produkte: sofort und ohne Netz (1.2).
+  const local = await findLocalProduct(code);
+  if (local) return { status: 'found', product: local };
 
   const url = new URL(`https://world.openfoodfacts.org/api/v2/product/${code}.json`);
   url.searchParams.set('fields', FIELDS);

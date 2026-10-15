@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { freshApp, kcalTotal } from './helpers';
+import { freshApp, kcalTotal, stubLocalProducts } from './helpers';
 
 const PRODUCT = {
   code: '7610000000001',
@@ -54,4 +54,15 @@ test('unknown barcode → manual entry keeps the barcode', async ({ page }) => {
   await expect(page.getByText('is not known to Open Food Facts')).toBeVisible();
   await page.getByRole('button', { name: 'Enter nutrition manually' }).click();
   await expect(page.getByText('Barcode 4000000000000 will be saved with it.')).toBeVisible();
+});
+
+// Mitgelieferte Produkte (1.2): Scan ohne Netz
+test('barcode from the bundled products works offline', async ({ page }) => {
+  await stubLocalProducts(page, [['7612345678901', 'Bundled Protein Pudding', 'Testbrand', 80, 10, 1.5, 6, 200, 0]]);
+  await page.route('**/api/v2/product/**', (route) => route.abort());
+  await openScan(page);
+  await page.getByLabel('Enter barcode manually').fill('7612345678901');
+  await page.getByRole('button', { name: 'Search', exact: true }).click();
+  await expect(page.getByText('Bundled Protein Pudding')).toBeVisible();
+  await expect(page.getByText('per 100 g: 80 kcal')).toBeVisible();
 });
