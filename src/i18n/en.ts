@@ -343,7 +343,7 @@ export const en = {
   'phase.quote2': '“If your weight drops faster but your performance, energy and recovery get worse, that is not good progress. The goal is not simply less weight – it is as little muscle loss as possible at full performance.”',
   'phase.quote3': '“Stick to the plan, track honestly and give your body time. We change one small thing, watch the response, then decide – not everything from scratch every Monday.”',
   'phase.contextHint': 'Not in the data: strength, sleep, recovery, waist. If those move while the scale doesn’t, it isn’t a real stall.',
-  'health.hint': 'Writes calories, macros, water and weight to Health; reads weight from your scale and active energy from your watch.',
+  'health.hint': 'Writes calories, macros, water and weight to Health; reads weight from your scale, active energy and steps.',
   'health.syncing': 'Syncing the last 30 days…',
   'health.done': 'Connected. Health is updated after every entry.',
   'health.denied': 'No access. Allow Serious Nutrition under Settings → Health → Data Access & Devices.',
@@ -455,6 +455,8 @@ export const en = {
   'concl.carbsHigh': 'Carbs high: avg {avg} g, remainder target would be ≈ {target} g.',
   'concl.partial': '{n} of {elapsed} past days logged – the average covers logged days only.',
   'concl.today': 'Today is not finished yet and already counts toward the average.',
+  'concl.stepsAvg': 'Steps: {n} a day on average (Apple Health).',
+  'concl.stepsDrop': 'Weight is stalling and you’re moving {pct} % less than over the past four weeks. Everyday movement often drops in a deficit – walk more before you cut calories further.',
   'concl.waterOk': 'Water: avg {avg} per day (goal {goal}).',
   'concl.waterLow': 'Water below goal: avg {avg} per day (goal {goal}).',
 

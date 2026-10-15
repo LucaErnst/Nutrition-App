@@ -1,10 +1,14 @@
-import { useState } from 'react';
-import { useDaySummaries, useSettings, useUnitSystem, useWaterByDate } from '../db/hooks';
+import { useEffect, useState } from 'react';
+import { useDaySummaries, useGoals, useSettings, useUnitSystem, useWaterByDate, useWeights } from '../db/hooks';
 import { addDays, formatShortDate, todayISO, weekDates, weekStartOf, weekdayShort } from '../lib/date';
 import { fmt, waterDigits, waterLeftLabel, waterUnitLabel, waterValue } from '../lib/nutrition';
 import { summarizeWeek, weekBudget, type Conclusion, type DaySummary } from '../lib/week';
 import { useT } from '../i18n';
 import { Tip } from './Tip';
+import { readSteps } from '../lib/health';
+import { stepsAverage, stepsConclusions } from '../lib/steps';
+import { trendChange, withTrend } from '../lib/weight';
+import { activeGoalFor } from '../lib/goals';
 import { WeekBudgetCard } from './WeekBudgetCard';
 
 interface Props {
@@ -30,6 +34,31 @@ export function WeekView({ onOpenDay }: Props) {
   // Wasser folgt dem Einheitensystem: metrisch Liter mit einer Nachkommastelle, sonst ganze Unzen.
   const system = useUnitSystem();
   const conclusions: Conclusion[] = week ? [...week.conclusions] : [];
+
+  // Schritte aus Apple Health: diese Woche und die vier davor (nur mit Health, nur nativ).
+  const [steps, setSteps] = useState<Map<string, number> | undefined>(undefined);
+  useEffect(() => {
+    setSteps(undefined);
+    if (settings?.health_enabled) void readSteps(addDays(start, -28), addDays(start, 6)).then(setSteps);
+  }, [start, settings?.health_enabled]);
+  const weights = useWeights();
+  const goals = useGoals();
+  if (week && steps) {
+    const before = Array.from({ length: 28 }, (_, i) => addDays(start, -28 + i));
+    const lastDay = isCurrent ? today : addDays(start, 6);
+    const points = weights ? withTrend(weights.filter((w) => w.date <= lastDay)) : [];
+    conclusions.push(
+      ...stepsConclusions(
+        {
+          week: stepsAverage(steps, dates),
+          before: stepsAverage(steps, before),
+          trendChange14: trendChange(points, 14),
+          phase: goals ? activeGoalFor(goals, lastDay)?.phase_type : undefined,
+        },
+        fmt,
+      ),
+    );
+  }
   if (week && waterDays.length > 0) {
     conclusions.push({
       kind: waterAvg >= waterGoal ? 'ok' : 'warn',

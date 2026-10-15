@@ -9,6 +9,7 @@ import { useGoals, useSettings, saveSettings } from './db/hooks';
 import { detectUnitSystem, setUnitSystemCache } from './lib/units';
 import { syncReferenceLanguage } from './db/seed';
 import { decideTipsMode, tipsMode } from './lib/tips';
+import { askForStepsOnce } from './lib/health';
 import { db } from './db/db';
 const UpdateBanner = lazy(() => import('./components/UpdateBanner').then((m) => ({ default: m.UpdateBanner })));
 import { ToastProvider } from './components/Toast';
@@ -68,6 +69,11 @@ export default function App() {
   useEffect(() => {
     if (tipsMode() === null) void db.mealEntries.count().then((n) => decideTipsMode(n > 0));
   }, []);
+
+  // Health vor 1.2 verbunden: einmal nach Schritten fragen (iOS zeigt nur offene Typen).
+  useEffect(() => {
+    if (settings?.health_enabled) void askForStepsOnce();
+  }, [settings?.health_enabled]);
 
   // Start-Screen (index.html) ausblenden, sobald die ersten Daten da sind
   useEffect(() => {

@@ -327,7 +327,7 @@ export const de: Record<MessageKey, string> = {
   'phase.quote2': '„Wenn dein Gewicht schneller fällt, aber gleichzeitig deine Leistung, Energie und Regeneration schlechter werden, ist das kein guter Fortschritt. Unser Ziel ist nicht einfach weniger Gewicht, sondern möglichst wenig Muskelverlust bei möglichst voller Leistung.“',
   'phase.quote3': '„Halte dich an den Plan, tracke ehrlich und gib deinem Körper Zeit. Wir verändern immer nur eine kleine Sache, beobachten die Reaktion und entscheiden dann weiter – nicht jeden Montag alles komplett neu.“',
   'phase.contextHint': 'Nicht in den Daten: Kraft, Schlaf, Regeneration, Taille. Bewegt sich das, während die Waage steht, ist es kein echter Stillstand.',
-  'health.hint': 'Schreibt Kalorien, Makros, Wasser und Gewicht nach Health; liest Gewicht von deiner Waage und Aktivkalorien von der Watch.',
+  'health.hint': 'Schreibt Kalorien, Makros, Wasser und Gewicht nach Health; liest Gewicht von deiner Waage, Aktivkalorien und Schritte.',
   'health.syncing': 'Gleicht die letzten 30 Tage ab…',
   'health.done': 'Verbunden. Health wird nach jedem Eintrag aktualisiert.',
   'health.denied': 'Kein Zugriff. Erlaube Serious Nutrition unter Einstellungen → Health → Datenzugriff & Geräte.',
@@ -433,6 +433,8 @@ export const de: Record<MessageKey, string> = {
   'concl.carbsHigh': 'Kohlenhydrate hoch: Ø {avg} g, Rest-Ziel wäre ≈ {target} g.',
   'concl.partial': '{n} von {elapsed} vergangenen Tagen erfasst – Schnitt bezieht sich nur auf erfasste Tage.',
   'concl.today': 'Heute ist noch nicht abgeschlossen und zählt bereits in den Schnitt.',
+  'concl.stepsAvg': 'Schritte: im Schnitt {n} pro Tag (Apple Health).',
+  'concl.stepsDrop': 'Das Gewicht stagniert, und du bewegst dich {pct} % weniger als in den vier Wochen davor. Im Defizit sinkt die Alltagsbewegung oft unbemerkt – erst mehr gehen, dann Kalorien senken.',
   'concl.waterOk': 'Wasser: Ø {avg} pro Tag (Ziel {goal}).',
   'concl.waterLow': 'Wasser unter Ziel: Ø {avg} pro Tag (Ziel {goal}).',
 

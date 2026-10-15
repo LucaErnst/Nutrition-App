@@ -1,6 +1,6 @@
 /**
  * Apple Health (nur iOS). Schreibt Tages-Summen (kcal, Makros, Wasser) und Gewicht; liest Gewicht
- * anderer Quellen (Waage) und die Aktivkalorien des Tages. Native Seite: ios/App/App/HealthBridgePlugin.swift.
+ * anderer Quellen (Waage), die Aktivkalorien des Tages und die Schritte (1.2). Native Seite: ios/App/App/HealthBridgePlugin.swift.
  * Alles hier ist ein No-op, solange die Anbindung nicht in den Einstellungen aktiviert ist.
  */
 import { registerPlugin } from '@capacitor/core';
@@ -18,6 +18,7 @@ interface HealthBridgePlugin {
   writeWeight(o: { date: string; kg?: number }): Promise<void>;
   readWeights(o: { days: number }): Promise<{ items: { date: string; kg: number }[] }>;
   readActiveEnergy(o: { date: string }): Promise<{ kcal: number }>;
+  readSteps(o: { from: string; to: string }): Promise<{ days: { date: string; steps: number }[] }>;
 }
 
 const Health = registerPlugin<HealthBridgePlugin>('HealthBridge');
@@ -135,6 +136,35 @@ export async function readActiveEnergy(date: string): Promise<number | undefined
   } catch {
     return undefined;
   }
+}
+
+/** Schritte pro Tag; fehlende Tage fehlen auch in der Map. undefined ohne Health. */
+export async function readSteps(from: string, to: string): Promise<Map<string, number> | undefined> {
+  if (!(await healthEnabled())) return undefined;
+  try {
+    const { days } = await Health.readSteps({ from, to });
+    return new Map(days.map((d) => [d.date, Math.round(d.steps)]));
+  } catch (e) {
+    logError('health', e);
+    return undefined;
+  }
+}
+
+const STEPS_ASKED = 'nutrition-tracker:health-steps-asked';
+
+/**
+ * Wer Health vor 1.2 verbunden hat, hat Schritte nie freigegeben. iOS fragt nur nach Typen, die
+ * noch offen sind – also einmal nachfragen, dann nie wieder.
+ */
+export async function askForStepsOnce(): Promise<void> {
+  if (!(await healthEnabled())) return;
+  try {
+    if (localStorage.getItem(STEPS_ASKED)) return;
+    localStorage.setItem(STEPS_ASKED, '1');
+  } catch {
+    return;
+  }
+  await requestHealthAccess();
 }
 
 // --- Erstabgleich beim Einschalten ------------------------------------------------

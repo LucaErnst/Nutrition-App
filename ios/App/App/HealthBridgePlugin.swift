@@ -2,7 +2,7 @@ import Foundation
 import Capacitor
 import HealthKit
 
-/// Apple Health: Nährwerte, Wasser und Gewicht schreiben; Gewicht und Aktivkalorien lesen.
+/// Apple Health: Nährwerte, Wasser und Gewicht schreiben; Gewicht, Aktivkalorien und Schritte lesen.
 /// Nährwerte werden pro Tag als Summe abgelegt (Samples der App für den Tag ersetzen).
 @objc(HealthBridgePlugin)
 public class HealthBridgePlugin: CAPPlugin, CAPBridgedPlugin {
@@ -16,6 +16,7 @@ public class HealthBridgePlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "writeWeight", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "readWeights", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "readActiveEnergy", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "readSteps", returnType: CAPPluginReturnPromise),
     ]
 
     private let store = HKHealthStore()
@@ -27,6 +28,7 @@ public class HealthBridgePlugin: CAPPlugin, CAPBridgedPlugin {
     private var water: HKQuantityType { HKQuantityType(.dietaryWater) }
     private var mass: HKQuantityType { HKQuantityType(.bodyMass) }
     private var active: HKQuantityType { HKQuantityType(.activeEnergyBurned) }
+    private var steps: HKQuantityType { HKQuantityType(.stepCount) }
 
     private static let day: DateFormatter = {
         let f = DateFormatter()
@@ -50,7 +52,7 @@ public class HealthBridgePlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func requestAuthorization(_ call: CAPPluginCall) {
         guard HKHealthStore.isHealthDataAvailable() else { call.resolve(["granted": false]); return }
         let write: Set<HKSampleType> = [energy, protein, fat, carbs, water, mass]
-        let read: Set<HKObjectType> = [mass, active]
+        let read: Set<HKObjectType> = [mass, active, steps]
         store.requestAuthorization(toShare: write, read: read) { ok, err in
             if let err = err { call.reject(err.localizedDescription); return }
             // Schreibrecht ist abfragbar, Leserecht aus Datenschutzgründen nicht – wir melden das Schreibrecht.
@@ -137,6 +139,28 @@ public class HealthBridgePlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     /// Aktivkalorien (Apple Watch u.a.) für ein Datum, Summe.
+    /// Schritte pro Tag von `from` bis `to` (beide inklusive, yyyy-MM-dd). Health rechnet die Summe
+    /// selbst und entfernt dabei Doppelzählungen von iPhone und Watch – darum keine Samples addieren.
+    /// Tage ohne Daten fehlen in der Antwort und zählen in der App nicht als 0.
+    @objc func readSteps(_ call: CAPPluginCall) {
+        guard let from = call.getString("from"), let to = call.getString("to"),
+              let (start, _) = dayRange(from), let (_, end) = dayRange(to) else { call.reject("range"); return }
+        let pred = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
+        let q = HKStatisticsCollectionQuery(quantityType: steps, quantitySamplePredicate: pred, options: .cumulativeSum,
+                                            anchorDate: start, intervalComponents: DateComponents(day: 1))
+        q.initialResultsHandler = { _, results, err in
+            if let err = err { call.reject(err.localizedDescription); return }
+            var days: [[String: Any]] = []
+            results?.enumerateStatistics(from: start, to: end) { stats, _ in
+                if let sum = stats.sumQuantity() {
+                    days.append(["date": Self.day.string(from: stats.startDate), "steps": sum.doubleValue(for: .count())])
+                }
+            }
+            call.resolve(["days": days])
+        }
+        store.execute(q)
+    }
+
     @objc func readActiveEnergy(_ call: CAPPluginCall) {
         guard let date = call.getString("date"), let (start, end) = dayRange(date) else { call.reject("date"); return }
         let pred = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
