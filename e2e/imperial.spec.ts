@@ -33,7 +33,7 @@ test('Onboarding fragt Fuss/Zoll und Pfund, Gewicht erscheint in Pfund', async (
   await page.getByRole('spinbutton', { name: 'Height (ft)' }).fill('5');
   await page.getByRole('spinbutton', { name: 'in', exact: true }).fill('11');
   await page.getByRole('spinbutton', { name: 'Weight (lb)' }).fill('170');
-  await page.getByRole('combobox', { name: 'Everyday activity' }).selectOption('high');
+  await page.getByRole('combobox', { name: 'Everyday life (without training)' }).selectOption('sitting');
   await page.getByLabel('Goal').getByText('Build muscle').click();
   await page.getByRole('button', { name: 'Next', exact: true }).click();
 

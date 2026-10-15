@@ -11,6 +11,7 @@ import { Modal } from './Modal';
 import { PhaseReview } from './PhaseReview';
 import { usePro } from '../lib/pro';
 import { openPaywall, ProBadge } from './Paywall';
+import { NeedsCalculator, type GoalPrefill } from './NeedsCalculator';
 
 const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0];
 
@@ -57,7 +58,17 @@ export function GoalsView() {
   const goals = useGoals() ?? [];
   const [editing, setEditing] = useState<DailyGoal | 'new' | null>(null);
   const [reviewing, setReviewing] = useState<DailyGoal | null>(null);
+  const [calcOpen, setCalcOpen] = useState(false);
+  /** Vorschlag aus dem Rechner – landet im Formular, gespeichert wird erst dort */
+  const [prefill, setPrefill] = useState<GoalPrefill | undefined>(undefined);
   const today = todayISO();
+  const activeGoal = goals.find((g) => g.start_date <= today && (!g.end_date || today <= g.end_date));
+
+  function applyCalc(p: GoalPrefill, mode: 'new' | 'active') {
+    setCalcOpen(false);
+    setPrefill(p);
+    setEditing(mode === 'active' && activeGoal ? activeGoal : 'new');
+  }
 
   async function remove(g: DailyGoal) {
     if (!confirm(t('goals.confirmDelete', { name: phaseDisplayName(g) }))) return;
@@ -70,11 +81,14 @@ export function GoalsView() {
       <section className="card section">
         <div className="section-head">
           <h2>{t('goals.phases')}</h2>
-          <button className="btn-primary" onClick={() => setEditing('new')}>
+          <button className="btn-primary" onClick={() => { setPrefill(undefined); setEditing('new'); }}>
             {t('goals.newPhase')}
           </button>
         </div>
         {goals.length === 0 && <p className="search-empty">{t('goals.none')}</p>}
+        <button className="btn-link" onClick={() => setCalcOpen(true)}>
+          {t('calc.open')}
+        </button>
         <ul className="phase-list">
           {goals.map((g) => {
             const active = g.start_date <= today && (!g.end_date || today <= g.end_date);
@@ -120,7 +134,7 @@ export function GoalsView() {
                     {t('phase.open')}
                     {!pro && <ProBadge />}
                   </button>
-                  <button className="btn-link" onClick={() => setEditing(g)}>
+                  <button className="btn-link" onClick={() => { setPrefill(undefined); setEditing(g); }}>
                     {t('common.edit')}
                   </button>
                   <button className="btn-link danger" onClick={() => void remove(g)}>
@@ -136,24 +150,32 @@ export function GoalsView() {
       {reviewing && <PhaseReview goal={reviewing} onClose={() => setReviewing(null)} />}
       {editing && (
         <Modal title={editing === 'new' ? t('goals.newTitle') : t('goals.editTitle')} onClose={() => setEditing(null)}>
-          <GoalForm goal={editing === 'new' ? undefined : editing} onDone={() => setEditing(null)} />
+          <GoalForm goal={editing === 'new' ? undefined : editing} prefill={prefill} onDone={() => setEditing(null)} />
+        </Modal>
+      )}
+      {calcOpen && (
+        <Modal title={t('calc.title')} onClose={() => setCalcOpen(false)}>
+          <NeedsCalculator hasActive={!!activeGoal} onApply={applyCalc} />
         </Modal>
       )}
     </>
   );
 }
 
-function GoalForm({ goal, onDone }: { goal?: DailyGoal; onDone: () => void }) {
+function GoalForm({ goal, prefill, onDone }: { goal?: DailyGoal; prefill?: GoalPrefill; onDone: () => void }) {
   const t = useT();
-  const [name, setName] = useState(goal?.phase_name ?? '');
-  const [type, setType] = useState<PhaseType | ''>(goal?.phase_type ?? '');
+  // Vorschlag aus dem Rechner schlägt die gespeicherten Werte; Name und Daten bleiben.
+  const v = { ...goal, ...prefill };
+  const typeName = (p: PhaseType) => t(p === 'cut' ? 'ob.phaseCut' : p === 'maintain' ? 'ob.phaseMaintain' : 'ob.phaseBulk');
+  const [name, setName] = useState(goal?.phase_name ?? (prefill?.phase_type ? typeName(prefill.phase_type) : ''));
+  const [type, setType] = useState<PhaseType | ''>(v.phase_type ?? '');
   const [start, setStart] = useState(goal?.start_date ?? todayISO());
   const [end, setEnd] = useState(goal?.end_date ?? '');
-  const [trainKcal, setTrainKcal] = useState(String(goal?.training_day_kcal ?? 2700));
-  const [restKcal, setRestKcal] = useState(String(goal?.rest_day_kcal ?? 2350));
-  const [protein, setProtein] = useState(String(goal?.protein_g ?? 150));
-  const [fatMin, setFatMin] = useState(String(goal?.fat_min_g ?? 75));
-  const [fatMax, setFatMax] = useState(String(goal?.fat_max_g ?? 90));
+  const [trainKcal, setTrainKcal] = useState(String(v.training_day_kcal ?? 2700));
+  const [restKcal, setRestKcal] = useState(String(v.rest_day_kcal ?? 2350));
+  const [protein, setProtein] = useState(String(v.protein_g ?? 150));
+  const [fatMin, setFatMin] = useState(String(v.fat_min_g ?? 75));
+  const [fatMax, setFatMax] = useState(String(v.fat_max_g ?? 90));
   const [error, setError] = useState<string | null>(null);
 
   async function submit(ev: FormEvent) {

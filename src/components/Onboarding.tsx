@@ -1,11 +1,11 @@
 import { useState, type FormEvent } from 'react';
 import { db } from '../db/db';
 import { saveSettings, upsertWeight, useUnitSystem } from '../db/hooks';
-import { bodyWeightUnitFor, ftInToCm, heightUnitFor, lbToKg, stoneToKg } from '../lib/units';
 import { useI18n, useT, type Language } from '../i18n';
 import { todayISO } from '../lib/date';
-import { fmt, waterGoalField } from '../lib/nutrition';
-import { suggestGoals, type Activity, type Phase, type Sex } from '../lib/onboarding';
+import { waterGoalField } from '../lib/nutrition';
+import { suggestGoals, type GoalSuggestion, type Phase } from '../lib/onboarding';
+import { BodyFields, EMPTY_BODY, NeedsBreakdown, num, useBodyMetrics, type BodyState } from './NeedsCalculator';
 import { getLocale } from '../i18n';
 
 interface Props {
@@ -16,38 +16,21 @@ type Step = 'welcome' | 'body' | 'result';
 
 const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0];
 
-function num(v: string): number {
-  const n = Number(v.replace(',', '.'));
-  return Number.isFinite(n) ? n : 0;
-}
-
 /** Erststart-Assistent: Sprache, Körperdaten, Zielvorschlag → Phase, Gewicht, Trainingstage, Wasserziel. */
 export function Onboarding({ onDone }: Props) {
   const t = useT();
   const { lang, setLanguage } = useI18n();
   const [step, setStep] = useState<Step>('welcome');
-  const [sex, setSex] = useState<Sex>('male');
-  const [age, setAge] = useState('');
-  const [height, setHeight] = useState('');
-  /** Zoll-Anteil, nur bei Fuss/Zoll */
-  const [heightIn, setHeightIn] = useState('');
-  const [weight, setWeight] = useState('');
-  /** Pfund-Anteil, nur bei Stone */
-  const [weightLb, setWeightLb] = useState('');
-  const [activity, setActivity] = useState<Activity>('high');
-  const [phase, setPhase] = useState<Phase>('bulk');
+  const [body, setBody] = useState<BodyState>({ ...EMPTY_BODY, lifestyle: 'mixed' });
+  const phase: Phase = body.phase;
   const [trainingDays, setTrainingDays] = useState<number[]>([1, 2, 4, 5]);
   const [error, setError] = useState<string | null>(null);
 
   // Körpermasse werden in Zentimetern und Kilogramm gerechnet; eingegeben wird in der
   // Einheit des Geräts (USA: lb und ft/in, England: st und ft/in).
   const system = useUnitSystem();
-  const bodyUnit = bodyWeightUnitFor(system);
-  const hUnit = heightUnitFor(system);
   const waterField = waterGoalField(system);
-  const heightCm = hUnit === 'cm' ? num(height) : ftInToCm(num(height), num(heightIn));
-  const weightKg =
-    bodyUnit === 'kg' ? num(weight) : bodyUnit === 'lb' ? lbToKg(num(weight)) : stoneToKg(num(weight), num(weightLb));
+  const { heightCm, weightKg, valid } = useBodyMetrics(body);
 
   // Vorschlag (editierbar)
   const [trainKcal, setTrainKcal] = useState('');
@@ -57,7 +40,7 @@ export function Onboarding({ onDone }: Props) {
   const [fatMax, setFatMax] = useState('');
   const [water, setWater] = useState('');
   const [phaseName, setPhaseName] = useState('');
-  const [bmrInfo, setBmrInfo] = useState<{ bmr: number; tdee: number } | null>(null);
+  const [suggestion, setSuggestion] = useState<GoalSuggestion | null>(null);
 
   async function finish(skip: boolean) {
     if (!skip) {
@@ -90,9 +73,9 @@ export function Onboarding({ onDone }: Props) {
 
   function toBody(ev: FormEvent) {
     ev.preventDefault();
-    if (num(age) <= 0 || heightCm <= 0 || weightKg <= 0) return setError(t('ob.errBody'));
+    if (!valid) return setError(t('ob.errBody'));
     setError(null);
-    const g = suggestGoals({ sex, age: num(age), height_cm: heightCm, weight_kg: weightKg, activity, phase, training_days: trainingDays.length });
+    const g = suggestGoals({ sex: body.sex, age: num(body.age), height_cm: heightCm, weight_kg: weightKg, lifestyle: body.lifestyle, phase, training_days: trainingDays.length });
     setTrainKcal(String(g.training_day_kcal));
     setRestKcal(String(g.rest_day_kcal));
     setProtein(String(g.protein_g));
@@ -100,7 +83,7 @@ export function Onboarding({ onDone }: Props) {
     setFatMax(String(g.fat_max_g));
     setWater(String(waterField.toDisplay(g.water_ml)));
     setPhaseName(phaseLabel(phase));
-    setBmrInfo({ bmr: g.bmr, tdee: g.tdee });
+    setSuggestion(g);
     setStep('result');
   }
 
@@ -142,82 +125,7 @@ export function Onboarding({ onDone }: Props) {
           <form className="form" onSubmit={toBody}>
             <h2>{t('ob.bodyTitle')}</h2>
             <p className="search-hint">{t('ob.bodyHint')}</p>
-            <div className="field">
-              <span>{t('ob.sex')}</span>
-              <div className="segmented" role="radiogroup" aria-label={t('ob.sex')}>
-                {(['male', 'female'] as Sex[]).map((s) => (
-                  <label key={s} className={sex === s ? 'active' : ''}>
-                    <input type="radio" name="ob-sex" checked={sex === s} onChange={() => setSex(s)} />
-                    {s === 'male' ? t('ob.male') : t('ob.female')}
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div className="field-row">
-              <label className="field">
-                <span>{t('ob.age')}</span>
-                <input type="number" inputMode="numeric" min={10} max={100} value={age} onChange={(e) => setAge(e.target.value)} required />
-              </label>
-              <label className="field">
-                <span>{t('ob.height', { unit: hUnit === 'cm' ? 'cm' : 'ft' })}</span>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={hUnit === 'cm' ? 100 : 3}
-                  max={hUnit === 'cm' ? 250 : 8}
-                  value={height}
-                  onChange={(e) => setHeight(e.target.value)}
-                  required
-                />
-              </label>
-              {hUnit === 'ftin' && (
-                <label className="field">
-                  <span>in</span>
-                  <input type="number" inputMode="numeric" min={0} max={11} value={heightIn} onChange={(e) => setHeightIn(e.target.value)} />
-                </label>
-              )}
-            </div>
-            <div className="field-row">
-              <label className="field">
-                <span>{t('ob.weight', { unit: bodyUnit === 'st' ? 'st' : bodyUnit })}</span>
-                <input
-                  type="number"
-                  inputMode="decimal"
-                  step={bodyUnit === 'st' ? 1 : 0.1}
-                  min={bodyUnit === 'kg' ? 30 : bodyUnit === 'lb' ? 66 : 4}
-                  max={bodyUnit === 'kg' ? 300 : bodyUnit === 'lb' ? 661 : 47}
-                  value={weight}
-                  onChange={(e) => setWeight(e.target.value)}
-                  required
-                />
-              </label>
-              {bodyUnit === 'st' && (
-                <label className="field">
-                  <span>lb</span>
-                  <input type="number" inputMode="decimal" step={0.1} min={0} max={13.9} value={weightLb} onChange={(e) => setWeightLb(e.target.value)} />
-                </label>
-              )}
-            </div>
-            <label className="field">
-              <span>{t('ob.activity')}</span>
-              <select value={activity} onChange={(e) => setActivity(e.target.value as Activity)}>
-                <option value="low">{t('ob.actLow')}</option>
-                <option value="moderate">{t('ob.actModerate')}</option>
-                <option value="high">{t('ob.actHigh')}</option>
-                <option value="athlete">{t('ob.actAthlete')}</option>
-              </select>
-            </label>
-            <div className="field">
-              <span>{t('ob.phase')}</span>
-              <div className="segmented" role="radiogroup" aria-label={t('ob.phase')}>
-                {(['cut', 'maintain', 'bulk'] as Phase[]).map((p) => (
-                  <label key={p} className={phase === p ? 'active' : ''}>
-                    <input type="radio" name="ob-phase" checked={phase === p} onChange={() => setPhase(p)} />
-                    {p === 'cut' ? t('ob.cut') : p === 'maintain' ? t('ob.maintain') : t('ob.bulk')}
-                  </label>
-                ))}
-              </div>
-            </div>
+            <BodyFields value={body} onChange={(p) => setBody((b) => ({ ...b, ...p }))} name="ob" />
             <div className="field">
               <span>{t('ob.trainingDays')}</span>
               <div className="weekday-picker" role="group" aria-label={t('ob.trainingDays')}>
@@ -263,7 +171,7 @@ export function Onboarding({ onDone }: Props) {
           >
             <h2>{t('ob.resultTitle')}</h2>
             <p className="search-hint">{t('ob.resultHint')}</p>
-            {bmrInfo && <p className="search-hint">{t('ob.bmr', { n: fmt(bmrInfo.bmr), tdee: fmt(bmrInfo.tdee) })}</p>}
+            {suggestion && <NeedsBreakdown g={suggestion} trainingDays={trainingDays.length} weightKg={weightKg} />}
             <label className="field">
               <span>{t('ob.phaseName')}</span>
               <input value={phaseName} onChange={(e) => setPhaseName(e.target.value)} />
