@@ -1,6 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 15.10.2026, Nachmittag. 1.1 ist live, **1.2 (Build 26) liegt in TestFlight**. Diese Datei ist die Übergabe an die nächste
+Stand: 15.10.2026, Nachmittag. 1.1 ist live, **1.2 (Build 27) liegt in TestFlight**. Diese Datei ist die Übergabe an die nächste
 Sitzung. Wer hier anfängt, soll ohne Rückfragen weiterarbeiten können.
 
 **So wird sie benutzt:** In einer neuen Sitzung sagen: *„Lies handoff.md und mach dort weiter, wo
@@ -36,7 +36,7 @@ Entscheidung misst sich daran.
     Review").
 
 **Code**
-- Version **1.2.0, iOS-Build 26**, am 15.10. hochgeladen (TestFlight). 25: Suche als eine Liste, Rangfolge erstes Wort. 26: Titel und × im Eintragen-Dialog bleiben oben, Suchfeld klebt darunter.
+- Version **1.2.0, iOS-Build 27**, am 15.10. hochgeladen (TestFlight). 25: Suche als eine Liste, Rangfolge erstes Wort. 26: Titel und × bleiben oben. 27: Eintragen-Dialog als iOS-Sheet (Griff, Titel, Reiter, Suchfeld fest; nach unten ziehen schliesst).
   Neu in 24: **288'776 Open-Food-Facts-Produkte mitgeliefert** (Scan/Suche offline, weltweite
   Auswahl), **USDA** (6'304, nur Englisch), Suche „Ei" → Ei, Schritte im Tagebuch.
   Aus Build 23, A2–A6 aus `docs/RELEASE-1.2.md`: Startliste folgt dem Sprachwechsel, Deutsch im
