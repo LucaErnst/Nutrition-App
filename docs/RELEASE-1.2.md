@@ -274,6 +274,9 @@ Heute: 6'906 Einträge = 6'411 BLS + 495 Schweiz.
       Die Prüfung ergab: Hauptsprache English (U.S.) und Keywords sind korrekt. Es fehlen
       Bewertungen und Downloads, die Einstellungen sind in Ordnung.
 - [ ] Screenshots: nur neu erzeugen (`npm run screenshots`), wenn sich das Aussehen geändert hat.
+- [ ] **Screenshots zuordnen:** iPhone-Satz um `07-offline` ergänzen (freigegeben), Reiter „iPhone Duo":
+      7 Bilder je Sprache aus `duo-inner` (Apple nimmt je Gerät einen Satz; Aussen- und Innenformat
+      werden beide angeboten – beide zuordnen, falls die Maske zwei Felder zeigt). Eingereicht am 15.10.2026.
       Demo-Lebensmittel in `store/screenshots.mjs` müssen `source: 'manual'` bleiben.
 - [ ] Review-Notizen: Abschnitt 1.2 aus `docs/APP-REVIEW-NOTES.md`
 - [x] App Privacy: am 15.10.2026 auf **„Käufe – Kaufverlauf"** geändert (App-Funktionalität + Analyse, nicht verknüpft, kein Tracking), wie RevenueCat es vorschreibt. Gilt sofort, auch für 1.1. Store-Beschreibung 1.2: „no data leaving your phone" → „your diary never leaves your phone".

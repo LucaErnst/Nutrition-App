@@ -44,6 +44,15 @@ Entscheidung misst sich daran.
   für 47 Grundnahrungsmittel, Bedarfsrechner unter Mehr mit Herleitung (DGE-PAL).
 - **160 Unit-Tests und 43 e2e-Tests** grün, Lint ohne Fehler (nur Warnungen).
 - 1.2 ist **nicht** zur Prüfung eingereicht und hat in App Store Connect noch keine Version.
+- **Screenshots (15.10.):** Bild 7 (offline) von Apple freigegeben. **iPhone Duo:** 28 Bilder
+  (aussen 1398×2034, innen 2007×2853, je 7 × DE/EN) in `store/screenshots/{de,en}/duo-{outer,inner}/`,
+  erzeugt mit `npm run screenshots -- duo-outer duo-inner`, in der Asset Library als `duo-<display>-<lang>-*.png`
+  hochgeladen und eingereicht (Prüfung bis 48 h). **Zuordnen geht erst mit Version 1.2:** Bei der
+  live-Version 1.1 sind die Screenshot-Felder gesperrt. Beim Anlegen von 1.2: iPhone-Satz um Bild 7
+  ergänzen, Duo-Satz zuordnen (Reiter „iPhone Duo").
+- Asset Library, Einreichen: „Add for Review" öffnet ein Menü → „Draft iOS Submission" wählen →
+  Seitenfenster mit × schliessen; am Ende „Draft Submissions" → „Submit for Review". Klicks per
+  Skript zählen nicht, nur echte Klicks.
 - **Rechtliches (15.10.):** Datenschutzerklärung um Apple Health, RevenueCat (USA, SCC) und Kauf-
   Benachrichtigung ergänzt (online). App-Store-Datenschutz von „Keine Daten" auf „Käufe – Kaufverlauf,
   nicht verknüpft" geändert (RevenueCat verlangt das). Bausteine für beserious.ch im Claude-Dokument
