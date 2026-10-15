@@ -1,6 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 15.10.2026. 1.1 ist live, **1.2 (Build 23) liegt in TestFlight**. Diese Datei ist die Übergabe an die nächste
+Stand: 15.10.2026, Nachmittag. 1.1 ist live, **1.2 (Build 24) liegt in TestFlight**. Diese Datei ist die Übergabe an die nächste
 Sitzung. Wer hier anfängt, soll ohne Rückfragen weiterarbeiten können.
 
 **So wird sie benutzt:** In einer neuen Sitzung sagen: *„Lies handoff.md und mach dort weiter, wo
@@ -36,11 +36,13 @@ Entscheidung misst sich daran.
     Review").
 
 **Code**
-- Version **1.2.0, iOS-Build 23**, am 15.10. nach App Store Connect hochgeladen (TestFlight).
-  Enthält A2–A6 aus `docs/RELEASE-1.2.md`: Startliste folgt dem Sprachwechsel, Deutsch im
+- Version **1.2.0, iOS-Build 24**, am 15.10. hochgeladen (TestFlight). Build 23 war der erste Test.
+  Neu in 24: **288'776 Open-Food-Facts-Produkte mitgeliefert** (Scan/Suche offline, weltweite
+  Auswahl), **USDA** (6'304, nur Englisch), Suche „Ei" → Ei, Schritte im Tagebuch.
+  Aus Build 23, A2–A6 aus `docs/RELEASE-1.2.md`: Startliste folgt dem Sprachwechsel, Deutsch im
   Bundle (`de.lproj`), Schritte aus Health im Wochenfazit, Hinweise beim ersten Kontakt, Stückzahl
   für 47 Grundnahrungsmittel, Bedarfsrechner unter Mehr mit Herleitung (DGE-PAL).
-- **151 Unit-Tests und 40 e2e-Tests** grün, Lint ohne Fehler (nur Warnungen).
+- **160 Unit-Tests und 43 e2e-Tests** grün, Lint ohne Fehler (nur Warnungen).
 - 1.2 ist **nicht** zur Prüfung eingereicht und hat in App Store Connect noch keine Version.
 - Alles gepusht (14.10.), Web-Version unter `lucaernst.github.io/Nutrition-App/` aktuell. Vor jedem
   Push fragen.
@@ -53,10 +55,12 @@ Entscheidung misst sich daran.
   `marketing/launch/compose.mjs`, `marketing/instagram/APP-ACCOUNT.md`, Ordner
   `marketing/launch/talking/`. Nicht mit-committen ohne Rückfrage.
 
-**Daten**
-- 6'906 Grundnahrungsmittel in der App, davon 495 aus der Schweizer Nährwertdatenbank
-  (Zustimmung des BLV vom 30.09.2026, siehe `docs/BLV-ANFRAGE.md`), der Rest aus dem
-  Bundeslebensmittelschlüssel 4.0.
+**Daten** (ab 1.2)
+- 6'906 Grundnahrungsmittel in beiden Sprachen (6'411 BLS + 495 Schweiz, BLV-Zustimmung
+  30.09.2026, `docs/BLV-ANFRAGE.md`), plus **6'304 USDA** nur in englischer App-Sprache.
+- **288'776 Markenprodukte** aus Open Food Facts mitgeliefert (ODbL), `public/data/off-products.tsv.gz`.
+  Vor jedem Release mit `tools/build-off-products.mjs` neu erzeugen (Export ~1,3 GB).
+- Stückgewichte für 47 Lebensmittel aus USDA SR Legacy (`src/db/pieceWeights.ts`).
 
 **Marketing**
 - TikTok @seriousnutritiontracker, praktisch bei null. Fertig: 11 Launch-Clips
@@ -163,7 +167,7 @@ Entscheidung misst sich daran.
    Metricool neu verbinden.
 4. **Instagram:** Luca pinnt die Kommentare aus `APP-ACCOUNT.md`. Ab 26.10. neue Posts planen.
    Browser: immer Chrome.
-5. **1.2 testen:** Build 23 in TestFlight auf dem iPhone installieren. Prüfen: Store-Version 1.1
+5. **1.2 testen:** Build 24 in TestFlight auf dem iPhone installieren. Prüfen: Store-Version 1.1
    darüber aktualisieren (Daten, Pro bleiben), Health-Abfrage nach Schritten, Wochenfazit mit
    Schritten, „Ei" in Stück, Bedarfsrechner unter Mehr, Hinweise (unter Mehr → Hinweise wieder
    zeigen). Rückmeldungen in `docs/RELEASE-1.2.md`.
@@ -175,6 +179,9 @@ Entscheidung misst sich daran.
    - A5 Stückzahl für Grundnahrungsmittel („Ei 3 Stk."), gratis
    - A6 Bedarfsrechner jederzeit unter Mehr, realistischer: Alltag und Training getrennt,
      Untergrenze Grundumsatz, Protein bei BMI > 30 auf Referenzgewicht, Herleitung als Tabelle
+   - Alles gebaut. Offen nur App Store Connect (B3): Version 1.2 anlegen, Texte aus
+     `store/LISTING.md` (Stand 1.2), Keywords, Review-Notizen aus `docs/APP-REVIEW-NOTES.md`,
+     Build 24 wählen, einreichen. Felder mit Klick + cmd+a + Tippen füllen.
    - Mit 1.2 ein In-App-Event „Major Update" erwägen.
 7. **31.01.2027:** Werbetext zurücksetzen, er nennt den Einführungspreis.
 
@@ -190,8 +197,8 @@ Entscheidung misst sich daran.
 ## Befehle
 
 ```
-npm test                                  # 151 Unit-Tests
-npx playwright test                       # 40 e2e, Projekte "mobile" (de-CH) und "us" (en-US)
+npm test                                  # 160 Unit-Tests
+npx playwright test                       # 43 e2e, Projekte "mobile" (de-CH) und "us" (en-US)
 npx playwright test e2e/X.spec.ts --project=mobile -g "Name"   # einzelner Test
 npm run build                             # tsc + vite
 npm run screenshots                       # Screenshots 1–7 und Creative Assets, beide Sprachen

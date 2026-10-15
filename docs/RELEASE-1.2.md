@@ -11,8 +11,21 @@ Store (siehe Tabelle in `docs/RELEASE-1.1.md`).
 
 ## A. Was in 1.2 kommt
 
-**Stand 15.10.2026:** A2–A6 gebaut und als **1.2 (Build 23) in TestFlight** hochgeladen. Offen: A1
-(USDA) für einen zweiten Testbuild, danach Teil B. Tests: 151 Unit, 40 e2e.
+**Stand 15.10.2026, 13:30:** A1–A6 gebaut, dazu **mitgelieferte Open-Food-Facts-Produkte**
+(neu, Wunsch Luca nach Test von Build 23). **1.2 (Build 24) in TestFlight.** Tests: 160 Unit, 43 e2e.
+Teil B erledigt bis auf das, was nur in App Store Connect geht (B3, Einreichung).
+
+Build 23 → 24, nach Lucas Test:
+- „Ei" fand das Ei nicht (Eiswein, Eierlikör standen oben): Rangfolge in `src/lib/foodRank.ts`
+  jetzt ganzes Wort > Wortende > Wortanfang > Wortmitte (deutsche Komposita).
+- Schritte waren nur im Wochenfazit: jetzt auch im Tagebuch unter den Aktivkalorien.
+- Open Food Facts lud oft langsam: **288'776 Produkte mitgeliefert** (`public/data/off-products.tsv.gz`,
+  8,2 MB, ODbL), erzeugt mit `tools/build-off-products.mjs` aus dem OFF-Export. Auswahl weltweit:
+  200'000 meistgescannte + 5'000 meistgescannte je Land. Scan und Suche schauen zuerst dort,
+  online nur noch von selbst bei weniger als 5 Treffern. **Vor jedem Release neu erzeugen.**
+- A1 USDA: 6'304 Einträge in `src/db/reference/usda.json` (eigene Datei, Schlüssel `usda:`),
+  erzeugt mit `tools/add-usda-foods.mjs`. Dabei Fehler gefunden: Anlegen und Sprachabgleich liefen
+  gleichzeitig und legten USDA doppelt an – jetzt nacheinander (`serialized` in `src/db/seed.ts`).
 
 Was beim Bauen anders wurde als geplant:
 - A6: Die Untergrenze (Grundumsatz) greift mit DGE-Faktoren praktisch nie (1,4 × 0,85 = 1,19 ×
@@ -230,20 +243,20 @@ Jede Zeile ist eine Stelle, an der heute eine Zahl, eine Quelle oder eine Versio
 
 Heute: 6'906 Einträge = 6'411 BLS + 495 Schweiz.
 
-- [ ] `src/i18n/de.ts:359` und `src/i18n/en.ts:375` – `more.about`, Quellenangabe unter „Mehr":
+- [x] `src/i18n/de.ts:359` und `src/i18n/en.ts:375` – `more.about`, Quellenangabe unter „Mehr":
       USDA FoodData Central ergänzen
-- [ ] `store/LISTING.md:72` (EN) und `:113` (DE) – Quellenzeile in der Beschreibung
-- [ ] `store/LISTING.md:121` (EN) und `:137` (DE) – Aufzählung „Built-in food table": US-Einträge
+- [x] `store/LISTING.md:72` (EN) und `:113` (DE) – Quellenzeile in der Beschreibung
+- [x] `store/LISTING.md:121` (EN) und `:137` (DE) – Aufzählung „Built-in food table": US-Einträge
       erwähnen
-- [ ] `docs/APP-REVIEW-NOTES.md:52` ff. – „about 6,900 basic foods", zwei Quellen → neue Zahl, drei
+- [x] `docs/APP-REVIEW-NOTES.md:52` ff. – „about 6,900 basic foods", zwei Quellen → neue Zahl, drei
       Quellen. Neuen Abschnitt **1.2** anlegen, den von 1.1 nicht überschreiben.
-- [ ] `src/db/seed.ts:63` – Kommentar nennt nur den BLS
-- [ ] `public/legal/terms-de.html:25` und `terms-en.html:25` – nennen nur Open Food Facts als
+- [x] `src/db/seed.ts:63` – Kommentar nennt nur den BLS
+- [x] `public/legal/terms-de.html:25` und `terms-en.html:25` – nennen nur Open Food Facts als
       Quelle. Mitgelieferte Tabellen (BLS, Schweiz, USDA) ergänzen.
-- [ ] `public/legal/privacy-*.html` – **bleibt unverändert**, solange USDA mitgeliefert wird und
+- [x] `public/legal/privacy-*.html` – angepasst (15.10.): Barcode/Suche gehen nur noch an OFF, wenn das Produkt nicht mitgeliefert ist. Sonst **unverändert**, solange USDA mitgeliefert wird und
       keine Anfrage an die USDA-API geht. Wenn doch eine API dazukommt: neuer Empfänger in der
       Tabelle, und App Privacy neu prüfen.
-- [ ] `marketing/instagram/build.mjs:87` – nennt „495 Swiss foods". Bleibt richtig, solange die
+- [x] `marketing/instagram/build.mjs:87` – nennt „495 Swiss foods". Bleibt richtig, solange die
       Schweizer Daten gleich bleiben.
 - [ ] `handoff.md` Abschnitt 2 „Daten"
 
