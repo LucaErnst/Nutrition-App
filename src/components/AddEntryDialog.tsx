@@ -1,5 +1,5 @@
 import { useScrollLock } from '../lib/useScrollLock';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { MealType } from '../db/types';
 import { mealLabel, useT } from '../i18n';
 import { ManualEntryForm } from './ManualEntryForm';
@@ -27,6 +27,21 @@ export function AddEntryDialog({ date, mealType, onClose }: Props) {
   // Mitgelieferte Produkte vorladen, bevor jemand tippt oder scannt.
   useEffect(() => warmLocalProducts(), []);
 
+  // Das Suchfeld klebt direkt unter dem Kopf (Titel + ×). Dessen Höhe hängt von der Notch bzw.
+  // Dynamic Island ab, darum gemessen statt geschätzt.
+  const modalRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const header = headerRef.current;
+    const modal = modalRef.current;
+    if (!header || !modal) return;
+    const update = () => modal.style.setProperty('--modal-header-h', `${header.offsetHeight}px`);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(header);
+    return () => ro.disconnect();
+  }, []);
+
   useEffect(() => {
     function onKey(ev: KeyboardEvent) {
       if (ev.key === 'Escape') onClose();
@@ -44,8 +59,8 @@ export function AddEntryDialog({ date, mealType, onClose }: Props) {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="add-entry-title" onClick={(ev) => ev.stopPropagation()}>
-        <header className="modal-header">
+      <div ref={modalRef} className="modal" role="dialog" aria-modal="true" aria-labelledby="add-entry-title" onClick={(ev) => ev.stopPropagation()}>
+        <header ref={headerRef} className="modal-header">
           <h3 id="add-entry-title">{t('add.title', { meal: mealLabel(mealType) })}</h3>
           <button className="btn-icon" onClick={onClose} aria-label={t('common.close')}>
             ×

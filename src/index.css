@@ -2399,7 +2399,7 @@ body {
 .modal-header {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 2;
   margin: calc(-12px - env(safe-area-inset-top)) -20px 12px;
   padding: calc(12px + env(safe-area-inset-top)) 20px 10px;
   background: var(--glass);
@@ -2764,11 +2764,10 @@ body::-webkit-scrollbar,
  */
 .modal .search > .scan-code-form {
   position: sticky;
-  top: 0;
-  z-index: 2;
+  /* direkt unter dem Kopf (Titel + ×), der selbst oben klebt; Höhe misst AddEntryDialog */
+  top: var(--modal-header-h, 0px);
+  z-index: 1;
   background: var(--surface);
   padding: 8px 0;
   margin: -8px 0 0;
-  /* deckt auch den oberen Rand des Dialogs ab, sonst schaut die Liste darüber hervor */
-  box-shadow: 0 -40px 0 var(--surface);
 }
