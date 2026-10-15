@@ -10,6 +10,8 @@ import { HealthSection } from './HealthSection';
 import { ProSection } from './ProSection';
 import { UnitsSection } from './UnitsSection';
 import { CollapsibleCard } from './CollapsibleCard';
+import { resetTips } from '../lib/tips';
+import { useToast } from './Toast';
 
 /** Rechtstexte liegen auf der Web-Adresse – auch die native App verlinkt dorthin. */
 const LEGAL_BASE = 'https://lucaernst.github.io/Nutrition-App/legal/';
@@ -48,6 +50,7 @@ export function MoreView() {
       <HealthSection />
       <BackupSection />
       <UnitsSection />
+      <TipsSection />
 
       <CollapsibleCard title={t('more.water')} summary={t('more.waterSummary', { goal: waterLeftLabel(waterGoal, system) })}>
         <div className="field" style={{ maxWidth: 260, marginTop: 8, marginInline: 'auto' }}>
@@ -118,5 +121,25 @@ export function MoreView() {
       </section>
       <p className="about">{t('more.about', { app: t('app.title'), version: __APP_VERSION__ })}</p>
     </div>
+  );
+}
+
+/** Hinweise beim ersten Kontakt zurücksetzen (1.2). */
+function TipsSection() {
+  const t = useT();
+  const toast = useToast();
+  return (
+    <CollapsibleCard title={t('tips.title')}>
+      <button
+        type="button"
+        className="btn-secondary"
+        onClick={() => {
+          resetTips();
+          toast.show({ message: t('tips.resetDone') });
+        }}
+      >
+        {t('tips.reset')}
+      </button>
+    </CollapsibleCard>
   );
 }

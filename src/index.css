@@ -2738,3 +2738,27 @@ body::-webkit-scrollbar,
   font-weight: 600;
   border-top: 1px solid var(--border);
 }
+
+/* Hinweis beim ersten Kontakt: eine Zeile, mit einem Tipp weg */
+.tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+.tip p {
+  flex: 1;
+  margin: 0;
+}
+.tip-close {
+  flex: none;
+  margin: -4px -4px -4px 0;
+}

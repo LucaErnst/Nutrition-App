@@ -4,6 +4,7 @@ import { addDays, formatShortDate, todayISO, weekDates, weekStartOf, weekdayShor
 import { fmt, waterDigits, waterLeftLabel, waterUnitLabel, waterValue } from '../lib/nutrition';
 import { summarizeWeek, weekBudget, type Conclusion, type DaySummary } from '../lib/week';
 import { useT } from '../i18n';
+import { Tip } from './Tip';
 import { WeekBudgetCard } from './WeekBudgetCard';
 
 interface Props {
@@ -55,6 +56,8 @@ export function WeekView({ onOpenDay }: Props) {
           ›
         </button>
       </nav>
+
+      <Tip id="week-budget">{t('tip.weekBudget')}</Tip>
 
       {week && (
         <>

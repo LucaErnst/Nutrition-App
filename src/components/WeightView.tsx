@@ -6,6 +6,7 @@ import { useT } from '../i18n';
 import { fmt } from '../lib/nutrition';
 import { usePro } from '../lib/pro';
 import { openPaywall, ProBadge } from './Paywall';
+import { Tip } from './Tip';
 import { trendChange, withTrend, type WeightPoint } from '../lib/weight';
 import {
   bodyWeightParts,
@@ -64,6 +65,9 @@ export function WeightView() {
 
   return (
     <div className="weight">
+      <Tip id="weight-trend" when={(weights?.length ?? 0) >= 3}>
+        {t('tip.weightTrend')}
+      </Tip>
       <div className="split-side">
       <section className="card section">
         <h2>{t('weight.enter')}</h2>

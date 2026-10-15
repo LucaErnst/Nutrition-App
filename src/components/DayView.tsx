@@ -13,6 +13,9 @@ import { useT } from '../i18n';
 import { WaterRow } from './WaterRow';
 import { readActiveEnergy } from '../lib/health';
 import { useSettings } from '../db/hooks';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../db/db';
+import { Tip } from './Tip';
 
 interface Props {
   initialDate?: string;
@@ -37,6 +40,7 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
   const weekDays = useDaySummaries(weekDates(weekStartOf(date)));
   const budget = weekDays && date === today ? weekBudget(weekDays, today) : undefined;
   const settings = useSettings();
+  const entryCount = useLiveQuery(() => db.mealEntries.count());
   const [activeEnergy, setActiveEnergy] = useState<number | undefined>(undefined);
   useEffect(() => {
     setActiveEnergy(undefined);
@@ -79,10 +83,17 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
 
         {budget && <WeekBudgetCard budget={budget} isCurrent compact />}
 
+        <Tip id="day-type" when={!!goal}>
+          {t('tip.dayType')}
+        </Tip>
+
         <WaterRow date={date} />
       </div>
 
       <div className="split-main">
+        <Tip id="first-entry" when={entryCount === 0}>
+          {t('tip.firstEntry')}
+        </Tip>
         {MEAL_TYPES.map((mt) => (
           <MealSlot key={`${date}-${mt}`} date={date} mealType={mt} entries={groups[mt]} />
         ))}

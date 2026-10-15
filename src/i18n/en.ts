@@ -486,6 +486,16 @@ export const en = {
   'weight.tooltipTrend': 'Trend',
 
   // Onboarding
+  'tip.dismiss': 'Hide tip',
+  'tip.firstEntry': 'Tap “+ Add” at a meal to log your first food. The 6,900 built-in foods work offline too.',
+  'tip.dayType': 'Training or rest day? Switch above – your targets change with it.',
+  'tip.weekBudget': 'The week counts, not the day: one day over target is fine as long as the week adds up.',
+  'tip.weightTrend': 'Daily weight jumps with water and salt. Watch the 7-day trend, not the single number.',
+  'tip.template': 'Eat this often? Expand the meal and save it as a template – next time it’s one tap.',
+  'tip.templateFree': 'Eat this often? With Pro you can save it as a template and log it in one tap.',
+  'tips.title': 'Tips',
+  'tips.reset': 'Show tips again',
+  'tips.resetDone': 'Tips will show again.',
   'ob.welcome': 'Welcome to Serious Nutrition',
   'ob.intro': 'Track calories, macros, water and weight – all data stays on your device. Let’s set your targets in two minutes.',
   'ob.chooseLanguage': 'Language',

@@ -10,6 +10,7 @@ import { fmtAmount, isPieceUnit, labelFor } from '../lib/units';
 import { AddEntryDialog } from './AddEntryDialog';
 import { AmountStepper } from './AmountStepper';
 import { useToast } from './Toast';
+import { Tip } from './Tip';
 
 interface Props {
   date: string;
@@ -33,6 +34,7 @@ export function MealSlot({ date, mealType, entries }: Props) {
   const label = mealLabel(mealType);
 
   return (
+    <>
     <section className="card meal" aria-labelledby={`meal-${mealType}`}>
       <header className="meal-header">
         <button
@@ -136,6 +138,12 @@ export function MealSlot({ date, mealType, entries }: Props) {
 
       {adding && <AddEntryDialog date={date} mealType={mealType} onClose={() => setAdding(false)} />}
     </section>
+    {mealType === 'breakfast' && (
+      <Tip id="template" when={entries.length >= 2}>
+        {pro ? t('tip.template') : t('tip.templateFree')}
+      </Tip>
+    )}
+    </>
   );
 }
 

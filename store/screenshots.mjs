@@ -220,7 +220,11 @@ async function main() {
         viewport: { width: 430, height: 932 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true,
         locale: lang === 'de' ? 'de-CH' : 'en-US', colorScheme: 'dark',
       });
-      await context.addInitScript((l) => localStorage.setItem('nutrition-tracker:language', l), lang);
+      await context.addInitScript((l) => {
+        localStorage.setItem('nutrition-tracker:language', l);
+        // Store-Bilder ohne Hinweise beim ersten Kontakt (1.2)
+        localStorage.setItem('nutrition-tracker:tips', 'off');
+      }, lang);
       const page = await context.newPage();
       const t = (en, de) => (lang === 'de' ? de : en);
 

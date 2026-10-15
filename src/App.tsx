@@ -8,6 +8,8 @@ import { PaywallHost } from './components/Paywall';
 import { useGoals, useSettings, saveSettings } from './db/hooks';
 import { detectUnitSystem, setUnitSystemCache } from './lib/units';
 import { syncReferenceLanguage } from './db/seed';
+import { decideTipsMode, tipsMode } from './lib/tips';
+import { db } from './db/db';
 const UpdateBanner = lazy(() => import('./components/UpdateBanner').then((m) => ({ default: m.UpdateBanner })));
 import { ToastProvider } from './components/Toast';
 import { IconDiary, IconFood, IconMore, IconWeek, IconWeight } from './components/Icons';
@@ -61,6 +63,11 @@ export default function App() {
   useEffect(() => {
     if (settings) setUnitSystemCache(settings.units_system ?? detectUnitSystem());
   }, [settings]);
+
+  // Hinweise beim ersten Kontakt: einmal entscheiden, ob dieses Gerät sie bekommt.
+  useEffect(() => {
+    if (tipsMode() === null) void db.mealEntries.count().then((n) => decideTipsMode(n > 0));
+  }, []);
 
   // Start-Screen (index.html) ausblenden, sobald die ersten Daten da sind
   useEffect(() => {
