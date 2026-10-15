@@ -14,6 +14,24 @@ describe('Treffer bewerten', () => {
   });
 });
 
+describe('Deutsche Wortbildung', () => {
+  it('„Ei" findet das Ei, nicht Eiswein oder Eiskaffee', () => {
+    const list = [food('Eiswein'), food('Eierlikör'), food('Eiskaffee'), food('Hühnerei roh'), food('Ei (ganz)')];
+    expect(rankFoods(list, 'ei').map((f) => f.name).slice(0, 2)).toEqual(['Ei (ganz)', 'Hühnerei roh']);
+  });
+
+  it('Wortende schlägt Wortanfang: Basmatireis vor Reiswaffeln', () => {
+    const list = [food('Reiswaffeln ungesalzen'), food('Basmatireis gekocht')];
+    expect(rankFoods(list, 'reis')[0].name).toBe('Basmatireis gekocht');
+  });
+
+  it('ganzes Wort schlägt alles', () => {
+    expect(matchScore('ei (ganz)', 'ei')).toBe(0);
+    expect(matchScore('huhnerei roh', 'ei')!).toBeLessThan(matchScore('eiswein', 'ei')!);
+    expect(matchScore('eiswein', 'ei')!).toBeLessThan(matchScore('weizen', 'ei')!);
+  });
+});
+
 describe('Reihenfolge der Treffer', () => {
   it('genauer Name zuerst', () => {
     const list = [food('Haferflocken mit Milch'), food('Hafer'), food('Haferkleie')];

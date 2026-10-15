@@ -9,12 +9,14 @@ interface Props {
   targets?: DayTargets;
   /** Aktivkalorien aus Apple Health (nur Anzeige) */
   activeEnergy?: number;
+  /** Schritte des Tages aus Health; nur Anzeige, ändert kein Ziel */
+  steps?: number;
   isTraining?: boolean;
   onToggleTraining?: (v: boolean) => void;
   onOpenGoals?: () => void;
 }
 
-export function DailySummary({ totals, targets, activeEnergy, isTraining, onToggleTraining, onOpenGoals }: Props) {
+export function DailySummary({ totals, targets, activeEnergy, steps, isTraining, onToggleTraining, onOpenGoals }: Props) {
   const t = useT();
 
   if (!targets) {
@@ -57,6 +59,7 @@ export function DailySummary({ totals, targets, activeEnergy, isTraining, onTogg
             <span className="summary-phase"> · {targets.phase_name}</span>
           </div>
           {activeEnergy !== undefined && activeEnergy > 0 && <div className="summary-health">{t('day.activeEnergy', { n: fmt(activeEnergy) })}</div>}
+          {steps !== undefined && steps > 0 && <div className="summary-health">{t('day.steps', { n: fmt(steps) })}</div>}
         </div>
         {onToggleTraining && (
           <div className="segmented segmented-sm" role="radiogroup" aria-label={t('day.dayType')}>

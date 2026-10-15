@@ -332,6 +332,7 @@ export const de: Record<MessageKey, string> = {
   'health.done': 'Verbunden. Health wird nach jedem Eintrag aktualisiert.',
   'health.denied': 'Kein Zugriff. Erlaube Serious Nutrition unter Einstellungen → Health → Datenzugriff & Geräte.',
   'health.off': 'Getrennt. Daten, die schon in Health sind, bleiben dort.',
+  'day.steps': '{n} Schritte (Health)',
   'day.activeEnergy': 'Aktivkalorien {n} kcal (Health) – werden nicht aufs Ziel gerechnet',
   'weight.fromHealth': 'Health',
   'rem.on': 'An',

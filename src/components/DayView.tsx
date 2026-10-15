@@ -11,7 +11,7 @@ import { MealSlot } from './MealSlot';
 import { BackupReminder } from './BackupReminder';
 import { useT } from '../i18n';
 import { WaterRow } from './WaterRow';
-import { readActiveEnergy } from '../lib/health';
+import { readActiveEnergy, readSteps } from '../lib/health';
 import { useSettings } from '../db/hooks';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/db';
@@ -42,9 +42,14 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
   const settings = useSettings();
   const entryCount = useLiveQuery(() => db.mealEntries.count());
   const [activeEnergy, setActiveEnergy] = useState<number | undefined>(undefined);
+  const [steps, setSteps] = useState<number | undefined>(undefined);
   useEffect(() => {
     setActiveEnergy(undefined);
-    if (settings?.health_enabled) void readActiveEnergy(date).then(setActiveEnergy);
+    setSteps(undefined);
+    if (settings?.health_enabled) {
+      void readActiveEnergy(date).then(setActiveEnergy);
+      void readSteps(date, date).then((m) => setSteps(m?.get(date)));
+    }
   }, [date, settings?.health_enabled]);
 
   return (
@@ -76,6 +81,7 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
           totals={totals}
           targets={targets}
           activeEnergy={activeEnergy}
+          steps={steps}
           isTraining={isTraining}
           onToggleTraining={(v) => void setTrainingDay(date, v)}
           onOpenGoals={goals && !goal ? onOpenGoals : undefined}

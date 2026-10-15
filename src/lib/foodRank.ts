@@ -23,13 +23,26 @@ export function normalize(s: string): string {
 /**
  * Trefferqualität eines Suchbegriffs im Text; kleiner ist besser.
  * `undefined` heisst: kommt nicht vor.
+ *
+ *   ganzes Wort („Ei (ganz)")            0 bzw. 10 + Position
+ *   Wortende („Hühnerei", „Basmatireis") 50 + Position
+ *   Wortanfang („Eiswein", „Haferflocken") 100 + Position
+ *   Wortmitte                            400 + Position
+ *
+ * Im Deutschen steht das eigentliche Lebensmittel am Ende des zusammengesetzten Wortes:
+ * Hühnerei ist ein Ei, Eiswein ist Wein. Darum schlägt das Wortende den Wortanfang.
  */
 export function matchScore(haystack: string, term: string): number | undefined {
   const at = haystack.indexOf(term);
   if (at < 0) return undefined;
-  if (at === 0) return 0;
-  const wordStart = /[\s,.\-/(]/.test(haystack[at - 1]);
-  return (wordStart ? 100 : 400) + Math.min(at, 60);
+  const isWordChar = (c: string | undefined) => c !== undefined && /[a-z0-9]/.test(c);
+  const starts = at === 0 || !isWordChar(haystack[at - 1]);
+  const ends = !isWordChar(haystack[at + term.length]);
+  const pos = Math.min(at, 60);
+  if (starts && ends) return at === 0 ? 0 : 10 + pos;
+  if (ends) return 50 + pos;
+  if (starts) return 100 + pos;
+  return 400 + pos;
 }
 
 /**

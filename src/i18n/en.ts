@@ -348,6 +348,7 @@ export const en = {
   'health.done': 'Connected. Health is updated after every entry.',
   'health.denied': 'No access. Allow Serious Nutrition under Settings → Health → Data Access & Devices.',
   'health.off': 'Disconnected. Data already in Health stays there.',
+  'day.steps': '{n} steps (Health)',
   'day.activeEnergy': 'Active energy {n} kcal (Health) – not added to your target',
   'weight.fromHealth': 'Health',
   'rem.on': 'On',
