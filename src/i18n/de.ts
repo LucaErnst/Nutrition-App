@@ -359,7 +359,7 @@ export const de: Record<MessageKey, string> = {
   'more.privacy': 'Datenschutzerklärung',
   'more.terms': 'Nutzungsbedingungen',
   'more.support': 'Support',
-  'more.about': '{app} · Version {version} · Daten: lokal (IndexedDB) · Produktdaten: Open Food Facts · Grundnahrungsmittel: Bundeslebensmittelschlüssel (BLS 4.0), Max Rubner-Institut, CC BY 4.0 · Schweizer Nährwertdatenbank V 7.1, Bundesamt für Lebensmittelsicherheit und Veterinärwesen BLV',
+  'more.about': '{app} · Version {version} · Daten: lokal (IndexedDB) · Produktdaten: Open Food Facts Contributors, ODbL (rund 290\'000 Produkte in der App enthalten) · Grundnahrungsmittel: Bundeslebensmittelschlüssel (BLS 4.0), Max Rubner-Institut, CC BY 4.0 · Schweizer Nährwertdatenbank V 7.1, Bundesamt für Lebensmittelsicherheit und Veterinärwesen BLV · Englisch: USDA FoodData Central, SR Legacy, gemeinfrei (CC0) · Stückgewichte: USDA SR Legacy',
 
   'backup.title': 'Backup',
   'backup.hint': 'Alle Daten liegen nur auf diesem Gerät. Exportiere regelmässig ein Backup (z.B. in iCloud Drive) – damit kannst du auch auf ein anderes Gerät umziehen.',
@@ -468,7 +468,7 @@ export const de: Record<MessageKey, string> = {
   'weight.tooltipTrend': 'Trend',
 
   'tip.dismiss': 'Hinweis ausblenden',
-  'tip.firstEntry': 'Tipp bei einer Mahlzeit auf „+ Hinzufügen“, um dein erstes Lebensmittel einzutragen. Die 6900 eingebauten Lebensmittel gehen auch offline.',
+  'tip.firstEntry': 'Tipp bei einer Mahlzeit auf „+ Hinzufügen“, um dein erstes Lebensmittel einzutragen. Die eingebauten Lebensmittel und Produkte gehen auch offline.',
   'tip.dayType': 'Trainings- oder Ruhetag? Oben umschalten – deine Ziele passen sich an.',
   'tip.weekBudget': 'Die Woche zählt, nicht der Tag: Ein Tag über dem Ziel ist okay, solange die Woche aufgeht.',
   'tip.weightTrend': 'Das Tagesgewicht schwankt mit Wasser und Salz. Achte auf den 7-Tage-Trend, nicht auf die einzelne Zahl.',

@@ -375,7 +375,7 @@ export const en = {
   'more.privacy': 'Privacy policy',
   'more.terms': 'Terms of use',
   'more.support': 'Support',
-  'more.about': '{app} · Version {version} · Data: local (IndexedDB) · Product data: Open Food Facts · Basic foods: German Nutrient Database (BLS 4.0), Max Rubner-Institut, CC BY 4.0 · Swiss Food Composition Database V 7.1, Federal Food Safety and Veterinary Office FSVO',
+  'more.about': '{app} · Version {version} · Data: local (IndexedDB) · Product data: Open Food Facts contributors, ODbL (about 290,000 products included in the app) · Basic foods: German Nutrient Database (BLS 4.0), Max Rubner-Institut, CC BY 4.0 · Swiss Food Composition Database V 7.1, Federal Food Safety and Veterinary Office FSVO · USDA FoodData Central, SR Legacy, public domain (CC0) · Piece weights: USDA SR Legacy',
 
   // Backup
   'backup.title': 'Backup',
@@ -492,7 +492,7 @@ export const en = {
 
   // Onboarding
   'tip.dismiss': 'Hide tip',
-  'tip.firstEntry': 'Tap “+ Add” at a meal to log your first food. The 6,900 built-in foods work offline too.',
+  'tip.firstEntry': 'Tap “+ Add” at a meal to log your first food. Built-in foods and products work offline too.',
   'tip.dayType': 'Training or rest day? Switch above – your targets change with it.',
   'tip.weekBudget': 'The week counts, not the day: one day over target is fine as long as the week adds up.',
   'tip.weightTrend': 'Daily weight jumps with water and salt. Watch the 7-day trend, not the single number.',
