@@ -20,6 +20,21 @@ describe('Deutsche Wortbildung', () => {
     expect(rankFoods(list, 'ei').map((f) => f.name).slice(0, 2)).toEqual(['Ei (ganz)', 'Hühnerei roh']);
   });
 
+  it('Favorit mitten im Wort kommt nach echten Treffern (Heidelbeeren bei „ei")', () => {
+    const list = [food('Heidelbeeren', { favorite: 1, id: 1 }), food('Ei (ganz)', { id: 2 }), food('Hühnerei roh', { id: 3 })];
+    expect(rankFoods(list, 'ei').map((f) => f.name)).toEqual(['Ei (ganz)', 'Hühnerei roh', 'Heidelbeeren']);
+  });
+
+  it('kurzes Wortende ist keine Zusammensetzung: Blei und Brei nach Hühnerei', () => {
+    const list = [food('Blei/Brachsen, roh'), food('Brei'), food('Hühnerei roh'), food('Rührei')];
+    expect(rankFoods(list, 'ei').map((f) => f.name).slice(0, 2)).toEqual(['Rührei', 'Hühnerei roh']);
+  });
+
+  it('ein späteres Wort zählt weniger: Tiramisu (ohne Ei) nach Hühnerei', () => {
+    const list = [food('Tiramisu (ohne Ei)'), food('Hühnerei roh')];
+    expect(rankFoods(list, 'ei')[0].name).toBe('Hühnerei roh');
+  });
+
   it('Wortende schlägt Wortanfang: Basmatireis vor Reiswaffeln', () => {
     const list = [food('Reiswaffeln ungesalzen'), food('Basmatireis gekocht')];
     expect(rankFoods(list, 'reis')[0].name).toBe('Basmatireis gekocht');

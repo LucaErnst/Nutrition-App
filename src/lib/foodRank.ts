@@ -4,10 +4,11 @@
  * „Schweinefleisch mit Haferbeilage". Gewichtet wird in dieser Reihenfolge:
  *
  *   1. genauer Namenstreffer
- *   2. Favorit
- *   3. wie oft schon benutzt
- *   4. Trefferqualität (Wortanfang schlägt Wortmitte, früh schlägt spät)
- *   5. kurzer Name, dann alphabetisch
+ *   2. Treffer an einer Wortgrenze vor Treffern mitten im Wort („Heidelbeeren" für „ei")
+ *   3. Favorit
+ *   4. wie oft schon benutzt
+ *   5. Trefferqualität (ganzes Wort, Wortende, Wortanfang; früh schlägt spät)
+ *   6. kurzer Name, dann alphabetisch
  */
 export interface RankableFood {
   id?: number;
@@ -24,13 +25,16 @@ export function normalize(s: string): string {
  * Trefferqualität eines Suchbegriffs im Text; kleiner ist besser.
  * `undefined` heisst: kommt nicht vor.
  *
- *   ganzes Wort („Ei (ganz)")            0 bzw. 10 + Position
- *   Wortende („Hühnerei", „Basmatireis") 50 + Position
- *   Wortanfang („Eiswein", „Haferflocken") 100 + Position
- *   Wortmitte                            400 + Position
+ *                          im ersten Wort   in einem späteren Wort
+ *   ganzes Wort            0                160 + Position   („Ei (ganz)" / „Tiramisu (ohne Ei)")
+ *   Wortende               20 + Position    170 + Position   („Hühnerei" / „Bio Hühnerei"),
+ *                                                            nur mit mindestens 3 Buchstaben davor
+ *   Wortanfang             100 + Position   250 + Position   („Eiswein" / „Rotwein Eiswein")
+ *   Wortmitte              400 + Position                    („Heidelbeeren")
  *
- * Im Deutschen steht das eigentliche Lebensmittel am Ende des zusammengesetzten Wortes:
- * Hühnerei ist ein Ei, Eiswein ist Wein. Darum schlägt das Wortende den Wortanfang.
+ * Das erste Wort sagt, was ein Lebensmittel ist; spätere Wörter beschreiben es. Und im Deutschen
+ * steht das eigentliche Lebensmittel am Ende des zusammengesetzten Wortes: Hühnerei ist ein Ei,
+ * Eiswein ist Wein. Darum schlägt das Wortende den Wortanfang.
  */
 export function matchScore(haystack: string, term: string): number | undefined {
   const at = haystack.indexOf(term);
@@ -38,10 +42,15 @@ export function matchScore(haystack: string, term: string): number | undefined {
   const isWordChar = (c: string | undefined) => c !== undefined && /[a-z0-9]/.test(c);
   const starts = at === 0 || !isWordChar(haystack[at - 1]);
   const ends = !isWordChar(haystack[at + term.length]);
+  const firstWord = !/[^a-z0-9]/.test(haystack.slice(0, at));
+  // Wortende nur bei echten Zusammensetzungen: Hühner|ei, Rühr|ei, Basmati|reis – nicht Bl|ei, Br|ei.
+  let wordStart = at;
+  while (wordStart > 0 && isWordChar(haystack[wordStart - 1])) wordStart--;
+  const compoundTail = ends && !starts && at - wordStart >= 3;
   const pos = Math.min(at, 60);
-  if (starts && ends) return at === 0 ? 0 : 10 + pos;
-  if (ends) return 50 + pos;
-  if (starts) return 100 + pos;
+  if (starts && ends) return firstWord ? 0 : 160 + pos;
+  if (compoundTail) return (firstWord ? 20 : 170) + pos;
+  if (starts) return (firstWord ? 100 : 250) + pos;
   return 400 + pos;
 }
 
@@ -108,7 +117,7 @@ export function rankFoods<T extends RankableFood>(
   const variants = queryVariants(q);
   const termSets = variants.map((v) => v.split(/\s+/));
 
-  const scored: { food: T; exact: number; score: number }[] = [];
+  const scored: { food: T; exact: number; mid: number; score: number }[] = [];
   for (const food of foods) {
     const name = normalize(food.name);
     const hay = normalize(`${food.name} ${food.brand ?? ''}`);
@@ -128,12 +137,14 @@ export function rankFoods<T extends RankableFood>(
       if (all && (best === undefined || score < best)) best = score;
     }
     if (best === undefined) continue;
-    scored.push({ food, exact: variants.includes(name) ? 0 : 1, score: best + name.length / 100 });
+    // Ein Begriff nur mitten im Wort: Zufallstreffer, auch bei Favoriten nach hinten.
+    scored.push({ food, exact: variants.includes(name) ? 0 : 1, mid: best >= 400 ? 1 : 0, score: best + name.length / 100 });
   }
 
   scored.sort(
     (a, b) =>
       a.exact - b.exact ||
+      a.mid - b.mid ||
       byFavorite(a.food, b.food) ||
       byUsage(a.food, b.food, usage) ||
       a.score - b.score ||
