@@ -44,6 +44,11 @@ Entscheidung misst sich daran.
   für 47 Grundnahrungsmittel, Bedarfsrechner unter Mehr mit Herleitung (DGE-PAL).
 - **160 Unit-Tests und 43 e2e-Tests** grün, Lint ohne Fehler (nur Warnungen).
 - 1.2 ist **nicht** zur Prüfung eingereicht und hat in App Store Connect noch keine Version.
+- **Rechtliches (15.10.):** Datenschutzerklärung um Apple Health, RevenueCat (USA, SCC) und Kauf-
+  Benachrichtigung ergänzt (online). App-Store-Datenschutz von „Keine Daten" auf „Käufe – Kaufverlauf,
+  nicht verknüpft" geändert (RevenueCat verlangt das). Bausteine für beserious.ch im Claude-Dokument
+  „Serious Nutrition – Rechtstexte für die Webseite" (https://claude.ai/code/artifact/aefafcc2-4b73-46d9-8cc3-cfb26707d3e5).
+  Offen nur: Impressum auf beserious.ch prüfen, Bausteine dort einfügen (Luca).
 - Alles gepusht (14.10.), Web-Version unter `lucaernst.github.io/Nutrition-App/` aktuell. Vor jedem
   Push fragen.
 - Seit dem 1.1-Store-Build behoben, **in Build 23 enthalten** (Web schon live):

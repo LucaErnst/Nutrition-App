@@ -37,7 +37,7 @@ Nach dem 31.01.2027 diesen Text zurücksetzen (geht jederzeit, ohne neue Version
 
 ## Beschreibung – Englisch
 
-Serious Nutrition is a calorie and macro tracker for people who train with a goal. Built by a calisthenics coach for his own bulk and cut phases – no account, no ads, no data leaving your phone.
+Serious Nutrition is a calorie and macro tracker for people who train with a goal. Built by a calisthenics coach for his own bulk and cut phases – no account, no ads, and your diary never leaves your phone.
 
 TRACK IN SECONDS
 • Thousands of basic foods are built into the app – meat, fish, dairy, grains, vegetables, fruit, nuts, oils – searchable without internet. In English, that includes 6,300 American foods from the USDA
@@ -81,7 +81,7 @@ Product data © Open Food Facts contributors (ODbL). Basic foods from the German
 
 ## Beschreibung – Deutsch
 
-Serious Nutrition ist ein Kalorien- und Makro-Tracker für Menschen, die mit einem Ziel trainieren. Von einem Calisthenics-Coach für die eigenen Aufbau- und Defizitphasen gebaut – ohne Konto, ohne Werbung, ohne dass Daten das Handy verlassen.
+Serious Nutrition ist ein Kalorien- und Makro-Tracker für Menschen, die mit einem Ziel trainieren. Von einem Calisthenics-Coach für die eigenen Aufbau- und Defizitphasen gebaut – ohne Konto, ohne Werbung, und dein Tagebuch verlässt das Handy nie.
 
 IN SEKUNDEN EINTRAGEN
 • 6900 Grundnahrungsmittel sind in der App gespeichert – Fleisch, Fisch, Milchprodukte, Getreide, Gemüse, Früchte, Nüsse, Öle – die Suche funktioniert auch ohne Internet

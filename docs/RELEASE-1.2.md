@@ -276,7 +276,7 @@ Heute: 6'906 Einträge = 6'411 BLS + 495 Schweiz.
 - [ ] Screenshots: nur neu erzeugen (`npm run screenshots`), wenn sich das Aussehen geändert hat.
       Demo-Lebensmittel in `store/screenshots.mjs` müssen `source: 'manual'` bleiben.
 - [ ] Review-Notizen: Abschnitt 1.2 aus `docs/APP-REVIEW-NOTES.md`
-- [ ] App Privacy: weiterhin „Data Not Collected" (siehe B2, Datenschutz)
+- [x] App Privacy: am 15.10.2026 auf **„Käufe – Kaufverlauf"** geändert (App-Funktionalität + Analyse, nicht verknüpft, kein Tracking), wie RevenueCat es vorschreibt. Gilt sofort, auch für 1.1. Store-Beschreibung 1.2: „no data leaving your phone" → „your diary never leaves your phone".
 - [ ] Build auswählen, Freigabe terminieren, einreichen
 - [ ] Felder mit Klick + `cmd+a` + Tippen befüllen, **nicht** mit `form_input` (verwirft die Werte,
       siehe `handoff.md` Punkt 5)
