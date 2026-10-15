@@ -2764,10 +2764,77 @@ body::-webkit-scrollbar,
  */
 .modal .search > .scan-code-form {
   position: sticky;
-  /* direkt unter dem Kopf (Titel + ×), der selbst oben klebt; Höhe misst AddEntryDialog */
-  top: var(--modal-header-h, 0px);
+  /* direkt unter dem festen Block (Griff, Titel, Reiter); Höhe misst AddEntryDialog */
+  top: var(--sheet-top-h, 0px);
   z-index: 1;
   background: var(--surface);
   padding: 8px 0;
   margin: -8px 0 0;
+}
+
+/*
+ * Eintragen-Dialog als iOS-Sheet (1.2): beginnt knapp unter der Statusleiste, oben runde Ecken
+ * und ein Griff. Griff, Titel, Reiter (und darunter das Suchfeld) stehen fest im Glas-Balken,
+ * die Liste läuft darunter durch. Nach unten ziehen schliesst (AddEntryDialog).
+ * Oben verankert wie alle Dialoge, damit die Tastatur Eingabefelder nicht verdeckt.
+ */
+.modal.sheet {
+  padding-top: 0;
+}
+.sheet-top {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0 -20px 4px;
+  padding: 6px 20px 0;
+  background: var(--glass);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  backdrop-filter: saturate(180%) blur(16px);
+  /* Ziehen übernimmt die App, nicht das Scrollen des Fensters */
+  touch-action: none;
+  cursor: grab;
+}
+.sheet-top .modal-header {
+  position: static;
+  margin: 0 0 4px;
+  padding: 0;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.sheet-top .tabs {
+  margin-bottom: 0;
+}
+.sheet-grabber {
+  width: 36px;
+  height: 5px;
+  border-radius: 3px;
+  margin: 0 auto 8px;
+  background: var(--text-2);
+  opacity: 0.45;
+}
+@media (max-width: 599px) {
+  .modal.sheet {
+    margin-top: calc(env(safe-area-inset-top) + 10px);
+    height: calc(100dvh - env(safe-area-inset-top) - 10px);
+    max-height: none;
+    border-radius: 14px 14px 0 0;
+  }
+}
+/* Sheet fährt wie unter iOS von unten herein (die übrigen Dialoge gleiten von oben) */
+.modal.sheet {
+  animation: sheet-up 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modal.sheet {
+    animation: none;
+  }
 }
