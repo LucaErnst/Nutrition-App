@@ -176,3 +176,18 @@ test('bundled products show instantly without asking the server', async ({ page 
   // Zwei Treffer sind weniger als fünf: online wird zusätzlich gesucht
   await expect.poll(() => serverAsked).toBe(true);
 });
+
+// USDA (1.2 A1): amerikanische Grundnahrungsmittel nur in englischer App-Sprache
+test('USDA foods appear in English and hide in German', async ({ page }) => {
+  await page.getByRole('button', { name: 'Add item to Breakfast' }).click();
+  await page.getByRole('searchbox', { name: 'Search foods' }).fill('cheese cheddar');
+  await expect(page.getByRole('dialog').getByText('Cheese, cheddar', { exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+
+  await page.getByRole('button', { name: 'More' }).click();
+  await page.getByLabel('Language').getByText('Deutsch').click();
+  await page.getByRole('button', { name: 'Tagebuch' }).click();
+  await page.getByRole('button', { name: 'Posten zu Frühstück hinzufügen' }).click();
+  await page.getByRole('searchbox', { name: 'Lebensmittel suchen' }).fill('cheese cheddar');
+  await expect(page.getByRole('dialog').getByText('Cheese, cheddar', { exact: true })).toHaveCount(0);
+});

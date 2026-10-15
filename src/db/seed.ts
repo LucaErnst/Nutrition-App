@@ -1,7 +1,7 @@
 import { db } from './db';
 import type { FoodItem, Unit } from './types';
 import { getLanguage } from '../i18n';
-import { loadReference, type ReferenceRow } from './reference';
+import { loadReference, loadUsda, USDA_PREFIX, type ReferenceRow } from './reference';
 import { PIECE_WEIGHTS } from './pieceWeights';
 
 /**
@@ -98,7 +98,7 @@ async function backfillSeedKeys(): Promise<void> {
  * in der App.
  */
 // „-pc1": Stückgewichte (1.2). Eine neue Endung lässt bestehende Installationen einmal abgleichen.
-const REFERENCE_VERSION = 'bls-4.0-ch-7.1-pc1';
+const REFERENCE_VERSION = 'bls-4.0-ch-7.1-pc1-usda1';
 const REFERENCE_STAMP = 'nutrition-tracker:reference';
 const REFERENCE_LANG = 'nutrition-tracker:reference-lang';
 
@@ -141,14 +141,31 @@ async function backfillPieceWeights(existing: FoodItem[]): Promise<void> {
  * alles ein zweites Mal an. Der Vermerk im localStorage spart den Download der Tabelle,
  * wenn sie schon eingespielt ist.
  */
-async function seedReference(): Promise<void> {
+/**
+ * Anlegen, Sprachabgleich und Nachladen ändern dieselben Einträge. Beim ersten Start laufen sie
+ * gleichzeitig los – ohne Reihenfolge legte jeder die fehlenden USDA-Einträge an, und
+ * „Cheese, cheddar" stand doppelt da. Darum hintereinander.
+ */
+let referenceQueue: Promise<unknown> = Promise.resolve();
+function serialized<T>(task: () => Promise<T>): Promise<T> {
+  const run = referenceQueue.then(task, task);
+  referenceQueue = run.catch(() => undefined);
+  return run;
+}
+
+function seedReference(): Promise<void> {
+  return serialized(seedReferenceNow);
+}
+
+async function seedReferenceNow(): Promise<void> {
   try {
     if (localStorage.getItem(REFERENCE_STAMP) === REFERENCE_VERSION) return;
   } catch {
     // Privater Modus: dann eben jedes Mal prüfen.
   }
   const lang = getLanguage() === 'de' ? 'de' : 'en';
-  const rows = await loadReference(lang);
+  // USDA nur in englischer Sprache; der Wechsel läuft über syncUsda.
+  const rows = lang === 'en' ? [...(await loadReference(lang)), ...(await loadUsda())] : await loadReference(lang);
   const existing = await db.foodItems.where('source').equals('reference').toArray();
   const known = new Set(existing.map((f) => f.ref_key).filter(Boolean));
   const missing = rows.filter((r) => !known.has(r[0]));
@@ -176,7 +193,12 @@ async function seedReference(): Promise<void> {
  */
 async function dropRetiredReference(existing: FoodItem[], current: Set<string>): Promise<void> {
   const retired = existing.filter(
-    (f) => f.ref_key && !f.ref_key.startsWith(SEED_PREFIX) && !current.has(f.ref_key) && f.id !== undefined,
+    (f) =>
+      f.ref_key &&
+      !f.ref_key.startsWith(SEED_PREFIX) &&
+      !f.ref_key.startsWith(USDA_PREFIX) &&
+      !current.has(f.ref_key) &&
+      f.id !== undefined,
   );
   if (retired.length === 0) return;
   const ids = retired.map((f) => f.id!);
@@ -193,7 +215,11 @@ async function dropRetiredReference(existing: FoodItem[], current: Set<string>):
  * umschaltet, will „Rind Hackfleisch" sehen und nicht „Beef minced meat". Verglichen wird über
  * den BLS-Code, die eigenen Lebensmittel bleiben unberührt.
  */
-export async function syncReferenceLanguage(lang: 'de' | 'en'): Promise<number> {
+export function syncReferenceLanguage(lang: 'de' | 'en'): Promise<number> {
+  return serialized(() => syncReferenceLanguageNow(lang));
+}
+
+async function syncReferenceLanguageNow(lang: 'de' | 'en'): Promise<number> {
   try {
     if (localStorage.getItem(REFERENCE_LANG) === lang) return 0;
   } catch {
@@ -207,6 +233,7 @@ export async function syncReferenceLanguage(lang: 'de' | 'en'): Promise<number> 
     .filter((f) => f.ref_key && names.has(f.ref_key) && f.name !== names.get(f.ref_key))
     .map((f) => ({ ...f, name: names.get(f.ref_key!)! }));
   if (changed.length) await db.foodItems.bulkPut(changed);
+  await syncUsda(lang);
   try {
     localStorage.setItem(REFERENCE_LANG, lang);
   } catch {
@@ -230,6 +257,32 @@ export async function refreshReferenceAfterRestore(): Promise<void> {
   }
   await syncReferenceLanguage(getLanguage() === 'de' ? 'de' : 'en');
   await seedReference();
+}
+
+/**
+ * USDA-Einträge folgen der Sprache: auf Englisch da, auf Deutsch ausgeblendet (`saved: 0`, so
+ * erscheinen sie in keiner Suche). Ausnahme: Was schon eingetragen oder Favorit ist, bleibt –
+ * sonst verschwände ein bekanntes Lebensmittel nach einem Sprachwechsel.
+ */
+async function syncUsda(lang: 'de' | 'en'): Promise<void> {
+  const existing = (await db.foodItems.where('source').equals('reference').toArray()).filter((f) =>
+    f.ref_key?.startsWith(USDA_PREFIX),
+  );
+  if (lang === 'en') {
+    const known = new Set(existing.map((f) => f.ref_key));
+    const missing = (await loadUsda()).filter((r) => !known.has(r[0]));
+    const now = Date.now();
+    if (missing.length) await db.foodItems.bulkAdd(missing.map((r, i) => referenceToFoodItem(r, now + i)));
+    const hidden = existing.filter((f) => f.saved === 0).map((f) => ({ ...f, saved: 1 as const }));
+    if (hidden.length) await db.foodItems.bulkPut(hidden);
+    return;
+  }
+  const ids = existing.map((f) => f.id!).filter((id) => id !== undefined);
+  const used = new Set((await db.mealEntries.where('food_item_id').anyOf(ids).toArray()).map((e) => e.food_item_id));
+  const hide = existing
+    .filter((f) => f.saved === 1 && f.favorite !== 1 && !used.has(f.id!))
+    .map((f) => ({ ...f, saved: 0 as const }));
+  if (hide.length) await db.foodItems.bulkPut(hide);
 }
 
 /** Legt die Referenzdaten und die aktuelle Phase einmalig an. */
