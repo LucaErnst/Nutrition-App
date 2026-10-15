@@ -4,11 +4,6 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
-	<key>CFBundleLocalizations</key>
-	<array>
-		<string>en</string>
-		<string>de</string>
-	</array>
 	<key>CFBundleDisplayName</key>
 	<string>Serious Nutrition</string>
 	<key>CFBundleExecutable</key>
@@ -17,12 +12,28 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>de</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>ch.beserious.nutrition</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>seriousnutrition</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -31,12 +42,12 @@
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>The camera is used to scan food barcodes.</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Serious Nutrition reads your weight and active energy from Apple Health to show them in the diary and weight trend.</string>
+	<string>Serious Nutrition reads your weight, active energy and steps from Apple Health to show them in the diary, weight trend and weekly summary.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Serious Nutrition writes your logged calories, macros, water and weight to Apple Health.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>The camera is used to scan food barcodes. / Die Kamera wird zum Scannen von Barcodes verwendet.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -56,17 +67,6 @@
 			</array>
 		</dict>
 	</dict>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>ch.beserious.nutrition</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>seriousnutrition</string>
-			</array>
-		</dict>
-	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

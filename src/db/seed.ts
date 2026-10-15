@@ -40,6 +40,13 @@ const SEED: SeedRow[] = [
   { name: 'Linsenwaffeln', name_en: 'Lentil crackers', amount: 5, unit: 'Stück', kcal: 119, protein: 10, fat: 0.5, carbs: 18, piece_weight_g: 6 },
 ];
 
+/**
+ * Schlüssel der Startliste. Ohne ihn folgten diese Einträge keinem Sprachwechsel (bis 1.1).
+ * Der englische Name ist stabil und eindeutig, darum dient er als Schlüssel.
+ */
+const SEED_PREFIX = 'seed:';
+const seedKey = (row: SeedRow) => SEED_PREFIX + row.name_en;
+
 function toFoodItem(row: SeedRow, now: number): FoodItem {
   const isPiece = row.unit === 'Stück';
   const grams = isPiece ? row.amount * (row.piece_weight_g ?? 100) : row.amount;
@@ -55,12 +62,36 @@ function toFoodItem(row: SeedRow, now: number): FoodItem {
     default_amount: row.amount,
     source: 'reference',
     saved: 1,
+    ref_key: seedKey(row),
     created_at: now,
   };
 }
 
 /**
- * Grundnahrungsmittel aus dem Bundeslebensmittelschlüssel (Max Rubner-Institut, CC BY 4.0).
+ * Startliste von Installationen vor 1.2: Die Einträge haben noch keinen Schlüssel. Erkannt
+ * werden sie am Namen in einer der beiden Sprachen; Nährwerte bleiben, wie sie sind.
+ */
+async function backfillSeedKeys(): Promise<void> {
+  const byName = new Map<string, string>();
+  for (const row of SEED) {
+    byName.set(row.name, seedKey(row));
+    byName.set(row.name_en, seedKey(row));
+  }
+  const unkeyed = await db.foodItems.where('source').equals('reference').filter((f) => !f.ref_key).toArray();
+  const updates = unkeyed.filter((f) => byName.has(f.name)).map((f) => ({ ...f, ref_key: byName.get(f.name)! }));
+  if (updates.length === 0) return;
+  await db.foodItems.bulkPut(updates);
+  // Einmal neu abgleichen lassen: Die Startliste kann noch in der Gerätesprache stehen.
+  try {
+    localStorage.removeItem(REFERENCE_LANG);
+  } catch {
+    // dann beim nächsten Sprachwechsel
+  }
+}
+
+/**
+ * Grundnahrungsmittel aus dem Bundeslebensmittelschlüssel (Max Rubner-Institut, CC BY 4.0) und
+ * der Schweizer Nährwertdatenbank (BLV).
  * Open Food Facts kennt jedes verpackte Produkt, aber „Hafer Flocken" oder „Schweineschnitzel
  * natur, gebraten" findet man dort schlecht – diese Tabelle füllt die Lücke und liegt offline
  * in der App.
@@ -120,11 +151,13 @@ async function seedReference(): Promise<void> {
  * Innereien, die nur die Suche zugestellt haben. Angefasst wird nur, was nirgends eingetragen
  * ist: Ein gelöschtes Lebensmittel darf keinen Tag im Tagebuch beschädigen.
  *
- * Die Startliste oben (`SEED`) hat keinen Schlüssel und bleibt deshalb unberührt – sie ist
- * gewollt und gibt einer frisch installierten App etwas zum Antippen.
+ * Die Startliste oben (`SEED`, Schlüssel `seed:`) bleibt unberührt – sie ist gewollt und gibt
+ * einer frisch installierten App etwas zum Antippen.
  */
 async function dropRetiredReference(existing: FoodItem[], current: Set<string>): Promise<void> {
-  const retired = existing.filter((f) => f.ref_key && !current.has(f.ref_key) && f.id !== undefined);
+  const retired = existing.filter(
+    (f) => f.ref_key && !f.ref_key.startsWith(SEED_PREFIX) && !current.has(f.ref_key) && f.id !== undefined,
+  );
   if (retired.length === 0) return;
   const ids = retired.map((f) => f.id!);
   const used = new Set((await db.mealEntries.where('food_item_id').anyOf(ids).toArray()).map((e) => e.food_item_id));
@@ -148,6 +181,7 @@ export async function syncReferenceLanguage(lang: 'de' | 'en'): Promise<number> 
   }
   const rows = await loadReference(lang);
   const names = new Map(rows.map((r) => [r[0], r[1]]));
+  for (const row of SEED) names.set(seedKey(row), lang === 'de' ? row.name : row.name_en);
   const existing = await db.foodItems.where('source').equals('reference').toArray();
   const changed = existing
     .filter((f) => f.ref_key && names.has(f.ref_key) && f.name !== names.get(f.ref_key))
@@ -184,6 +218,8 @@ export async function seedIfEmpty(): Promise<void> {
   if (count === 0) {
     const now = Date.now();
     await db.foodItems.bulkAdd(SEED.map((r, i) => toFoodItem(r, now + i)));
+  } else {
+    await backfillSeedKeys();
   }
   await seedReference();
 

@@ -1,0 +1,5 @@
+/* Systemtexte, Deutsch. Diese Datei sorgt auch dafür, dass der App Store Deutsch als Sprache anzeigt. */
+"CFBundleDisplayName" = "Serious Nutrition";
+"NSCameraUsageDescription" = "Die Kamera wird zum Scannen von Barcodes verwendet.";
+"NSHealthUpdateUsageDescription" = "Serious Nutrition schreibt deine eingetragenen Kalorien, Makros, Wasser und dein Gewicht in Apple Health.";
+"NSHealthShareUsageDescription" = "Serious Nutrition liest Gewicht, aktive Energie und Schritte aus Apple Health und zeigt sie im Tagebuch, im Gewichtstrend und im Wochenfazit.";

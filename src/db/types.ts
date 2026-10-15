@@ -69,8 +69,9 @@ export interface FoodItem {
   /** Eigene Portionsgrössen, z.B. „1 EL“ = 14 g, „1 Handvoll“ = 30 g */
   portions?: Portion[];
   /**
-   * Schlüssel eines mitgelieferten Grundnahrungsmittels (USDA-Tabelle). Daran erkennt die App
-   * sprachunabhängig, welche Einträge sie schon angelegt hat.
+   * Schlüssel eines mitgelieferten Grundnahrungsmittels: BLS-Code, Schweizer Code (`ch:`) oder
+   * Eintrag der Startliste (`seed:`). Daran erkennt die App sprachunabhängig, welche Einträge sie
+   * schon angelegt hat, und benennt sie beim Sprachwechsel um.
    */
   ref_key?: string;
   /** Zuletzt eingetragene Menge – wird beim nächsten Mal vorgeschlagen */

@@ -101,6 +101,18 @@ test('language switch to German and back', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Breakfast' })).toBeVisible();
 });
 
+// Die Startliste (Magerquark, Haferflocken …) folgte bis 1.1 keinem Sprachwechsel.
+test('starter foods follow a language switch', async ({ page }) => {
+  await page.getByRole('button', { name: 'More' }).click();
+  await page.getByLabel('Language').getByText('Deutsch').click();
+  await page.getByRole('button', { name: 'Tagebuch' }).click();
+  await page.getByRole('button', { name: 'Posten zu Frühstück hinzufügen' }).click();
+  await page.getByRole('searchbox', { name: 'Lebensmittel suchen' }).fill('Magerquark');
+  await expect(page.getByRole('dialog').getByText('Magerquark', { exact: true })).toBeVisible();
+  await page.getByRole('searchbox', { name: 'Lebensmittel suchen' }).fill('Low-fat quark');
+  await expect(page.getByRole('dialog').getByText('Low-fat quark', { exact: true })).toBeHidden();
+});
+
 test('default phase name and number format follow the language', async ({ page }) => {
   // Phase „Bulk“ aus dem Helper: Standardname → wird übersetzt angezeigt
   await expect(page.locator('.summary-phase')).toHaveText('· Bulk');

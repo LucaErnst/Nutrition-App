@@ -1,0 +1,5 @@
+/* Systemtexte, Englisch. Gegenstück: de.lproj/InfoPlist.strings */
+"CFBundleDisplayName" = "Serious Nutrition";
+"NSCameraUsageDescription" = "The camera is used to scan food barcodes.";
+"NSHealthUpdateUsageDescription" = "Serious Nutrition writes your logged calories, macros, water and weight to Apple Health.";
+"NSHealthShareUsageDescription" = "Serious Nutrition reads your weight, active energy and steps from Apple Health to show them in the diary, weight trend and weekly summary.";

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17B2DE9BC0A49EB156EF5184 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C62228CDD2EF178B7CEBB226 /* InfoPlist.strings */; };
 		0990D4E1750F9861EA557B5C /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2009E2A17B41BD1362CF1D6A /* MainViewController.swift */; };
 		2D2E3262C09E3A12AEA5D91F /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01DD427223FFB570ADAD6CC /* SharedStore.swift */; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
@@ -59,6 +60,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		58A7C097CFF716C692E876D8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6FA9D58A0C0F1DCDFB599B71 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		000EF3192D905BF9BB416301 /* ReviewBridgePlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ReviewBridgePlugin.swift; sourceTree = "<group>"; };
 		2009E2A17B41BD1362CF1D6A /* MainViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		2398B74698CB422FE3CF91C6 /* SeriousWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SeriousWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -169,6 +172,7 @@
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
 				504EC3131FED79650016851F /* Info.plist */,
+				C62228CDD2EF178B7CEBB226 /* InfoPlist.strings */,
 				2FAD9762203C412B000D30F8 /* config.xml */,
 				50B271D01FEDC1A000F3C39B /* public */,
 				B6CD2035EC37F0856BC17C3C /* WidgetBridgePlugin.swift */,
@@ -266,6 +270,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				de,
 				Base,
 			);
 			mainGroup = 504EC2FB1FED79650016851F;
@@ -285,6 +290,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */,
+				17B2DE9BC0A49EB156EF5184 /* InfoPlist.strings in Resources */,
 				50B271D11FEDC1A000F3C39B /* public in Resources */,
 				504EC30F1FED79650016851F /* Assets.xcassets in Resources */,
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
@@ -391,6 +397,15 @@
 				504EC3111FED79650016851F /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		C62228CDD2EF178B7CEBB226 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				58A7C097CFF716C692E876D8 /* en */,
+				6FA9D58A0C0F1DCDFB599B71 /* de */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
