@@ -11,6 +11,20 @@ Store (siehe Tabelle in `docs/RELEASE-1.1.md`).
 
 ## A. Was in 1.2 kommt
 
+**Stand 15.10.2026:** A2–A6 gebaut und als **1.2 (Build 23) in TestFlight** hochgeladen. Offen: A1
+(USDA) für einen zweiten Testbuild, danach Teil B. Tests: 151 Unit, 40 e2e.
+
+Was beim Bauen anders wurde als geplant:
+- A6: Die Untergrenze (Grundumsatz) greift mit DGE-Faktoren praktisch nie (1,4 × 0,85 = 1,19 ×
+  Grundumsatz). Sie bleibt als Sicherheitsnetz; der Test prüft sie über viele Kombinationen.
+- A5: Stückgewichte stammen aus **USDA SR Legacy** (`food_portion`, CC0), 47 Einträge in
+  `src/db/pieceWeights.ts`, je mit FDC-ID. Brot fehlt bewusst (Scheibe ≠ Stück, eigene Einheit nötig).
+  Die USDA-Quelle muss mit A1 ohnehin in `more.about` und die Store-Texte (B2).
+- A4: Hinweis-Zustand liegt im localStorage (Gerätezustand, nicht im Backup), nicht in den Settings.
+  Hinweise erscheinen nacheinander: Tagestyp erst nach dem ersten Eintrag.
+- A3: Schritte nur nativ; ohne Health keine Zeile im Fazit. Nutzer mit Health aus 1.1 werden beim
+  ersten Start einmal nach Schritten gefragt.
+
 ### A1. USDA FoodData Central – amerikanische Grundnahrungsmittel
 
 - **Quelle:** USDA FoodData Central, Teil **SR Legacy** (~7'800 Grundnahrungsmittel).
@@ -45,12 +59,12 @@ deutschen. Folgen für den Bau:
 
 ### A2. Bekannte Fehler aus 1.1
 
-- [ ] Die 17 Startlebensmittel aus `SEED` (Magerquark, Haferflocken …) folgen keinem
+- [x] Die 17 Startlebensmittel aus `SEED` (Magerquark, Haferflocken …) folgen keinem
       Sprachwechsel. Lösung über einen eigenen Schlüssel für diese Einträge, **nicht** über
       `dropRetiredReference` (siehe `handoff.md` Punkt 5).
-- [ ] Veralteter Kommentar in `src/db/types.ts:72`: spricht von der „USDA-Tabelle", gemeint ist
+- [x] Veralteter Kommentar in `src/db/types.ts:72`: spricht von der „USDA-Tabelle", gemeint ist
       seit Build 17 der BLS. Wird mit A1 wieder teilweise richtig, dann sauber formulieren.
-- [ ] Store-Seite zeigt unter „Sprachen" nur **Englisch** (gesehen am 12.10.2026 auf der Live-Seite
+- [x] Store-Seite zeigt unter „Sprachen" nur **Englisch** (gesehen am 12.10.2026 auf der Live-Seite
       von 1.1). Apple liest die Sprachen aus den `.lproj`-Ordnern im Bundle, nicht aus
       `CFBundleLocalizations`. Im Projekt gibt es nur `Base.lproj`, `knownRegions` kennt nur `en`.
       Lösung: in Xcode Deutsch als Lokalisierung hinzufügen und eine `de.lproj/InfoPlist.strings`
@@ -203,12 +217,12 @@ Jede Zeile ist eine Stelle, an der heute eine Zahl, eine Quelle oder eine Versio
 
 ### B1. Versionsnummern
 
-- [ ] `package.json` → `1.2.0` (erscheint unter „Mehr")
-- [ ] `ios/App/App.xcodeproj/project.pbxproj`: `MARKETING_VERSION = 1.2` – **vier Stellen**
+- [x] `package.json` → `1.2.0` (erscheint unter „Mehr")
+- [x] `ios/App/App.xcodeproj/project.pbxproj`: `MARKETING_VERSION = 1.2` – **vier Stellen**
       (App und SeriousWidgets, je Debug und Release)
-- [ ] gleiche Datei: `CURRENT_PROJECT_VERSION` hochzählen (heute 22) – ebenfalls **vier Stellen**,
+- [x] gleiche Datei: `CURRENT_PROJECT_VERSION` hochzählen (jetzt 23) – ebenfalls **vier Stellen**,
       alle gleich, sonst lehnt App Store Connect ab (`docs/NATIVE.md`)
-- [ ] `src/lib/__tests__/review.test.ts` nutzt `1.1.0` als Testwert – prüfen, ob die
+- [x] `src/lib/__tests__/review.test.ts` nutzt `1.1.0` als Testwert – prüfen, ob die
       Bewertungsabfrage an die Version gekoppelt ist. Wenn ja, muss der Test zur neuen Version
       passen.
 

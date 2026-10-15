@@ -1,6 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 14.10.2026, zwei Tage nach dem Launch von 1.1. Diese Datei ist die Übergabe an die nächste
+Stand: 15.10.2026. 1.1 ist live, **1.2 (Build 23) liegt in TestFlight**. Diese Datei ist die Übergabe an die nächste
 Sitzung. Wer hier anfängt, soll ohne Rückfragen weiterarbeiten können.
 
 **So wird sie benutzt:** In einer neuen Sitzung sagen: *„Lies handoff.md und mach dort weiter, wo
@@ -36,11 +36,15 @@ Entscheidung misst sich daran.
     Review").
 
 **Code**
-- Version 1.1.0, iOS-Build 22. 131 Unit-Tests und **35** e2e-Tests grün, Lint ohne Fehler (nur
-  alte Warnungen).
+- Version **1.2.0, iOS-Build 23**, am 15.10. nach App Store Connect hochgeladen (TestFlight).
+  Enthält A2–A6 aus `docs/RELEASE-1.2.md`: Startliste folgt dem Sprachwechsel, Deutsch im
+  Bundle (`de.lproj`), Schritte aus Health im Wochenfazit, Hinweise beim ersten Kontakt, Stückzahl
+  für 47 Grundnahrungsmittel, Bedarfsrechner unter Mehr mit Herleitung (DGE-PAL).
+- **151 Unit-Tests und 40 e2e-Tests** grün, Lint ohne Fehler (nur Warnungen).
+- 1.2 ist **nicht** zur Prüfung eingereicht und hat in App Store Connect noch keine Version.
 - Alles gepusht (14.10.), Web-Version unter `lucaernst.github.io/Nutrition-App/` aktuell. Vor jedem
   Push fragen.
-- **Seit dem Store-Build behoben, geht erst mit dem nächsten iOS-Build raus** (Web schon live):
+- Seit dem 1.1-Store-Build behoben, **in Build 23 enthalten** (Web schon live):
   - Backup wiederherstellen löschte die mitgelieferten Grundnahrungsmittel, wenn das Backup sie
     nicht enthielt (Backups aus 1.0). Jetzt `refreshReferenceAfterRestore` in `src/db/seed.ts`,
     aufgerufen in `restoreBackup`.
@@ -127,6 +131,15 @@ Entscheidung misst sich daran.
   durchs Datum. Nur die gewollten Bilder committen, Rest mit `git checkout --` zurücksetzen –
   die freigegebenen Bilder im Store sind die alten.
 
+**1.2-Bau**
+- USDA SR Legacy liegt **nicht** im Repo; heruntergeladen am 15.10. ins Scratchpad
+  (`fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip`, 6 MB). Für A1
+  erneut laden (Luca hat den Download freigegeben).
+- `tsc -b` prüft auch die Testdateien: kein `node:fs` in Tests (keine Node-Typen), JSON über
+  `loadReference` laden.
+- `tools/ExportOptions.plist` lädt direkt hoch und behält kein `.ipa`; die Build-Nummer in
+  TestFlight nachsehen.
+
 **Werkzeuge auf diesem Mac**
 - **Kein LibreOffice, kein pandoc, kein pdftoppm.** Word nur über die entpackte `document.xml` prüfen.
 - Was Luca über die geteilte Zwischenablage schickt (`…/shared-pasteboard/…rtfd`), ist für Claude
@@ -150,7 +163,11 @@ Entscheidung misst sich daran.
    Metricool neu verbinden.
 4. **Instagram:** Luca pinnt die Kommentare aus `APP-ACCOUNT.md`. Ab 26.10. neue Posts planen.
    Browser: immer Chrome.
-5. **1.2 bauen** nach `docs/RELEASE-1.2.md`:
+5. **1.2 testen:** Build 23 in TestFlight auf dem iPhone installieren. Prüfen: Store-Version 1.1
+   darüber aktualisieren (Daten, Pro bleiben), Health-Abfrage nach Schritten, Wochenfazit mit
+   Schritten, „Ei" in Stück, Bedarfsrechner unter Mehr, Hinweise (unter Mehr → Hinweise wieder
+   zeigen). Rückmeldungen in `docs/RELEASE-1.2.md`.
+6. **1.2 fertig bauen** nach `docs/RELEASE-1.2.md` (A2–A6 erledigt, Stand oben in der Datei):
    - A1 USDA-Daten für US-Nutzer, nur in englischer App-Sprache
    - A2 bekannte Fehler, u. a. Store-Sprache Deutsch fehlt (`de.lproj`)
    - A3 Schritte aus Apple Health, nur als Erklärung im Wochenfazit, **kein Schrittziel**
@@ -159,7 +176,7 @@ Entscheidung misst sich daran.
    - A6 Bedarfsrechner jederzeit unter Mehr, realistischer: Alltag und Training getrennt,
      Untergrenze Grundumsatz, Protein bei BMI > 30 auf Referenzgewicht, Herleitung als Tabelle
    - Mit 1.2 ein In-App-Event „Major Update" erwägen.
-6. **31.01.2027:** Werbetext zurücksetzen, er nennt den Einführungspreis.
+7. **31.01.2027:** Werbetext zurücksetzen, er nennt den Einführungspreis.
 
 **Offene Entscheidungen von Luca**
 - Ab Februar kostet Pro in Deutschland/Österreich **EUR 34.99** (Apples Umrechnung von CHF 25).
@@ -173,8 +190,8 @@ Entscheidung misst sich daran.
 ## Befehle
 
 ```
-npm test                                  # 131 Unit-Tests
-npx playwright test                       # 35 e2e, Projekte "mobile" (de-CH) und "us" (en-US)
+npm test                                  # 151 Unit-Tests
+npx playwright test                       # 40 e2e, Projekte "mobile" (de-CH) und "us" (en-US)
 npx playwright test e2e/X.spec.ts --project=mobile -g "Name"   # einzelner Test
 npm run build                             # tsc + vite
 npm run screenshots                       # Screenshots 1–7 und Creative Assets, beide Sprachen
