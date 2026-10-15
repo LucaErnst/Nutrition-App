@@ -209,15 +209,71 @@ function compose(shot, png) {
   </body></html>`;
 }
 
+/**
+ * Gerätegrössen. Laut App Store Connect (Screenshot specifications, Stand 10/2026):
+ * iPhone mit Dynamic Island 1290 × 2796; iPhone Duo aussen 1398 × 2034, innen 2007 × 2853,
+ * jeweils Hochformat. Alle mit Faktor 3 aufgenommen, die Punkte sind Pixel / 3.
+ * Aufruf nur für einzelne Sätze: `npm run screenshots -- duo-outer duo-inner`.
+ */
+const SETS = {
+  iphone: { width: 430, height: 932, dir: '', creative: true },
+  'duo-outer': { width: 466, height: 678, dir: 'duo-outer', creative: false },
+  'duo-inner': { width: 669, height: 951, dir: 'duo-inner', creative: false },
+};
+
+/**
+ * Rahmen fürs iPhone Duo. Die Displays sind fast quadratisch (0,69 bzw. 0,70 statt 0,46), darum
+ * nicht der iPhone-Rahmen gestreckt: gleiche Bildsprache, Gerät breiter, Schrift mit der Breite.
+ */
+function composeWideDevice(shot, png, w, h) {
+  const src = `data:image/png;base64,${png.toString('base64')}`;
+  const title = Math.min(56, Math.round(w * 0.085));
+  const deviceW = Math.round(w * 0.74);
+  return `<!doctype html><html><head><meta charset="utf-8"><style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: ${w}px; height: ${h}px; overflow: hidden; position: relative;
+      background: #07080b;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .glow-a { position: absolute; top: ${-0.15 * h}px; left: ${-0.2 * w}px; width: ${0.9 * w}px; height: ${0.9 * w}px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(230,196,106,.20), rgba(230,196,106,0) 68%); }
+    .glow-b { position: absolute; bottom: ${-0.06 * h}px; right: ${-0.25 * w}px; width: ${w}px; height: ${w}px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,92,246,.22), rgba(139,92,246,0) 66%); }
+    .copy { position: relative; padding: ${Math.round(h * 0.06)}px ${Math.round(w * 0.08)}px 0; text-align: center; }
+    h1 { font-size: ${title}px; line-height: 1.1; letter-spacing: -0.5px; font-weight: 800; color: #fff; }
+    h1 em { font-style: normal; color: #e6c46a; }
+    p { margin-top: ${Math.round(title * 0.3)}px; font-size: ${Math.round(title * 0.4)}px; line-height: 1.35; color: rgba(255,255,255,.62); }
+    .phone { position: absolute; left: 50%; top: ${Math.round(h * 0.27)}px; transform: translateX(-50%);
+      width: ${deviceW}px; padding: 5px; border-radius: ${Math.round(deviceW * 0.09)}px;
+      background: linear-gradient(160deg, #2b2f38, #14161b);
+      box-shadow: 0 30px 70px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.06); }
+    .phone img { display: block; width: 100%; border-radius: ${Math.round(deviceW * 0.09) - 5}px; }
+  </style></head><body>
+    <div class="glow-a"></div><div class="glow-b"></div>
+    <div class="copy">
+      <h1>${shot.top} <em>${shot.accent}</em></h1>
+      <p>${shot.sub}</p>
+    </div>
+    <div class="phone"><img src="${src}"></div>
+  </body></html>`;
+}
+
 async function main() {
+  const only = process.argv.slice(2).filter((a) => SETS[a]);
+  const sets = only.length ? only : Object.keys(SETS);
   const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { stdio: 'ignore' });
   await new Promise((r) => setTimeout(r, 2500));
   const browser = await chromium.launch();
   try {
+    for (const setName of sets) {
+    const set = SETS[setName];
     for (const lang of ['en', 'de']) {
-      mkdirSync(`${OUT}/${lang}`, { recursive: true });
+      const outDir = set.dir ? `${OUT}/${lang}/${set.dir}` : `${OUT}/${lang}`;
+      mkdirSync(outDir, { recursive: true });
       const context = await browser.newContext({
-        viewport: { width: 430, height: 932 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true,
+        viewport: { width: set.width, height: set.height }, deviceScaleFactor: 3, isMobile: true, hasTouch: true,
         locale: lang === 'de' ? 'de-CH' : 'en-US', colorScheme: 'dark',
       });
       await context.addInitScript((l) => {
@@ -296,18 +352,19 @@ async function main() {
       await context.setOffline(false);
 
       // Rahmen rendern – eigener Kontext ohne Gerätemerkmale, damit nichts hineinfunkt.
-      const frameCtx = await browser.newContext({ viewport: { width: 430, height: 932 }, deviceScaleFactor: 3 });
+      const frameCtx = await browser.newContext({ viewport: { width: set.width, height: set.height }, deviceScaleFactor: 3 });
       const framePage = await frameCtx.newPage();
       for (const shot of SHOTS) {
         const png = raw[shot.name];
         if (!png) continue;
-        await framePage.setContent(compose(shot[lang], png));
+        await framePage.setContent(setName === 'iphone' ? compose(shot[lang], png) : composeWideDevice(shot[lang], png, set.width, set.height));
         await framePage.waitForTimeout(150);
-        await framePage.screenshot({ path: `${OUT}/${lang}/${shot.name}.png` });
+        await framePage.screenshot({ path: `${outDir}/${shot.name}.png` });
       }
       await frameCtx.close();
 
       // Creative Assets: Header 21:9 und Suchergebnis 3:2, beide aus denselben Rohaufnahmen.
+      if (set.creative) {
       mkdirSync(`${OUT_CREATIVE}/${lang}`, { recursive: true });
       const shots = [raw['01-diary'], raw['03-week']].filter(Boolean);
       for (const [kind, w, h] of [['header', 1920, 823], ['search', 1440, 960]]) {
@@ -318,9 +375,11 @@ async function main() {
         await pg.screenshot({ path: `${OUT_CREATIVE}/${lang}/${kind}.png` });
         await ctx.close();
       }
+      }
 
       await context.close();
-      console.log(`${lang}: ${SHOTS.length} Screenshots → ${OUT}/${lang}/, 2 Creative Assets → ${OUT_CREATIVE}/${lang}/`);
+      console.log(`${setName} ${lang}: ${SHOTS.length} Screenshots → ${outDir}/${set.creative ? `, 2 Creative Assets → ${OUT_CREATIVE}/${lang}/` : ''}`);
+    }
     }
   } finally {
     await browser.close();
