@@ -149,7 +149,8 @@ export function unitChoices(kind: UnitType, system: UnitSystem): UnitChoiceGroup
  */
 export function unitChoicesForFood(kind: UnitType, system: UnitSystem): UnitChoiceGroup[] {
   if (kind === 'piece') return [...unitChoices('piece', system), ...unitChoices('weight', system)];
-  return unitChoices(kind, system);
+  // Stück steht immer zur Wahl (1.3); ohne Stückgewicht fragt das Formular danach.
+  return [...unitChoices(kind, system), ...unitChoices('piece', system)];
 }
 
 /** Beschriftung einer Einheit; 'Stück' wird übersetzt hereingereicht. */

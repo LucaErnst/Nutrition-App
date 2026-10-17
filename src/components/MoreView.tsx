@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useI18n, useT, type Language } from '../i18n';
 import { waterGoalField, waterLeftLabel, WATER_GOAL_MAX_ML, WATER_GOAL_MIN_ML } from '../lib/nutrition';
 import { saveSettings, useSettings, useUnitSystem } from '../db/hooks';
@@ -12,6 +12,7 @@ import { UnitsSection } from './UnitsSection';
 import { CollapsibleCard } from './CollapsibleCard';
 import { resetTips } from '../lib/tips';
 import { useToast } from './Toast';
+import { SettingIcon } from './Icons';
 
 /** Rechtstexte liegen auf der Web-Adresse – auch die native App verlinkt dorthin. */
 const LEGAL_BASE = 'https://lucaernst.github.io/Nutrition-App/legal/';
@@ -42,17 +43,19 @@ export function MoreView() {
   }
 
   return (
-    <div className="goals">
-      <GoalsView />
+    <div className="goals more">
       <ProSection />
+      <GoalsView />
       <TrainingDaysSection />
+
+      <div className="settings-block">
+      <h3 className="group-title">{t('more.groupSettings')}</h3>
+      <div className="settings-group">
       <RemindersSection />
       <HealthSection />
-      <BackupSection />
       <UnitsSection />
-      <TipsSection />
 
-      <CollapsibleCard title={t('more.water')} summary={t('more.waterSummary', { goal: waterLeftLabel(waterGoal, system) })}>
+      <CollapsibleCard icon="water" title={t('more.water')} summary={t('more.waterSummary', { goal: waterLeftLabel(waterGoal, system) })}>
         <div className="field" style={{ maxWidth: 260, marginTop: 8, marginInline: 'auto' }}>
           <span>{t('more.waterGoal', { unit: field.label })}</span>
           <div className="stepper">
@@ -90,11 +93,16 @@ export function MoreView() {
         </div>
       </CollapsibleCard>
 
-      <DiagnosticsSection />
-
       <section className="card section">
-        <h2>{t('more.language')}</h2>
-        <div className="segmented segmented-centered" role="radiogroup" aria-label={t('more.language')}>
+        <div className="section-head">
+          <SettingIcon kind="language" />
+          <h2>{t('more.language')}</h2>
+        <div
+          className="segmented segmented-sm"
+          role="radiogroup"
+          aria-label={t('more.language')}
+          style={{ '--n': LANGS.length, '--i': Math.max(0, LANGS.findIndex((l) => l.id === lang)) } as CSSProperties}
+        >
           {LANGS.map((l) => (
             <label key={l.id} className={lang === l.id ? 'active' : ''}>
               <input type="radio" name="language" checked={lang === l.id} onChange={() => setLanguage(l.id)} />
@@ -102,23 +110,42 @@ export function MoreView() {
             </label>
           ))}
         </div>
+        </div>
         <p className="search-hint">{t('more.languageHint')}</p>
       </section>
 
-      <section className="card section">
-        <h2>{t('more.legal')}</h2>
-        <p className="legal-links">
-          <a href={`${LEGAL_BASE}privacy-${lang}.html`} target="_blank" rel="noopener">
-            {t('more.privacy')}
-          </a>
-          <a href={`${LEGAL_BASE}terms-${lang}.html`} target="_blank" rel="noopener">
-            {t('more.terms')}
-          </a>
-          <a href={`${LEGAL_BASE}support-${lang}.html`} target="_blank" rel="noopener">
-            {t('more.support')}
-          </a>
-        </p>
-      </section>
+      <TipsSection />
+      </div>
+      </div>
+
+      <div className="settings-block">
+        <h3 className="group-title">{t('more.groupData')}</h3>
+        <div className="settings-group">
+          <BackupSection />
+          <DiagnosticsSection />
+        </div>
+      </div>
+
+      <div className="settings-block">
+        <h3 className="group-title">{t('more.legal')}</h3>
+        <div className="settings-group">
+          {(
+            [
+              ['privacy', t('more.privacy')],
+              ['terms', t('more.terms')],
+              ['support', t('more.support')],
+            ] as const
+          ).map(([doc, label]) => (
+            <a key={doc} className="card section setting-link" href={`${LEGAL_BASE}${doc}-${lang}.html`} target="_blank" rel="noopener">
+              <SettingIcon kind="legal" />
+              <span>{label}</span>
+              <svg viewBox="0 0 8 13" width="8" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M1.5 1.5 6.5 6.5l-5 5" />
+              </svg>
+            </a>
+          ))}
+        </div>
+      </div>
       <p className="about">{t('more.about', { app: t('app.title'), version: __APP_VERSION__ })}</p>
     </div>
   );
@@ -129,7 +156,7 @@ function TipsSection() {
   const t = useT();
   const toast = useToast();
   return (
-    <CollapsibleCard title={t('tips.title')}>
+    <CollapsibleCard icon="tips" title={t('tips.title')}>
       <button
         type="button"
         className="btn-secondary"

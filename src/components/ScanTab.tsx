@@ -76,8 +76,9 @@ export function ScanTab({ date, mealType, onDone }: Props) {
         fromLocal={state.fromLocal}
         backLabel={t('product.backScan')}
         onBack={() => setState({ kind: 'scanning' })}
-        onConfirm={async (amount, unit, save) => {
-          let food = state.item;
+        onConfirm={async (amount, unit, save, pieceWeight) => {
+          let food = pieceWeight ? { ...state.item, piece_weight_g: pieceWeight } : state.item;
+          if (food.id && pieceWeight) await db.foodItems.update(food.id, { piece_weight_g: pieceWeight });
           if (!food.id) {
             const id = (await db.foodItems.add({ ...food, saved: save ? 1 : 0 })) as number;
             food = { ...food, id };

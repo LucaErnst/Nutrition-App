@@ -4,16 +4,17 @@ import { defaultUnit, fmt, macrosFor } from '../lib/nutrition';
 import { useT } from '../i18n';
 import { useUnitSystem } from '../db/hooks';
 import { UnitSelect } from './UnitSelect';
-import { convertAmount } from '../lib/units';
+import { convertAmount, isPieceUnit } from '../lib/units';
 import { AmountStepper } from './AmountStepper';
 import { PortionChips } from './PortionChips';
+import { PieceWeightField, usePieceWeight } from './PieceWeight';
 
 interface ResultProps {
   item: FoodItem;
   fromLocal: boolean;
   backLabel: string;
   onBack: () => void;
-  onConfirm: (amount: number, unit: Unit, save: boolean) => Promise<void>;
+  onConfirm: (amount: number, unit: Unit, save: boolean, pieceWeight?: number) => Promise<void>;
 }
 
 /** Ergebniskarte für ein Open-Food-Facts-Produkt (Scan oder Textsuche): Menge wählen, speichern. */
@@ -29,8 +30,9 @@ export function ProductResult({ item, fromLocal, backLabel, onBack, onConfirm }:
   });
   const [save, setSave] = useState(true);
   const n = Number(amount.replace(',', '.'));
-  const valid = Number.isFinite(n) && n > 0;
-  const m = macrosFor(item, valid ? n : 0, unit);
+  const piece = usePieceWeight(item, unit);
+  const valid = Number.isFinite(n) && n > 0 && piece.ok;
+  const m = macrosFor(piece.effective, valid ? n : 0, unit);
   const incomplete = item.kcal_per_100g === 0;
 
   return (
@@ -38,7 +40,7 @@ export function ProductResult({ item, fromLocal, backLabel, onBack, onConfirm }:
       className="form"
       onSubmit={(e) => {
         e.preventDefault();
-        if (valid) void onConfirm(n, unit, save);
+        if (valid) void onConfirm(n, unit, save, piece.newWeight);
       }}
     >
       <button type="button" className="btn-link" onClick={onBack}>
@@ -62,9 +64,17 @@ export function ProductResult({ item, fromLocal, backLabel, onBack, onConfirm }:
         </div>
         <label className="field">
           <span>{t('common.unit')}</span>
-          <UnitSelect kind={item.unit_type} value={unit} onChange={setUnit} />
+          <UnitSelect
+            kind={item.unit_type}
+            value={unit}
+            onChange={(u) => {
+              if (isPieceUnit(u) !== isPieceUnit(unit)) setAmount(isPieceUnit(u) ? '1' : String(convertAmount(item.default_amount ?? 100, baseUnit, u)));
+              setUnit(u);
+            }}
+          />
         </label>
       </div>
+      {piece.needs && <PieceWeightField input={piece.input} setInput={piece.setInput} />}
       <PortionChips
         food={item}
         baseUnit={baseUnit}

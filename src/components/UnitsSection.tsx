@@ -20,6 +20,7 @@ export function UnitsSection() {
 
   return (
     <CollapsibleCard
+      icon="units"
       title={t('units.title')}
       summary={t('units.example', {
         weight: labelFor(defaultUnitFor('weight', system), t('unit.piece')),

@@ -5,6 +5,7 @@ import { isNative } from '../lib/native';
 import { useT } from '../i18n';
 import { usePro } from '../lib/pro';
 import { openPaywall, ProBadge } from './Paywall';
+import { SettingIcon } from './Icons';
 
 /** Mehr → Apple Health: ein Schalter; beim Einschalten Freigabe + Erstabgleich. */
 export function HealthSection() {
@@ -50,6 +51,7 @@ export function HealthSection() {
   return (
     <section className="card section">
       <div className="section-head">
+        <SettingIcon kind="health" />
         <h2>
           {t('health.title')} {!pro && <ProBadge />}
         </h2>

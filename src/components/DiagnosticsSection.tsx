@@ -42,7 +42,7 @@ export function DiagnosticsSection() {
   }
 
   return (
-    <CollapsibleCard title={t('diag.title')} summary={errors.length === 0 ? t('diag.none') : t('diag.count', { n: errors.length })}>
+    <CollapsibleCard icon="diag" title={t('diag.title')} summary={errors.length === 0 ? t('diag.none') : t('diag.count', { n: errors.length })}>
       {isNative && (
         // In TestFlight zeigt iOS die Bewertungs-Abfrage nie an. Hier steht darum, ob die App
         // sie angefordert hat – sonst liesse sich nicht unterscheiden, ob die Regel griff.

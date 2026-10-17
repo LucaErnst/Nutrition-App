@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MEAL_TYPES } from '../db/types';
 import { groupByMeal, setTrainingDay, useDayEntries, useDaySummaries, useGoals, useIsTrainingDay } from '../db/hooks';
 import { sumMacros } from '../lib/nutrition';
@@ -16,7 +16,6 @@ import { useSettings } from '../db/hooks';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/db';
 import { Tip } from './Tip';
-import { swallowNextClick } from '../lib/swallowClick';
 
 interface Props {
   initialDate?: string;
@@ -31,10 +30,9 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
     window.scrollTo(0, 0);
   }, [date]);
 
-  // Seitlich wischen wechselt den Tag (wie Seiten umblättern). Einträge haben ihr eigenes
-  // Wischen zum Löschen, Eingabefelder bleiben aussen vor.
+  // Pfeile wechseln den Tag mit einer kurzen Gleitbewegung (Wischen zwischen Tagen hat Luca
+  // am 17.10.2026 wieder herausgenommen – die Pfeile reichen).
   const [slide, setSlide] = useState<'' | 'out-left' | 'out-right' | 'in-left' | 'in-right'>('');
-  const swipe = useRef<{ x: number; y: number } | null>(null);
   function goTo(dir: 1 | -1) {
     setSlide(dir > 0 ? 'out-left' : 'out-right');
     window.setTimeout(() => {
@@ -89,25 +87,7 @@ export function DayView({ initialDate, onOpenGoals }: Props) {
 
       <BackupReminder />
 
-      <div
-        className={`day-pane ${slide}`}
-        onPointerDown={(ev) => {
-          const el = ev.target as HTMLElement;
-          swipe.current = el.closest('.swipe, input, textarea, select, .segmented') ? null : { x: ev.clientX, y: ev.clientY };
-        }}
-        onPointerUp={(ev) => {
-          const s = swipe.current;
-          swipe.current = null;
-          if (!s) return;
-          const dx = ev.clientX - s.x;
-          const dy = ev.clientY - s.y;
-          if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
-          // Der Klick am Ende des Wischens soll keinen Knopf auslösen.
-          swallowNextClick(window);
-          goTo(dx < 0 ? 1 : -1);
-        }}
-        onPointerCancel={() => (swipe.current = null)}
-      >
+      <div className={`day-pane ${slide}`}>
       {/* Auf breiten Displays (iPad, aufgeklapptes iPhone Duo) zwei Spalten: Tagesstand links, Mahlzeiten rechts */}
       <div className="split-side">
         <DailySummary

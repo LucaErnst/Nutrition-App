@@ -81,6 +81,7 @@ export function BackupSection() {
 
   return (
     <CollapsibleCard
+      icon="backup"
       title={t('backup.title')}
       summary={t('backup.last', { when: settings?.last_backup_at ? formatWhen(settings.last_backup_at) : t('backup.never') })}
     >

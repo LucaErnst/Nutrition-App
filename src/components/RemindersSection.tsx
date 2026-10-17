@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { saveSettings, useSettings } from '../db/hooks';
+import { SettingIcon } from './Icons';
 import { useT } from '../i18n';
 import { isNative } from '../lib/native';
 import { DEFAULT_REMINDERS, MAX_PER_DAY, type ReminderSettings } from '../lib/reminders';
@@ -49,7 +50,10 @@ export function RemindersSection() {
   if (!isNative) {
     return (
       <section className="card section">
-        <h2>{t('rem.title')}</h2>
+        <div className="section-head">
+          <SettingIcon kind="reminders" />
+          <h2>{t('rem.title')}</h2>
+        </div>
         <p className="search-hint">{t('rem.webHint')}</p>
       </section>
     );
@@ -68,6 +72,7 @@ export function RemindersSection() {
   return (
     <section className="card section">
       <div className="section-head">
+        <SettingIcon kind="reminders" />
         <h2>{t('rem.title')}</h2>
         <div className="meal-header-right">
           <label className="checkbox">

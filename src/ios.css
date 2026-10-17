@@ -29,7 +29,7 @@
   --bar-shine: rgb(255 255 255 / 0.9);
   --bar-thumb: rgb(120 120 128 / 0.16);
   --press: rgb(0 0 0 / 0.06);
-  --wm-opacity: 0.06;
+  --wm-opacity: 0.045;
   --spring: cubic-bezier(0.34, 1.36, 0.5, 1);
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -845,5 +845,216 @@ button:active:not(:disabled) {
 @media (max-width: 599px) {
   .modal.sheet {
     border-radius: 28px 28px 0 0;
+  }
+}
+
+/* Wochenbudget im Tagebuch als Karte (1.3) */
+.budget-mini {
+  padding: 14px 16px;
+}
+.budget-mini-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.budget-mini-head > span:last-child {
+  font-weight: 600;
+}
+.budget-mini .budget-track {
+  height: 6px;
+  border-radius: 3px;
+  margin: 8px 0 6px;
+  background: var(--fill);
+}
+.budget-mini .progress-fill {
+  border-radius: 3px;
+}
+.budget-mini-line {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+
+/*
+ * Oberer Bildrand einheitlich (17.10.2026): iOS zeigt beim Hochziehen die Farbe hinter der Seite –
+ * die kommt vom html-Element, nicht vom body. Und unter der Statusleiste liegt ein Glas-Streifen in
+ * Hintergrundfarbe, damit scrollender Inhalt dort nicht als weisse Kante stehen bleibt.
+ */
+html {
+  background: var(--bg);
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top);
+  z-index: 20;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+}
+
+/* ---------- Mehr: gruppierte Einstellungsliste ---------- */
+.group-title {
+  margin: 8px 16px 6px;
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-2);
+}
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--surface);
+}
+.settings-group > .card,
+.settings-group > .card.section {
+  border-radius: 0;
+  margin: 0;
+  padding: 10px 16px;
+  position: relative;
+}
+.settings-group > .card + .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 58px;
+  right: 0;
+  border-top: 0.5px solid var(--border);
+}
+.settings-group .section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 34px;
+  flex-wrap: nowrap;
+}
+.settings-group .section-head h2 {
+  flex: 1;
+  min-width: 0;
+  font-size: 17px;
+  font-weight: 400;
+}
+.settings-group .section-head .segmented {
+  margin: 0;
+  flex: none;
+  width: 190px;
+}
+.settings-group .search-hint {
+  margin: 2px 0 0 42px;
+  font-size: 13px;
+}
+.settings-group .collapse-inner {
+  padding-left: 42px;
+}
+.section-head-tap {
+  cursor: pointer;
+}
+.setting-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.setting-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 50px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 17px;
+}
+.setting-link span:not(.setting-icon) {
+  flex: 1;
+}
+.setting-link > svg {
+  color: var(--text-3);
+}
+.settings-group .meal-chevron {
+  color: var(--text-3);
+}
+
+/* Schalter wie in iOS (Erinnerungen, Apple Health) */
+.section-head .checkbox {
+  font-size: 0;
+  gap: 0;
+}
+.section-head .checkbox input {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 51px;
+  height: 31px;
+  margin: 0;
+  border-radius: 100px;
+  background: var(--fill);
+  transition: background 0.2s;
+  cursor: pointer;
+  flex: none;
+}
+.section-head .checkbox input::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 3px 8px rgb(0 0 0 / 0.15);
+  transition: transform 0.25s var(--spring);
+}
+.section-head .checkbox input:checked {
+  background: var(--green);
+}
+.section-head .checkbox input:checked::after {
+  transform: translateX(20px);
+}
+.settings-group .chevron-slot {
+  display: none;
+}
+
+/* Phasen und Trainingstage als eigene Karten mit Abstand */
+.more > .card,
+.more > section {
+  margin-bottom: 4px;
+}
+.weekday-picker .weekday {
+  border-radius: 100px;
+}
+
+/* Segmente gleich breit, damit die gleitende Markierung genau unter dem Text liegt */
+.segmented[style*='--n'] {
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+}
+.segmented[style*='--n'] label {
+  padding-inline: 4px;
+  min-width: 0;
+}
+.section-head:has(> .segmented[style*='--n']) {
+  flex-wrap: wrap;
+}
+.card.section > .section-head > .segmented[style*='--n']:not(.daytype) {
+  flex: 1 1 100%;
+}
+.settings-group .section-head > .segmented[style*='--n'] {
+  flex: none !important;
+}
+
+@media (min-width: 700px) {
+  .goals > .settings-block {
+    break-inside: avoid;
+    margin-bottom: 12px;
   }
 }

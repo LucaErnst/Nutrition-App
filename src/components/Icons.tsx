@@ -1,4 +1,4 @@
-import type { SVGProps } from 'react';
+import type { ReactNode, SVGProps } from 'react';
 
 type P = SVGProps<SVGSVGElement>;
 const base: P = { width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true };
@@ -42,4 +42,27 @@ export const IconMore = (p: P) => (
     <circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none" />
     <circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none" />
   </svg>
+);
+
+export type SettingKind = 'reminders' | 'health' | 'backup' | 'units' | 'diag' | 'water' | 'tips' | 'language' | 'legal';
+
+const SETTING: Record<SettingKind, { bg: string; path: ReactNode }> = {
+  reminders: { bg: '#ff3b30', path: <><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15Z" /><path d="M10 21h4" /></> },
+  health: { bg: '#ff2d55', path: <path d="M12 20.5 4.9 13.6A4.6 4.6 0 0 1 12 7.4a4.6 4.6 0 0 1 7.1 6.2Z" fill="currentColor" stroke="none" /> },
+  backup: { bg: '#34c759', path: <><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5" /><path d="M5 19h14" /></> },
+  units: { bg: '#8e8e93', path: <><rect x="3" y="8" width="18" height="8" rx="1.5" /><path d="M7 8v3M11 8v4M15 8v3M19 8v3" /></> },
+  diag: { bg: '#8e8e93', path: <path d="M5 7h14M5 12h14M5 17h9" /> },
+  water: { bg: '#0a9fdb', path: <path d="M12 3.5s6 6.4 6 10.7a6 6 0 0 1-12 0C6 9.9 12 3.5 12 3.5Z" fill="currentColor" stroke="none" /> },
+  tips: { bg: '#af52de', path: <><circle cx="12" cy="12" r="8" /><path d="M12 11v5M12 8v.1" /></> },
+  language: { bg: '#007aff', path: <><circle cx="12" cy="12" r="8" /><path d="M4 12h16M12 4c2.5 2.4 2.5 13.6 0 16M12 4c-2.5 2.4-2.5 13.6 0 16" /></> },
+  legal: { bg: '#8e8e93', path: <><rect x="6" y="3.5" width="12" height="17" rx="2" /><path d="M9 8h6M9 12h6M9 16h3" /></> },
+};
+
+/** Farbiges Quadrat mit Symbol wie in den iOS-Einstellungen. */
+export const SettingIcon = ({ kind }: { kind: SettingKind }) => (
+  <span className="setting-icon" style={{ background: SETTING[kind].bg }} aria-hidden="true">
+    <svg {...base} width={17} height={17} stroke="#fff" strokeWidth={2}>
+      {SETTING[kind].path}
+    </svg>
+  </span>
 );

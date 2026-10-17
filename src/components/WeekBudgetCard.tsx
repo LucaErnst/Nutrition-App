@@ -28,18 +28,23 @@ export function WeekBudgetCard({ budget: b, isCurrent, compact }: Props) {
   if (compact) {
     if (!isCurrent || b.daysLeft === 0) return null;
     return (
-      <p className="budget-line">
-        <span className="budget-line-label">{t('week.budget')}</span>
-        <span>
-          {t('week.budgetLine', {
-            left: fmt(b.todayLeft),
+      <section className="card budget-mini" aria-label={t('week.budget')}>
+        <div className="budget-mini-head">
+          <span className="budget-line-label">{t('week.budget')}</span>
+          <span className={b.todayLeft < 0 ? 'delta-down' : ''}>{t('week.budgetLeftToday', { n: fmt(b.todayLeft) })}</span>
+        </div>
+        <div className="progress-track budget-track" aria-hidden="true">
+          <div className="progress-fill" style={{ width: `${usedPct}%`, background: 'var(--c-kcal)' }} />
+        </div>
+        <p className="budget-mini-line">
+          {t('week.budgetAvgLine', {
             perDay: fmt(b.perDay),
             days: b.daysLeft,
             dayWord: b.daysLeft === 1 ? t('common.day') : t('common.days'),
             drift: driftText,
           })}
-        </span>
-      </p>
+        </p>
+      </section>
     );
   }
 

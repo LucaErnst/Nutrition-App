@@ -13,6 +13,7 @@ import { ProductResult } from './ProductResult';
 import { ProductSearch } from './ProductSearch';
 import { AmountStepper } from './AmountStepper';
 import { PortionChips } from './PortionChips';
+import { PieceWeightField, usePieceWeight } from './PieceWeight';
 
 interface Props {
   date: string;
@@ -65,8 +66,9 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
         fromLocal={!!offProduct.id}
         backLabel={t('product.backResults')}
         onBack={() => setOffProduct(null)}
-        onConfirm={async (amount, unit, save) => {
-          let food = offProduct;
+        onConfirm={async (amount, unit, save, pieceWeight) => {
+          let food = pieceWeight ? { ...offProduct, piece_weight_g: pieceWeight } : offProduct;
+          if (food.id && pieceWeight) await db.foodItems.update(food.id, { piece_weight_g: pieceWeight });
           if (!food.id) {
             const id = (await db.foodItems.add({ ...food, saved: save ? 1 : 0 })) as number;
             food = { ...food, id };
@@ -83,8 +85,13 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
       <AmountPicker
         food={selected}
         onBack={() => setSelected(null)}
-        onConfirm={async (amount, unit) => {
-          await addMealEntry({ date, meal_type: mealType, food_item_id: selected.id!, amount, unit }, selected);
+        onConfirm={async (amount, unit, pieceWeight) => {
+          let food = selected;
+          if (pieceWeight) {
+            food = { ...selected, piece_weight_g: pieceWeight };
+            await db.foodItems.update(selected.id!, { piece_weight_g: pieceWeight });
+          }
+          await addMealEntry({ date, meal_type: mealType, food_item_id: food.id!, amount, unit }, food);
           onAdded();
         }}
       />
@@ -179,7 +186,7 @@ function initialAmount(food: FoodItem, baseUnit: Unit, unit: Unit): number {
 interface PickerProps {
   food: FoodItem;
   onBack: () => void;
-  onConfirm: (amount: number, unit: Unit) => void | Promise<void>;
+  onConfirm: (amount: number, unit: Unit, pieceWeight?: number) => void | Promise<void>;
 }
 
 function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
@@ -193,15 +200,16 @@ function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
   const [unit, setUnit] = useState<Unit>(initialUnit);
   const [amount, setAmount] = useState(String(initialAmount(food, baseUnit, initialUnit)));
   const n = Number(amount.replace(',', '.'));
-  const valid = Number.isFinite(n) && n > 0;
-  const m = macrosFor(food, valid ? n : 0, unit);
+  const piece = usePieceWeight(food, unit);
+  const valid = Number.isFinite(n) && n > 0 && piece.ok;
+  const m = macrosFor(piece.effective, valid ? n : 0, unit);
 
   return (
     <form
       className="form"
       onSubmit={(e) => {
         e.preventDefault();
-        if (valid) void onConfirm(n, unit);
+        if (valid) void onConfirm(n, unit, piece.newWeight);
       }}
     >
       <button type="button" className="btn-link" onClick={onBack}>
@@ -218,9 +226,18 @@ function AmountPicker({ food, onBack, onConfirm }: PickerProps) {
         </div>
         <label className="field">
           <span>{t('common.unit')}</span>
-          <UnitSelect kind={food.unit_type} value={unit} onChange={setUnit} />
+          <UnitSelect
+            kind={food.unit_type}
+            value={unit}
+            onChange={(u) => {
+              // Beim Wechsel auf Stück mit 1 beginnen, zurück auf Gramm mit 100.
+              if (isPieceUnit(u) !== isPieceUnit(unit)) setAmount(isPieceUnit(u) ? '1' : String(initialAmount(food, baseUnit, u)));
+              setUnit(u);
+            }}
+          />
         </label>
       </div>
+      {piece.needs && <PieceWeightField input={piece.input} setInput={piece.setInput} />}
       <PortionChips
         food={food}
         baseUnit={baseUnit}
