@@ -880,22 +880,11 @@ button:active:not(:disabled) {
 
 /*
  * Oberer Bildrand einheitlich (17.10.2026): iOS zeigt beim Hochziehen die Farbe hinter der Seite –
- * die kommt vom html-Element, nicht vom body. Und unter der Statusleiste liegt ein Glas-Streifen in
- * Hintergrundfarbe, damit scrollender Inhalt dort nicht als weisse Kante stehen bleibt.
+ * die kommt vom html-Element, nicht vom body. Unter Uhrzeit und Notch liegt bewusst kein Streifen:
+ * der Inhalt scrollt dort durch und nutzt den ganzen Bildschirm (Wunsch Luca).
  */
 html {
   background: var(--bg);
-}
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0 0 auto;
-  height: env(safe-area-inset-top);
-  z-index: 20;
-  pointer-events: none;
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  backdrop-filter: blur(16px) saturate(180%);
 }
 
 /* ---------- Mehr: gruppierte Einstellungsliste ---------- */
