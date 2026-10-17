@@ -117,7 +117,12 @@ export function kcalTotal(page: Page) {
 export async function openSection(page: Page, title: string) {
   // Unter „Mehr“ öffnet eine Zeile ihre eigene Seite (1.3)
   const row = page.locator('.setting-row').filter({ hasText: new RegExp(`^${title}`) });
-  if (await row.count()) return row.first().click();
+  if (await row.count()) {
+    await row.first().click();
+    // Unterseite gleitet herein – erst messen, wenn sie steht
+    await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== 'running'));
+    return;
+  }
   const card = page.locator('section.card').filter({ has: page.getByRole('heading', { name: title, exact: true }) });
   const chevron = card.getByRole('button', { name: 'Expand' });
   if (await chevron.count()) await chevron.click();

@@ -310,10 +310,13 @@ struct TodayWidget: Widget {
 
 struct HomeBackground: ViewModifier {
     func body(content: Content) -> some View {
+        // Fast schwarz und leicht durchscheinend (Wunsch Luca, 17.10.2026); Schrift darum immer hell.
         if #available(iOS 17.0, *) {
-            content.containerBackground(Brand.bg, for: .widget)
+            content
+                .environment(\.colorScheme, .dark)
+                .containerBackground(for: .widget) { Color.black.opacity(0.72) }
         } else {
-            content.background(Brand.bg)
+            content.environment(\.colorScheme, .dark).background(Color.black.opacity(0.85))
         }
     }
 }

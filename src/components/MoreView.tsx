@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { useI18n, useT, type Language } from '../i18n';
 import { waterGoalField, waterLeftLabel, WATER_GOAL_MAX_ML, WATER_GOAL_MIN_ML } from '../lib/nutrition';
 import { saveSettings, useSettings, useUnitSystem } from '../db/hooks';
@@ -47,10 +47,83 @@ export function MoreView() {
   }
 
   const pro = usePro();
-  const [page, setPage] = useState<Page | null>(null);
-  const edge = useRef<{ x: number; y: number } | null>(null);
+  const [page, setPageState] = useState<Page | null>(null);
+  const pageRef = useRef<HTMLDivElement>(null);
+  // Zurück landet dort, wo man in der Liste war – nicht ganz oben.
+  const listScroll = useRef(0);
+  const restoreTo = useRef<number | null>(null);
+  function openPage(p: Page) {
+    listScroll.current = window.scrollY;
+    setPageState(p);
+  }
+  function back() {
+    restoreTo.current = listScroll.current;
+    setPageState(null);
+  }
+  useLayoutEffect(() => {
+    if (page) window.scrollTo(0, 0);
+    else if (restoreTo.current !== null) {
+      window.scrollTo(0, restoreTo.current);
+      restoreTo.current = null;
+    }
+  }, [page]);
+
+  // Wie in iOS: vom linken Rand nach rechts wischen geht zurück; die Seite folgt dem Finger.
+  // Touch-Ereignisse statt Pointer: Pointer werden beim kleinsten senkrechten Scrollen abgebrochen.
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (!page) return;
+    let start: { x: number; y: number } | null = null;
+    let dx = 0;
+    let horizontal = false;
+    const el = () => pageRef.current;
+    const onStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      start = t.clientX < 36 ? { x: t.clientX, y: t.clientY } : null;
+      dx = 0;
+      horizontal = false;
+    };
+    const onMove = (e: TouchEvent) => {
+      if (!start) return;
+      const t = e.touches[0];
+      dx = Math.max(0, t.clientX - start.x);
+      const dy = Math.abs(t.clientY - start.y);
+      if (!horizontal && dx > 10 && dx > dy) horizontal = true;
+      if (!horizontal) {
+        if (dy > 12) start = null;
+        return;
+      }
+      e.preventDefault();
+      const p = el();
+      if (p) {
+        p.style.transition = 'none';
+        p.style.transform = `translateX(${dx}px)`;
+      }
+    };
+    const onEnd = () => {
+      if (!start || !horizontal) return;
+      start = null;
+      const p = el();
+      if (dx > Math.min(120, window.innerWidth * 0.3)) {
+        if (p) {
+          p.style.transition = 'transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1)';
+          p.style.transform = 'translateX(100%)';
+        }
+        window.setTimeout(back, 200);
+      } else if (p) {
+        p.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.36, 0.5, 1)';
+        p.style.transform = '';
+      }
+    };
+    document.addEventListener('touchstart', onStart, { passive: true });
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onEnd);
+    document.addEventListener('touchcancel', onEnd);
+    return () => {
+      document.removeEventListener('touchstart', onStart);
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onEnd);
+      document.removeEventListener('touchcancel', onEnd);
+    };
   }, [page]);
 
   const waterContent = (
@@ -140,20 +213,8 @@ export function MoreView() {
   if (page) {
     const p = PAGES[page];
     return (
-      <div
-        className="settings-page"
-        onPointerDown={(ev) => {
-          // Wie in iOS: vom linken Rand nach rechts wischen geht zurück
-          edge.current = ev.clientX < 32 ? { x: ev.clientX, y: ev.clientY } : null;
-        }}
-        onPointerUp={(ev) => {
-          const e = edge.current;
-          edge.current = null;
-          if (e && ev.clientX - e.x > 70 && Math.abs(ev.clientY - e.y) < 60) setPage(null);
-        }}
-        onPointerCancel={() => (edge.current = null)}
-      >
-        <button className="settings-back" onClick={() => setPage(null)}>
+      <div className="settings-page" ref={pageRef}>
+        <button className="settings-back" onClick={back}>
           <svg viewBox="0 0 10 17" width="10" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M8.5 1.5 1.5 8.5l7 7" />
           </svg>
@@ -170,7 +231,7 @@ export function MoreView() {
   const row = (id: Page) => {
     const p = PAGES[id];
     return (
-      <button key={id} className="card section setting-row" onClick={() => setPage(id)}>
+      <button key={id} className="card section setting-row" onClick={() => openPage(id)}>
         <SettingIcon kind={p.icon} />
         <span className="setting-title">
           {p.title}
