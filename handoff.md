@@ -1,7 +1,9 @@
 # Handoff – Serious Nutrition
 
-Stand: 15.10.2026, Nachmittag. 1.1 ist live, **1.2 (Build 27) liegt in TestFlight**. Diese Datei ist die Übergabe an die nächste
-Sitzung. Wer hier anfängt, soll ohne Rückfragen weiterarbeiten können.
+Stand: 17.10.2026, Abend. 1.1 ist live. **1.2 (Build 27) wurde abgelehnt und ist korrigiert, wartet auf
+Lucas „Resubmit“.** **1.3 (iOS-27-Look) liegt als Build 34 in TestFlight**, auf Branch `release-1.3`.
+Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll ohne Rückfragen
+weiterarbeiten können.
 
 **So wird sie benutzt:** In einer neuen Sitzung sagen: *„Lies handoff.md und mach dort weiter, wo
 wir aufgehört haben."* Vor dem Ende einer Sitzung diese Datei aktualisieren, sonst ist sie nach
@@ -11,9 +13,10 @@ zwei Tagen Fiktion.
 
 ## 1. Ziel
 
-Serious Nutrition 1.1 ist live; jetzt über TikTok und Instagram Downloads erzeugen und 1.2 planen.
-Die App ist gratis, Pro ist ein Einmalkauf (CHF 15 im Launch, ab 01.02.2027 CHF 25). Absender ist
-Luca als Calisthenics-Coach in Basel; die App ist der Beweis, nicht der Star.
+Serious Nutrition 1.1 ist live; jetzt 1.2 durch die Prüfung bringen, 1.3 (neuer Look) fertig testen
+und über TikTok/Instagram Downloads erzeugen. Die App ist gratis, Pro ist ein Einmalkauf (CHF 15 im
+Launch, ab 01.02.2027 CHF 25). Absender ist Luca als Calisthenics-Coach in Basel; die App ist der
+Beweis, nicht der Star.
 
 Technisch: lokal-zuerst, kein Konto, keine Werbung, keine Daten, die das Gerät verlassen. Jede
 Entscheidung misst sich daran.
@@ -22,70 +25,72 @@ Entscheidung misst sich daran.
 
 ## 2. Aktueller Stand
 
-**App Store**
-- **1.1 (Build 22) ist live** seit 12.10.2026, 11:00. Store-Seite CH zeigt 1.1, 1 Bewertung (5.0).
-  Store zeigt unter „Sprachen" nur Englisch – Fix für 1.2 in `docs/RELEASE-1.2.md` A2.
-- In-App-Kauf `pro_lifetime` (Apple-ID 6814513884) freigegeben, CHF 15. Preisänderung auf
-  **CHF 25 ab 01.02.2027** für 175 Länder geplant.
-- Pro auf einem Gerät, das die App vor 1.1 hatte: **geschenkt, geprüft von Luca am 12.10.**
-- **Header und Suchbild** in Deutsch und Englisch auf der Produktseite zugeordnet und live (13.10.).
-- **Eingereicht, wartet auf Apple** (geprüft 14.10.):
-  - Eigene Produktseiten **TikTok** und **Instagram** (Custom Product Pages, Status „In Review").
-    Kopie der 1.1-Seite, nur zum Messen, welcher Kanal Downloads bringt.
-  - **Screenshot 7** `07-offline-de.png` / `07-offline-en.png` in der Asset Library („Waiting for
-    Review").
+### App Store
+- **1.1 (Build 22) live** seit 12.10.2026. In-App-Kauf `pro_lifetime` CHF 15, Preisänderung auf
+  **CHF 25 ab 01.02.2027** geplant. Pro für Nutzer von vor 1.1 geschenkt.
+- **1.2 (Build 27):** am 16./17.10. in App Store Connect angelegt und von Luca eingereicht
+  (17.10., 07:23). **Am 17.10. abgelehnt, Guideline 2.3.7:** Screenshot 1 sagte „No subscription.
+  Free to use. Pro once“ / „Ohne Abo. Gratis nutzbar“ – Apple zählt auch „gratis“ und „ohne Abo“
+  als Preisangabe. **Behoben:** Bild 1 heisst jetzt „Calories & macros. At a glance.“ / „Kalorien &
+  Makros. Auf einen Blick.“, für iPhone (6,7") und iPhone Duo (innen) je DE/EN hochgeladen, altes
+  Bild aus der Version entfernt, Reihenfolge per API geprüft. **Offen: Luca klickt „Resubmit to
+  App Review“.** Freigabe steht auf **manuell** – nach Apples OK drückt Luca „Release“.
+  Eingetragen und zurückgelesen: Beschreibung, „Neu in dieser Version“, Werbetext (neu, war leer),
+  Keywords EN, Review-Notizen (gekürzter Gesamttext 3'250 Zeichen, Limit 4'000), Build 27.
+- **Restrisiko Preisangabe:** Header und Suchbild sagen noch „No subscription. Free.“; die eigenen
+  Produktseiten **TikTok** und **Instagram** (beide freigegeben) zeigen noch das alte Bild 1. Mit 1.3
+  ersetzen. Alte `01-diary`-Bilder in der Asset Library erst löschen, wenn 1.2 live ist und die
+  Produktseiten umgestellt sind (Luca löscht).
+- Bild 7 (offline) und der Duo-Satz sind seit 1.2 zugeordnet.
 
-**Code**
-- Version **1.2.0, iOS-Build 27**, am 15.10. hochgeladen (TestFlight). 25: Suche als eine Liste, Rangfolge erstes Wort. 26: Titel und × bleiben oben. 27: Eintragen-Dialog als iOS-Sheet (Griff, Titel, Reiter, Suchfeld fest; nach unten ziehen schliesst).
-  Neu in 24: **288'776 Open-Food-Facts-Produkte mitgeliefert** (Scan/Suche offline, weltweite
-  Auswahl), **USDA** (6'304, nur Englisch), Suche „Ei" → Ei, Schritte im Tagebuch.
-  Aus Build 23, A2–A6 aus `docs/RELEASE-1.2.md`: Startliste folgt dem Sprachwechsel, Deutsch im
-  Bundle (`de.lproj`), Schritte aus Health im Wochenfazit, Hinweise beim ersten Kontakt, Stückzahl
-  für 47 Grundnahrungsmittel, Bedarfsrechner unter Mehr mit Herleitung (DGE-PAL).
-- **160 Unit-Tests und 43 e2e-Tests** grün, Lint ohne Fehler (nur Warnungen).
-- 1.2 ist **nicht** zur Prüfung eingereicht und hat in App Store Connect noch keine Version.
-- **Screenshots (15.10.):** Bild 7 (offline) von Apple freigegeben. **iPhone Duo:** 28 Bilder
-  (aussen 1398×2034, innen 2007×2853, je 7 × DE/EN) in `store/screenshots/{de,en}/duo-{outer,inner}/`,
-  erzeugt mit `npm run screenshots -- duo-outer duo-inner`, in der Asset Library als `duo-<display>-<lang>-*.png`
-  hochgeladen und eingereicht (Prüfung bis 48 h). **Zuordnen geht erst mit Version 1.2:** Bei der
-  live-Version 1.1 sind die Screenshot-Felder gesperrt. Beim Anlegen von 1.2: iPhone-Satz um Bild 7
-  ergänzen, Duo-Satz zuordnen (Reiter „iPhone Duo").
-- Asset Library, Einreichen: „Add for Review" öffnet ein Menü → „Draft iOS Submission" wählen →
-  Seitenfenster mit × schliessen; am Ende „Draft Submissions" → „Submit for Review". Klicks per
-  Skript zählen nicht, nur echte Klicks.
-- **Rechtliches (15.10.):** Datenschutzerklärung um Apple Health, RevenueCat (USA, SCC) und Kauf-
-  Benachrichtigung ergänzt (online). App-Store-Datenschutz von „Keine Daten" auf „Käufe – Kaufverlauf,
-  nicht verknüpft" geändert (RevenueCat verlangt das). Bausteine für beserious.ch im Claude-Dokument
-  „Serious Nutrition – Rechtstexte für die Webseite" (https://claude.ai/code/artifact/aefafcc2-4b73-46d9-8cc3-cfb26707d3e5).
-  Offen nur: Impressum auf beserious.ch prüfen, Bausteine dort einfügen (Luca).
-- Alles gepusht (14.10.), Web-Version unter `lucaernst.github.io/Nutrition-App/` aktuell. Vor jedem
-  Push fragen.
-- Seit dem 1.1-Store-Build behoben, **in Build 23 enthalten** (Web schon live):
-  - Backup wiederherstellen löschte die mitgelieferten Grundnahrungsmittel, wenn das Backup sie
-    nicht enthielt (Backups aus 1.0). Jetzt `refreshReferenceAfterRestore` in `src/db/seed.ts`,
-    aufgerufen in `restoreBackup`.
-  - Schalter „App als Free-Nutzer ansehen" nur noch in Entwicklungs-Builds.
+### Code
+- **`main`:** 1.2.0 Build 27 plus zwei lokale Commits (Screenshot-Fix 1.2, Planung 1.3).
+  **Nicht gepusht** – vor jedem Push fragen (die Web-Version deployt von dort).
+- **`release-1.3`** (7 Commits über `main`, **nicht gepusht**): 1.3.0, iOS-Builds 28–34 in TestFlight,
+  aktuell **Build 34**. Inhalt (Details in `docs/RELEASE-1.3.md`):
+  - neues Stylesheet `src/ios.css` über `index.css` (Farben, Karten, Segmente mit gleitender
+    Markierung, iOS-Schalter, Wasserzeichen-Logo, Ränder)
+  - Tab-Leiste Liquid Glass mit gleitender Markierung (`App.tsx`, `.nav-thumb`), grosse Titel
+  - Tagebuch: Kalorienring rot→grün (`Ring.tsx`), Makro-Balken, Aktivkalorien/Schritte kurz,
+    Trainingstag/Ruhetag (schwarze Kapsel, grün/violett), Wasser oben, Wochenbudget als Karte,
+    Mahlzeiten mit rundem +, Einträge per Wischen löschen mit Rückgängig (`SwipeRow.tsx`).
+    Wischen zwischen Tagen wurde auf Lucas Wunsch wieder entfernt (nur Pfeile).
+  - Eintragen: leere Suche zeigt **Favoriten** und **Zuletzt hinzugefügt** (`useRecentFoods`,
+    `useFavoriteFoods`); **„Stück“ bei jedem Lebensmittel**, ohne Stückgewicht fragt die App einmal
+    nach Gramm pro Stück und speichert es (`PieceWeight.tsx`).
+  - Woche: Wochenschnitt als Ring, Fazit als Dropdown, Tage mit „Mo / 12/10“, T/R-Kapsel, Balken
+    violett < 90 %, grün 90–105 %, rot > 105 %, nur kcal.
+  - Gewicht: Speichern unter den Feldern, Werte zentriert, Einträge per Wischen löschen.
+  - Mehr: wie iOS-Einstellungen – Pro-Karte (schlank, Goldrand), Phasen, Trainingstage, dann
+    Gruppen Einstellungen / Daten / Rechtliches mit Symbol, Wert und Pfeil; Antippen öffnet eine
+    Unterseite („‹ Mehr“, vom linken Rand wischen, Tipp auf „Mehr“ unten führt zurück, Liste behält
+    die Scrollposition). Unterseiten nutzen `SettingsPageContext` in `CollapsibleCard.tsx`.
+  - Paywall als Sheet von unten, goldene Kaufknöpfe.
+  - Inhalt scrollt hinter Uhrzeit/Notch durch; `html` trägt die Hintergrundfarbe (keine weisse
+    Kante beim Herunterziehen).
+  - **Widgets** (`ios/App/SeriousWidgets/SeriousWidgets.swift`): Kalorienring mit Farbverlauf,
+    Protein-/Wasserbalken, blaue Wasser-Knöpfe, Hintergrund fast schwarz durchscheinend, getönter/
+    klarer Home-Bildschirm unterstützt (`widgetAccentable`), Zahlen zählen hoch (`numericText`),
+    Tipp auf Ring → Tagebuch, auf Wasser → `seriousnutrition://water` (App springt zur Wasserzeile,
+    `native.ts` `appUrlOpen` → Event `sn-deeplink` → `App.tsx`).
+- **163 Unit-Tests und 48 e2e-Tests** grün (neu: `e2e/more-pages.spec.ts`; Löschen per Wischgeste
+  im Diary-Test; Fazit wird vor der Prüfung aufgeklappt; Duo-Tests messen `.day-pane`).
 - Nicht committet und **nicht von Claude**: Lucas Änderungen an `marketing/launch-broll.mjs`,
   `marketing/launch/compose.mjs`, `marketing/instagram/APP-ACCOUNT.md`, Ordner
   `marketing/launch/talking/`. Nicht mit-committen ohne Rückfrage.
 
-**Daten** (ab 1.2)
-- 6'906 Grundnahrungsmittel in beiden Sprachen (6'411 BLS + 495 Schweiz, BLV-Zustimmung
-  30.09.2026, `docs/BLV-ANFRAGE.md`), plus **6'304 USDA** nur in englischer App-Sprache.
-- **288'776 Markenprodukte** aus Open Food Facts mitgeliefert (ODbL), `public/data/off-products.tsv.gz`.
-  Vor jedem Release mit `tools/build-off-products.mjs` neu erzeugen (Export ~1,3 GB).
-- Stückgewichte für 47 Lebensmittel aus USDA SR Legacy (`src/db/pieceWeights.ts`).
+### Daten (ab 1.2)
+- 6'906 Grundnahrungsmittel (BLS + 495 Schweiz), 6'304 USDA nur Englisch, **288'776 Markenprodukte**
+  aus Open Food Facts mitgeliefert (`public/data/off-products.tsv.gz`, vor jedem Release mit
+  `tools/build-off-products.mjs` neu erzeugen). Stückgewichte für 47 Lebensmittel.
 
-**Marketing**
-- TikTok @seriousnutritiontracker, praktisch bei null. Fertig: 11 Launch-Clips
-  (`marketing/launch/final/`, unter 10 MB in `final/upload/`) und 6 Karussell-Videos
-  (`marketing/instagram/tiktok/`). Noch nicht gedreht: Clips 11, 12, 13, D „Gestern kopieren".
-- TikTok-Website-Link geht erst ab **1'000 Followern**; ein Unternehmenskonto ging nicht (Luca
-  fehlen die Firmendaten). Bis dahin Instagram im TikTok-Profil verknüpfen (nur in der App).
-  Login vermutlich über Google mit `beseriouscalisthenics@gmail.com` – nicht sicher, Luca prüft
-  in der App unter Kontoinformationen.
-- **Instagram @seriousnutrition.app:** 11 Reels + 6 Karussells vom 12. bis 25.10. in der Meta
-  Business Suite geplant, Captions in `marketing/instagram/APP-ACCOUNT.md`. Bio-Link gesetzt.
+### Marketing
+- Instagram @seriousnutrition.app: Plan bis 01.11. in der Meta Business Suite
+  (`marketing/instagram/APP-ACCOUNT.md`). TikTok praktisch bei null, Website-Link erst ab 1'000 Followern.
+- **Neuer Content-Plan 02.11.2026–31.01.2027:** `marketing/CONTENT-PLAN-1.3.md` (5 Phasen, 25 Clips,
+  8 Karussells, 3 Drehtage, Store-Video, Idee In-App-Event „January Reset“ bis ~17.12. einreichen).
+- Entwurf des neuen Looks zum Anklicken: `docs/design/ios27-entwurf.html`,
+  online https://claude.ai/code/artifact/372532dc-452a-46b9-8971-34788f4f0981 (Pro/Free umschaltbar, `#free`).
 
 ---
 
@@ -93,131 +98,110 @@ Entscheidung misst sich daran.
 
 | Datei | Wofür |
 |---|---|
-| `docs/RELEASE-1.1.md` | Launch-Checkliste. Offen nur noch: Kauftest mit echtem Konto, Bewertungs-Abfrage beobachten |
-| `docs/RELEASE-1.2.md` | **Planung 1.2**, A1–A7 und Teil B (alle Stellen mit Zahlen/Quellen) |
-| `docs/PUSH-BENACHRICHTIGUNGEN.md` | Kauf-Push und Tagesbericht über Telegram, läuft |
-| `store/LISTING.md` | Alle Store-Texte, Stand = eingereicht |
-| `store/screenshots.mjs` | Screenshots 1–7 und Creative Assets (`npm run screenshots`) |
-| `store/screenshots/{de,en}/07-offline.png` | Neuer Screenshot 7, eingereicht |
-| `marketing/Drehtag-TikTok.docx` | 14 Drehbücher in Drehreihenfolge plus Kalender |
-| `marketing/LAUNCH-1.1.md` | Launch-Plan, Preislogik, Kanäle |
-| `src/db/seed.ts` | Seed, Sprachabgleich, Nachladen nach Backup – empfindlich, siehe Punkt 5 |
-| `src/lib/onboarding.ts` | Bedarfsrechner (Mifflin-St Jeor), wird in 1.2 erweitert (A6) |
+| `docs/RELEASE-1.2.md` | 1.2: B3 erledigt bis auf Resubmit; Ablehnung und Fix dokumentiert |
+| `docs/RELEASE-1.3.md` | **1.3: alle Design-Entscheide (A–D), Free-Version, F = was im Store/Marketing neu muss** |
+| `docs/RELEASE-1.4.md` | **1.4: Akte** – Wasser im Kontrollzentrum/Aktionstaste, grosses Widget, konfigurierbar, Sperrbildschirm geschützt, Smart Stack, Offenes aus 1.3 |
+| `docs/APP-REVIEW-NOTES.md` | Review-Notizen; unten der 1.2-Gesamttext |
+| `store/LISTING.md` | Store-Texte inkl. Werbetext ab 1.2 |
+| `store/screenshots.mjs` | Screenshots; Bild 1 ohne Preis (Kommentar zur Ablehnung) |
+| `src/ios.css` | Der ganze 1.3-Look |
+| `marketing/CONTENT-PLAN-1.3.md` | Content bis 31.01.2027 |
 
 ---
 
-## 4. Was zuletzt passiert ist (12.–14.10.)
+## 4. Was zuletzt passiert ist (16.–17.10.)
 
-- 1.1 live geprüft, Store-Seite in DE geprüft.
-- Header und Suchbilder hochgeladen, von Apple freigegeben, in beiden Sprachen zugeordnet.
-- Apples „App Store asset best practices" gelesen: Bilder halten die Regeln ein (keine Preise,
-  URLs, ©, Auszeichnungen). Daraus umgesetzt: eigene Produktseiten pro Kanal und Screenshot 7.
-- Screenshot 7: Rösti-Suche ohne Netz, zeigt die eingebaute Tabelle. Dabei den Backup-Fehler
-  gefunden und mit e2e-Test behoben.
-- 1.2 geplant: Schritte aus Health, Hinweise statt Tour, Stückzahl, Bedarfsrechner (siehe Punkt 6).
+- iOS-27-Entwurf mit Luca in vielen Runden abgestimmt, gespeichert, Free-Ansicht mit Paywall.
+- 1.2 in App Store Connect angelegt und befüllt (per iris-API, siehe Punkt 5), eingereicht,
+  abgelehnt (2.3.7), Bild 1 ersetzt.
+- 1.3 gebaut und als Builds 28–34 hochgeladen; jede Runde nach Lucas Rückmeldung vom iPhone.
+- Akte 1.4 angelegt, Content-Plan bis Ende Januar.
 
 ---
 
 ## 5. Sackgassen – bitte nicht wiederholen
 
 **App Store Connect**
-- **Einreichen und Veröffentlichen klickt Luca selbst.** Der Auto-Modus blockiert für Claude
-  „Add for Review", „Publish" und teils schon das Umschalten der Reiter auf der Produktseite.
-  Vorbereiten (hochladen, auswählen, Entwurf anlegen) geht; den letzten Klick Luca überlassen.
-- Die Anmeldung in Chrome läuft nach einiger Zeit ab (`authResult=FAILED`). Claude meldet sich
-  nicht selbst an – Luca bitten, sich in Chrome neu anzumelden.
-- Datei-Upload in der Asset Library: Der Dateidialog ist versteckt. Vor dem Klick auf „Upload …"
-  `HTMLInputElement.prototype.click` abfangen, dann `file_upload` auf das gefangene Input. Gleich
-  benannte Dateien vorher umbenennen (z. B. `-de` / `-en`), sonst zählt Apple „(21)", „(22)" hoch.
-- Bei „Copy Existing Product Page" greift `form_input` mit dem Anzeigetext manchmal nicht; dann
-  mit dem `value` (UUID) der Option setzen.
-- `form_input` auf Beschreibungs- und Keyword-Felder **verwirft die Werte stillschweigend**.
-  Richtig: hineinklicken, `cmd+a`, tippen, Zeichenzähler prüfen.
-- Die Versionsseite ist zu gross für `find`; mit Koordinaten aus frischem Screenshot arbeiten.
-- Vorsicht beim Sprachumschalter: daneben liegt „remove this version from review".
+- **Einreichen und Veröffentlichen klickt Luca selbst.** Vorbereiten geht, den letzten Klick nicht.
+- Die Anmeldung in Chrome läuft ab (`authResult=FAILED`). Claude meldet sich nicht an – Luca bitten.
+- **Team springt:** ASC wechselte mehrmals selbst zwischen „LUCA BERNARD ERNST“ und „Endureps AG“
+  (Luca hat beide Teams). Vor jeder Aktion oben rechts das Team prüfen. App-ID: `6814075860`.
+- **Metadaten per API statt Formular:** Im Tab mit ASC `fetch('/iris/v1/…', {credentials:'include'})`.
+  PATCH auf `appStoreVersionLocalizations/{id}` (description, whatsNew, keywords, promotionalText),
+  `appStoreReviewDetails/{id}` (notes), `appStoreVersions/{id}/relationships/build`. Antwortet oft
+  mit 500 oder hängt: **mit AbortController (20 s) und 3–4 Wiederholungen**, danach zurücklesen.
+  Externe Fetches (GitHub raw) blockiert die CSP – Texte direkt ins Skript.
+- `form_input` auf Beschreibungs-/Keyword-Felder verwirft Werte stillschweigend.
+- **Screenshots zuordnen:** „View All Sizes in Media Manager“. Die Asset-Auswahl ist virtualisiert;
+  `find`-Refs zeigen auf falsche Kacheln. Kachel per JS mit `scrollIntoView` suchen, Mittelpunkt
+  messen, dann **echter** Klick auf die Koordinate (`innerWidth` = Screenshot-Frame). Reihenfolge
+  danach per API prüfen (`appStoreVersionLocalizations/{id}/appScreenshotSets?include=appScreenshots`),
+  umsortieren mit PATCH `appScreenshotSets/{id}/relationships/appScreenshots`, alte mit DELETE
+  `appScreenshots/{id}` aus der Version nehmen.
+- Datei-Upload: `HTMLInputElement.prototype.click` abfangen, dann `file_upload` auf das Input.
+- **Keine Preis-, Gratis- oder Abo-Hinweise** in Screenshots, Headern, Videos (Ablehnung 17.10.).
+- Review-Notizen max. 4'000 Zeichen. Werbetext einer neuen Version startet leer.
 
-**Seed und Daten**
-- `dropRetiredReference` auf Einträge **ohne** `ref_key` auszuweiten löscht die Startliste aus
-  `SEED` – elf e2e-Tests wurden rot. Zurückgenommen.
-- Nach `restoreBackup` stimmen die localStorage-Vermerke (`nutrition-tracker:reference`,
-  `…:reference-lang`) nicht mehr mit der Datenbank überein. Deshalb `refreshReferenceAfterRestore`.
-- XLSX ohne `xlsx`-Paket lesen: **leere Zellen stehen als `<c .../>`**, sonst verschieben sich Spalten.
+**1.3-Bau**
+- Vorschau mit Daten: `node marketing/demo-data.mjs`, Datei als `public/__demo.json` kopieren (in
+  `.git/info/exclude`), im Browser `restoreBackup` per `import('/src/lib/backup.ts')`.
+  **Vor jedem Build löschen**, sonst landet sie in der App.
+- `marketing/demo-backup.json` ist nicht im Repo (Generator überschreibt sie).
+- `useEffect(() => window.scrollTo(0, 0), …)` ohne geschweifte Klammern liess „Mehr“ abstürzen
+  („destroy is not a function“). Effekte immer mit `{ … }`.
+- Zurück-Wischen auf iOS: Pointer-Events brechen beim kleinsten senkrechten Scrollen ab, Mitziehen
+  der Seite schob die ganze Ansicht leer zur Seite. Jetzt Touch-Events, Auslösen beim Loslassen.
+- `package-lock.json` nicht per Suchen/Ersetzen auf die App-Version setzen – das trifft fremde Pakete
+  (Wurzel steht dort ohnehin auf 0.17.0).
+- Widgets: `widgetAccentedRenderingMode` gibt es nur auf `Image` nach `.resizable()`.
+- Kompilieren ohne Signatur: `xcodebuild … -destination 'generic/platform=iOS Simulator' build CODE_SIGNING_ALLOWED=NO`.
 
-**Screenshots**
+**Seed, Daten, Screenshots** – wie bisher:
+- `dropRetiredReference` nicht auf Einträge ohne `ref_key` ausweiten (Startliste weg).
+- Nach `restoreBackup` → `refreshReferenceAfterRestore`.
+- `npm run screenshots` erzeugt **alle** Bilder neu; nur gewollte committen, Rest zurücksetzen.
 - Demo-Lebensmittel in `store/screenshots.mjs` müssen `source: 'manual'` tragen.
-- `npm run screenshots` erzeugt **alle** Bilder neu; 1–6 und die Header ändern sich dabei nur
-  durchs Datum. Nur die gewollten Bilder committen, Rest mit `git checkout --` zurücksetzen –
-  die freigegebenen Bilder im Store sind die alten.
-
-**1.2-Bau**
-- USDA SR Legacy liegt **nicht** im Repo; heruntergeladen am 15.10. ins Scratchpad
-  (`fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip`, 6 MB). Für A1
-  erneut laden (Luca hat den Download freigegeben).
-- `tsc -b` prüft auch die Testdateien: kein `node:fs` in Tests (keine Node-Typen), JSON über
-  `loadReference` laden.
-- `tools/ExportOptions.plist` lädt direkt hoch und behält kein `.ipa`; die Build-Nummer in
-  TestFlight nachsehen.
 
 **Werkzeuge auf diesem Mac**
-- **Kein LibreOffice, kein pandoc, kein pdftoppm.** Word nur über die entpackte `document.xml` prüfen.
-- Was Luca über die geteilte Zwischenablage schickt (`…/shared-pasteboard/…rtfd`), ist für Claude
-  gesperrt. Inhalt per `pbpaste` oder über `NSPasteboard` lesen; meist steht nur der Titel drin.
-- Vor `vite preview` den Port freiräumen (`lsof -ti:4173` bzw. `:4174`).
-- Playwright-Projekt `us` läuft nur `imperial.spec.ts`; alle anderen Tests mit `--project=mobile`.
+- Kein LibreOffice, pandoc, pdftoppm. Bauen und Hochladen gibt Claude an den Haiku-Agenten
+  `executer` (Befehle unten), danach `ARCHIVE/EXPORT SUCCEEDED` und `CFBundleVersion` im Archiv prüfen.
+- Playwright-Projekt `us` läuft nur `imperial.spec.ts`.
 
 ---
 
 ## 6. Nächste Schritte
 
-1. **Kauftest:** Pro einmal mit Lucas echtem Apple-Konto kaufen (nur Luca).
-2. **Sobald Apple freigibt** (Produktseiten und Screenshot 7):
-   - Links in die Bios setzen statt des normalen Store-Links:
-     - TikTok: `https://apps.apple.com/app/id6814075860?ppid=5c0820eb-b801-44fe-b199-7b4033937436`
-     - Instagram: `https://apps.apple.com/app/id6814075860?ppid=253c4913-4ce0-4765-ad5e-e3a31c94940c`
-   - Screenshot 7 je Sprache als 7. Bild an die Produktseite von 1.1 hängen (Claude bereitet vor,
-     Luca klickt veröffentlichen). Danach auch in beide eigenen Produktseiten übernehmen.
-   - Downloads je Kanal in App Analytics → Quelle „Custom Product Page" ansehen.
-3. **TikTok:** Clips nach `marketing/Drehtag-TikTok.docx` drehen, Instagram im Profil verknüpfen,
-   Metricool neu verbinden.
-4. **Instagram:** Luca pinnt die Kommentare aus `APP-ACCOUNT.md`. Ab 26.10. neue Posts planen.
-   Browser: immer Chrome.
-5. **1.2 testen:** Build 24 in TestFlight auf dem iPhone installieren. Prüfen: Store-Version 1.1
-   darüber aktualisieren (Daten, Pro bleiben), Health-Abfrage nach Schritten, Wochenfazit mit
-   Schritten, „Ei" in Stück, Bedarfsrechner unter Mehr, Hinweise (unter Mehr → Hinweise wieder
-   zeigen). Rückmeldungen in `docs/RELEASE-1.2.md`.
-6. **1.2 fertig bauen** nach `docs/RELEASE-1.2.md` (A2–A6 erledigt, Stand oben in der Datei):
-   - A1 USDA-Daten für US-Nutzer, nur in englischer App-Sprache
-   - A2 bekannte Fehler, u. a. Store-Sprache Deutsch fehlt (`de.lproj`)
-   - A3 Schritte aus Apple Health, nur als Erklärung im Wochenfazit, **kein Schrittziel**
-   - A4 Hinweise beim ersten Kontakt statt Einführungstour
-   - A5 Stückzahl für Grundnahrungsmittel („Ei 3 Stk."), gratis
-   - A6 Bedarfsrechner jederzeit unter Mehr, realistischer: Alltag und Training getrennt,
-     Untergrenze Grundumsatz, Protein bei BMI > 30 auf Referenzgewicht, Herleitung als Tabelle
-   - Alles gebaut. Offen nur App Store Connect (B3): Version 1.2 anlegen, Texte aus
-     `store/LISTING.md` (Stand 1.2), Keywords, Review-Notizen aus `docs/APP-REVIEW-NOTES.md`,
-     Build 24 wählen, einreichen. Felder mit Klick + cmd+a + Tippen füllen.
-   - Mit 1.2 ein In-App-Event „Major Update" erwägen.
-7. **31.01.2027:** Werbetext zurücksetzen, er nennt den Einführungspreis.
+1. **1.2 neu einreichen** (Luca: abgelehnte Einreichung → „Resubmit to App Review“). Nach Freigabe
+   „Release“ drücken (manuelle Freigabe).
+2. **1.3 testen** (Build 34): Zurück-Wischen unter Mehr, Notch-Bereich, Pro-Karte, Widgets im
+   getönten Modus, Tippen aufs Widget (Ring/Wasser), Stück-Abfrage. Rückmeldungen in `docs/RELEASE-1.3.md`.
+   Offene Frage an Luca: was genau „Widgets funktionieren nicht“ hiess (Text im Widget? Mehr →
+   Diagnose → „Widgets:“).
+3. **Wenn 1.3 steht:** Store-Bilder neu nach `docs/RELEASE-1.3.md` F (iPhone, Duo, Header, Suchbild,
+   beide eigenen Produktseiten, ohne Preis), „Neu in dieser Version“, Review-Notizen, Branch
+   `release-1.3` nach `main`, **vor dem Push fragen**, 1.3 einreichen (nach 1.2).
+4. **Content:** Drehtag A sobald 1.3 steht (`marketing/CONTENT-PLAN-1.3.md`). Instagram-Plan endet 01.11.
+5. **Kauftest** mit Lucas echtem Apple-Konto (nur Luca). Impressum/Rechtstexte auf beserious.ch (Luca).
+6. **31.01.2027:** Werbetext zurücksetzen (nennt den Einführungspreis). 01.02. Preis CHF 25.
 
 **Offene Entscheidungen von Luca**
-- Ab Februar kostet Pro in Deutschland/Österreich **EUR 34.99** (Apples Umrechnung von CHF 25).
-  Falls zu hoch: bis Ende Januar über „Custom Price Change" einzeln senken.
-- Ebook (`beserious.ch/nutrition-guide`, CHF 15) und Pro kosten dasselbe. Vorschlag: Bündel über
-  **Offer Codes**. Noch nicht entschieden.
-- Ebook-Drehbücher: vier Proben geschrieben, voller Satz wartet auf die Kapitelübersicht.
+- Balkengrenzen Woche (90–105 %) – so lassen oder strenger?
+- In-App-Event „January Reset“ ja/nein (einreichen bis ~17.12.).
+- EUR 34.99 in DE/AT ab Februar; Ebook-Bündel über Offer Codes.
 
 ---
 
 ## Befehle
 
 ```
-npm test                                  # 160 Unit-Tests
-npx playwright test                       # 43 e2e, Projekte "mobile" (de-CH) und "us" (en-US)
+npm test                                  # 163 Unit-Tests
+npx playwright test                       # 48 e2e, Projekte "mobile" (de-CH) und "us" (en-US)
 npx playwright test e2e/X.spec.ts --project=mobile -g "Name"   # einzelner Test
 npm run build                             # tsc + vite
-npm run screenshots                       # Screenshots 1–7 und Creative Assets, beide Sprachen
+npm run screenshots                       # Screenshots und Creative Assets, beide Sprachen
 LANG=en_US.UTF-8 npx cap sync ios
 ```
 
-Archiv und Upload stehen in `docs/NATIVE.md`; Build-Nummer in beiden Zielen hochzählen, sonst
-lehnt App Store Connect ab.
+Archiv und Upload stehen in `docs/NATIVE.md`; Build-Nummer `CURRENT_PROJECT_VERSION` an **vier**
+Stellen in `ios/App/App.xcodeproj/project.pbxproj` hochzählen (App und SeriousWidgets), sonst lehnt
+App Store Connect ab. Nächste freie Build-Nummer: **35**.
