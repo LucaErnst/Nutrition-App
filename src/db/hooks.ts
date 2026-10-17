@@ -85,6 +85,31 @@ export function useFoodUsage(): Map<number, { count: number; last: number }> | u
   });
 }
 
+/**
+ * Zuletzt eingetragene Lebensmittel, neueste zuerst, jedes nur einmal – auch mitgelieferte und
+ * nicht gespeicherte Produkte. Für die leere Suche im Eintragen-Dialog.
+ */
+export function useRecentFoods(limit = 15): FoodItem[] | undefined {
+  return useLiveQuery(async () => {
+    const entries = await db.mealEntries.orderBy(':id').reverse().limit(400).toArray();
+    const ids: number[] = [];
+    for (const e of entries) {
+      if (!ids.includes(e.food_item_id)) ids.push(e.food_item_id);
+      if (ids.length >= limit) break;
+    }
+    const items = await db.foodItems.bulkGet(ids);
+    return items.filter((f): f is FoodItem => !!f);
+  });
+}
+
+/** Alle Favoriten, egal ob eigen oder mitgeliefert, alphabetisch. */
+export function useFavoriteFoods(): FoodItem[] | undefined {
+  return useLiveQuery(async () => {
+    const items = await db.foodItems.filter((f) => !!f.favorite).toArray();
+    return items.sort((a, b) => a.name.localeCompare(b.name, 'de'));
+  });
+}
+
 export async function deleteFoodItem(id: number) {
   // Wird das Item noch von Einträgen oder Vorlagen verwendet, nur aus der
   // Datenbank ausblenden, damit historische Tage ihre Werte behalten.
@@ -205,6 +230,13 @@ export async function deleteWeight(id: number) {
   const w = await db.weights.get(id);
   await db.weights.delete(id);
   if (w && w.source !== 'health') void syncHealthWeight(w.date, undefined);
+  return w;
+}
+
+/** Rückgängig nach dem Löschen: legt den Eintrag mit derselben id wieder an. */
+export async function restoreWeight(w: WeightEntry) {
+  await db.weights.put(w);
+  if (w.source !== 'health') void syncHealthWeight(w.date, w.weight_kg);
 }
 
 // --- Vorlagen ----------------------------------------------------------------

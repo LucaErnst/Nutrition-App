@@ -11,6 +11,8 @@ test('week view shows average, budget and summary', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Weekly average' })).toBeVisible();
   await expect(page.getByText('1 of 7 days logged')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Weekly budget' })).toBeVisible();
+  // Fazit ist eingeklappt (wie die Mahlzeiten) und zeigt erst nach dem Aufklappen die Punkte
+  await page.getByRole('button', { name: /^Summary/ }).click();
   await expect(page.getByText('Protein below target')).toBeVisible();
   // Ohne Apple Health (Web) keine Schritte im Fazit
   await expect(page.getByText('Steps:', { exact: false })).toHaveCount(0);

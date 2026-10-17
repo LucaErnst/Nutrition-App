@@ -28,14 +28,14 @@ test('Duo: Tagebuch wechselt live zwischen Aussen- und Innendisplay', async ({ p
 
   // Aussen (474 px): eine Spalte, Tab-Leiste unten
   await noHorizontalScroll(page);
-  expect(await columns(page, '.day')).toBe(1);
+  expect(await columns(page, '.day-pane')).toBe(1);
   const nav = page.getByRole('navigation', { name: 'Main navigation' });
   expect(await nav.evaluate((el) => getComputedStyle(el).position)).toBe('fixed');
 
   // Aufklappen → zwei Spalten, Navigation oben
   await page.setViewportSize(INNER_LANDSCAPE);
   await noHorizontalScroll(page);
-  expect(await columns(page, '.day')).toBe(2);
+  expect(await columns(page, '.day-pane')).toBe(2);
   expect(await nav.evaluate((el) => getComputedStyle(el).position)).not.toBe('fixed');
   await expect(page.getByRole('heading', { name: 'Breakfast' })).toBeVisible();
 
@@ -53,7 +53,7 @@ test('Duo: Tagebuch wechselt live zwischen Aussen- und Innendisplay', async ({ p
   // Innendisplay hochkant (640 px): eine Spalte, aber zentriert und ohne Überlauf
   await page.setViewportSize(INNER);
   await noHorizontalScroll(page);
-  expect(await columns(page, '.day')).toBe(1);
+  expect(await columns(page, '.day-pane')).toBe(1);
 });
 
 test('Duo: Woche und Gewicht zweispaltig auf dem Innendisplay', async ({ page }) => {

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { db } from '../db/db';
 import type { FoodItem, MealType, Unit } from '../db/types';
-import { addMealEntry, toggleFavorite, useFoodUsage, useSavedFoods } from '../db/hooks';
+import { addMealEntry, toggleFavorite, useFavoriteFoods, useFoodUsage, useRecentFoods, useSavedFoods } from '../db/hooks';
 import { defaultUnit, fmt, macrosFor } from '../lib/nutrition';
 import { offProductToFoodItem, type OffProduct } from '../lib/openfoodfacts';
 import { useT } from '../i18n';
@@ -36,6 +36,10 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
   const [offProduct, setOffProduct] = useState<FoodItem | null>(null);
   const foods = useSavedFoods() ?? [];
   const usage = useFoodUsage();
+  const favorites = useFavoriteFoods() ?? [];
+  const recentAll = useRecentFoods();
+  // Zuletzt hinzugefügt ohne die Favoriten, die stehen schon darüber.
+  const recent = useMemo(() => (recentAll ?? []).filter((f) => !f.favorite), [recentAll]);
   async function pickOff(p: OffProduct) {
     // Bereits gespeichert (z.B. früher gescannt)? Dann das lokale Item nehmen.
     const local = await db.foodItems.where('barcode').equals(p.barcode).first();
@@ -88,6 +92,37 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
   }
 
   const q = query.trim();
+  // Leere Suche: Favoriten und zuletzt Eingetragenes statt einer Liste ohne Bezug.
+  const quickPick = !q && (favorites.length > 0 || recent.length > 0);
+
+  function row(f: FoodItem) {
+    const unit = defaultUnit(f, 'metric');
+    const amount = f.default_amount ?? (unit === 'Stück' ? 1 : 100);
+    const m = macrosFor(f, amount, unit);
+    return (
+      <li key={f.id} className="search-row">
+        <button
+          className={`btn-icon star ${f.favorite ? 'on' : ''}`}
+          onClick={() => void toggleFavorite(f)}
+          aria-label={f.favorite ? t('search.favRemove', { name: f.name }) : t('search.favAdd', { name: f.name })}
+          aria-pressed={!!f.favorite}
+          title={t('db.favorite')}
+        >
+          {f.favorite ? '★' : '☆'}
+        </button>
+        <button className="search-item" onClick={() => setSelected(f)}>
+          <span className="search-item-main">
+            <span className="search-item-name">{f.name}</span>
+            {f.brand && <span className="search-item-brand">{f.brand}</span>}
+            <span className="search-item-portion">
+              {fmtAmount(amount, unit)} {unitLabel(t, unit)} · {t('macro.p')} {fmt(m.protein)} · {t('macro.f')} {fmt(m.fat)} · {t('macro.c')} {fmt(m.carbs)}
+            </span>
+          </span>
+          <span className="search-item-kcal">{fmt(m.kcal)} kcal</span>
+        </button>
+      </li>
+    );
+  }
 
   return (
     <div className="search">
@@ -101,42 +136,31 @@ export function FoodSearch({ date, mealType, onAdded }: Props) {
           aria-label={t('search.label')}
         />
       </form>
-      {!query && ownCount > 0 && <p className="search-hint">{t('search.hint')}</p>}
+      {quickPick && (
+        <>
+          {favorites.length > 0 && (
+            <>
+              <h4 className="search-section">{t('search.favorites')}</h4>
+              <ul className="search-list">{favorites.map(row)}</ul>
+            </>
+          )}
+          {recent.length > 0 && (
+            <>
+              <h4 className="search-section">{t('search.recent')}</h4>
+              <ul className="search-list">{recent.map(row)}</ul>
+            </>
+          )}
+        </>
+      )}
+      {!query && !quickPick && ownCount > 0 && <p className="search-hint">{t('search.hint')}</p>}
       {/* Solange kaum eigene Lebensmittel da sind: erklären, dass die Datenbank mitwächst.
           Wer das weiss, scannt in den ersten Wochen mehr – und tippt danach fast nichts mehr. */}
-      {!query && ownCount > 0 && ownCount < 12 && <p className="search-hint">{t('search.ownHint')}</p>}
-      {results.length === 0 ? (
+      {!query && !quickPick && ownCount > 0 && ownCount < 12 && <p className="search-hint">{t('search.ownHint')}</p>}
+      {quickPick ? null : results.length === 0 ? (
         <p className="search-empty">{q ? t('search.noneFor', { q }) : t('search.empty')}</p>
       ) : (
         <ul className="search-list">
-          {results.map((f) => {
-            const unit = defaultUnit(f, 'metric');
-            const amount = f.default_amount ?? (unit === 'Stück' ? 1 : 100);
-            const m = macrosFor(f, amount, unit);
-            return (
-              <li key={f.id} className="search-row">
-                <button
-                  className={`btn-icon star ${f.favorite ? 'on' : ''}`}
-                  onClick={() => void toggleFavorite(f)}
-                  aria-label={f.favorite ? t('search.favRemove', { name: f.name }) : t('search.favAdd', { name: f.name })}
-                  aria-pressed={!!f.favorite}
-                  title={t('db.favorite')}
-                >
-                  {f.favorite ? '★' : '☆'}
-                </button>
-                <button className="search-item" onClick={() => setSelected(f)}>
-                  <span className="search-item-main">
-                    <span className="search-item-name">{f.name}</span>
-                    {f.brand && <span className="search-item-brand">{f.brand}</span>}
-                    <span className="search-item-portion">
-                      {fmtAmount(amount, unit)} {unitLabel(t, unit)} · {t('macro.p')} {fmt(m.protein)} · {t('macro.f')} {fmt(m.fat)} · {t('macro.c')} {fmt(m.carbs)}
-                    </span>
-                  </span>
-                  <span className="search-item-kcal">{fmt(m.kcal)} kcal</span>
-                </button>
-              </li>
-            );
-          })}
+          {results.map(row)}
         </ul>
       )}
 

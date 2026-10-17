@@ -1,0 +1,849 @@
+/*
+ * 1.3: Look im Stil von iOS 27 (Entwurf: docs/design/ios27-entwurf.html, Entscheide: docs/RELEASE-1.3.md).
+ * Liegt über index.css und ändert nur das Aussehen; Aufbau und Funktionen bleiben dort.
+ * Aktionen bleiben blau (--accent), Gold nur für Marke und Pro.
+ */
+:root {
+  --bg: #e4e4ea;
+  --surface: #ffffff;
+  --surface-2: #ececf1;
+  --fill: rgb(120 120 128 / 0.2);
+  --border: rgb(60 60 67 / 0.16);
+  --text: #000000;
+  --text-2: #6c6c72;
+  --text-3: rgb(60 60 67 / 0.32);
+  --radius-card: 22px;
+  --c-kcal: #8b5cf6;
+  --c-water: #0a9fdb;
+  --green: #34c759;
+  --red: #ff3b30;
+  --orange: #ff9500;
+  --violet: #8b5cf6;
+  --train: #34c759;
+  --rest: #a09eff;
+  --seg-strong: #1c1c1e;
+  --brand: #b08a22;
+  --glass: rgb(250 250 252 / 0.72);
+  --glass-edge: rgb(255 255 255 / 0.8);
+  --bar-glass: rgb(255 255 255 / 0.38);
+  --bar-shine: rgb(255 255 255 / 0.9);
+  --bar-thumb: rgb(120 120 128 / 0.16);
+  --press: rgb(0 0 0 / 0.06);
+  --wm-opacity: 0.06;
+  --spring: cubic-bezier(0.34, 1.36, 0.5, 1);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --surface: #1c1c1e;
+    --surface-2: #2c2c2e;
+    --fill: rgb(120 120 128 / 0.32);
+    --border: rgb(84 84 88 / 0.55);
+    --text: #ffffff;
+    --text-2: #98989f;
+    --text-3: rgb(235 235 245 / 0.3);
+    --accent: #3b82f6;
+    --train: #30d158;
+    --seg-strong: #3a3a3c;
+    --brand: #e6c46a;
+    --glass: rgb(30 30 32 / 0.72);
+    --glass-edge: rgb(255 255 255 / 0.12);
+    --bar-glass: rgb(40 40 46 / 0.36);
+    --bar-shine: rgb(255 255 255 / 0.22);
+    --bar-thumb: rgb(255 255 255 / 0.14);
+    --press: rgb(255 255 255 / 0.08);
+    --wm-opacity: 0.035;
+  }
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Karten und Listen ---------- */
+.card {
+  border: 0;
+  border-radius: var(--radius-card);
+  box-shadow: none;
+}
+
+.section-head h2,
+.card.section > h2 {
+  font-size: 17px;
+}
+
+/* ---------- Drück-Gefühl ---------- */
+button {
+  transition: scale 0.18s var(--spring), background-color 0.15s, opacity 0.15s, color 0.25s;
+}
+button:active:not(:disabled) {
+  scale: 0.94;
+  transition-duration: 0.08s;
+}
+.meal-toggle:active:not(:disabled),
+.day-bar-btn:active:not(:disabled),
+.search-item:active,
+.db-item button:active {
+  scale: 0.985;
+}
+
+/* ---------- Grosser Titel und Kopf ---------- */
+.app-header {
+  padding-top: calc(16px + env(safe-area-inset-top));
+}
+.btn-round:disabled {
+  opacity: 0.35;
+}
+.phase-values {
+  font-size: 13.5px;
+}
+.large-title {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+@media (max-width: 600px) {
+  .app-header-dated {
+    padding: calc(4px + env(safe-area-inset-top)) 0 0;
+    min-height: 0;
+  }
+}
+
+/* ---------- Tab-Leiste: Liquid Glass ---------- */
+.app-nav {
+  isolation: isolate;
+  border: 0;
+  border-radius: 100px;
+  padding: 4px;
+  gap: 0;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0) 55%), var(--bar-glass);
+  -webkit-backdrop-filter: blur(14px) saturate(200%) brightness(1.04);
+  backdrop-filter: blur(14px) saturate(200%) brightness(1.04);
+  box-shadow:
+    0 12px 32px rgb(0 0 0 / 0.14),
+    0 1px 3px rgb(0 0 0 / 0.08),
+    inset 0 1px 0 var(--bar-shine),
+    inset 0 0 0 0.5px var(--glass-edge);
+}
+.app-nav button,
+.app-nav button.active {
+  flex: 1 0 auto;
+  padding: 6px 12px;
+  border-radius: 100px;
+  background: none;
+  box-shadow: none;
+  color: var(--text);
+  white-space: nowrap;
+}
+.app-nav button.active {
+  color: var(--accent);
+}
+.app-nav button:active .nav-icon {
+  transform: scale(0.88);
+}
+.nav-icon {
+  transition: transform 0.35s var(--spring);
+}
+.nav-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  border-radius: 100px;
+  pointer-events: none;
+  background: var(--bar-thumb);
+  box-shadow: inset 0 1px 0 var(--bar-shine), inset 0 0 0 0.5px var(--glass-edge);
+  transition: transform 0.5s var(--spring), width 0.5s var(--spring);
+}
+.nav-thumb.moving {
+  animation: thumb-stretch 0.5s cubic-bezier(0.3, 0.8, 0.3, 1);
+}
+@keyframes thumb-stretch {
+  35% {
+    scale: 1.12 0.9;
+  }
+  70% {
+    scale: 0.98 1.03;
+  }
+}
+
+@media (min-width: 601px) {
+  .app-nav {
+    position: relative;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-nav {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: max(12px, calc(env(safe-area-inset-bottom) - 10px));
+    height: 62px;
+    padding: 4px;
+    border-top: 0;
+  }
+  .app-nav button,
+  .app-nav button.active {
+    padding: 0 8px;
+    font-size: 10px;
+    font-weight: 500;
+    gap: 2px;
+    justify-content: center;
+    background: none;
+    min-height: 0;
+  }
+  .nav-icon {
+    width: 23px;
+    height: 23px;
+  }
+  .app {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ---------- Segmente mit gleitender Markierung ---------- */
+.segmented[style*='--n'] {
+  position: relative;
+  isolation: isolate;
+  background: var(--fill);
+  border-radius: 100px;
+  padding: 3px;
+  gap: 0;
+}
+.segmented[style*='--n']::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  z-index: -1;
+  width: calc((100% - 6px) / var(--n));
+  transform: translateX(calc(var(--i) * 100%));
+  border-radius: 100px;
+  background: var(--surface);
+  box-shadow: 0 3px 8px rgb(0 0 0 / 0.12), 0 0 0 0.5px rgb(0 0 0 / 0.04);
+  transition: transform 0.32s var(--spring);
+}
+.segmented[style*='--n'] label,
+.segmented[style*='--n'] label.active {
+  background: none;
+  box-shadow: none;
+  border-radius: 100px;
+}
+
+/* Trainingstag / Ruhetag: schwarze Kapsel, gewählter Text samt Symbol farbig */
+.daytype {
+  margin-top: 0;
+}
+.daytype::before {
+  background: var(--seg-strong) !important;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.18) !important;
+}
+.daytype label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-2);
+  transition: color 0.25s;
+}
+.daytype svg {
+  width: 14px;
+  height: 14px;
+}
+.daytype.is-training label.active {
+  color: var(--train);
+}
+.daytype.is-rest label.active {
+  color: var(--rest);
+}
+
+/* ---------- Tagebuch ---------- */
+.date-nav {
+  padding: 6px 0 2px;
+}
+.date-label {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.btn-round {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--fill);
+  font-size: 22px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  color: var(--text);
+}
+
+.day-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  touch-action: pan-y;
+  transition: transform 0.22s var(--ease), opacity 0.22s;
+}
+.day-pane.out-left,
+.day-pane.in-left {
+  transform: translateX(-28px);
+  opacity: 0;
+}
+.day-pane.out-right,
+.day-pane.in-right {
+  transform: translateX(28px);
+  opacity: 0;
+}
+.day-pane.in-left,
+.day-pane.in-right {
+  transition: none;
+}
+
+.summary {
+  display: block;
+  padding: 16px;
+}
+.summary-top {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+}
+.summary-bars {
+  display: grid;
+  gap: 9px;
+}
+.macro-bar {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+}
+.macro-bar-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.macro-bar-values {
+  color: var(--text-2);
+}
+.macro-bar .progress-track,
+.summary .progress-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--fill);
+}
+.macro-bar .progress-fill {
+  border-radius: 3px;
+  transition: width 0.5s var(--ease);
+}
+.summary-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 0.5px solid var(--border);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.summary-remaining {
+  font-size: 13px;
+}
+.summary-health-col {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+}
+.summary-health {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+/* Ring */
+.ring {
+  position: relative;
+  width: 112px;
+  height: 112px;
+}
+.ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.ring circle {
+  fill: none;
+  stroke-width: 12;
+}
+.ring-track {
+  stroke: var(--fill);
+}
+.ring-value {
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s var(--ease), stroke 0.4s;
+}
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  line-height: 1.15;
+}
+.ring .summary-kcal-value {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.ring .summary-kcal-label {
+  font-size: 11px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+/* Wochenbudget kompakt */
+.budget-line {
+  border: 0;
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  padding: 12px 16px;
+  margin: 0;
+}
+
+/* Wasser */
+.water {
+  padding: 12px 16px;
+}
+.water-chip {
+  border-radius: 100px;
+  border: 0;
+  background: var(--fill);
+  color: var(--c-water);
+  font-weight: 600;
+}
+.water .btn-icon {
+  border-radius: 100px;
+  background: var(--fill);
+}
+
+/* Mahlzeiten als Aufklapp-Karten */
+.meal {
+  padding: 4px 12px 4px 16px;
+}
+.meal-header {
+  min-height: 52px;
+}
+.meal-header h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+.meal-meta {
+  font-size: 12.5px;
+}
+.meal-kcal {
+  font-size: 14.5px;
+}
+.meal-chevron {
+  color: var(--text-3);
+  transition: transform 0.25s var(--ease);
+}
+.btn-add-round {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+.collapse-inner .entry-list {
+  margin: 0 -12px 0 -16px;
+}
+.meal-footer {
+  padding: 6px 0 10px;
+}
+.meal-footer-empty {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 0 12px;
+  font-size: 13.5px;
+}
+.meal-footer-empty .btn-link {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Wischen zum Löschen */
+.swipe {
+  position: relative;
+  overflow: hidden;
+  list-style: none;
+  padding: 0 !important;
+  border-top: 0 !important;
+}
+.swipe-action {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 88px;
+  background: var(--red);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scale: 1 !important;
+}
+.swipe-action.armed {
+  justify-content: flex-start;
+  padding-left: 26px;
+}
+.swipe-row {
+  position: relative;
+  background: var(--surface);
+  touch-action: pan-y;
+}
+.entry .swipe-row {
+  padding: 10px 12px 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.entry .swipe-row::before,
+.weight-row .swipe-row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 0;
+  border-top: 0.5px solid var(--border);
+}
+.weight-row:first-child .swipe-row::before {
+  display: none;
+}
+.weight-row {
+  display: block;
+}
+.weight-row .swipe-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0 10px 16px;
+  font-variant-numeric: tabular-nums;
+}
+.weight-list {
+  margin: 8px -16px 0;
+}
+.weight-row .swipe-row > :last-child {
+  padding-right: 16px;
+}
+
+/* ---------- Woche ---------- */
+.week-avg {
+  margin-top: 4px;
+}
+.conclusions-card .collapse-inner .conclusions {
+  padding: 0 0 12px;
+  margin: 0;
+}
+.concl-dot {
+  font-size: 9px;
+  vertical-align: 1px;
+}
+.concl-dot-ok {
+  color: var(--green);
+}
+.concl-dot-warn {
+  color: var(--orange);
+}
+.concl-dot-info {
+  color: var(--text-3);
+}
+.day-dot-under {
+  color: var(--violet);
+  font-size: 9px;
+  vertical-align: 1px;
+}
+.day-dot-over {
+  color: var(--red);
+  font-size: 9px;
+  vertical-align: 1px;
+}
+
+.day-bar-btn {
+  display: grid;
+  grid-template-columns: 38px 26px minmax(0, 1fr) 84px;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 0;
+}
+.day-bar-label {
+  display: grid;
+  line-height: 1.2;
+  text-align: left;
+}
+.day-bar-weekday {
+  font-weight: 600;
+  font-size: 15px;
+}
+.day-bar-date {
+  font-size: 11.5px;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.day-today .day-bar-weekday,
+.day-today .day-bar-date {
+  color: var(--accent);
+}
+.day-type-pill {
+  width: 24px;
+  height: 22px;
+  border-radius: 100px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--seg-strong);
+}
+.day-type-pill.is-training {
+  color: var(--train);
+}
+.day-type-pill.is-rest {
+  color: var(--rest);
+}
+.day-type-pill.is-empty {
+  background: none;
+}
+.day-bar-track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--fill);
+  position: relative;
+  overflow: hidden;
+}
+.day-bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 4px;
+  background: var(--violet);
+}
+.day-bar-fill.status-ok {
+  background: var(--green);
+}
+.day-bar-fill.status-over {
+  background: var(--red);
+}
+.day-bar-fill.status-under {
+  background: var(--violet);
+}
+.day-bar-target {
+  display: none;
+}
+.day-bar-values {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.day-bar-values strong {
+  font-size: 15px;
+}
+.day-bar-values small {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.day-bars-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+/* ---------- Gewicht ---------- */
+.weight-stats {
+  text-align: center;
+}
+
+/* ---------- Pro ---------- */
+.pro-gold {
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(135deg, #f3dc94, #b08a22 35%, #e9cd7a 60%, #8c6a14) border-box;
+  box-shadow: 0 6px 18px rgb(176 138 34 / 0.14);
+}
+.pro-gold .pro-hero-title {
+  background: linear-gradient(100deg, var(--text) 30%, var(--brand));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.pro-hero-logo {
+  border-radius: 12px;
+}
+.btn-gold {
+  background: linear-gradient(135deg, #f0d27a, #c9982c);
+  color: #1a1400;
+  border: 0;
+  border-radius: 100px;
+  box-shadow: 0 6px 16px rgb(201 152 44 / 0.3);
+}
+.pro-badge {
+  border: 0;
+}
+
+/* Paywall als Sheet */
+.modal-sheet .modal-header {
+  position: static;
+  margin: 0 0 8px;
+  padding: 0;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.modal-sheet .sheet-grabber {
+  margin-top: 8px;
+}
+.paywall-mark {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgb(176 138 34 / 0.35), 0 0 0 1px rgb(240 210 122 / 0.6);
+}
+
+/* ---------- Buttons, Felder, Toast ---------- */
+.btn-primary {
+  border-radius: 100px;
+}
+.search-input {
+  border-radius: 100px;
+  border: 0;
+  background: var(--fill);
+}
+.toast {
+  border-radius: 100px;
+  background: var(--glass);
+  color: var(--text);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+  border: 0;
+}
+.search-section {
+  margin: 12px 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-2);
+}
+
+/* ---------- BS-Logo als Wasserzeichen ---------- */
+.watermark {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: min(86vw, 520px);
+  aspect-ratio: 1;
+  translate: -50% -46%;
+  z-index: 3;
+  pointer-events: none;
+  opacity: var(--wm-opacity);
+  background: center / contain no-repeat;
+  mix-blend-mode: multiply;
+}
+@media (prefers-color-scheme: dark) {
+  .watermark {
+    mix-blend-mode: screen;
+  }
+}
+
+/* ---------- Breite Displays: Tagebuch-Raster liegt jetzt in .day-pane ---------- */
+@media (min-width: 700px) {
+  .day {
+    display: flex;
+    flex-direction: column;
+  }
+  .day-pane {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: 16px;
+    row-gap: 12px;
+    align-items: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-thumb,
+  .segmented[style*='--n']::before,
+  .day-pane,
+  .ring-value {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Reiter im Eintragen-Sheet als Kapsel-Segment */
+.modal .tabs {
+  background: var(--fill);
+  border: 0;
+  border-radius: 100px;
+  padding: 3px;
+  gap: 0;
+}
+.modal .tabs button {
+  flex: 1;
+  border: 0;
+  border-radius: 100px;
+  padding: 7px 4px;
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+.modal .tabs button.active {
+  background: var(--surface);
+  box-shadow: 0 3px 8px rgb(0 0 0 / 0.12);
+  color: var(--text);
+}
+.modal {
+  border-radius: 28px;
+}
+@media (max-width: 599px) {
+  .modal.sheet {
+    border-radius: 28px 28px 0 0;
+  }
+}

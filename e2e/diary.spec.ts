@@ -17,7 +17,13 @@ test('add item, change amount, delete and undo', async ({ page }) => {
   await expect(kcalTotal(page)).toHaveText('84');
 
   // Löschen → Toast → Rückgängig
-  await page.getByRole('button', { name: 'Remove Low-fat quark' }).click();
+  // Wie in iOS: Eintrag weit nach links wischen löscht ihn
+  const row = page.locator('.entry .swipe-row').filter({ hasText: 'Low-fat quark' });
+  const box = (await row.boundingBox())!;
+  await page.mouse.move(box.x + box.width - 20, box.y + box.height / 2);
+  await page.mouse.down();
+  for (let i = 1; i <= 12; i++) await page.mouse.move(box.x + box.width - 20 - i * 25, box.y + box.height / 2);
+  await page.mouse.up();
   await expect(kcalTotal(page)).toHaveText('0');
   await page.getByRole('button', { name: 'Undo' }).click();
   await expect(kcalTotal(page)).toHaveText('84');

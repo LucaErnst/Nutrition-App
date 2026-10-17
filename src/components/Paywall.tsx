@@ -64,7 +64,7 @@ function Paywall({ onClose }: { onClose: () => void }) {
   const features: string[] = ['pro.fHealth', 'pro.fPhase', 'pro.fWidgets', 'pro.fTemplates', 'pro.fPortions', 'pro.fTrend', 'pro.fCsv'].map((k) => t(k as never));
 
   return (
-    <Modal title={t('pro.title')} onClose={onClose}>
+    <Modal title={t('pro.title')} onClose={onClose} sheet>
       <div className="paywall">
         <div className="paywall-brand">
           <img className="paywall-mark" src={`${import.meta.env.BASE_URL}icon-192.png`} alt="" width={44} height={44} />
@@ -87,7 +87,7 @@ function Paywall({ onClose }: { onClose: () => void }) {
           <p className="form-ok">{t('pro.active')}</p>
         ) : (
           <>
-            <button className="btn-primary paywall-buy" onClick={() => void buy()} disabled={busy || !ready}>
+            <button className="btn-primary paywall-buy btn-gold" onClick={() => void buy()} disabled={busy || !ready}>
               {price ? t('pro.buy', { price }) : t('pro.buyNoPrice')}
             </button>
             <p className="search-hint paywall-once">{t('pro.once')}</p>

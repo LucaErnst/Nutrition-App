@@ -11,6 +11,7 @@ import { AddEntryDialog } from './AddEntryDialog';
 import { AmountStepper } from './AmountStepper';
 import { useToast } from './Toast';
 import { Tip } from './Tip';
+import { SwipeRow } from './SwipeRow';
 
 interface Props {
   date: string;
@@ -53,18 +54,24 @@ export function MealSlot({ date, mealType, entries }: Props) {
         </button>
         <div className="meal-header-right">
           <span className="meal-kcal">{fmt(totals.kcal)} kcal</span>
-          <button className="btn-add" onClick={() => setAdding(true)} aria-label={t('slot.addTo', { meal: label })}>
-            + {t('common.add')}
-          </button>
-          {hasEntries && (
+          {hasEntries ? (
             <button
               className={`btn-icon meal-chevron ${expanded ? 'open' : ''}`}
               onClick={() => setExpanded((v) => !v)}
               aria-label={expanded ? t('slot.collapse') : t('slot.expand')}
             >
-              ›
+              <svg viewBox="0 0 8 13" width="8" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M1.5 1.5 6.5 6.5l-5 5" />
+              </svg>
             </button>
+          ) : (
+            <span className="chevron-slot" aria-hidden="true" />
           )}
+          <button className="btn-add btn-add-round" onClick={() => setAdding(true)} aria-label={t('slot.addTo', { meal: label })}>
+            <svg viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+              <path d="M7 1v12M1 7h12" />
+            </svg>
+          </button>
         </div>
       </header>
 
@@ -182,7 +189,7 @@ function EntryRow({ item }: { item: EntryWithFood }) {
   const pieceGrams = isPieceUnit(entry.unit) && food.piece_weight_g && system === 'metric' ? entry.amount * food.piece_weight_g : 0;
 
   return (
-    <li className="entry">
+    <SwipeRow className="entry" onDelete={() => void remove()} deleteLabel={t('slot.removeItem', { name: food.name })} actionText={t('common.delete')}>
       <div className="entry-main">
         <span className="entry-name">
           {food.name}
@@ -222,10 +229,7 @@ function EntryRow({ item }: { item: EntryWithFood }) {
         <span>{t('macro.p')} {fmt(macros.protein)}</span>
         <span>{t('macro.f')} {fmt(macros.fat)}</span>
         <span>{t('macro.c')} {fmt(macros.carbs)}</span>
-        <button className="btn-icon" onClick={() => void remove()} aria-label={t('slot.removeItem', { name: food.name })} title={t('common.remove')}>
-          ×
-        </button>
       </div>
-    </li>
+    </SwipeRow>
   );
 }

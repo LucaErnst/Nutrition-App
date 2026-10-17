@@ -23,7 +23,7 @@ export function ProSection() {
   // Gekauft: keine Verkaufsseite mehr, sondern eine ruhige Bestätigung mit Goldakzent.
   if (pro) {
     return (
-      <section className="card section pro-section pro-active">
+      <section className="card section pro-section pro-active pro-gold">
         <div className="pro-hero">
           <img className="pro-hero-logo" src={`${import.meta.env.BASE_URL}icon-192.png`} alt="" width={44} height={44} />
           <div className="pro-hero-text">
@@ -41,12 +41,16 @@ export function ProSection() {
   }
 
   return (
-    <section className="card section pro-section">
-      <div className="section-head">
-        <h2>{t('pro.title')}</h2>
+    <section className="card section pro-section pro-gold">
+      <div className="pro-hero">
+        <img className="pro-hero-logo" src={`${import.meta.env.BASE_URL}icon-192.png`} alt="" width={44} height={44} />
+        <div className="pro-hero-text">
+          <h2 className="pro-hero-title">{t('pro.title')}</h2>
+          <p className="pro-hero-sub">{t('pro.tagline')}</p>
+        </div>
       </div>
       <p className="search-hint">{t('pro.sectionHint')}</p>
-      <button className="btn-primary btn-centered" onClick={openPaywall} style={{ marginTop: 10 }}>
+      <button className="btn-primary btn-centered btn-gold" onClick={openPaywall} style={{ marginTop: 10 }}>
         {price ? t('pro.buy', { price }) : t('pro.open')}
       </button>
       {previewToggle}

@@ -10,6 +10,7 @@ import { stepsAverage, stepsConclusions } from '../lib/steps';
 import { trendChange, withTrend } from '../lib/weight';
 import { activeGoalFor } from '../lib/goals';
 import { WeekBudgetCard } from './WeekBudgetCard';
+import { Ring } from './Ring';
 
 interface Props {
   onOpenDay?: (date: string) => void;
@@ -34,6 +35,7 @@ export function WeekView({ onOpenDay }: Props) {
   // Wasser folgt dem Einheitensystem: metrisch Liter mit einer Nachkommastelle, sonst ganze Unzen.
   const system = useUnitSystem();
   const conclusions: Conclusion[] = week ? [...week.conclusions] : [];
+  const [conclusionsOpen, setConclusionsOpen] = useState(false);
 
   // Schritte aus Apple Health: diese Woche und die vier davor (nur mit Health, nur nativ).
   const [steps, setSteps] = useState<Map<string, number> | undefined>(undefined);
@@ -70,7 +72,7 @@ export function WeekView({ onOpenDay }: Props) {
   return (
     <div className="week">
       <nav className="date-nav" aria-label={t('week.nav')}>
-        <button className="btn-icon" onClick={() => setStart(addDays(start, -7))} aria-label={t('week.prev')}>
+        <button className="btn-icon btn-round" onClick={() => setStart(addDays(start, -7))} aria-label={t('week.prev')}>
           ‹
         </button>
         <div className="date-nav-center">
@@ -81,7 +83,7 @@ export function WeekView({ onOpenDay }: Props) {
             </span>
           )}
         </div>
-        <button className="btn-icon" onClick={() => setStart(addDays(start, 7))} aria-label={t('week.next')} disabled={isCurrent}>
+        <button className="btn-icon btn-round" onClick={() => setStart(addDays(start, 7))} aria-label={t('week.next')} disabled={isCurrent}>
           ›
         </button>
       </nav>
@@ -96,27 +98,33 @@ export function WeekView({ onOpenDay }: Props) {
               <h2>{t('week.average')}</h2>
               <span className="search-hint">{t('week.tracked', { n: week.trackedCount })}</span>
             </div>
-            <div className="week-stats">
-              <Stat label={t('macro.kcal')} value={week.avg.kcal} target={week.avgTarget?.kcal} unit="kcal" color="var(--c-kcal)" />
-              <Stat label={t('macro.protein')} value={week.avg.protein} target={week.avgTarget?.protein} unit="g" color="var(--c-protein)" prefix="≥ " />
-              <Stat
-                label={t('macro.fat')}
-                value={week.avg.fat}
-                targetLabel={week.avgTarget ? `${fmt(week.avgTarget.fat_min)}–${fmt(week.avgTarget.fat_max)} g` : undefined}
-                unit="g"
-                color="var(--c-fat)"
-              />
-              <Stat label={t('macro.carbs')} value={week.avg.carbs} target={week.avgTarget?.carbs} unit="g" color="var(--c-carbs)" prefix="≈ " />
-              {waterDays.length > 0 && (
-                <Stat
-                  label={t('water.avg')}
-                  value={waterValue(waterAvg, system)}
-                  digits={waterDigits(system)}
-                  target={waterValue(waterGoal, system)}
-                  unit={waterUnitLabel(system)}
-                  color="var(--c-water)"
+            <div className="summary-top week-avg">
+              <Ring fraction={week.avgTarget ? week.avg.kcal / week.avgTarget.kcal : 0}>
+                <span className="summary-kcal-value">{fmt(week.avg.kcal)}</span>
+                <span className="summary-kcal-label">{week.avgTarget ? t('week.ringOf', { n: fmt(week.avgTarget.kcal) }) : 'kcal'}</span>
+              </Ring>
+              <div className="summary-bars">
+                <AvgBar label={t('macro.protein')} value={week.avg.protein} target={week.avgTarget?.protein} targetLabel={week.avgTarget ? `≥ ${fmt(week.avgTarget.protein)}` : undefined} unit="g" color="var(--c-protein)" />
+                <AvgBar
+                  label={t('macro.fat')}
+                  value={week.avg.fat}
+                  target={week.avgTarget?.fat_max}
+                  targetLabel={week.avgTarget ? `${fmt(week.avgTarget.fat_min)}–${fmt(week.avgTarget.fat_max)}` : undefined}
+                  unit="g"
+                  color="var(--c-fat)"
                 />
-              )}
+                <AvgBar label={t('macro.carbs')} value={week.avg.carbs} target={week.avgTarget?.carbs} unit="g" color="var(--c-carbs)" />
+                {waterDays.length > 0 && (
+                  <AvgBar
+                    label={t('water.avg')}
+                    value={waterValue(waterAvg, system)}
+                    target={waterValue(waterGoal, system)}
+                    digits={waterDigits(system)}
+                    unit={waterUnitLabel(system)}
+                    color="var(--c-water)"
+                  />
+                )}
+              </div>
             </div>
             {week.totalTargetKcal !== undefined && (
               <p className="week-total">
@@ -131,18 +139,53 @@ export function WeekView({ onOpenDay }: Props) {
 
           {budget && <WeekBudgetCard budget={budget} isCurrent={isCurrent} />}
 
-          <section className="card section" aria-label={t('week.conclusion')}>
-            <h2>{t('week.conclusion')}</h2>
-            <ul className="conclusions">
-              {conclusions.map((c, i) => (
-                <li key={i} className={`conclusion conclusion-${c.kind}`}>
-                  <span className="conclusion-icon" aria-hidden="true">
-                    {c.kind === 'ok' ? '✓' : c.kind === 'warn' ? '!' : 'i'}
-                  </span>
-                  {t(c.key, c.params)}
-                </li>
-              ))}
-            </ul>
+          <section className="card meal conclusions-card" aria-label={t('week.conclusion')}>
+            <header className="meal-header">
+              <button
+                className="meal-toggle"
+                onClick={() => setConclusionsOpen((v) => !v)}
+                aria-expanded={conclusionsOpen}
+                aria-controls="week-conclusions"
+              >
+                <h2>{t('week.conclusion')}</h2>
+                <span className="meal-meta">
+                  {(['ok', 'warn', 'info'] as const)
+                    .map((k) => [k, conclusions.filter((c) => c.kind === k).length] as const)
+                    .filter(([, n]) => n > 0)
+                    .map(([k, n], i) => (
+                      <span key={k}>
+                        {i > 0 && ' · '}
+                        <span className={`concl-dot concl-dot-${k}`} aria-hidden="true">●</span> {t(`week.sum.${k}`, { n })}
+                      </span>
+                    ))}
+                </span>
+              </button>
+              <div className="meal-header-right">
+                <button
+                  className={`btn-icon meal-chevron ${conclusionsOpen ? 'open' : ''}`}
+                  onClick={() => setConclusionsOpen((v) => !v)}
+                  aria-label={conclusionsOpen ? t('slot.collapse') : t('slot.expand')}
+                >
+                  <svg viewBox="0 0 8 13" width="8" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M1.5 1.5 6.5 6.5l-5 5" />
+                  </svg>
+                </button>
+              </div>
+            </header>
+            <div className={`collapse ${conclusionsOpen ? 'open' : ''}`} aria-hidden={!conclusionsOpen}>
+              <div className="collapse-inner">
+                <ul className="conclusions" id="week-conclusions">
+                  {conclusions.map((c, i) => (
+                    <li key={i} className={`conclusion conclusion-${c.kind}`}>
+                      <span className="conclusion-icon" aria-hidden="true">
+                        {c.kind === 'ok' ? '✓' : c.kind === 'warn' ? '!' : 'i'}
+                      </span>
+                      {t(c.key, c.params)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </section>
           </div>
 
@@ -156,72 +199,77 @@ export function WeekView({ onOpenDay }: Props) {
   );
 }
 
-interface StatProps {
-  label: string;
-  value: number;
-  target?: number;
-  targetLabel?: string;
-  unit: string;
-  color: string;
-  prefix?: string;
-  digits?: number;
-}
-
-function Stat({ label, value, target, targetLabel, unit, color, prefix = '', digits = 0 }: StatProps) {
-  const t = useT();
-  const tl = targetLabel ?? (target !== undefined ? `${prefix}${fmt(target, digits)} ${unit}` : undefined);
-  return (
-    <div className="week-stat">
-      <span className="progress-label">
-        <span className="macro-dot" style={{ background: color }} aria-hidden="true" />
-        {label}
-      </span>
-      <span className="week-stat-value">
-        {fmt(value, digits)} <span className="week-stat-unit">{unit}</span>
-      </span>
-      {tl && <span className="week-stat-target">{t('week.target', { t: tl })}</span>}
-    </div>
-  );
+/** Balkenfarbe nach Anteil am Tagesziel: unter 90 % violett, 90–105 % grün, darüber rot. */
+export function dayStatus(kcal: number, target: number | undefined): 'under' | 'ok' | 'over' | '' {
+  if (!target || kcal <= 0) return '';
+  const r = kcal / target;
+  return r > 1.05 ? 'over' : r >= 0.9 ? 'ok' : 'under';
 }
 
 function DayBars({ days, today, onOpenDay }: { days: DaySummary[]; today: string; onOpenDay?: (d: string) => void }) {
   const t = useT();
-  const scaleMax = Math.max(1, ...days.map((d) => Math.max(d.totals.kcal, d.targets?.kcal ?? 0))) * 1.05;
-
   return (
-    <ul className="day-bars">
-      {days.map((d) => {
-        const target = d.targets?.kcal;
-        const status = !d.tracked || !target ? '' : d.totals.kcal > target * 1.1 ? 'over' : d.totals.kcal < target * 0.9 ? 'under' : 'ok';
-        const future = d.date > today;
-        return (
-          <li key={d.date} className={`day-bar ${future ? 'day-future' : ''} ${d.date === today ? 'day-today' : ''}`}>
-            <button className="day-bar-btn" onClick={() => onOpenDay?.(d.date)} disabled={!onOpenDay}>
-              <span className="day-bar-label">
-                <span className="day-bar-weekday">{weekdayShort(d.date)}</span>
-                <span className="day-bar-date">{formatShortDate(d.date)}</span>
-                {d.targets && <span className="day-bar-type">{d.targets.is_training ? t('week.typeT') : t('week.typeR')}</span>}
-              </span>
-              <span className="day-bar-track">
-                {d.tracked && <span className={`day-bar-fill status-${status}`} style={{ width: `${(d.totals.kcal / scaleMax) * 100}%` }} />}
-                {target && <span className="day-bar-target" style={{ left: `${(target / scaleMax) * 100}%` }} />}
-              </span>
-              <span className="day-bar-values">
-                {d.tracked ? (
-                  <>
-                    <strong>{fmt(d.totals.kcal)}</strong>
-                    <span className="day-bar-macros">
-                      {t('macro.p')} {fmt(d.totals.protein)} · {t('macro.f')} {fmt(d.totals.fat)} · {t('macro.c')} {fmt(d.totals.carbs)}
-                    </span>
-                  </>
+    <>
+      <ul className="day-bars">
+        {days.map((d) => {
+          const target = d.targets?.kcal;
+          const status = d.tracked ? dayStatus(d.totals.kcal, target) : '';
+          const future = d.date > today;
+          const pct = target && d.tracked ? Math.min(100, (d.totals.kcal / target) * 100) : 0;
+          return (
+            <li key={d.date} className={`day-bar ${future ? 'day-future' : ''} ${d.date === today ? 'day-today' : ''}`}>
+              <button className="day-bar-btn" onClick={() => onOpenDay?.(d.date)} disabled={!onOpenDay}>
+                <span className="day-bar-label">
+                  <span className="day-bar-weekday">{weekdayShort(d.date)}</span>
+                  <span className="day-bar-date">{d.date.slice(8, 10)}/{d.date.slice(5, 7)}</span>
+                </span>
+                {d.targets ? (
+                  <span className={`day-type-pill ${d.targets.is_training ? 'is-training' : 'is-rest'}`} aria-label={d.targets.is_training ? t('day.training') : t('day.rest')}>
+                    {d.targets.is_training ? t('week.typeT') : t('week.typeR')}
+                  </span>
                 ) : (
-                  <span className="day-bar-empty">{future ? '' : '–'}</span>
+                  <span className="day-type-pill is-empty" aria-hidden="true" />
                 )}
-              </span>
-            </button>
-          </li>
-        );
-      })}
-    </ul>
+                <span className="day-bar-track">
+                  {d.tracked && <span className={`day-bar-fill status-${status}`} style={{ width: `${pct}%` }} />}
+                </span>
+                <span className="day-bar-values">
+                  {d.tracked ? (
+                    <strong>
+                      {fmt(d.totals.kcal)} <small>kcal</small>
+                    </strong>
+                  ) : (
+                    <span className="day-bar-empty">–</span>
+                  )}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="day-bars-legend">
+        <span><span className="concl-dot concl-dot-ok" aria-hidden="true">●</span> {t('week.legendOk')}</span>
+        <span><span className="day-dot-under" aria-hidden="true">●</span> {t('week.legendUnder')}</span>
+        <span><span className="day-dot-over" aria-hidden="true">●</span> {t('week.legendOver')}</span>
+      </p>
+    </>
+  );
+}
+
+function AvgBar({ label, value, target, targetLabel, unit, color, digits = 0 }: { label: string; value: number; target?: number; targetLabel?: string; unit: string; color: string; digits?: number }) {
+  const pct = target ? Math.min(100, (value / target) * 100) : 0;
+  return (
+    <div className="macro-bar">
+      <div className="macro-bar-head">
+        <span>{label}</span>
+        <span className="macro-bar-values">
+          {fmt(value, digits)}
+          {target !== undefined && ` / ${targetLabel ?? fmt(target, digits)}`} {unit}
+        </span>
+      </div>
+      <div className="progress-track" aria-hidden="true">
+        <div className="progress-fill" style={{ width: `${pct}%`, background: color }} />
+      </div>
+    </div>
   );
 }

@@ -443,7 +443,7 @@ button.row:active:not(:disabled), .meal-head > button.main:active, .screens butt
           <div class="card today" style="margin:0">
             <div class="ring" aria-label="Wochenschnitt 2'464 von 2'800 Kilokalorien">
               <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--fill)" stroke-width="12"/><circle class="v" cx="60" cy="60" r="52" fill="none" stroke="hsl(106 78% 47%)" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="39.2"/></svg>
-              <div class="num"><b>2'464</b><span>Ø von 2'800 kcal</span></div>
+              <div class="num"><b>2'464</b><span>/ 2'800 kcal</span></div>
             </div>
             <div class="macros">
               <div class="macro"><div class="top"><span>Protein</span><span>216 / ≥ 150 g</span></div><div class="bar"><i style="width:100%;background:var(--protein)"></i></div></div>
@@ -811,7 +811,7 @@ button.row:active:not(:disabled), .meal-head > button.main:active, .screens butt
       <div class="card today">
         <div class="ring" aria-label="${fmt(kcal)} von ${fmt(target)} Kilokalorien">
           <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--fill)" stroke-width="12"/><circle class="v" cx="60" cy="60" r="52" fill="none" stroke="${ringColor(kcal / target)}" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="${ringOff}"/></svg>
-          <div class="num"><b>${fmt(kcal)}</b><span>von ${fmt(target)} kcal</span></div>
+          <div class="num"><b>${fmt(kcal)}</b><span>/ ${fmt(target)} kcal</span></div>
         </div>
         <div class="macros">
           <div class="macro"><div class="top"><span>Protein</span><span>${fmt(p)} / 150 g</span></div><div class="bar"><i style="width:${Math.min(100, p / 1.5)}%;background:var(--protein)"></i></div></div>
@@ -848,7 +848,7 @@ button.row:active:not(:disabled), .meal-head > button.main:active, .screens butt
       const target = tr ? 2900 : 2500, kcalNow = sum(D.meals.flatMap((m) => m[1]), 2), carbsT = tr ? 401 : 301;
       $('.ring circle.v').style.strokeDashoffset = 326.7 * (1 - Math.min(1, kcalNow / target));
       $('.ring circle.v').setAttribute('stroke', ringColor(kcalNow / target));
-      $('.ring .num span').textContent = `von ${fmt(target)} kcal`;
+      $('.ring .num span').textContent = `/ ${fmt(target)} kcal`;
       const left = target - kcalNow;
       $('.remain span').innerHTML = left >= 0 ? `noch <b>${fmt(left)} kcal</b>` : `<b>${fmt(-left)} kcal</b> über Ziel`;
       const kh = $$('.macro')[2];

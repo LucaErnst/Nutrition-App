@@ -1,12 +1,14 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useMemo, useState, type CSSProperties, type FormEvent } from 'react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { deleteWeight, upsertWeight, useUnitSystem, useWeights } from '../db/hooks';
+import { deleteWeight, restoreWeight, upsertWeight, useUnitSystem, useWeights } from '../db/hooks';
+import { useToast } from './Toast';
 import { addDays, formatDate, formatShortDate, todayISO } from '../lib/date';
 import { useT } from '../i18n';
 import { fmt } from '../lib/nutrition';
 import { usePro } from '../lib/pro';
 import { openPaywall, ProBadge } from './Paywall';
 import { Tip } from './Tip';
+import { SwipeRow } from './SwipeRow';
 import { trendChange, withTrend, type WeightPoint } from '../lib/weight';
 import {
   bodyWeightParts,
@@ -31,6 +33,7 @@ export function WeightView() {
     { value: 0, label: t('weight.rAll') },
   ];
   const weights = useWeights();
+  const toast = useToast();
   const bodyUnit = bodyWeightUnitFor(useUnitSystem());
   const [date, setDate] = useState(todayISO());
   const [value, setValue] = useState('');
@@ -119,7 +122,12 @@ export function WeightView() {
         <section className="card section split-main">
           <div className="section-head">
             <h2>{t('weight.history')}</h2>
-            <div className="segmented segmented-sm" role="radiogroup" aria-label={t('weight.range')}>
+            <div
+              className="segmented segmented-sm"
+              role="radiogroup"
+              aria-label={t('weight.range')}
+              style={{ '--n': RANGES.length, '--i': RANGES.findIndex((r) => r.value === range) } as CSSProperties}
+            >
               {RANGES.map((r) => (
                 <label key={r.value} className={range === r.value ? 'active' : ''}>
                   <input type="radio" name="range" checked={range === r.value} onChange={() => setRange(r.value)} />
@@ -174,19 +182,20 @@ export function WeightView() {
             {list.map((p) => {
               const entry = weights!.find((w) => w.date === p.date)!;
               return (
-                <li key={p.date} className="weight-row">
+                <SwipeRow
+                  key={p.date}
+                  className="weight-row"
+                  onDelete={async () => {
+                    const w = await deleteWeight(entry.id!);
+                    if (w) toast.show({ message: t('weight.deleted', { date: formatDate(p.date) }), actionLabel: t('common.undo'), onAction: () => restoreWeight(w) });
+                  }}
+                  deleteLabel={t('weight.deleteEntry', { date: formatDate(p.date) })}
+                  actionText={t('common.delete')}
+                >
                   <span className="weight-date">{formatDate(p.date)}</span>
                   <span className="weight-value">{formatBodyWeight(p.weight, bodyUnit)}</span>
                   <span className="weight-trend">{t('weight.trendShort', { n: formatBodyWeight(p.trend, bodyUnit) })}{p.source === 'health' ? ` · ${t('weight.fromHealth')}` : ''}</span>
-                  <button
-                    className="btn-icon"
-                    onClick={() => void deleteWeight(entry.id!)}
-                    aria-label={t('weight.deleteEntry', { date: formatDate(p.date) })}
-                    title={t('common.delete')}
-                  >
-                    ×
-                  </button>
-                </li>
+                </SwipeRow>
               );
             })}
           </ul>
