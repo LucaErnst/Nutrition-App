@@ -490,6 +490,7 @@ export const de: Record<MessageKey, string> = {
   'tip.weightTrend': 'Das Tagesgewicht schwankt mit Wasser und Salz. Achte auf den 7-Tage-Trend, nicht auf die einzelne Zahl.',
   'tip.template': 'Isst du das öfter? Mahlzeit aufklappen und als Vorlage speichern – nächstes Mal ein Tipp.',
   'tip.templateFree': 'Isst du das öfter? Mit Pro speicherst du es als Vorlage und trägst es mit einem Tipp ein.',
+  'tips.desc': 'Kurze Hinweise erscheinen einmal an der passenden Stelle, z.B. beim Wochenbudget oder bei Vorlagen. Tippe unten, um alle wieder zu sehen.',
   'tips.title': 'Hinweise',
   'tips.reset': 'Hinweise wieder zeigen',
   'tips.resetDone': 'Hinweise werden wieder gezeigt.',

@@ -514,6 +514,7 @@ export const en = {
   'tip.weightTrend': 'Daily weight jumps with water and salt. Watch the 7-day trend, not the single number.',
   'tip.template': 'Eat this often? Expand the meal and save it as a template – next time it’s one tap.',
   'tip.templateFree': 'Eat this often? With Pro you can save it as a template and log it in one tap.',
+  'tips.desc': 'Short tips appear once at the right moment, e.g. on the weekly budget or templates. Tap below to see them all again.',
   'tips.title': 'Tips',
   'tips.reset': 'Show tips again',
   'tips.resetDone': 'Tips will show again.',

@@ -26,7 +26,7 @@ const LANGS: { id: Language; label: string }[] = [
   { id: 'de', label: 'Deutsch' },
 ];
 
-export function MoreView() {
+export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
   const t = useT();
   const { lang, setLanguage } = useI18n();
   const settings = useSettings();
@@ -68,63 +68,52 @@ export function MoreView() {
     }
   }, [page]);
 
-  // Wie in iOS: vom linken Rand nach rechts wischen geht zurück; die Seite folgt dem Finger.
-  // Touch-Ereignisse statt Pointer: Pointer werden beim kleinsten senkrechten Scrollen abgebrochen.
+  // Wie in iOS: vom linken Rand nach rechts wischen geht zurück. Die Seite gleitet erst beim
+  // Loslassen hinaus – mitziehen liess auf iOS die ganze Ansicht leer zur Seite rutschen.
+  // Touch statt Pointer: Pointer werden beim kleinsten senkrechten Scrollen abgebrochen.
   useEffect(() => {
     if (!page) return;
     let start: { x: number; y: number } | null = null;
-    let dx = 0;
-    let horizontal = false;
-    const el = () => pageRef.current;
+    let last = { x: 0, y: 0 };
     const onStart = (e: TouchEvent) => {
       const t = e.touches[0];
-      start = t.clientX < 36 ? { x: t.clientX, y: t.clientY } : null;
-      dx = 0;
-      horizontal = false;
+      start = t.clientX < 40 ? { x: t.clientX, y: t.clientY } : null;
+      last = { x: t.clientX, y: t.clientY };
     };
     const onMove = (e: TouchEvent) => {
       if (!start) return;
       const t = e.touches[0];
-      dx = Math.max(0, t.clientX - start.x);
-      const dy = Math.abs(t.clientY - start.y);
-      if (!horizontal && dx > 10 && dx > dy) horizontal = true;
-      if (!horizontal) {
-        if (dy > 12) start = null;
-        return;
-      }
-      e.preventDefault();
-      const p = el();
-      if (p) {
-        p.style.transition = 'none';
-        p.style.transform = `translateX(${dx}px)`;
-      }
+      last = { x: t.clientX, y: t.clientY };
+      // Waagrechte Bewegung vom Rand gehört uns, nicht dem Browser
+      if (t.clientX - start.x > Math.abs(t.clientY - start.y)) e.preventDefault();
     };
     const onEnd = () => {
-      if (!start || !horizontal) return;
+      if (!start) return;
+      const dx = last.x - start.x;
+      const dy = Math.abs(last.y - start.y);
       start = null;
-      const p = el();
-      if (dx > Math.min(120, window.innerWidth * 0.3)) {
-        if (p) {
-          p.style.transition = 'transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1)';
-          p.style.transform = 'translateX(100%)';
-        }
-        window.setTimeout(back, 200);
-      } else if (p) {
-        p.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.36, 0.5, 1)';
-        p.style.transform = '';
+      if (dx > 70 && dx > dy * 1.5) {
+        pageRef.current?.classList.add('page-out');
+        window.setTimeout(back, 180);
       }
     };
     document.addEventListener('touchstart', onStart, { passive: true });
     document.addEventListener('touchmove', onMove, { passive: false });
     document.addEventListener('touchend', onEnd);
-    document.addEventListener('touchcancel', onEnd);
+    const onCancel = () => (start = null);
+    document.addEventListener('touchcancel', onCancel);
     return () => {
       document.removeEventListener('touchstart', onStart);
       document.removeEventListener('touchmove', onMove);
       document.removeEventListener('touchend', onEnd);
-      document.removeEventListener('touchcancel', onEnd);
+      document.removeEventListener('touchcancel', onCancel);
     };
   }, [page]);
+
+  // Tipp auf „Mehr“ in der Tab-Leiste führt von einer Unterseite zurück zur Liste.
+  useEffect(() => {
+    if (resetKey) setPageState(null);
+  }, [resetKey]);
 
   const waterContent = (
     <>
@@ -291,10 +280,10 @@ function TipsSection() {
   const t = useT();
   const toast = useToast();
   return (
-    <CollapsibleCard title={t('tips.title')}>
+    <CollapsibleCard title={t('tips.title')} summary={t('tips.desc')}>
       <button
         type="button"
-        className="btn-secondary"
+        className="btn-secondary btn-centered"
         onClick={() => {
           resetTips();
           toast.show({ message: t('tips.resetDone') });

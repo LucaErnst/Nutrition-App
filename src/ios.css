@@ -1196,3 +1196,21 @@ body::before {
   margin-top: 10px !important;
   min-height: 40px;
 }
+
+/* Zurück per Wischen: Seite gleitet beim Loslassen hinaus; der Browser zieht nichts seitlich */
+html,
+body {
+  overscroll-behavior-x: none;
+}
+.settings-page {
+  touch-action: pan-y;
+}
+.settings-page.page-out {
+  transition: transform 0.18s cubic-bezier(0.4, 0, 1, 1), opacity 0.18s;
+  transform: translateX(60px);
+  opacity: 0;
+}
+.settings-page .btn-centered {
+  display: block;
+  margin: 10px auto 0;
+}

@@ -46,6 +46,7 @@ export default function App() {
   const settings = useSettings();
   const goals = useGoals();
   const [view, setView] = useState<View>('diary');
+  const [moreReset, setMoreReset] = useState(0);
 
   // Bestehende Nutzer mit Phase brauchen kein Onboarding – einmalig als erledigt markieren.
   useEffect(() => {
@@ -137,6 +138,7 @@ export default function App() {
                 aria-current={view === v.id ? 'page' : undefined}
                 onClick={() => {
                   setDiaryDate(undefined);
+                  if (v.id === 'more' && view === 'more') setMoreReset((n) => n + 1);
                   setView(v.id);
                 }}
               >
@@ -155,7 +157,7 @@ export default function App() {
             </Suspense>
           )}
           {view === 'database' && <FoodDatabase />}
-          {view === 'more' && <MoreView />}
+          {view === 'more' && <MoreView resetKey={moreReset} />}
         </main>
         {!isNative && (
           <Suspense fallback={null}>
