@@ -28,6 +28,11 @@ so passt `offline` hinein, der einzige echte Unterschied zu Lifesum und Lose It!
 101 Zeichen und damit über dem Limit.)
 
 ## Werbetext (Apple, ≤170) – änderbar ohne neue Version
+- **Ab 1.2 (eingetragen 16.10.2026):**
+  - EN: `New: about 290,000 products built in, so scanning and search work even offline. Pro is a one-time purchase – at the launch price until January 31.` (146)
+  - DE: `Neu: rund 290'000 Produkte in der App – Scannen und Suche gehen auch offline. Pro: Einmalkauf zum Einführungspreis bis 31. Januar.` (130)
+
+Bis 1.1:
 - EN: `New: 6,900 basic foods built in, Swiss dishes included, so search works offline. Pro is a one-time purchase – at the launch price until January 31.` (147)
 - DE: `Neu: 6900 Grundnahrungsmittel in der App, Schweizer Küche inklusive – die Suche funktioniert offline. Pro: Einmalkauf zum Einführungspreis bis 31. Januar.` (154)
 

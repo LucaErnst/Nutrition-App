@@ -96,3 +96,31 @@ pre-fills a form the user saves.
 PRIVACY – Unchanged: no accounts, no analytics, no data collection. Fewer requests to Open Food
 Facts than before, because most lookups are answered from the bundled extract.
 ```
+
+
+# Eingetragen für 1.2 (16.10.2026)
+
+Alter Text + Ergänzung hätten 5'300 Zeichen ergeben, Apple erlaubt 4'000. Eingetragen ist deshalb
+ein gekürzter Gesamttext (3'250 Zeichen):
+
+```
+Serious Nutrition is an offline calorie and macro tracker. No account, login or sign-in exists; all data is stored on the device. The screen recording attached to earlier versions shows the full flow (onboarding, adding food, barcode scan incl. camera prompt, water, week, weight, foods, settings, backup).
+
+PURPOSE - A calorie and macro diary for people who train with a goal (muscle gain, fat loss, maintenance), built by a calisthenics coach. Targets differ between training and rest days, protein is a minimum, fat a range, and the week is treated as a budget.
+
+SETUP - No login or sample files needed. First launch: onboarding suggests targets; "Skip" is available. Diary: "+ Add" on a meal > Search, Scan, Templates or Manual. Any retail barcode works for testing the scanner.
+
+IN-APP PURCHASE - One non-consumable, "Serious Nutrition Pro" (pro_lifetime): one-time, no subscription, no trial, no account. Validated through StoreKit via RevenueCat; "Restore purchases" is on the paywall and under More. Free stays free: diary, scanning, search, water, targets, week and weekly budget, reminders, backup. Pro unlocks Apple Health, the phase review, widgets, templates and "copy yesterday", portion sizes, the weight trend chart and CSV export. To see the paywall: More > Serious Nutrition Pro, or tap any item marked PRO. Users who had the app before 1.1 keep Pro for free; a fresh install sees the paywall (intended).
+
+WHAT'S NEW IN 1.2
+- Bundled products: about 290,000 branded products from Open Food Facts (the most-scanned worldwide plus the most-scanned of every country), with name, brand, energy, protein, fat and carbohydrates per 100 g. Scans and product search check this extract first, without a network request; only products not in it are looked up online as before. ODbL (contents DbCL), attributed under More, in the description and in the terms of use.
+- American foods: when the app language is English, about 6,300 basic foods from USDA FoodData Central (SR Legacy, public domain) are added to the bundled table, plus piece weights for 47 common foods (egg, banana, apple...).
+- Apple Health now also READS the step count (HKQuantityTypeIdentifierStepCount) in addition to body mass and active energy. Steps are only displayed (diary and weekly summary), never leave the device and never change the user's targets. Health access stays optional and part of Pro.
+- Needs calculator under More > Phases > "Calculate needs": Mifflin-St Jeor with activity factors from the German Nutrition Society (DGE). Labelled as a starting point, not medical advice; it only pre-fills a form the user saves.
+
+DATA SOURCES - Bundled basic foods: German Nutrient Database (BLS 4.0, Max Rubner-Institut, CC BY 4.0), about 500 entries from the Swiss Food Composition Database V 7.1 (FSVO, written permission of 30 September 2026) and USDA FoodData Central. Bundled data, not services.
+
+EXTERNAL SERVICES - Open Food Facts over HTTPS only for products that are not bundled; Apple StoreKit via RevenueCat for the purchase. No analytics, no ads, no backend of our own. No regional differences besides UI language (English/German) and number formatting. Not a medical device.
+
+Developer: Luca Ernst, Basel, Switzerland - beseriouscalisthenics@gmail.com
+```

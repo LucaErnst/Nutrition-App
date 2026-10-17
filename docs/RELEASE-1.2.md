@@ -262,10 +262,10 @@ Heute: 6'906 Einträge = 6'411 BLS + 495 Schweiz.
 
 ### B3. App Store Connect (nur mit der Version änderbar)
 
-- [ ] „+ Version or Platform" → 1.2
-- [ ] Beschreibung DE und EN aus `store/LISTING.md` ersetzen (B2 vorher erledigen)
-- [ ] „Neu in dieser Version" DE und EN neu schreiben
-- [ ] Keywords EN ersetzen. Vorschlag vom 10.10.2026 (96 Zeichen):
+- [x] „+ Version or Platform" → 1.2
+- [x] Beschreibung DE und EN aus `store/LISTING.md` ersetzen (B2 vorher erledigen)
+- [x] „Neu in dieser Version" DE und EN neu schreiben
+- [x] Keywords EN ersetzen. Vorschlag vom 10.10.2026 (96 Zeichen):
       `counter,protein,food,diary,barcode,scanner,offline,diet,bulk,cut,water,weight,coach,calisthenics`
       `calorie`, `macro` und `tracker` fallen weg, weil sie schon im Untertitel stehen und Apple
       Name, Untertitel und Keywords zusammen liest. So werden „calorie counter", „food diary" und
@@ -274,13 +274,20 @@ Heute: 6'906 Einträge = 6'411 BLS + 495 Schweiz.
       Die Prüfung ergab: Hauptsprache English (U.S.) und Keywords sind korrekt. Es fehlen
       Bewertungen und Downloads, die Einstellungen sind in Ordnung.
 - [ ] Screenshots: nur neu erzeugen (`npm run screenshots`), wenn sich das Aussehen geändert hat.
-- [ ] **Screenshots zuordnen:** iPhone-Satz um `07-offline` ergänzen (freigegeben), Reiter „iPhone Duo":
+- [x] **Screenshots zuordnen:** iPhone-Satz um `07-offline` ergänzen (freigegeben), Reiter „iPhone Duo":
       7 Bilder je Sprache aus `duo-inner` (Apple nimmt je Gerät einen Satz; Aussen- und Innenformat
       werden beide angeboten – beide zuordnen, falls die Maske zwei Felder zeigt). Eingereicht am 15.10.2026.
       Demo-Lebensmittel in `store/screenshots.mjs` müssen `source: 'manual'` bleiben.
-- [ ] Review-Notizen: Abschnitt 1.2 aus `docs/APP-REVIEW-NOTES.md`
+- [x] Review-Notizen: Abschnitt 1.2 aus `docs/APP-REVIEW-NOTES.md`
 - [x] App Privacy: am 15.10.2026 auf **„Käufe – Kaufverlauf"** geändert (App-Funktionalität + Analyse, nicht verknüpft, kein Tracking), wie RevenueCat es vorschreibt. Gilt sofort, auch für 1.1. Store-Beschreibung 1.2: „no data leaving your phone" → „your diary never leaves your phone".
-- [ ] Build auswählen, Freigabe terminieren, einreichen
+- [x] Build 27 ausgewählt (16.10.2026). Texte, Keywords, Werbetext, Review-Notizen und Screenshots
+      (iPhone 7, Duo innen 7, je DE/EN) per API bzw. Media Manager eingetragen und zurückgelesen.
+- [x] Lizenzvereinbarung akzeptieren (Luca), dann „Add for Review“ → einreichen (Luca)
+- [x] **17.10.2026 abgelehnt, Guideline 2.3.7:** Screenshot 1 nannte „No subscription. Free to use.“ /
+      „Ohne Abo. Gratis nutzbar.“ – zählt als Preisangabe. Neu: „Calories & macros. At a glance.“ /
+      „Kalorien & Makros. Auf einen Blick.“ (`store/screenshots.mjs`), iPhone und Duo innen je DE/EN
+      ersetzt (`01-glance-*`). Header und Suchbild sagen weiterhin „No subscription. Free.“ – Risiko.
+- [ ] Erneut einreichen (Luca)
 - [ ] Felder mit Klick + `cmd+a` + Tippen befüllen, **nicht** mit `form_input` (verwirft die Werte,
       siehe `handoff.md` Punkt 5)
 

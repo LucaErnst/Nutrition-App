@@ -81,8 +81,9 @@ function backup(lang) {
 const SHOTS = [
   {
     name: '01-diary',
-    en: { top: 'Calories & macros.', accent: 'No subscription.', sub: 'Free to use. Pro once, if you want it.' },
-    de: { top: 'Kalorien & Makros.', accent: 'Ohne Abo.', sub: 'Gratis nutzbar. Pro einmalig, wenn du willst.' },
+    // Keine Preis-, Gratis- oder Abo-Hinweise: Apple lehnte 1.2 am 17.10.2026 deshalb ab (Guideline 2.3.7).
+    en: { top: 'Calories & macros.', accent: 'At a glance.', sub: 'What’s left today, with protein, fat and carbs.' },
+    de: { top: 'Kalorien & Makros.', accent: 'Auf einen Blick.', sub: 'Was heute noch übrig ist, mit Protein, Fett und KH.' },
   },
   {
     name: '02-search',
