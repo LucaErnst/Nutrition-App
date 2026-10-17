@@ -131,8 +131,12 @@ Screenshots lassen sich nur zusammen mit einer neuen Version tauschen.
 4. **Asset Library** hochladen, freigeben lassen, Version 1.3 zuordnen, einreichen.
 
 ### F0. Widgets (Wunsch Luca 17.10.)
-- [ ] Home- und Sperrbildschirm-Widgets (`ios/App/SeriousWidgets`) im neuen Look: Kalorienring mit
-      Farbverlauf (rot → grün), gleiche Farben wie die App, Wasser-Knopf blau.
+- [x] Home-Widgets im neuen Look: Kalorienring mit Farbverlauf (rot → grün), Wasser-Knöpfe blau,
+      Hintergrund fast schwarz durchscheinend (Build 30–31).
+- [x] Getönter und durchsichtiger Home-Bildschirm (Ring, Balken, Zahlen `widgetAccentable`, Logo
+      entsättigt), Zahlen zählen beim Aktualisieren hoch (`numericText`), Tippen: Ring → Tagebuch,
+      Wasser → Wasserzeile (`seriousnutrition://water`, App springt hin und hebt sie hervor). Build 33.
+- Weitere Widget-Ideen: `docs/RELEASE-1.4.md`.
 
 ### F2. App Store – Bilder (alles in DE und EN)
 - [ ] iPhone 6,9"/6,7" (1290×2796): 7 Bilder `store/screenshots/{de,en}` inkl. `07-offline`. Texte prüfen

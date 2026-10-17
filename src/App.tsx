@@ -81,6 +81,27 @@ export default function App() {
     if (settings && goals) window.__hideSplash?.();
   }, [settings, goals]);
   const [diaryDate, setDiaryDate] = useState<string | undefined>(undefined);
+  const [diaryKey, setDiaryKey] = useState(0);
+
+  // Links aus dem Widget: Tagebuch von heute, bei „water“ direkt zur Wasserzeile.
+  useEffect(() => {
+    function onLink(e: Event) {
+      const target = (e as CustomEvent<string>).detail;
+      setDiaryDate(undefined);
+      setDiaryKey((k) => k + 1);
+      setView('diary');
+      if (target === 'water') {
+        window.setTimeout(() => {
+          const el = document.querySelector<HTMLElement>('.water');
+          el?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          el?.classList.add('flash');
+          window.setTimeout(() => el?.classList.remove('flash'), 1200);
+        }, 350);
+      }
+    }
+    window.addEventListener('sn-deeplink', onLink);
+    return () => window.removeEventListener('sn-deeplink', onLink);
+  }, []);
 
   // Jede Ansicht beginnt oben – nicht dort, wo die vorherige aufgehört hat.
   useEffect(() => {
@@ -149,7 +170,7 @@ export default function App() {
           </nav>
         </header>
         <main className="app-main">
-          {view === 'diary' && <DayView initialDate={diaryDate} onOpenGoals={() => setView('more')} />}
+          {view === 'diary' && <DayView key={diaryKey} initialDate={diaryDate} onOpenGoals={() => setView('more')} />}
           {view === 'week' && <WeekView onOpenDay={(d) => { setDiaryDate(d); setView('diary'); }} />}
           {view === 'weight' && (
             <Suspense fallback={<Skeleton />}>

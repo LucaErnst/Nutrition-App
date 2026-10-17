@@ -51,6 +51,11 @@ export async function initNative() {
     await App.addListener('resume', () => {
       refresh();
     });
+    // Tipp im Widget: seriousnutrition://diary oder seriousnutrition://water
+    await App.addListener('appUrlOpen', ({ url }) => {
+      const target = url.replace(/^seriousnutrition:\/\//, '').split(/[/?#]/)[0];
+      window.dispatchEvent(new CustomEvent('sn-deeplink', { detail: target }));
+    });
     // Android: Zurück-Taste schliesst offene Dialoge (Escape), sonst App in den Hintergrund
     await App.addListener('backButton', () => {
       const dialog = document.querySelector('.modal-backdrop');

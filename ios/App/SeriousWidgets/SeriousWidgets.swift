@@ -53,6 +53,19 @@ enum Brand {
     }
 }
 
+extension View {
+    /// Zahlen zählen beim Aktualisieren sichtbar hoch oder runter wie in Apples Widgets (iOS 17+).
+    @ViewBuilder func numericTransition() -> some View {
+        if #available(iOS 17.0, *) { self.contentTransition(.numericText()) } else { self }
+    }
+}
+
+/// Deep Links aus dem Widget: Ring öffnet das Tagebuch, Wasser die Wasserzeile.
+enum DeepLink {
+    static let diary = URL(string: "seriousnutrition://diary")!
+    static let water = URL(string: "seriousnutrition://water")!
+}
+
 /// Kalorienring wie im Tagebuch: füllt sich und färbt sich mit dem Tagesstand.
 struct KcalRing: View {
     let progress: Double
@@ -64,6 +77,7 @@ struct KcalRing: View {
                 .trim(from: 0, to: max(0.001, min(1, progress)))
                 .stroke(Brand.ring(progress), style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .rotationEffect(.degrees(-90))
+                .widgetAccentable()
         }
     }
 }
@@ -77,7 +91,7 @@ struct Bar: View {
         GeometryReader { g in
             ZStack(alignment: .leading) {
                 Capsule().fill(Brand.track)
-                Capsule().fill(color).frame(width: max(6, g.size.width * progress))
+                Capsule().fill(color).frame(width: max(6, g.size.width * progress)).widgetAccentable()
             }
         }
         .frame(height: 6)
@@ -89,11 +103,17 @@ struct Bar: View {
 struct BrandLogo: View {
     var size: CGFloat = 16
     var body: some View {
-        Image("Logo")
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(width: size, height: size)
-            .clipShape(RoundedRectangle(cornerRadius: size * 0.28, style: .continuous))
+        // Im getönten oder durchsichtigen Home-Bildschirm entsättigt statt als Farbfleck (iOS 18+).
+        Group {
+            if #available(iOS 18.0, *) {
+                Image("Logo").resizable().widgetAccentedRenderingMode(.accentedDesaturated)
+            } else {
+                Image("Logo").resizable()
+            }
+        }
+        .aspectRatio(contentMode: .fill)
+        .frame(width: size, height: size)
+        .clipShape(RoundedRectangle(cornerRadius: size * 0.28, style: .continuous))
     }
 }
 
@@ -121,7 +141,7 @@ struct MetricRow: View {
             HStack {
                 Text(label).font(.system(size: 11, weight: .medium)).foregroundStyle(Brand.text2)
                 Spacer()
-                Text(value).font(.system(size: 11, weight: .semibold)).foregroundStyle(Brand.text).monospacedDigit()
+                Text(value).font(.system(size: 11, weight: .semibold)).foregroundStyle(Brand.text).monospacedDigit().numericTransition()
             }
             Bar(progress: progress, color: color)
         }
@@ -161,7 +181,7 @@ struct SmallView: View {
                 ZStack {
                     KcalRing(progress: s.kcalProgress, lineWidth: 8)
                     VStack(spacing: 0) {
-                        Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 18, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit()
+                        Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 18, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit().numericTransition()
                             .lineLimit(1).minimumScaleFactor(0.6)
                         Text(s.kcalTarget == nil ? "kcal" : L.t(de, "left", "übrig")).font(.system(size: 9, weight: .medium)).foregroundStyle(Brand.text2)
                     }
@@ -193,7 +213,7 @@ struct MediumView: View {
                 ZStack {
                     KcalRing(progress: s.kcalProgress, lineWidth: 11)
                     VStack(spacing: 1) {
-                        Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 24, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit()
+                        Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 24, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit().numericTransition()
                             .lineLimit(1).minimumScaleFactor(0.6)
                         Text(s.kcalTarget == nil ? "kcal" : L.t(de, "kcal left", "kcal übrig")).font(.system(size: 10, weight: .medium)).foregroundStyle(Brand.text2)
                             .lineLimit(1)
@@ -201,6 +221,7 @@ struct MediumView: View {
                     .padding(.horizontal, 14)
                 }
                 .frame(width: 112, height: 112)
+                .overlay(Link(destination: DeepLink.diary) { Color.clear.contentShape(Rectangle()) })
 
                 VStack(alignment: .leading, spacing: 9) {
                     if let left = s.weekLeftToday, let days = s.weekDaysLeft {
@@ -209,8 +230,10 @@ struct MediumView: View {
                     }
                     MetricRow(label: "Protein", value: s.proteinTarget.map { "\(s.protein) / \($0) g" } ?? "\(s.protein) g",
                               progress: s.proteinProgress, color: Brand.protein)
-                    MetricRow(label: L.t(de, "Water", "Wasser"), value: s.waterText,
-                              progress: s.waterProgress, color: Brand.water)
+                    Link(destination: DeepLink.water) {
+                        MetricRow(label: L.t(de, "Water", "Wasser"), value: s.waterText,
+                                  progress: s.waterProgress, color: Brand.water)
+                    }
                     if #available(iOS 17.0, *) {
                         HStack(spacing: 6) {
                             ForEach(s.waterStepsOrDefault.prefix(2), id: \.self) { ml in

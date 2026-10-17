@@ -1214,3 +1214,13 @@ body {
   display: block;
   margin: 10px auto 0;
 }
+
+/* Wasserzeile kurz hervorheben, wenn man aus dem Widget kommt */
+.water.flash {
+  animation: flash 1.2s var(--ease);
+}
+@keyframes flash {
+  20% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-water) 55%, transparent);
+  }
+}
