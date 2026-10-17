@@ -95,6 +95,7 @@ test('water goal can be typed and picked', async ({ page }) => {
 
 test('language switch to German and back', async ({ page }) => {
   await page.getByRole('button', { name: 'More' }).click();
+  await openSection(page, 'Language');
   await page.getByLabel('Language').getByText('Deutsch').click();
   await page.getByRole('button', { name: 'Tagebuch' }).click();
   await expect(page.getByRole('heading', { name: 'Frühstück' })).toBeVisible();
@@ -102,6 +103,7 @@ test('language switch to German and back', async ({ page }) => {
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Frühstück' })).toBeVisible();
   await page.getByRole('button', { name: 'Mehr' }).click();
+  await openSection(page, 'Sprache');
   await page.getByLabel('Sprache').getByText('English').click();
   await page.getByRole('button', { name: 'Diary' }).click();
   await expect(page.getByRole('heading', { name: 'Breakfast' })).toBeVisible();
@@ -110,6 +112,7 @@ test('language switch to German and back', async ({ page }) => {
 // Die Startliste (Magerquark, Haferflocken …) folgte bis 1.1 keinem Sprachwechsel.
 test('starter foods follow a language switch', async ({ page }) => {
   await page.getByRole('button', { name: 'More' }).click();
+  await openSection(page, 'Language');
   await page.getByLabel('Language').getByText('Deutsch').click();
   await page.getByRole('button', { name: 'Tagebuch' }).click();
   await page.getByRole('button', { name: 'Posten zu Frühstück hinzufügen' }).click();
@@ -126,6 +129,7 @@ test('default phase name and number format follow the language', async ({ page }
   await page.getByRole('radiogroup', { name: 'Day type' }).getByText('Rest day').click();
   await expect(page.locator('.summary-remaining')).toContainText('2,350 kcal left');
   await page.getByRole('button', { name: 'More' }).click();
+  await openSection(page, 'Language');
   await page.getByLabel('Language').getByText('Deutsch').click();
   await page.getByRole('button', { name: 'Tagebuch' }).click();
   await expect(page.locator('.summary-phase')).toHaveText('· Aufbau');
@@ -191,6 +195,7 @@ test('USDA foods appear in English and hide in German', async ({ page }) => {
   await page.keyboard.press('Escape');
 
   await page.getByRole('button', { name: 'More' }).click();
+  await openSection(page, 'Language');
   await page.getByLabel('Language').getByText('Deutsch').click();
   await page.getByRole('button', { name: 'Tagebuch' }).click();
   await page.getByRole('button', { name: 'Posten zu Frühstück hinzufügen' }).click();

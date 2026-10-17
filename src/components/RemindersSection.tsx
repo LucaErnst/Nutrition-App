@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { saveSettings, useSettings } from '../db/hooks';
 import { SettingIcon } from './Icons';
+import { useContext } from 'react';
+import { SettingsPageContext } from './CollapsibleCard';
 import { useT } from '../i18n';
 import { isNative } from '../lib/native';
 import { DEFAULT_REMINDERS, MAX_PER_DAY, type ReminderSettings } from '../lib/reminders';
@@ -18,7 +20,10 @@ export function RemindersSection() {
   const [perm, setPerm] = useState<'granted' | 'denied' | 'prompt'>('prompt');
   const [planned, setPlanned] = useState<number | null>(null);
   // Einstellungen eingeklappt lassen; beim Einschalten einmal aufklappen
-  const [open, setOpen] = useState(false);
+  const [openState, setOpen] = useState(false);
+  // Auf der eigenen Seite unter „Mehr“ immer offen
+  const inPage = useContext(SettingsPageContext);
+  const open = inPage || openState;
 
   useEffect(() => {
     if (isNative) void reminderPermission().then(setPerm);
@@ -79,7 +84,7 @@ export function RemindersSection() {
             <input type="checkbox" checked={r.enabled} onChange={(e) => void toggleEnabled(e.target.checked)} />
             {r.enabled ? t('rem.on') : t('rem.off')}
           </label>
-          {r.enabled ? (
+          {r.enabled && !inPage ? (
             <button
               className={`btn-icon meal-chevron ${open ? 'open' : ''}`}
               onClick={() => setOpen((v) => !v)}

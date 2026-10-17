@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 import { useT } from '../i18n';
 import { SettingIcon, type SettingKind } from './Icons';
 
@@ -14,12 +14,28 @@ interface Props {
 }
 
 /**
+ * true innerhalb einer Einstellungs-Unterseite unter „Mehr“ (1.3): dort ist alles offen,
+ * Titel und Pfeil übernimmt die Seite selbst.
+ */
+export const SettingsPageContext = createContext(false);
+
+/**
  * Karte unter „Mehr“, die sich über denselben Pfeil öffnet wie die Erinnerungen.
  * Einstellungen, die man selten anfasst, sollen die Ansicht nicht vollstellen.
  */
 export function CollapsibleCard({ title, summary, children, className, defaultOpen = false, icon }: Props) {
   const t = useT();
   const [open, setOpen] = useState(defaultOpen);
+  const inPage = useContext(SettingsPageContext);
+
+  if (inPage) {
+    return (
+      <section className={`card section ${className ?? ''}`}>
+        {summary !== undefined && <p className="search-hint page-summary">{summary}</p>}
+        {children}
+      </section>
+    );
+  }
 
   return (
     <section className={`card section ${className ?? ''}`}>

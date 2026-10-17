@@ -32,18 +32,40 @@ struct Provider: TimelineProvider {
     }
 }
 
-// MARK: - Farben
+// MARK: - Farben (1.3: wie die App im iOS-27-Look, hell und dunkel)
 
 enum Brand {
-    static let bg = Color(red: 0x0f / 255, green: 0x11 / 255, blue: 0x15 / 255)
-    static let card = Color(red: 0x1a / 255, green: 0x1d / 255, blue: 0x24 / 255)
+    static let bg = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(red: 0x1c / 255, green: 0x1c / 255, blue: 0x1e / 255, alpha: 1) : .white })
     static let gold = Color(red: 0xe6 / 255, green: 0xc4 / 255, blue: 0x6a / 255)
     static let kcal = Color(red: 0x8b / 255, green: 0x5c / 255, blue: 0xf6 / 255)
     static let protein = Color(red: 0x3b / 255, green: 0x82 / 255, blue: 0xf6 / 255)
-    static let water = Color(red: 0x38 / 255, green: 0xbd / 255, blue: 0xf8 / 255)
-    static let text = Color.white
-    static let text2 = Color.white.opacity(0.62)
-    static let track = Color.white.opacity(0.12)
+    static let water = Color(red: 0x0a / 255, green: 0x9f / 255, blue: 0xdb / 255)
+    static let accent = Color(red: 0x25 / 255, green: 0x63 / 255, blue: 0xeb / 255)
+    static let text = Color.primary
+    static let text2 = Color.secondary
+    static let track = Color(uiColor: .systemFill)
+
+    /// Ringfarbe wie in der App: wenig = rot, die Hälfte = orange, voll = grün (HSL 4…132°, 78 %, 47 %).
+    static func ring(_ f: Double) -> Color {
+        let p = min(1, max(0, f))
+        let hue = (4 + 128 * pow(p, 1.8)) / 360
+        return Color(hue: hue, saturation: 0.876, brightness: 0.837)
+    }
+}
+
+/// Kalorienring wie im Tagebuch: füllt sich und färbt sich mit dem Tagesstand.
+struct KcalRing: View {
+    let progress: Double
+    var lineWidth: CGFloat = 9
+    var body: some View {
+        ZStack {
+            Circle().stroke(Brand.track, lineWidth: lineWidth)
+            Circle()
+                .trim(from: 0, to: max(0.001, min(1, progress)))
+                .stroke(Brand.ring(progress), style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+        }
+    }
 }
 
 // MARK: - Bausteine
@@ -135,17 +157,20 @@ struct SmallView: View {
     var de: Bool { s.isGerman }
     var body: some View {
         if !e.hasData { NoDataView(de: de) } else if s.pro == false { ProLockView(de: de) } else {
-            // Im kleinen Widget bleibt die Marke weg – hier zählt nur die Zahl.
             VStack(alignment: .leading, spacing: 8) {
-                HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 26, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit()
-                        .lineLimit(1).minimumScaleFactor(0.7)
-                    Text(s.kcalTarget == nil ? "kcal" : L.t(de, "kcal left", "kcal übrig")).font(.system(size: 11, weight: .medium)).foregroundStyle(Brand.text2)
-                        .lineLimit(1)
+                ZStack {
+                    KcalRing(progress: s.kcalProgress, lineWidth: 8)
+                    VStack(spacing: 0) {
+                        Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 18, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit()
+                            .lineLimit(1).minimumScaleFactor(0.6)
+                        Text(s.kcalTarget == nil ? "kcal" : L.t(de, "left", "übrig")).font(.system(size: 9, weight: .medium)).foregroundStyle(Brand.text2)
+                    }
+                    .padding(.horizontal, 10)
                 }
-                Bar(progress: s.kcalProgress, color: Brand.kcal)
-                MetricRow(label: L.t(de, "Protein", "Protein"),
-                          value: s.proteinTarget.map { "\(s.protein) / \($0) g" } ?? "\(s.protein) g",
+                .frame(width: 74, height: 74)
+                .frame(maxWidth: .infinity)
+                MetricRow(label: "Protein",
+                          value: s.proteinTarget.map { "\(s.protein)/\($0) g" } ?? "\(s.protein) g",
                           progress: s.proteinProgress, color: Brand.protein)
                 MetricRow(label: L.t(de, "Water", "Wasser"),
                           value: s.waterText,
@@ -163,58 +188,37 @@ struct MediumView: View {
     var de: Bool { s.isGerman }
     var body: some View {
         if !e.hasData { NoDataView(de: de) } else if s.pro == false { ProLockView(de: de) } else {
-            // Kopfzeile, darunter ein Raster mit drei Zeilen. Das Raster richtet die Spalten
-            // aneinander aus, statt sie über feste Abstände zu schieben: Der Wasserbalken liegt
-            // auf Höhe des Kalorienbalkens, die Knöpfe auf Höhe der Proteinleiste – und das
-            // unabhängig davon, wie gross das Widget auf dem jeweiligen iPhone ausfällt.
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 6) {
-                    BrandLogo(size: 19)
-                    Text("Serious Nutrition").font(.system(size: 11, weight: .semibold)).foregroundStyle(Brand.text2)
-                    Spacer(minLength: 8)
+            HStack(alignment: .center, spacing: 16) {
+                // Links der Ring wie im Tagebuch, rechts Protein, Wasser und die Knöpfe.
+                ZStack {
+                    KcalRing(progress: s.kcalProgress, lineWidth: 11)
+                    VStack(spacing: 1) {
+                        Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 24, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit()
+                            .lineLimit(1).minimumScaleFactor(0.6)
+                        Text(s.kcalTarget == nil ? "kcal" : L.t(de, "kcal left", "kcal übrig")).font(.system(size: 10, weight: .medium)).foregroundStyle(Brand.text2)
+                            .lineLimit(1)
+                    }
+                    .padding(.horizontal, 14)
+                }
+                .frame(width: 112, height: 112)
+
+                VStack(alignment: .leading, spacing: 9) {
                     if let left = s.weekLeftToday, let days = s.weekDaysLeft {
                         Text(L.t(de, "Week \(fmtInt(left, de: de)) kcal · \(days) d", "Woche \(fmtInt(left, de: de)) kcal · \(days) T"))
                             .font(.system(size: 10, weight: .medium)).foregroundStyle(Brand.text2).lineLimit(1)
                     }
-                }
-
-                // Auf grossen iPhones ist die Karte höher als der Inhalt. Die übrige Höhe
-                // verteilt sich gleichmässig über und unter dem Raster, statt unten zu hängen.
-                Spacer(minLength: 0)
-
-                Grid(alignment: .bottomLeading, horizontalSpacing: 16, verticalSpacing: 9) {
-                    GridRow {
-                        HStack(alignment: .firstTextBaseline, spacing: 5) {
-                            Text(fmtInt(s.kcalLeft ?? s.kcal, de: de)).font(.system(size: 32, weight: .bold)).foregroundStyle(Brand.text).monospacedDigit()
-                                .lineLimit(1).minimumScaleFactor(0.7)
-                            Text(s.kcalTarget == nil ? "kcal" : L.t(de, "kcal left", "kcal übrig")).font(.system(size: 11, weight: .medium)).foregroundStyle(Brand.text2)
-                                .lineLimit(1)
-                        }
-                        LabelValue(label: L.t(de, "Water", "Wasser"),
-                                   value: s.waterText)
-                            .frame(width: 132)
-                    }
-                    GridRow {
-                        Bar(progress: s.kcalProgress, color: Brand.kcal)
-                        Bar(progress: s.waterProgress, color: Brand.water).frame(width: 132)
-                    }
-                    GridRow {
-                        MetricRow(label: "Protein", value: s.proteinTarget.map { "\(s.protein) / \($0) g" } ?? "\(s.protein) g",
-                                  progress: s.proteinProgress, color: Brand.protein)
-                        if #available(iOS 17.0, *) {
-                            HStack(spacing: 6) {
-                                ForEach(s.waterStepsOrDefault.prefix(2), id: \.self) { ml in
-                                    WaterButton(ml: ml, label: s.waterStepLabel(ml), de: de)
-                                }
+                    MetricRow(label: "Protein", value: s.proteinTarget.map { "\(s.protein) / \($0) g" } ?? "\(s.protein) g",
+                              progress: s.proteinProgress, color: Brand.protein)
+                    MetricRow(label: L.t(de, "Water", "Wasser"), value: s.waterText,
+                              progress: s.waterProgress, color: Brand.water)
+                    if #available(iOS 17.0, *) {
+                        HStack(spacing: 6) {
+                            ForEach(s.waterStepsOrDefault.prefix(2), id: \.self) { ml in
+                                WaterButton(ml: ml, label: s.waterStepLabel(ml), de: de)
                             }
-                            .frame(width: 132)
-                        } else {
-                            Color.clear.frame(width: 132, height: 0)
                         }
                     }
                 }
-
-                Spacer(minLength: 0)
             }
         }
     }
@@ -231,8 +235,8 @@ struct WaterButton: View {
                 .font(.system(size: 12, weight: .semibold))
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 7)
-                .background(Brand.water.opacity(0.18))
-                .foregroundStyle(Brand.water)
+                .background(Brand.accent.opacity(0.14))
+                .foregroundStyle(Brand.accent)
                 .clipShape(Capsule())
         }
         .buttonStyle(.plain)

@@ -1058,3 +1058,98 @@ body::before {
     margin-bottom: 12px;
   }
 }
+
+/* ---------- Mehr: Zeilen mit Wert und Pfeil, Unterseiten wie in den iOS-Einstellungen ---------- */
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 50px;
+  text-align: left;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 17px;
+  background: var(--surface);
+}
+.settings-group > .setting-row {
+  padding: 8px 16px;
+}
+.setting-row:active {
+  scale: 1;
+  background: var(--press);
+}
+.setting-title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.setting-value {
+  color: var(--text-2);
+  font-size: 17px;
+  white-space: nowrap;
+}
+.setting-chevron {
+  color: var(--text-3);
+  flex: none;
+}
+
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: page-in 0.32s var(--ease);
+}
+@keyframes page-in {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+}
+.settings-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  height: 36px;
+  padding: 0 14px 0 10px;
+  margin-left: -4px;
+  border-radius: 100px;
+  background: var(--fill);
+  color: var(--accent);
+  font-size: 16px;
+  font-weight: 500;
+}
+.settings-page .large-title {
+  margin: 0 0 4px;
+}
+.app:has(.settings-page) .app-header .large-title {
+  display: none;
+}
+.settings-page .setting-icon {
+  display: none;
+}
+.settings-page .section-head h2 {
+  font-size: 17px;
+  font-weight: 400;
+}
+.settings-page .card.section {
+  padding: 14px 16px;
+}
+.settings-page .page-summary {
+  margin-top: 0;
+}
+.settings-page .chevron-slot {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-page {
+    animation: none;
+  }
+}
+.settings-page {
+  touch-action: pan-y;
+  min-height: 70vh;
+}

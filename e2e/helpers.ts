@@ -115,6 +115,9 @@ export function kcalTotal(page: Page) {
  * Sie starten zugeklappt, damit die Ansicht nicht vollsteht.
  */
 export async function openSection(page: Page, title: string) {
+  // Unter „Mehr“ öffnet eine Zeile ihre eigene Seite (1.3)
+  const row = page.locator('.setting-row').filter({ hasText: new RegExp(`^${title}`) });
+  if (await row.count()) return row.first().click();
   const card = page.locator('section.card').filter({ has: page.getByRole('heading', { name: title, exact: true }) });
   const chevron = card.getByRole('button', { name: 'Expand' });
   if (await chevron.count()) await chevron.click();
