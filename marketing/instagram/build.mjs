@@ -251,17 +251,76 @@ const CAROUSELS = {
   ],
 };
 
+// ---------- 1.3-Launch (neuer Look). SET=1.3 baut nur diesen Satz nach out-1.3/,
+// die bereits geplanten Posts in out/ bleiben unberührt. Aufnahmen: shots-1.3.mjs (n-*.png).
+const STORIES_13 = {
+  's7-new-look': story(`
+    <div style="position:absolute;top:240px;left:80px;right:80px;text-align:center">
+      <div class="label">Update 1.3</div>
+      <h1 style="font-size:132px;margin-top:22px">Same app.\n<span class="gold">New look.</span></h1>
+      <p class="sub" style="font-size:40px;margin-top:22px">Rebuilt to feel like your iPhone.</p>
+    </div>
+    <div class="phone" style="top:820px;width:560px;height:640px;overflow:hidden;border-radius:64px 64px 0 0;padding-bottom:0"><img src="${shot('n-diary')}" style="border-radius:52px 52px 0 0"></div>
+    <div style="position:absolute;left:0;right:0;top:1330px;height:600px;background:linear-gradient(transparent,#0b0d12 30%)"></div>
+    <div style="position:absolute;top:1480px;left:80px;right:80px;text-align:center;font-size:38px;font-weight:700">Update in the App Store <span class="gold">↓</span></div>`),
+  's8-swipe': story(`
+    <div style="position:absolute;top:250px;left:80px;right:80px;text-align:center">
+      <div class="label">New in 1.3</div>
+      <h1 style="font-size:110px;margin-top:22px">Logged the wrong thing?\n<span class="gold">Swipe.</span></h1>
+      <p class="sub" style="font-size:38px;margin-top:24px">Swipe left to delete. Changed your mind? Undo.</p>
+    </div>
+    ${crop('n-swipe', [1000, 1150], 920, 'top:800px;left:80px')}`),
+  's9-recent': story(`
+    <div style="position:absolute;top:250px;left:80px;right:80px;text-align:center">
+      <div class="label">New in 1.3</div>
+      <h1 style="font-size:104px;margin-top:22px">Your foods.\n<span class="gold">Right there.</span></h1>
+      <p class="sub" style="font-size:38px;margin-top:24px">Tap + and your favorites and recent foods are waiting. No typing.</p>
+    </div>
+    ${crop('n-sheet', [0, 1500], 820, 'top:760px;left:130px')}`),
+  's10-poll': story(`
+    <div style="position:absolute;top:290px;left:80px;right:80px">
+      <div class="label">Quick question</div>
+      <h1 style="font-size:112px;margin-top:24px">Ring or <span class="gold">numbers?</span></h1>
+      <p class="sub" style="font-size:40px;margin-top:36px">The new calorie ring goes from red to green as your day fills up. Does it help you?</p>
+      <div style="font-size:120px;margin-top:60px;text-align:center">↓</div>
+    </div>
+    <div style="position:absolute;bottom:250px;left:0;right:0">
+      <div class="brand" style="position:static;justify-content:center"><img src="${ICON}">Serious Nutrition</div>
+    </div>`),
+};
+
+const CAROUSELS_13 = {
+  'g-new-look': [
+    hook('Same app.\n<span class="gold">New look.</span>', 'Serious Nutrition 1.3 – rebuilt to feel like your iPhone. Everything you know is still there.'),
+    phone('A ring that <span class="gold">fills up.</span>', 'Red when you start, green when you hit your target.', 'n-diary', [130, 900]),
+    phone('Training day. Rest day. <span class="gold">One tap.</span>', 'Green for training, violet for rest – the whole day adjusts.', 'n-daytype-rest', [130, 1080]),
+    phone('Logged the wrong thing? <span class="gold">Swipe.</span>', 'Swipe left to delete. Undo if you didn’t mean it.', 'n-swipe', [1000, 1150]),
+    phone('Your foods <span class="gold">come first.</span>', 'Tap + and your favorites and recent foods are already there.', 'n-sheet', [0, 1250]),
+    phone('Your week <span class="gold">at a glance.</span>', 'Green: on target. Violet: below. Red: above.', 'n-week-days', [1080, 1150]),
+    cta('Update in the App Store.'),
+  ],
+  'h-week-colours': [
+    hook('Green. Violet. <span class="gold">Red.</span>', 'What your week tells you in one look.'),
+    text('<span style="color:#34c759">Green</span> = on target.', 'Between 90 and 105 % of your daily target. That’s a good day – no need to be exact.'),
+    text('<span style="color:#a09eff">Violet</span> = below.', 'Under 90 %. One day is fine. A whole week of violet stalls your bulk.'),
+    text('<span style="color:#ff3b30">Red</span> = above.', 'Over 105 %. Also fine once – the weekly budget spreads it over the days that are left.'),
+    phone('Your week <span class="gold">in one look.</span>', 'Tap a day to open it in the diary.', 'n-week-days', [1080, 1150]),
+    cta('The week counts, not the day.'),
+  ],
+};
+
+const SET_13 = process.env.SET === '1.3';
 const browser = await chromium.launch();
-const out = path.join(HERE, VIDEO ? 'out-video' : 'out');
+const out = path.join(HERE, SET_13 ? 'out-1.3' : VIDEO ? 'out-video' : 'out');
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
 const p = await browser.newPage();
-for (const [name, html] of VIDEO ? [] : Object.entries(STORIES)) {
+for (const [name, html] of VIDEO ? [] : Object.entries(SET_13 ? STORIES_13 : STORIES)) {
   await p.setViewportSize({ width: 1080, height: 1920 });
   await p.setContent(html, { waitUntil: 'load' });
   await p.screenshot({ path: path.join(out, `story-${name}.png`) });
 }
-for (const [name, slides] of Object.entries(CAROUSELS)) {
+for (const [name, slides] of Object.entries(SET_13 ? CAROUSELS_13 : CAROUSELS)) {
   await p.setViewportSize(VIDEO ? { width: 1080, height: 1920 } : { width: W, height: H });
   for (const [i, s] of slides.entries()) {
     await p.setContent(s(i + 1, slides.length), { waitUntil: 'load' });

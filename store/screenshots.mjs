@@ -127,9 +127,10 @@ const SHOTS = [
  * Nicht dieselbe Komposition wie die Screenshots: Hochkant und Querformat vertragen keinen
  * gemeinsamen Entwurf. Hier steht die Aussage links, die Ger\u00e4te stehen rechts.
  */
+// 1.3: ohne „No subscription“ und „Free“ – Apple wertet beides als Preisangabe (Ablehnung 1.2, 2.3.7).
 const CREATIVE = {
-  en: { top: 'Calories & macros.', accent: 'No subscription.', sub: 'Free. No account. Nothing leaves your phone.' },
-  de: { top: 'Kalorien & Makros.', accent: 'Ohne Abo.', sub: 'Gratis. Kein Konto. Nichts verl\u00e4sst dein Handy.' },
+  en: { top: 'Calories & macros.', accent: 'Built for training.', sub: 'No account. Your diary stays on your phone.' },
+  de: { top: 'Kalorien & Makros.', accent: 'Fürs Training gebaut.', sub: 'Kein Konto. Dein Tagebuch bleibt auf dem Handy.' },
 };
 
 /** Gemeinsame Grundlage beider Querformate; `kind` bestimmt nur die Proportionen. */
@@ -273,7 +274,10 @@ async function main() {
     for (const lang of ['en', 'de']) {
       const outDir = set.dir ? `${OUT}/${lang}/${set.dir}` : `${OUT}/${lang}`;
       mkdirSync(outDir, { recursive: true });
-      const context = await browser.newContext({
+      // Datumsfelder zeigt Chromium im Format der Browsersprache, nicht des Kontexts – darum je
+      // Sprache ein eigener Browser (sonst stand im deutschen Bild „10/17/2026“).
+      const langBrowser = await chromium.launch({ args: [`--lang=${lang === 'de' ? 'de-CH' : 'en-US'}`] });
+      const context = await langBrowser.newContext({
         viewport: { width: set.width, height: set.height }, deviceScaleFactor: 3, isMobile: true, hasTouch: true,
         locale: lang === 'de' ? 'de-CH' : 'en-US', colorScheme: 'dark',
       });
@@ -288,9 +292,9 @@ async function main() {
       await page.goto(BASE);
       await page.getByRole('button', { name: t('Skip, set targets later', 'Überspringen, Ziele später festlegen') }).click();
       await page.getByRole('button', { name: t('More', 'Mehr') }).click();
-      await page.getByRole('button', { name: t('Backup', 'Backup') }).getByRole('button', { name: t('Expand', 'Ausklappen') }).click().catch(() => {});
-      const card = page.locator('section.card').filter({ has: page.getByRole('heading', { name: 'Backup', exact: true }) });
-      await card.getByRole('button', { name: t('Expand', 'Ausklappen') }).click();
+      // 1.3: Backup ist eine eigene Seite unter „Mehr“
+      await page.locator('.setting-row').filter({ hasText: 'Backup' }).first().click();
+      await page.waitForTimeout(500);
       await page.locator('input[type=file]').setInputFiles({ name: 'sample.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(backup(lang))) });
       await page.getByRole('button', { name: t('Replace and restore', 'Ersetzen und wiederherstellen') }).click();
       await page.waitForTimeout(500);
@@ -325,22 +329,15 @@ async function main() {
       await page.waitForTimeout(500);
       await grab('05-training');
 
-      // Backup aufklappen: dort steht schwarz auf weiss, dass die Daten auf dem Gerät bleiben.
-      const backupCard = page.locator('section.card').filter({ has: page.getByRole('heading', { name: 'Backup', exact: true }) });
-      await backupCard.getByRole('button', { name: t('Expand', 'Ausklappen') }).click();
-      await page.waitForTimeout(400);
-      // Karte an den oberen Rand holen, sonst sieht Bild 6 aus wie Bild 5.
-      await page.evaluate(() => {
-        const card = [...document.querySelectorAll('section.card')].find((c) => c.querySelector('h2')?.textContent?.trim() === 'Backup');
-        if (card) window.scrollTo(0, card.getBoundingClientRect().top + window.scrollY - 86);
-      });
-      await page.waitForTimeout(350);
+      // Backup-Seite unter „Mehr“ (1.3: eigene Unterseite): dort steht, dass die Daten auf dem Gerät bleiben.
+      await page.locator('.setting-row').filter({ hasText: 'Backup' }).first().click();
+      await page.waitForTimeout(700);
       await grab('06-privacy');
 
       // Ohne Netz suchen: zeigt, dass die Grundnahrungsmittel in der App liegen. „Rösti" trifft
       // in beiden Sprachen mehrere Einträge, im Deutschen aus der Schweizer Nährwertdatenbank.
       await page.evaluate(() => window.scrollTo(0, 0));
-      await page.getByRole('button', { name: t('Diary', 'Tagebuch') }).click();
+      await page.locator('.app-nav').getByRole('button', { name: t('Diary', 'Tagebuch') }).click();
       await page.waitForTimeout(400);
       await context.setOffline(true);
       await page.getByRole('button', { name: t('Add item to Dinner', 'Posten zu Abendessen hinzufügen') }).click();
@@ -379,6 +376,7 @@ async function main() {
       }
 
       await context.close();
+      await langBrowser.close();
       console.log(`${setName} ${lang}: ${SHOTS.length} Screenshots → ${outDir}/${set.creative ? `, 2 Creative Assets → ${OUT_CREATIVE}/${lang}/` : ''}`);
     }
     }

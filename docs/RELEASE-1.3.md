@@ -139,6 +139,11 @@ Screenshots lassen sich nur zusammen mit einer neuen Version tauschen.
 - Weitere Widget-Ideen: `docs/RELEASE-1.4.md`.
 
 ### F2. App Store – Bilder (alles in DE und EN)
+**Stand 17.10.2026:** Alle Bilder aus Build 34 neu erzeugt (`node store/screenshots.mjs iphone duo-outer duo-inner`,
+im Repo, noch **nicht** in App Store Connect hochgeladen): iPhone 7 je DE/EN, Duo aussen/innen je 7,
+Header und Suchbild ohne „No subscription/Free“ („Built for training.“ / „Fürs Training gebaut.“).
+Deutsche Bilder zeigen das Datum jetzt im Schweizer Format (Browser je Sprache).
+Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eigenen Produktseiten.
 - [ ] iPhone 6,9"/6,7" (1290×2796): 7 Bilder `store/screenshots/{de,en}` inkl. `07-offline`. Texte prüfen
       („Calories & macros. No subscription.“ usw.) – passen sie zum neuen Look?
 - [ ] iPhone Duo aussen (`duo-outer`, 1398×2034) und innen (`duo-inner`, 2007×2853), je 7 Bilder.
@@ -163,6 +168,8 @@ Screenshots lassen sich nur zusammen mit einer neuen Version tauschen.
 - [ ] Keywords: nach 4 Wochen 1.2 die Suchbegriffe in App Analytics prüfen, dann erst ändern.
 
 ### F4. Ausserhalb des App Store
+- [x] **Launch-Inhalte 1.3 erzeugt (17.10.2026):** 2 Karussells, 4 Storys, 5 App-Reels – Plan, Dateien
+      und Captions in `marketing/instagram/POSTING-1.3.md`. Talking-Head-Clips folgen nach Drehtag A.
 - [ ] Web-Version (GitHub Pages) bekommt den Look automatisch mit dem Push – vorher Luca fragen.
 - [ ] Marketing-Seite `https://lucaernst.github.io/Nutrition-App/` und beserious.ch: alte Screenshots?
 - [ ] Instagram: Karussells und Storys nutzen alte App-Bilder (`marketing/instagram/shots.mjs`) –
