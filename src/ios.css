@@ -1213,3 +1213,50 @@ body {
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-water) 55%, transparent);
   }
 }
+
+/* Zurückwischen wie in iOS (18.10.2026): Seite folgt dem Finger, die Liste liegt versetzt und
+   abgedunkelt darunter. Der Zurück-Knopf ist ein runder Glaskreis nur mit Pfeil. */
+.settings-stack {
+  position: relative;
+}
+.settings-under {
+  position: fixed;
+  z-index: 1;
+  visibility: hidden;
+  pointer-events: none;
+  --dim: 0.28;
+}
+.settings-under::after {
+  content: '';
+  position: fixed;
+  inset: -100vh -100vw;
+  background: rgb(0 0 0 / var(--dim));
+  pointer-events: none;
+}
+.settings-under .large-title {
+  margin: 0;
+}
+.settings-page {
+  position: relative;
+  z-index: 2;
+  background: var(--bg);
+  min-height: 100vh;
+  margin-inline: -16px;
+  padding-inline: 16px;
+}
+.settings-page.page-dragging {
+  box-shadow: -8px 0 24px rgb(0 0 0 / 0.25);
+}
+.settings-back {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  margin-left: 0;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: inset 0 0 0 0.5px var(--glass-edge), 0 2px 8px rgb(0 0 0 / 0.08);
+  color: var(--text);
+}

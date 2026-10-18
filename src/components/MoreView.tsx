@@ -52,13 +52,45 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
   // Zurück landet dort, wo man in der Liste war – nicht ganz oben.
   const listScroll = useRef(0);
   const restoreTo = useRef<number | null>(null);
+  const underRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  // Wo Titel und Liste beim Öffnen auf dem Bildschirm standen – beim Zurückwischen liegt die
+  // Liste genau dort darunter, wie in iOS.
+  const listGeo = useRef({ titleTop: 0, gap: 0, left: 0, width: 0 });
   function openPage(p: Page) {
     listScroll.current = window.scrollY;
+    const title = document.querySelector('.app-header .large-title')?.getBoundingClientRect();
+    const list = rootRef.current?.getBoundingClientRect();
+    if (title && list) listGeo.current = { titleTop: title.top, gap: list.top - title.bottom, left: list.left, width: list.width };
     setPageState(p);
   }
   function back() {
     restoreTo.current = listScroll.current;
     setPageState(null);
+  }
+
+  /** Liste unter der Seite zeigen und beide Ebenen auf Fortschritt p (0 = Seite da, 1 = weg) setzen. */
+  function setProgress(p: number, animate: boolean) {
+    const page = pageRef.current;
+    const under = underRef.current;
+    if (!page || !under) return;
+    const w = page.offsetWidth || window.innerWidth;
+    const tr = animate ? 'transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1)' : 'none';
+    under.style.visibility = 'visible';
+    under.style.transition = animate ? `${tr}, opacity 0.32s` : 'none';
+    page.style.transition = tr;
+    page.style.transform = p > 0 ? `translateX(${p * w}px)` : '';
+    under.style.transform = `translateX(${-0.3 * w * (1 - p)}px)`;
+    under.style.setProperty('--dim', String(0.28 * (1 - p)));
+    page.classList.toggle('page-dragging', p > 0);
+  }
+  /** Zurück mit derselben Bewegung wie beim Wischen (Pfeil oben und Wischen enden gleich). */
+  function animateBack() {
+    setProgress(0, false);
+    requestAnimationFrame(() => {
+      setProgress(1, true);
+      window.setTimeout(back, 300);
+    });
   }
   useLayoutEffect(() => {
     if (page) window.scrollTo(0, 0);
@@ -68,46 +100,69 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
     }
   }, [page]);
 
-  // Wie in iOS: vom linken Rand nach rechts wischen geht zurück. Die Seite gleitet erst beim
-  // Loslassen hinaus – mitziehen liess auf iOS die ganze Ansicht leer zur Seite rutschen.
-  // Touch statt Pointer: Pointer werden beim kleinsten senkrechten Scrollen abgebrochen.
+  // Wie in iOS: vom linken Rand nach rechts wischen. Die Seite folgt dem Finger, darunter schiebt
+  // sich die Liste leicht versetzt und abgedunkelt herein. Weit genug oder schnell genug → zurück,
+  // sonst federt die Seite zurück. Touch statt Pointer: Pointer brechen beim senkrechten Scrollen ab.
   useEffect(() => {
     if (!page) return;
-    let start: { x: number; y: number } | null = null;
-    let last = { x: 0, y: 0 };
+    let start: { x: number; y: number; t: number } | null = null;
+    let horizontal = false;
+    let dx = 0;
+    let last = { x: 0, t: 0, v: 0 };
     const onStart = (e: TouchEvent) => {
       const t = e.touches[0];
-      start = t.clientX < 40 ? { x: t.clientX, y: t.clientY } : null;
-      last = { x: t.clientX, y: t.clientY };
+      start = t.clientX < 30 ? { x: t.clientX, y: t.clientY, t: e.timeStamp } : null;
+      horizontal = false;
+      dx = 0;
+      last = { x: t.clientX, t: e.timeStamp, v: 0 };
     };
     const onMove = (e: TouchEvent) => {
       if (!start) return;
       const t = e.touches[0];
-      last = { x: t.clientX, y: t.clientY };
-      // Waagrechte Bewegung vom Rand gehört uns, nicht dem Browser
-      if (t.clientX - start.x > Math.abs(t.clientY - start.y)) e.preventDefault();
+      const mx = t.clientX - start.x;
+      const my = Math.abs(t.clientY - start.y);
+      if (!horizontal) {
+        if (mx > 8 && mx > my) horizontal = true;
+        else if (my > 10) {
+          start = null;
+          return;
+        } else return;
+      }
+      e.preventDefault();
+      const dt = Math.max(1, e.timeStamp - last.t);
+      last = { x: t.clientX, t: e.timeStamp, v: (t.clientX - last.x) / dt };
+      dx = Math.max(0, mx);
+      setProgress(Math.min(1, dx / (pageRef.current?.offsetWidth || window.innerWidth)), false);
     };
     const onEnd = () => {
-      if (!start) return;
-      const dx = last.x - start.x;
-      const dy = Math.abs(last.y - start.y);
+      if (!start || !horizontal) {
+        start = null;
+        return;
+      }
       start = null;
-      if (dx > 70 && dx > dy * 1.5) {
-        pageRef.current?.classList.add('page-out');
-        window.setTimeout(back, 180);
+      const w = pageRef.current?.offsetWidth || window.innerWidth;
+      if (dx / w > 0.4 || last.v > 0.5) {
+        setProgress(1, true);
+        window.setTimeout(back, 300);
+      } else {
+        setProgress(0, true);
+        window.setTimeout(() => {
+          if (underRef.current) underRef.current.style.visibility = 'hidden';
+          pageRef.current?.classList.remove('page-dragging');
+        }, 320);
       }
     };
     document.addEventListener('touchstart', onStart, { passive: true });
     document.addEventListener('touchmove', onMove, { passive: false });
     document.addEventListener('touchend', onEnd);
-    const onCancel = () => (start = null);
-    document.addEventListener('touchcancel', onCancel);
+    document.addEventListener('touchcancel', onEnd);
     return () => {
       document.removeEventListener('touchstart', onStart);
       document.removeEventListener('touchmove', onMove);
       document.removeEventListener('touchend', onEnd);
-      document.removeEventListener('touchcancel', onCancel);
+      document.removeEventListener('touchcancel', onEnd);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   // Tipp auf „Mehr“ in der Tab-Leiste führt von einer Unterseite zurück zur Liste.
@@ -199,24 +254,6 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
     diag: { title: t('diag.title'), icon: 'diag', content: <DiagnosticsSection /> },
   };
 
-  if (page) {
-    const p = PAGES[page];
-    return (
-      <div className="settings-page" ref={pageRef}>
-        <button className="settings-back" onClick={back}>
-          <svg viewBox="0 0 10 17" width="10" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M8.5 1.5 1.5 8.5l7 7" />
-          </svg>
-          {t('nav.more')}
-        </button>
-        <h2 className="large-title">{p.title}</h2>
-        <SettingsPageContext.Provider value={true}>
-          <div className="settings-page-body">{p.content}</div>
-        </SettingsPageContext.Provider>
-      </div>
-    );
-  }
-
   const row = (id: Page) => {
     const p = PAGES[id];
     return (
@@ -234,8 +271,8 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
     );
   };
 
-  return (
-    <div className="goals more">
+  const listView = (
+    <div className="goals more" ref={rootRef}>
       <ProSection />
       <GoalsView />
       <TrainingDaysSection />
@@ -273,6 +310,39 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
       <p className="about">{t('more.about', { app: t('app.title'), version: __APP_VERSION__ })}</p>
     </div>
   );
+
+  if (page) {
+    const p = PAGES[page];
+    const g = listGeo.current;
+    return (
+      <div className="settings-stack">
+        {/* Die Liste liegt darunter bereit – sichtbar nur beim Zurückwischen. */}
+        <div
+          className="settings-under"
+          ref={underRef}
+          aria-hidden="true"
+          inert
+          style={{ top: g.titleTop, left: g.left, width: g.width }}
+        >
+          <h2 className="large-title">{t('nav.more')}</h2>
+          <div style={{ marginTop: g.gap }}>{listView}</div>
+        </div>
+        <div className="settings-page" ref={pageRef}>
+          <button className="settings-back" onClick={animateBack} aria-label={t('nav.more')}>
+            <svg viewBox="0 0 10 17" width="11" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M8.5 1.5 1.5 8.5l7 7" />
+            </svg>
+          </button>
+          <h2 className="large-title">{p.title}</h2>
+          <SettingsPageContext.Provider value={true}>
+            <div className="settings-page-body">{p.content}</div>
+          </SettingsPageContext.Provider>
+        </div>
+      </div>
+    );
+  }
+
+  return listView;
 }
 
 /** Hinweise beim ersten Kontakt zurücksetzen (1.2). */
