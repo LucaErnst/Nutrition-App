@@ -7,6 +7,8 @@ Hooks und Texte auf Englisch (Hauptsprache), deutsche Fassung für die stärkste
 Die Regeln aus `marketing/CONTENT-PLAN.md` gelten weiter: Luca vor der Kamera, App als B-Roll; ein
 Clip = eine Aussage; Hook in 1,5 s; Untertitel immer; keine Gewichtsversprechen („5 kg in 4 Wochen“).
 **Preise nur in Storys** (verschwinden nach 24 h), nie im Feed – und nie nach dem 31.01.2027.
+**Kein Alkohol** in Hooks, Bildern oder Beispielen – auch nicht als Witz (Wunsch Luca, 18.10.2026).
+Keine Funktionen zeigen, die es nicht gibt (Wischen zwischen Tagen wurde in 1.3 wieder entfernt).
 
 ## Takt
 
@@ -46,7 +48,7 @@ T = Talking Head (Luca spricht), A = App-only (Bildschirmaufnahme, Textüberlage
 ### Phase 2 – 1.3, der neue Look
 | # | Typ | Hook | Kernaussage | B-Roll |
 |---|---|---|---|---|
-| 7 | A | Swipe to yesterday. | Swipe the diary left and right, like turning pages. | Wischen zwischen Tagen |
+| 7 | A | Your foods. Right there. | Tap + and your favorites and recent foods are already waiting. No typing. | Eintragen-Sheet mit Favoriten und „Zuletzt hinzugefügt“ |
 | 8 | A | Your ring tells you how close you are. | Red at the start, green when you're there. | Ring füllt sich über einen Tag (Zeitraffer) |
 | 9 | T | I redesigned my app. Here's why. | Tracking has to feel fast or you quit. So it now feels like the iPhone itself. | Tab-Leiste gleitet, Sheet geht auf |
 | 10 | A | Logged the wrong thing? Swipe. | Swipe left, gone. Undo if you didn't mean it. | Wischen zum Löschen + Rückgängig |
@@ -61,7 +63,7 @@ T = Talking Head (Luca spricht), A = App-only (Bildschirmaufnahme, Textüberlage
 | 15 | T | December is not the month to cut. | Switch to maintenance until January. That's a plan, not giving up. | Phase „Erhalt“ anlegen |
 | 16 | T | +2 kg after Christmas. Relax. | Salt, carbs, water. Look at the 7-day trend on the 6th of January, not on the 26th of December. | Gewichtstrend |
 | 17 | A | Same breakfast during the holidays? | Template once, one tap every morning. | Vorlage eintragen |
-| 18 | T | Glühwein has calories too. | Not a reason to skip it. A reason to log it. | Manuell-Eintrag |
+| 18 | T | Christmas cookies count too. | Not a reason to skip them. A reason to log them – then enjoy them. | Mailänderli eintragen (Stück) |
 
 ### Phase 4 – Neustart richtig
 | # | Typ | Hook | Kernaussage | B-Roll |
@@ -89,7 +91,7 @@ Alles per AirDrop nach `marketing/raw/<drehtag>/`; ich schneide, setze Hook, Unt
 **Drehtag A – sobald 1.3 in TestFlight ist (Ziel KW 46/47)**
 - Talking Heads: 1, 3, 4, 6, 9, 12, R1, R2
 - Bildschirmaufnahmen auf deinem iPhone (Einstellungen → Kontrollzentrum → Bildschirmaufnahme,
-  Mikrofon aus): Tab-Leiste antippen, zwischen Tagen wischen, Eintrag wegwischen + Rückgängig,
+  Mikrofon aus): Tab-Leiste antippen, Tag mit den Pfeilen wechseln, Eintrag wegwischen + Rückgängig,
   Trainingstag ↔ Ruhetag, Eintragen-Sheet öffnen und runterziehen, Woche mit Ring und Balken.
   Die Paywall nehme ich im Simulator auf (du hast als Early Adopter Pro und siehst sie nicht)
 - B-Roll ohne Ton: Handy in der Hand im Gym (Kellerraum ohne Netz für Clip 1), Daumen wischt,
@@ -111,8 +113,7 @@ Erzeuge ich aus der neuen App (`marketing/instagram/shots.mjs` mit neuen Selekto
 1. „New look, same app“ – 6 Bilder: Tagebuch, Ring, Woche, Wischen, Sheet, Pro
 2. „Your week in colours“ – was Grün, Violett, Rot bedeuten
 3. „Holiday survival: the week budget“
-4. „Swiss Christmas, logged offline“: Grittibänz, Mailänderli, Zimtstern, Fondue, Raclettekäse,
-   Glühwein – alle in der mitgelieferten Tabelle (geprüft 16.10.2026)
+4. „Swiss Christmas, logged offline“: Grittibänz, Mailänderli, Zimtstern, Fondue, Raclettekäse – alle in der mitgelieferten Tabelle (geprüft 16.10.2026)
 5. „Start your cut without crashing“ – Bedarfsrechner Schritt für Schritt
 6. „Bulk vs. cut: one question“
 7. „The 2-week trick“
@@ -121,7 +122,7 @@ Erzeuge ich aus der neuen App (`marketing/instagram/shots.mjs` mit neuen Selekto
 ## Store-Video (App-Vorschau, mit 1.3)
 
 Bis 30 s, nur echte Bildschirmaufnahme der App, kein Gesicht, kein Logo-Intro (Apple-Regel).
-Ablauf: Tagebuch (Ring füllt sich) → Eintragen-Sheet, Scan → zwischen Tagen wischen → Woche mit
+Ablauf: Tagebuch (Ring füllt sich) → Eintragen-Sheet mit Favoriten, Scan → Eintrag wegwischen → Woche mit
 Balken → Gewichtstrend. Aufnahme am Drehtag A gleich mitmachen (je DE und EN Sprache in der App).
 
 ## Ideen für App Store „In-App-Events“

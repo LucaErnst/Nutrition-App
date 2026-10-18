@@ -158,7 +158,7 @@ Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eig
 - [ ] Widgets: wenn das Aussehen mitzieht, Widget-Bild in den Screenshots tauschen.
 
 ### F3. App Store – Texte
-- [ ] „Neu in dieser Version“ 1.3 DE/EN: neuer Look, Wischen zwischen Tagen, Wischen zum Löschen mit
+- [ ] „Neu in dieser Version“ 1.3 DE/EN: neuer Look, Wischen zum Löschen mit
       Rückgängig, farbiger Kalorienring, Wochenschnitt als Ring, Balkenfarben in der Woche.
 - [ ] Beschreibung: ein Satz zum Look nur, wenn er Nutzen beschreibt (z.B. „Swipe between days“).
 - [ ] **Werbetext** nennt den Einführungspreis bis 31. Januar → spätestens 31.01.2027 zurücksetzen.
