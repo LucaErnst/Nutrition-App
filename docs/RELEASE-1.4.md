@@ -45,6 +45,25 @@ richtige Stelle). Alles hier ist für 1.4 vorgemerkt.
 - Apple Watch: Komplikation mit Ring (eigenes Target, grösserer Aufwand).
 - StandBy-Darstellung prüfen (Querformat beim Laden): grosse Zahl, wenig Text.
 
+## A7. Duo mit Xcode 27.1 (sobald verfügbar – wöchentliche Erinnerung läuft)
+
+Apple verlangt ab April 2027 Duo-Screenshots und einen Build mit dem iOS-27.1-SDK. Xcode 27.0 (auf
+diesem Mac) hat keinen Duo-Simulator. Geplante Aufgabe `xcode-27-1-duo-check` prüft jeden Montag,
+ob Xcode 27.1 erschienen ist, und erinnert Luca.
+
+Schon erledigt (1.3, Build 36): Layout aussen/innen/quer, Wechsel zur Laufzeit ohne Neuladen, Tab-Leiste
+in der App immer unten (mittig, max. 520 px), Markierung springt beim Klappen sofort an den Ort,
+Unterseiten unter „Mehr“ übernehmen beim Klappen die neue Breite, Tests `e2e/duo-*.spec.ts`
+(inkl. `duo-1-3.spec.ts`), Duo-Store-Bilder erzeugt.
+
+Mit Xcode 27.1 zu tun:
+- [ ] Xcode 27.1 installieren (Luca)
+- [ ] App im Duo-Simulator: aussen, innen hochkant, innen quer; während der Nutzung auf- und zuklappen
+      (offenes Eintragen-Sheet, offene Unterseite unter „Mehr“, Wischen zum Löschen, Tastatur offen)
+- [ ] Widgets auf beiden Home-Bildschirmen (aussen/innen), Sperrbildschirm, getönter Modus
+- [ ] Prüfen, ob iOS auf dem Duo mehrere Apps nebeneinander erlaubt; falls ja, schmale Breiten testen
+- [ ] Mit dem 27.1-SDK bauen und hochladen; Store-Bilder ggf. aus dem echten Simulator neu
+
 ## B. Aus 1.3 offen geblieben
 - Paywall-Sheet: nach unten ziehen zum Schliessen (heute nur ×).
 - Lebensmittel-Liste unter „Lebensmittel“ voll im Listen-Stil (Zeilen wie unter „Mehr“).

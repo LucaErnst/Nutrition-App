@@ -165,6 +165,21 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
+  // Auf- oder Zuklappen (iPhone Duo) bei offener Unterseite: Breite und Lage der Liste darunter
+  // neu nehmen, sonst läge sie beim Zurückwischen versetzt. Die Seite reicht 16 px über den Rand.
+  useEffect(() => {
+    if (!page) return;
+    const onResize = () => {
+      const r = pageRef.current?.getBoundingClientRect();
+      if (!r || !underRef.current) return;
+      listGeo.current = { ...listGeo.current, left: r.left + 16, width: r.width - 32 };
+      underRef.current.style.left = `${r.left + 16}px`;
+      underRef.current.style.width = `${r.width - 32}px`;
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [page]);
+
   // Tipp auf „Mehr“ in der Tab-Leiste führt von einer Unterseite zurück zur Liste.
   useEffect(() => {
     if (resetKey) setPageState(null);

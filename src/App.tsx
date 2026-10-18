@@ -40,6 +40,14 @@ function Skeleton() {
   );
 }
 
+function readFlag(key: string): boolean {
+  try {
+    return localStorage.getItem(key) === '1';
+  } catch {
+    return false;
+  }
+}
+
 export default function App() {
   const t = useT();
   const { lang } = useI18n();
@@ -114,29 +122,42 @@ export default function App() {
   const thumbRef = useRef<HTMLSpanElement>(null);
   const firstPlace = useRef(true);
   useLayoutEffect(() => {
-    function place() {
+    /** animate=false: sofort an die Stelle (erster Aufbau, Auf-/Zuklappen, Drehen). */
+    function place(animate: boolean) {
       const nav = navRef.current;
       const thumb = thumbRef.current;
       const btn = nav?.querySelector<HTMLElement>('button[aria-current="page"]');
       if (!nav || !thumb || !btn) return;
-      if (firstPlace.current) thumb.style.transition = 'none';
+      if (!animate) thumb.style.transition = 'none';
       else {
         thumb.classList.remove('moving');
         void thumb.offsetWidth;
         thumb.classList.add('moving');
       }
-      thumb.style.width = `${btn.offsetWidth}px`;
-      thumb.style.height = `${btn.offsetHeight}px`;
-      thumb.style.transform = `translate(${btn.offsetLeft}px, ${btn.offsetTop}px)`;
-      if (firstPlace.current) {
-        firstPlace.current = false;
-        requestAnimationFrame(() => (thumb.style.transition = ''));
+      // Bruchteile von Pixeln: Tabs sind so breit wie ihr Wort, offsetLeft würde runden.
+      const n = nav.getBoundingClientRect();
+      const b = btn.getBoundingClientRect();
+      thumb.style.width = `${b.width}px`;
+      thumb.style.height = `${b.height}px`;
+      thumb.style.transform = `translate(${b.left - n.left - nav.clientLeft}px, ${b.top - n.top - nav.clientTop}px)`;
+      if (!animate) {
+        // Neuen Ort erst festschreiben, dann die Animation wieder einschalten – sonst gleitet
+        // die Markierung nach dem Auf- und Zuklappen hinterher.
+        void thumb.offsetWidth;
+        thumb.style.transition = '';
       }
     }
-    place();
-    window.addEventListener('resize', place);
-    return () => window.removeEventListener('resize', place);
+    place(!firstPlace.current);
+    firstPlace.current = false;
+    const onResize = () => place(false);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, [view, lang]);
+
+  // In der App bleibt die Tab-Leiste auf jeder Displaygrösse unten (auch innen auf dem iPhone Duo),
+  // sonst spränge sie beim Auf- und Zuklappen nach oben und zurück. Oben nur im Browser am Computer.
+  // Der localStorage-Schalter erlaubt den e2e-Tests, das Layout der App im Browser zu prüfen.
+  const nativeLayout = isNative || readFlag('nutrition-tracker:native-layout');
 
   // Grosser Titel wie in iOS; Tagebuch und Woche tragen stattdessen ihr Datum als Titel.
   const current = VIEWS.find((v) => v.id === view)!;
@@ -146,7 +167,7 @@ export default function App() {
     <ToastProvider>
       {showOnboarding && <Onboarding onDone={() => window.scrollTo(0, 0)} />}
       <PaywallHost />
-      <div className="app">
+      <div className={`app ${nativeLayout ? 'app-native' : ''}`}>
         <div className="watermark" aria-hidden="true" style={{ backgroundImage: `url(${import.meta.env.BASE_URL}splash-logo.png)` }} />
         <header className={`app-header ${titled ? '' : 'app-header-dated'}`}>
           <h1 className={titled ? 'large-title' : 'visually-hidden'}>{titled ? t(current.label) : t('app.title')}</h1>
