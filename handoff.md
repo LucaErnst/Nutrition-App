@@ -1,7 +1,7 @@
 # Handoff – Serious Nutrition
 
 Stand: 17.10.2026, Abend. 1.1 ist live. **1.2 (Build 27) wurde abgelehnt und ist korrigiert, wartet auf
-Lucas „Resubmit“.** **1.3 (iOS-27-Look) liegt als Build 34 in TestFlight**, auf Branch `release-1.3`.
+Lucas „Resubmit“.** **1.3 (iOS-27-Look) liegt als Build 35 in TestFlight**, auf Branch `release-1.3`.
 Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll ohne Rückfragen
 weiterarbeiten können.
 
@@ -173,7 +173,7 @@ Entscheidung misst sich daran.
 
 1. **1.2 neu einreichen** (Luca: abgelehnte Einreichung → „Resubmit to App Review“). Nach Freigabe
    „Release“ drücken (manuelle Freigabe).
-2. **1.3 testen** (Build 34): Zurück-Wischen unter Mehr, Notch-Bereich, Pro-Karte, Widgets im
+2. **1.3 testen** (Build 35, Zurückwischen wie iOS mit Liste darunter): Zurück-Wischen unter Mehr, Notch-Bereich, Pro-Karte, Widgets im
    getönten Modus, Tippen aufs Widget (Ring/Wasser), Stück-Abfrage. Rückmeldungen in `docs/RELEASE-1.3.md`.
    Offene Frage an Luca: was genau „Widgets funktionieren nicht“ hiess (Text im Widget? Mehr →
    Diagnose → „Widgets:“).
@@ -204,4 +204,4 @@ LANG=en_US.UTF-8 npx cap sync ios
 
 Archiv und Upload stehen in `docs/NATIVE.md`; Build-Nummer `CURRENT_PROJECT_VERSION` an **vier**
 Stellen in `ios/App/App.xcodeproj/project.pbxproj` hochzählen (App und SeriousWidgets), sonst lehnt
-App Store Connect ab. Nächste freie Build-Nummer: **35**.
+App Store Connect ab. Nächste freie Build-Nummer: **36**.
