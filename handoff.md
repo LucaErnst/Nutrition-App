@@ -1,6 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 17.10.2026, Abend. 1.1 ist live. **1.2 (Build 27) wurde abgelehnt und ist korrigiert, wartet auf
+Stand: 18.10.2026, Abend. 1.1 ist live. **1.2 (Build 27) wurde abgelehnt und ist korrigiert, wartet auf
 Lucas „Resubmit“.** **1.3 (iOS-27-Look) liegt als Build 36 in TestFlight**, auf Branch `release-1.3`.
 Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll ohne Rückfragen
 weiterarbeiten können.
@@ -46,8 +46,8 @@ Entscheidung misst sich daran.
 ### Code
 - **`main`:** 1.2.0 Build 27 plus zwei lokale Commits (Screenshot-Fix 1.2, Planung 1.3).
   **Nicht gepusht** – vor jedem Push fragen (die Web-Version deployt von dort).
-- **`release-1.3`** (7 Commits über `main`, **nicht gepusht**): 1.3.0, iOS-Builds 28–34 in TestFlight,
-  aktuell **Build 34**. Inhalt (Details in `docs/RELEASE-1.3.md`):
+- **`release-1.3`** (13 Commits über `main`, **nicht gepusht**): 1.3.0, iOS-Builds 28–36 in TestFlight,
+  aktuell **Build 36**. Inhalt (Details in `docs/RELEASE-1.3.md`):
   - neues Stylesheet `src/ios.css` über `index.css` (Farben, Karten, Segmente mit gleitender
     Markierung, iOS-Schalter, Wasserzeichen-Logo, Ränder)
   - Tab-Leiste Liquid Glass mit gleitender Markierung (`App.tsx`, `.nav-thumb`), grosse Titel
@@ -63,8 +63,11 @@ Entscheidung misst sich daran.
   - Gewicht: Speichern unter den Feldern, Werte zentriert, Einträge per Wischen löschen.
   - Mehr: wie iOS-Einstellungen – Pro-Karte (schlank, Goldrand), Phasen, Trainingstage, dann
     Gruppen Einstellungen / Daten / Rechtliches mit Symbol, Wert und Pfeil; Antippen öffnet eine
-    Unterseite („‹ Mehr“, vom linken Rand wischen, Tipp auf „Mehr“ unten führt zurück, Liste behält
-    die Scrollposition). Unterseiten nutzen `SettingsPageContext` in `CollapsibleCard.tsx`.
+    Unterseite (runder Zurück-Knopf, Tipp auf „Mehr“ unten führt zurück, Liste behält die
+    Scrollposition). **Zurückwischen wie in iOS** (Build 35, nach Lucas Video): Seite folgt dem
+    Finger, die Liste liegt versetzt und abgedunkelt darunter (`.settings-under`, fixiert, Lage beim
+    Öffnen gemerkt in `listGeo`), ab 40 % oder schnellem Wisch zurück. Unterseiten nutzen
+    `SettingsPageContext` in `CollapsibleCard.tsx`.
   - Paywall als Sheet von unten, goldene Kaufknöpfe.
   - Inhalt scrollt hinter Uhrzeit/Notch durch; `html` trägt die Hintergrundfarbe (keine weisse
     Kante beim Herunterziehen).
@@ -73,8 +76,16 @@ Entscheidung misst sich daran.
     klarer Home-Bildschirm unterstützt (`widgetAccentable`), Zahlen zählen hoch (`numericText`),
     Tipp auf Ring → Tagebuch, auf Wasser → `seriousnutrition://water` (App springt zur Wasserzeile,
     `native.ts` `appUrlOpen` → Event `sn-deeplink` → `App.tsx`).
-- **163 Unit-Tests und 48 e2e-Tests** grün (neu: `e2e/more-pages.spec.ts`; Löschen per Wischgeste
-  im Diary-Test; Fazit wird vor der Prüfung aufgeklappt; Duo-Tests messen `.day-pane`).
+  - **iPhone Duo** (Build 36): In der App bleibt die Tab-Leiste auf jeder Breite unten (Klasse
+    `.app-native`, mittig, max. 520 px); Markierung springt beim Klappen ohne Animation an den Ort;
+    Unterseiten übernehmen beim Klappen die neue Breite. Im Browser schaltet
+    `localStorage['nutrition-tracker:native-layout']='1'` das App-Layout für Tests ein.
+- **163 Unit-Tests und 51 e2e-Tests** grün (neu: `e2e/more-pages.spec.ts`, `e2e/duo-1-3.spec.ts`;
+  Löschen per Wischgeste im Diary-Test; Fazit wird vor der Prüfung aufgeklappt; Duo-Tests messen
+  `.day-pane`).
+- **Store-Bilder 1.3 erzeugt** (im Repo, **nicht** hochgeladen): iPhone 7, Duo aussen/innen je 7, DE/EN,
+  Header und Suchbild ohne Preis („Built for training.“ / „Fürs Training gebaut.“). Erst nach Lucas
+  Abnahme von 1.3 hochladen, dann auch die beiden eigenen Produktseiten.
 - Nicht committet und **nicht von Claude**: Lucas Änderungen an `marketing/launch-broll.mjs`,
   `marketing/launch/compose.mjs`, `marketing/instagram/APP-ACCOUNT.md`, Ordner
   `marketing/launch/talking/`. Nicht mit-committen ohne Rückfrage.
@@ -89,6 +100,11 @@ Entscheidung misst sich daran.
   (`marketing/instagram/APP-ACCOUNT.md`). TikTok praktisch bei null, Website-Link erst ab 1'000 Followern.
 - **Neuer Content-Plan 02.11.2026–31.01.2027:** `marketing/CONTENT-PLAN-1.3.md` (5 Phasen, 25 Clips,
   8 Karussells, 3 Drehtage, Store-Video, Idee In-App-Event „January Reset“ bis ~17.12. einreichen).
+- **Launch-Inhalte 1.3 fertig:** 2 Karussells, 4 Storys (`marketing/instagram/out-1.3/`), 5 App-Reels
+  (`marketing/clips/1.3-*.mp4`, nur lokal), Wochenplan und Captions in `marketing/instagram/POSTING-1.3.md`.
+  Generatoren: `shots-1.3.mjs`, `SET=1.3 build.mjs`, `clips-1.3.mjs`.
+- **Content-Regeln:** kein Alkohol (auch nicht als Witz), nur Funktionen zeigen, die es gibt
+  (Clip 7 und 18 im Plan am 18.10. ersetzt).
 - Entwurf des neuen Looks zum Anklicken: `docs/design/ios27-entwurf.html`,
   online https://claude.ai/code/artifact/372532dc-452a-46b9-8971-34788f4f0981 (Pro/Free umschaltbar, `#free`).
 
@@ -106,16 +122,22 @@ Entscheidung misst sich daran.
 | `store/screenshots.mjs` | Screenshots; Bild 1 ohne Preis (Kommentar zur Ablehnung) |
 | `src/ios.css` | Der ganze 1.3-Look |
 | `marketing/CONTENT-PLAN-1.3.md` | Content bis 31.01.2027 |
+| `marketing/instagram/POSTING-1.3.md` | Launch-Woche 1.3: Posts, Storys, Reels, Captions |
+| `e2e/duo-1-3.spec.ts` | Duo-Tests für den neuen Look inkl. Auf-/Zuklappen |
 
 ---
 
-## 4. Was zuletzt passiert ist (16.–17.10.)
+## 4. Was zuletzt passiert ist (16.–18.10.)
 
 - iOS-27-Entwurf mit Luca in vielen Runden abgestimmt, gespeichert, Free-Ansicht mit Paywall.
 - 1.2 in App Store Connect angelegt und befüllt (per iris-API, siehe Punkt 5), eingereicht,
   abgelehnt (2.3.7), Bild 1 ersetzt.
-- 1.3 gebaut und als Builds 28–34 hochgeladen; jede Runde nach Lucas Rückmeldung vom iPhone.
-- Akte 1.4 angelegt, Content-Plan bis Ende Januar.
+- 1.3 gebaut und als Builds 28–36 hochgeladen; jede Runde nach Lucas Rückmeldung vom iPhone.
+- Akte 1.4 angelegt (Widgets, Duo mit Xcode 27.1), Content-Plan bis Ende Januar.
+- 18.10.: Store-Bilder und Launch-Inhalte für 1.3 erzeugt, Zurückwischen wie iOS, Duo-Prüfung
+  (Bericht: alles Wesentliche vorhanden; Tab-Leiste, Markierung, Unterseiten beim Klappen behoben).
+- **Erinnerung eingerichtet:** geplante Aufgabe `xcode-27-1-duo-check`, montags 09:05 (Auto-Modus,
+  läuft nur bei offener App). Meldet, sobald Xcode 27.1 final ist → dann `docs/RELEASE-1.4.md` A7.
 
 ---
 
@@ -154,6 +176,13 @@ Entscheidung misst sich daran.
 - `package-lock.json` nicht per Suchen/Ersetzen auf die App-Version setzen – das trifft fremde Pakete
   (Wurzel steht dort ohnehin auf 0.17.0).
 - Widgets: `widgetAccentedRenderingMode` gibt es nur auf `Image` nach `.resizable()`.
+- **Git-Identität:** Seit 18.10. kann Git Name/Mail nicht mehr aus dem Rechnernamen ableiten
+  (Netzwerkname geändert, keine `~/.gitconfig`). Committen mit
+  `git -c user.name="Luca Ernst" -c user.email="lucaernst@macbook-pro-von-luca.home" commit …`
+  (gleiche Identität wie alle bisherigen Commits). Nicht ungefragt in die Git-Einstellungen schreiben.
+- Thumb-/Seitengeometrie beim Klappen: nach `transition='none'` erst `void el.offsetWidth`, dann
+  Transition wieder an – sonst gleitet die Markierung hinterher. Positionen mit
+  `getBoundingClientRect` statt `offsetLeft` (Bruchteile von Pixeln).
 - Kompilieren ohne Signatur: `xcodebuild … -destination 'generic/platform=iOS Simulator' build CODE_SIGNING_ALLOWED=NO`.
 
 **Seed, Daten, Screenshots** – wie bisher:
@@ -173,16 +202,21 @@ Entscheidung misst sich daran.
 
 1. **1.2 neu einreichen** (Luca: abgelehnte Einreichung → „Resubmit to App Review“). Nach Freigabe
    „Release“ drücken (manuelle Freigabe).
-2. **1.3 testen** (Build 35, Zurückwischen wie iOS mit Liste darunter): Zurück-Wischen unter Mehr, Notch-Bereich, Pro-Karte, Widgets im
-   getönten Modus, Tippen aufs Widget (Ring/Wasser), Stück-Abfrage. Rückmeldungen in `docs/RELEASE-1.3.md`.
+2. **1.3 testen** (Build 36): Zurückwischen unter Mehr (Liste darunter), Notch-Bereich, Pro-Karte,
+   Widgets im getönten Modus, Tippen aufs Widget (Ring/Wasser), Stück-Abfrage, Tab-Leiste beim
+   Auf-/Zuklappen. Rückmeldungen in `docs/RELEASE-1.3.md`.
    Offene Frage an Luca: was genau „Widgets funktionieren nicht“ hiess (Text im Widget? Mehr →
    Diagnose → „Widgets:“).
-3. **Wenn 1.3 steht:** Store-Bilder neu nach `docs/RELEASE-1.3.md` F (iPhone, Duo, Header, Suchbild,
-   beide eigenen Produktseiten, ohne Preis), „Neu in dieser Version“, Review-Notizen, Branch
-   `release-1.3` nach `main`, **vor dem Push fragen**, 1.3 einreichen (nach 1.2).
-4. **Content:** Drehtag A sobald 1.3 steht (`marketing/CONTENT-PLAN-1.3.md`). Instagram-Plan endet 01.11.
-5. **Kauftest** mit Lucas echtem Apple-Konto (nur Luca). Impressum/Rechtstexte auf beserious.ch (Luca).
-6. **31.01.2027:** Werbetext zurücksetzen (nennt den Einführungspreis). 01.02. Preis CHF 25.
+3. **Wenn 1.3 steht:** die schon erzeugten Store-Bilder hochladen und zuordnen (iPhone, Duo, Header,
+   Suchbild, beide eigenen Produktseiten), „Neu in dieser Version“, Review-Notizen, Branch
+   `release-1.3` nach `main`, **vor dem Push fragen**, 1.3 einreichen (nach 1.2). Falls sich der
+   Look noch ändert: Bilder neu mit `node store/screenshots.mjs iphone duo-outer duo-inner`.
+4. **Content:** Launch-Woche nach `marketing/instagram/POSTING-1.3.md` am Tag, an dem 1.3 live ist.
+   Drehtag A für die Talking-Head-Clips (`marketing/CONTENT-PLAN-1.3.md`). Instagram-Plan endet 01.11.
+5. **Xcode 27.1:** sobald die Erinnerung kommt (oder Luca es sagt) → `docs/RELEASE-1.4.md` A7
+   (Duo-Simulator, Widgets, Build mit 27.1-SDK; Pflicht ab April 2027).
+6. **Kauftest** mit Lucas echtem Apple-Konto (nur Luca). Impressum/Rechtstexte auf beserious.ch (Luca).
+7. **31.01.2027:** Werbetext zurücksetzen (nennt den Einführungspreis). 01.02. Preis CHF 25.
 
 **Offene Entscheidungen von Luca**
 - Balkengrenzen Woche (90–105 %) – so lassen oder strenger?
@@ -195,7 +229,7 @@ Entscheidung misst sich daran.
 
 ```
 npm test                                  # 163 Unit-Tests
-npx playwright test                       # 48 e2e, Projekte "mobile" (de-CH) und "us" (en-US)
+npx playwright test                       # 51 e2e, Projekte "mobile" (de-CH) und "us" (en-US)
 npx playwright test e2e/X.spec.ts --project=mobile -g "Name"   # einzelner Test
 npm run build                             # tsc + vite
 npm run screenshots                       # Screenshots und Creative Assets, beide Sprachen
