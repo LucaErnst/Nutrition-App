@@ -309,18 +309,34 @@ const CAROUSELS_13 = {
   ],
 };
 
+// ---------- Update 1.2 (live seit 19.10.2026): eine Story, Aufnahme im Look von 1.2. SET=1.2 → out-1.2/
+const STORIES_12 = {
+  's11-update-1-2': story(`
+    <div style="position:absolute;top:240px;left:80px;right:80px;text-align:center">
+      <div class="label">Update 1.2 is live</div>
+      <h1 style="font-size:116px;margin-top:22px">No signal?\n<span class="gold">Still scans.</span></h1>
+      <p class="sub" style="font-size:38px;margin-top:24px">290,000 products are now built into the app. Scanning and search work offline.</p>
+    </div>
+    ${crop('scan-result', [350, 690], 820, 'top:790px;left:130px')}
+    <div style="position:absolute;top:1560px;left:80px;right:80px;text-align:center">
+      <div style="font-size:34px;font-weight:700">Also new: eggs by the piece · steps from Apple Health · a smarter needs calculator</div>
+      <div class="gold" style="font-size:34px;font-weight:700;margin-top:18px">Update now ↓</div>
+    </div>`),
+};
+
+const SET_12 = process.env.SET === '1.2';
 const SET_13 = process.env.SET === '1.3';
 const browser = await chromium.launch();
-const out = path.join(HERE, SET_13 ? 'out-1.3' : VIDEO ? 'out-video' : 'out');
+const out = path.join(HERE, SET_12 ? 'out-1.2' : SET_13 ? 'out-1.3' : VIDEO ? 'out-video' : 'out');
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
 const p = await browser.newPage();
-for (const [name, html] of VIDEO ? [] : Object.entries(SET_13 ? STORIES_13 : STORIES)) {
+for (const [name, html] of VIDEO ? [] : Object.entries(SET_12 ? STORIES_12 : SET_13 ? STORIES_13 : STORIES)) {
   await p.setViewportSize({ width: 1080, height: 1920 });
   await p.setContent(html, { waitUntil: 'load' });
   await p.screenshot({ path: path.join(out, `story-${name}.png`) });
 }
-for (const [name, slides] of Object.entries(SET_13 ? CAROUSELS_13 : CAROUSELS)) {
+for (const [name, slides] of Object.entries(SET_12 ? {} : SET_13 ? CAROUSELS_13 : CAROUSELS)) {
   await p.setViewportSize(VIDEO ? { width: 1080, height: 1920 } : { width: W, height: H });
   for (const [i, s] of slides.entries()) {
     await p.setContent(s(i + 1, slides.length), { waitUntil: 'load' });

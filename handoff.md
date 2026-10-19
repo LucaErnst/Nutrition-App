@@ -1,7 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 18.10.2026, Abend. 1.1 ist live. **1.2 (Build 27) wurde abgelehnt und ist korrigiert, wartet auf
-Lucas „Resubmit“.** **1.3 (iOS-27-Look) liegt als Build 36 in TestFlight**, auf Branch `release-1.3`.
+Stand: 19.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (iOS-27-Look) liegt als Build 36 in TestFlight**, auf Branch `release-1.3`.
 Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll ohne Rückfragen
 weiterarbeiten können.
 
@@ -200,8 +199,9 @@ Entscheidung misst sich daran.
 
 ## 6. Nächste Schritte
 
-1. **1.2 neu einreichen** (Luca: abgelehnte Einreichung → „Resubmit to App Review“). Nach Freigabe
-   „Release“ drücken (manuelle Freigabe).
+1. **1.2 ist live (19.10.).** Story „Update 1.2 is live“ liegt in `marketing/instagram/out-1.2/`
+   (`SET=1.2 node marketing/instagram/build.mjs`), Link-Sticker unter „Update now“. Alte `01-diary`-
+   Bilder in der Asset Library erst löschen, wenn die eigenen Produktseiten mit 1.3 umgestellt sind.
 2. **1.3 testen** (Build 36): Zurückwischen unter Mehr (Liste darunter), Notch-Bereich, Pro-Karte,
    Widgets im getönten Modus, Tippen aufs Widget (Ring/Wasser), Stück-Abfrage, Tab-Leiste beim
    Auf-/Zuklappen. Rückmeldungen in `docs/RELEASE-1.3.md`.
