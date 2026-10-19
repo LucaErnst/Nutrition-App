@@ -201,3 +201,4 @@ Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eig
 - Build 38 getestet: Zurückwischen unter Mehr sauber, Lebensmittel-Liste gut, Stück-Abfrage geht.
 - Paywall nicht prüfbar: Luca ist Early Adopter (Pro geschenkt), der Schalter „Als Free ansehen“
   in `ProSection.tsx` erscheint nur im Dev-Build (`import.meta.env.DEV`), also nicht in TestFlight.
+  Luca nimmt die Paywall aus dem Entwurf ab; kein versteckter Free-Schalter für TestFlight.
