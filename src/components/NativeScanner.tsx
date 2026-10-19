@@ -9,6 +9,33 @@ interface Props {
 type State = 'idle' | 'scanning' | 'denied' | 'error';
 
 /**
+ * Schwarze Fläche über der App, solange die Kamera öffnet oder schliesst. Das Scan-Fenster des
+ * Plugins ist durchsichtig, bis das Kamerabild kommt – ohne Abdeckung sah man beim Öffnen und
+ * Schliessen kurz die App mit Rahmen und X darüber. Direkt am <body>, damit sie auch dann weich
+ * ausblendet, wenn nach einem Treffer die Scan-Ansicht schon weg ist.
+ */
+const COVER_MS = 220;
+let coverEl: HTMLDivElement | null = null;
+
+function coverOn(): Promise<void> {
+  if (!coverEl) {
+    coverEl = document.createElement('div');
+    coverEl.className = 'scan-cover';
+    coverEl.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(coverEl);
+  }
+  return new Promise((r) => window.setTimeout(r, COVER_MS));
+}
+
+function coverOff() {
+  const el = coverEl;
+  if (!el) return;
+  coverEl = null;
+  el.classList.add('scan-cover-out');
+  window.setTimeout(() => el.remove(), COVER_MS + 30);
+}
+
+/**
  * Nativer Scanner (ML Kit) in der Capacitor-Hülle: öffnet die System-Scanansicht.
  * Ersetzt den ZXing-Web-Scanner; die Kamera-Freigabe wird vom System gespeichert.
  */
@@ -28,6 +55,7 @@ export function NativeScanner({ onDetected }: Props) {
         setMessage(t('scan.errDenied'));
         return;
       }
+      await coverOn();
       const { barcodes } = await BarcodeScanner.scan({
         formats: [BarcodeFormat.Ean13, BarcodeFormat.Ean8, BarcodeFormat.UpcA, BarcodeFormat.UpcE],
       });
@@ -49,6 +77,7 @@ export function NativeScanner({ onDetected }: Props) {
     } finally {
       // Das Plugin lässt den Hintergrund hinter der WebView weiss zurück.
       void syncNativeBackground();
+      coverOff();
     }
   }
 

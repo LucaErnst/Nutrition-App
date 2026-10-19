@@ -1388,3 +1388,23 @@ body {
     padding-top: calc(84px + env(safe-area-inset-top));
   }
 }
+
+/* Scan (nativ): schwarze Abdeckung, solange die Kamera öffnet oder schliesst (NativeScanner.tsx). */
+.scan-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #000;
+  animation: scan-cover-in 0.22s ease-out both;
+}
+.scan-cover-out {
+  animation: scan-cover-out 0.22s ease-in both;
+}
+@keyframes scan-cover-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scan-cover-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}

@@ -216,3 +216,10 @@ Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eig
   Weiss (`showWebViewBackground`) und nie zurück. Behoben mit `AppearanceBridgePlugin`
   (`MainViewController.swift`) und `syncNativeBackground()` in `native.ts`: nach jedem Scan, beim
   Start und beim Wechsel Hell/Dunkel bekommt der Hintergrund die Farbe von `html`.
+
+## L. Build 41 (19.10.2026)
+
+- Nach Lucas Video (Build 40): Weiss weg, aber beim Öffnen und Schliessen des Scanners sah man
+  kurz die App mit Rahmen, X und „Starting camera…“ – das Scan-Fenster des Plugins ist durchsichtig,
+  bis das Kamerabild kommt. Jetzt blendet vor dem Start eine schwarze Fläche ein (`.scan-cover`,
+  direkt am `<body>`), nach dem Scan (Treffer, Abbruch, Fehler) blendet sie in 220 ms aus.
