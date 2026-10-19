@@ -198,3 +198,6 @@ Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eig
 
 - Balkengrenzen Woche (90–105 %): bleiben so.
 - Widgets: sehen gut aus, keine offene Frage mehr.
+- Build 38 getestet: Zurückwischen unter Mehr sauber, Lebensmittel-Liste gut, Stück-Abfrage geht.
+- Paywall nicht prüfbar: Luca ist Early Adopter (Pro geschenkt), der Schalter „Als Free ansehen“
+  in `ProSection.tsx` erscheint nur im Dev-Build (`import.meta.env.DEV`), also nicht in TestFlight.

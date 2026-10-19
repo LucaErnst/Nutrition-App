@@ -209,9 +209,10 @@ Entscheidung misst sich daran.
 1. **1.2 ist live (19.10.).** Story „Update 1.2 is live“ liegt in `marketing/instagram/out-1.2/`
    (`SET=1.2 node marketing/instagram/build.mjs`), Link-Sticker unter „Update now“. Alte `01-diary`-
    Bilder in der Asset Library erst löschen, wenn die eigenen Produktseiten mit 1.3 umgestellt sind.
-2. **1.3 testen** (Build 38): Zurückwischen unter Mehr, Lebensmittel-Liste (Wischen, Bearbeiten),
-   Paywall herunterziehen, Notch-Bereich, Pro-Karte, Tippen aufs Widget (Ring/Wasser), Stück-Abfrage,
-   Tab-Leiste beim Auf-/Zuklappen. Rückmeldungen in `docs/RELEASE-1.3.md`. Widgets: laut Luca
+2. **1.3 testen** (Build 38): Zurückwischen, Lebensmittel-Liste, Stück-Abfrage und Widgets laut
+   Luca gut (19.10.). Offen: Paywall herunterziehen (in TestFlight nicht sichtbar, weil Luca Early
+   Adopter ist und der Free-Schalter nur im Dev-Build kommt), Notch-Bereich, Pro-Karte, Tippen aufs
+   Widget (Ring/Wasser), Tab-Leiste beim Auf-/Zuklappen. Rückmeldungen in `docs/RELEASE-1.3.md`. Widgets: laut Luca
    (19.10.) gut, Frage erledigt.
 3. **Wenn Luca 1.3 abnimmt:** Version 1.3 in App Store Connect anlegen, Texte aus den Entwürfen
    (Luca liest sie vorher), die schon erzeugten Store-Bilder hochladen und zuordnen (iPhone, Duo,
