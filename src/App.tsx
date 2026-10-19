@@ -180,7 +180,12 @@ export default function App() {
                 aria-current={view === v.id ? 'page' : undefined}
                 onClick={() => {
                   setDiaryDate(undefined);
-                  if (v.id === 'more' && view === 'more') setMoreReset((n) => n + 1);
+                  // Wie in iOS: Tipp auf den offenen Tab gleitet nach ganz oben. „Mehr“ regelt das
+                  // selbst, weil dort eine Unterseite offen sein kann.
+                  if (v.id === view) {
+                    if (v.id === 'more') setMoreReset((n) => n + 1);
+                    else window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
                   setView(v.id);
                 }}
               >

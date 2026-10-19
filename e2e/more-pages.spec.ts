@@ -26,3 +26,29 @@ test('Mehr: Tipp auf „Mehr“ in der Leiste führt zurück zur Liste', async (
   await page.locator('.app-nav').getByRole('button', { name: 'More' }).click();
   await expect(page.locator('.settings-page')).toHaveCount(0);
 });
+
+test('Mehr: Tipp auf „Mehr“ auf heruntergescrollter Unterseite gleitet erst nach oben', async ({ page }) => {
+  await openSection(page, 'Backup');
+  const pg = page.locator('.settings-page');
+  await expect(pg).toBeVisible();
+  await pg.evaluate((el) => {
+    el.querySelector<HTMLElement>('.settings-page-inner')!.style.minHeight = '3000px';
+    el.scrollTop = 500;
+  });
+  const more = page.locator('.app-nav').getByRole('button', { name: 'More' });
+  await more.click();
+  await expect.poll(() => pg.evaluate((el) => el.scrollTop)).toBe(0);
+  await expect(pg).toBeVisible();
+  await more.click();
+  await expect(page.locator('.settings-page')).toHaveCount(0);
+});
+
+test('Tipp auf den offenen Tab gleitet nach ganz oben', async ({ page }) => {
+  await page.evaluate(() => {
+    document.body.style.minHeight = '4000px';
+    window.scrollTo(0, 800);
+  });
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  await page.locator('.app-nav').getByRole('button', { name: 'More' }).click();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+});

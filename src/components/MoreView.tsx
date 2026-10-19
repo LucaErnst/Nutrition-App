@@ -172,9 +172,14 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
-  // Tipp auf „Mehr“ in der Tab-Leiste führt von einer Unterseite zurück zur Liste.
+  // Tipp auf „Mehr“ in der Tab-Leiste: Auf einer heruntergescrollten Unterseite gleitet sie erst
+  // nach oben, steht sie oben, geht es zurück zur Liste. Ohne Unterseite gleitet die Liste nach oben.
   useEffect(() => {
-    if (resetKey && pageRef.current) slideBack();
+    if (!resetKey) return;
+    const pg = pageRef.current;
+    if (!pg) window.scrollTo({ top: 0, behavior: 'smooth' });
+    else if (pg.scrollTop > 0) pg.scrollTo({ top: 0, behavior: 'smooth' });
+    else slideBack();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey]);
 
