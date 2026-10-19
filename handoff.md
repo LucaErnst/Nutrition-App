@@ -224,12 +224,12 @@ Entscheidung misst sich daran.
    (Duo-Simulator, Widgets, Build mit 27.1-SDK; Pflicht ab April 2027).
 6. **Kauftest** mit Lucas echtem Apple-Konto (nur Luca). Impressum/Rechtstexte auf beserious.ch (Luca).
 7. **31.01.2027:** Werbetext zurücksetzen (nennt den Einführungspreis). 01.02. Preis CHF 25,
-   Deutschland EUR 34.99 (eigener Preis, bis Ende Januar eintragen, Luca klickt).
+   Deutschland und Österreich EUR 34.99 (eigener Preis, bis Ende Januar eintragen, Luca klickt).
 
 **Offene Entscheidungen von Luca**
 - In-App-Event „January Reset“ ja/nein (einreichen bis ~17.12.).
-- Österreich ebenfalls EUR 34.99? Ebook-Bündel über Offer Codes.
-- *Entschieden 19.10.:* Balkengrenzen 90–105 % bleiben; Preisplan bleibt, Deutschland EUR 34.99.
+- Ebook-Bündel über Offer Codes.
+- *Entschieden 19.10.:* Balkengrenzen 90–105 % bleiben; Preisplan bleibt, Deutschland und Österreich EUR 34.99.
 
 ---
 
