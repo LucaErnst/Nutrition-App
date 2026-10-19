@@ -208,3 +208,11 @@ Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eig
 - Tipp auf den offenen Tab gleitet sanft nach ganz oben (alle Tabs). Unter Mehr: Ist eine
   Unterseite heruntergescrollt, gleitet erst sie nach oben; steht sie oben, führt der nächste Tipp
   zurück zur Liste (an die alte Stelle). Wie in iOS. Tests in `e2e/more-pages.spec.ts`.
+
+## K. Build 40 (19.10.2026)
+
+- Weisser Schimmer am oberen Rand (Lucas Fund: tritt nach dem Scannen auf). Ursache: Das Plugin
+  `@capacitor-mlkit/barcode-scanning` stellt bei jedem Scan den Hintergrund der WebView fest auf
+  Weiss (`showWebViewBackground`) und nie zurück. Behoben mit `AppearanceBridgePlugin`
+  (`MainViewController.swift`) und `syncNativeBackground()` in `native.ts`: nach jedem Scan, beim
+  Start und beim Wechsel Hell/Dunkel bekommt der Hintergrund die Farbe von `html`.

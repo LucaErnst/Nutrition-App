@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useT } from '../i18n';
-import { haptic } from '../lib/native';
+import { haptic, syncNativeBackground } from '../lib/native';
 
 interface Props {
   onDetected: (code: string) => void;
@@ -46,6 +46,9 @@ export function NativeScanner({ onDetected }: Props) {
       }
       setState('error');
       setMessage(t('scan.errStart'));
+    } finally {
+      // Das Plugin lässt den Hintergrund hinter der WebView weiss zurück.
+      void syncNativeBackground();
     }
   }
 

@@ -1,4 +1,4 @@
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 
 /** true, wenn die App als native Hülle (Capacitor) auf iOS/Android läuft. */
 export const isNative = Capacitor.isNativePlatform();
@@ -16,6 +16,24 @@ export async function haptic(kind: 'light' | 'medium' | 'success' = 'light') {
   }
 }
 
+const Appearance = registerPlugin<{ setBackground(c: { r: number; g: number; b: number }): Promise<void> }>('AppearanceBridge');
+
+/**
+ * Hintergrund hinter der WebView = Hintergrundfarbe der App. Das Scan-Plugin stellt ihn bei jedem
+ * Scan fest auf Weiss; ohne das schimmerte oben am Rand Weiss durch (Build 39).
+ */
+export async function syncNativeBackground() {
+  if (platform !== 'ios') return;
+  try {
+    const m = getComputedStyle(document.documentElement).backgroundColor.match(/\d+(\.\d+)?/g);
+    if (!m || m.length < 3) return;
+    const [r, g, b] = m.map(Number);
+    await Appearance.setBackground({ r, g, b });
+  } catch {
+    /* ignorieren */
+  }
+}
+
 /** Native Initialisierung: Statusleiste, Splash ausblenden, Android-Zurück-Taste. */
 export async function initNative() {
   if (!isNative) return;
@@ -27,6 +45,8 @@ export async function initNative() {
   } catch {
     /* ignorieren */
   }
+  void syncNativeBackground();
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => void syncNativeBackground());
   try {
     const { SplashScreen } = await import('@capacitor/splash-screen');
     await SplashScreen.hide();
