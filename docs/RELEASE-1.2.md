@@ -297,8 +297,9 @@ Heute: 6'906 Einträge = 6'411 BLS + 495 Schweiz.
       Version. Liegt 1.2 um diesen Termin in der Review, den Werbetext trotzdem rechtzeitig ändern.
 - [ ] **01.02.2027:** Preis springt auf CHF 25 (geplant in App Store Connect). Steht in
       „Neu in dieser Version" oder in der Beschreibung ein Preis? Darf nicht.
-- [ ] Offene Entscheidung aus 1.1: EUR 34.99 für Deutschland/Österreich, ggf. „Custom Price Change"
-      bis Ende Januar.
+- [ ] **Entschieden 19.10.2026:** Preisplan bleibt (CHF 25 ab 01.02.2027), Deutschland zahlt
+      **EUR 34.99**. Bis Ende Januar in App Store Connect als eigener Preis für Deutschland
+      (und Österreich, falls Luca es so will) zum 01.02. eintragen – Luca klickt.
 
 ### B5. Vor dem Hochladen
 

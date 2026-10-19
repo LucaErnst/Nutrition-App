@@ -70,7 +70,8 @@ Stepper, Schnellwahl, kcal-Vorschau, Hinzufügen.
 - **Tage-Liste:** Wochentag mit Datum klein darunter („Mo“ / „13/10“), heute blau; T/R in
   schwarzer Kapsel (T grün, R violett); Balken; rechts nur die eingetragenen kcal („–“ wenn leer).
   **Balkenfarbe:** unter 90 % des Tagesziels violett, 90–105 % grün, über 105 % rot. Kleine
-  Legende darunter. Tag antippen öffnet ihn im Tagebuch.
+  Legende darunter. Tag antippen öffnet ihn im Tagebuch. Grenzen 90–105 % von Luca am 19.10.2026
+  bestätigt (bleiben so).
 
 **Gewicht**
 - Eintragen: Datum und kg nebeneinander, **„Speichern“ als breiter Knopf darunter**.
@@ -192,3 +193,8 @@ Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eig
 ## H. Build 38 (19.10.2026)
 - Zurückwischen unter „Mehr“ neu gebaut (Lucas Video): Unterseite als eigene Ebene über der echten
   Liste, deckt bis ganz oben; am Ende kein Ruckler mehr (Bild nach der Animation pixelgleich geprüft).
+
+## I. Lucas Rückmeldung 19.10.2026
+
+- Balkengrenzen Woche (90–105 %): bleiben so.
+- Widgets: sehen gut aus, keine offene Frage mehr.

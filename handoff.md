@@ -210,10 +210,9 @@ Entscheidung misst sich daran.
    (`SET=1.2 node marketing/instagram/build.mjs`), Link-Sticker unter „Update now“. Alte `01-diary`-
    Bilder in der Asset Library erst löschen, wenn die eigenen Produktseiten mit 1.3 umgestellt sind.
 2. **1.3 testen** (Build 38): Zurückwischen unter Mehr, Lebensmittel-Liste (Wischen, Bearbeiten),
-   Paywall herunterziehen, Notch-Bereich, Pro-Karte, Widgets im getönten Modus, Tippen aufs Widget
-   (Ring/Wasser), Stück-Abfrage, Tab-Leiste beim Auf-/Zuklappen. Rückmeldungen in `docs/RELEASE-1.3.md`.
-   Offene Frage an Luca: was genau „Widgets funktionieren nicht“ hiess (Text im Widget? Mehr →
-   Diagnose → „Widgets:“).
+   Paywall herunterziehen, Notch-Bereich, Pro-Karte, Tippen aufs Widget (Ring/Wasser), Stück-Abfrage,
+   Tab-Leiste beim Auf-/Zuklappen. Rückmeldungen in `docs/RELEASE-1.3.md`. Widgets: laut Luca
+   (19.10.) gut, Frage erledigt.
 3. **Wenn Luca 1.3 abnimmt:** Version 1.3 in App Store Connect anlegen, Texte aus den Entwürfen
    (Luca liest sie vorher), die schon erzeugten Store-Bilder hochladen und zuordnen (iPhone, Duo,
    Header, Suchbild, beide eigenen Produktseiten), Build wählen, Branch
@@ -224,12 +223,13 @@ Entscheidung misst sich daran.
 5. **Xcode 27.1:** sobald die Erinnerung kommt (oder Luca es sagt) → `docs/RELEASE-1.4.md` A7
    (Duo-Simulator, Widgets, Build mit 27.1-SDK; Pflicht ab April 2027).
 6. **Kauftest** mit Lucas echtem Apple-Konto (nur Luca). Impressum/Rechtstexte auf beserious.ch (Luca).
-7. **31.01.2027:** Werbetext zurücksetzen (nennt den Einführungspreis). 01.02. Preis CHF 25.
+7. **31.01.2027:** Werbetext zurücksetzen (nennt den Einführungspreis). 01.02. Preis CHF 25,
+   Deutschland EUR 34.99 (eigener Preis, bis Ende Januar eintragen, Luca klickt).
 
 **Offene Entscheidungen von Luca**
-- Balkengrenzen Woche (90–105 %) – so lassen oder strenger?
 - In-App-Event „January Reset“ ja/nein (einreichen bis ~17.12.).
-- EUR 34.99 in DE/AT ab Februar; Ebook-Bündel über Offer Codes.
+- Österreich ebenfalls EUR 34.99? Ebook-Bündel über Offer Codes.
+- *Entschieden 19.10.:* Balkengrenzen 90–105 % bleiben; Preisplan bleibt, Deutschland EUR 34.99.
 
 ---
 
