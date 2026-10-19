@@ -1114,9 +1114,6 @@ html {
 .settings-page .large-title {
   margin: 0 0 4px;
 }
-.app:has(.settings-page) .app-header .large-title {
-  display: none;
-}
 .settings-page .setting-icon {
   display: none;
 }
@@ -1137,10 +1134,6 @@ html {
   .settings-page {
     animation: none;
   }
-}
-.settings-page {
-  touch-action: pan-y;
-  min-height: 70vh;
 }
 
 /* Unterseiten: Knöpfe und Auswahl mittig (Einheiten, Wasser, Backup) */
@@ -1194,11 +1187,6 @@ body {
 .settings-page {
   touch-action: pan-y;
 }
-.settings-page.page-out {
-  transition: transform 0.18s cubic-bezier(0.4, 0, 1, 1), opacity 0.18s;
-  transform: translateX(60px);
-  opacity: 0;
-}
 .settings-page .btn-centered {
   display: block;
   margin: 10px auto 0;
@@ -1216,34 +1204,6 @@ body {
 
 /* Zurückwischen wie in iOS (18.10.2026): Seite folgt dem Finger, die Liste liegt versetzt und
    abgedunkelt darunter. Der Zurück-Knopf ist ein runder Glaskreis nur mit Pfeil. */
-.settings-stack {
-  position: relative;
-}
-.settings-under {
-  position: fixed;
-  z-index: 1;
-  visibility: hidden;
-  pointer-events: none;
-  --dim: 0.28;
-}
-.settings-under::after {
-  content: '';
-  position: fixed;
-  inset: -100vh -100vw;
-  background: rgb(0 0 0 / var(--dim));
-  pointer-events: none;
-}
-.settings-under .large-title {
-  margin: 0;
-}
-.settings-page {
-  position: relative;
-  z-index: 2;
-  background: var(--bg);
-  min-height: 100vh;
-  margin-inline: -16px;
-  padding-inline: 16px;
-}
 .settings-page.page-dragging {
   box-shadow: -8px 0 24px rgb(0 0 0 / 0.25);
 }
@@ -1375,4 +1335,56 @@ body {
   touch-action: none;
   cursor: grab;
   padding-top: 2px;
+}
+
+/*
+ * Unterseiten unter „Mehr“ als eigene Ebene über der Liste (19.10.2026): deckt den ganzen Bildschirm
+ * bis unter die Statusleiste, scrollt für sich. Die Liste darunter bleibt stehen – beim
+ * Zurückwischen bewegt sich die echte Liste, nichts wird getauscht oder neu gescrollt.
+ */
+.settings-dim {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  background: rgb(0 0 0 / 0.28);
+  pointer-events: none;
+  opacity: 0;
+}
+.settings-page {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  display: block;
+  margin: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  animation: none;
+  background: var(--bg);
+  padding: calc(16px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) calc(110px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  scrollbar-width: none;
+}
+.settings-page::-webkit-scrollbar {
+  display: none;
+}
+.settings-page-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.watermark {
+  z-index: 4;
+}
+/* Browser am Computer: Tab-Leiste oben bleibt über der Unterseite, die Seite beginnt darunter */
+@media (min-width: 601px) {
+  .app:not(.app-native) .app-nav {
+    z-index: 5;
+  }
+  .app:not(.app-native) .settings-page {
+    padding-top: calc(84px + env(safe-area-inset-top));
+  }
 }

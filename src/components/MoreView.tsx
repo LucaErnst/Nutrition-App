@@ -49,56 +49,71 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
   const pro = usePro();
   const [page, setPageState] = useState<Page | null>(null);
   const pageRef = useRef<HTMLDivElement>(null);
-  // Zurück landet dort, wo man in der Liste war – nicht ganz oben.
-  const listScroll = useRef(0);
-  const restoreTo = useRef<number | null>(null);
-  const underRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
-  // Wo Titel und Liste beim Öffnen auf dem Bildschirm standen – beim Zurückwischen liegt die
-  // Liste genau dort darunter, wie in iOS.
-  const listGeo = useRef({ titleTop: 0, gap: 0, left: 0, width: 0 });
+  const dimRef = useRef<HTMLDivElement>(null);
+  // Die Liste bleibt die ganze Zeit an ihrer Stelle (gleiche Scrollposition); die Unterseite liegt
+  // als eigene Ebene darüber. Zurück muss darum nichts tauschen und nichts neu scrollen.
+  const EASE = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
+  const DUR = 320;
   function openPage(p: Page) {
-    listScroll.current = window.scrollY;
-    const title = document.querySelector('.app-header .large-title')?.getBoundingClientRect();
-    const list = rootRef.current?.getBoundingClientRect();
-    if (title && list) listGeo.current = { titleTop: title.top, gap: list.top - title.bottom, left: list.left, width: list.width };
     setPageState(p);
   }
   function back() {
-    restoreTo.current = listScroll.current;
     setPageState(null);
   }
-
-  /** Liste unter der Seite zeigen und beide Ebenen auf Fortschritt p (0 = Seite da, 1 = weg) setzen. */
+  /** Ebenen hinter der Seite: Liste und grosser Titel von „Mehr“. */
+  function behind(): HTMLElement[] {
+    return [rootRef.current, document.querySelector<HTMLElement>('.app-header .large-title')].filter((e): e is HTMLElement => !!e);
+  }
+  /** Fortschritt p: 0 = Seite steht, 1 = Seite ganz weg und Liste wieder an ihrem Platz. */
   function setProgress(p: number, animate: boolean) {
-    const page = pageRef.current;
-    const under = underRef.current;
-    if (!page || !under) return;
-    const w = page.offsetWidth || window.innerWidth;
-    const tr = animate ? 'transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1)' : 'none';
-    under.style.visibility = 'visible';
-    under.style.transition = animate ? `${tr}, opacity 0.32s` : 'none';
-    page.style.transition = tr;
-    page.style.transform = p > 0 ? `translateX(${p * w}px)` : '';
-    under.style.transform = `translateX(${-0.3 * w * (1 - p)}px)`;
-    under.style.setProperty('--dim', String(0.28 * (1 - p)));
-    page.classList.toggle('page-dragging', p > 0);
-  }
-  /** Zurück mit derselben Bewegung wie beim Wischen (Pfeil oben und Wischen enden gleich). */
-  function animateBack() {
-    setProgress(0, false);
-    requestAnimationFrame(() => {
-      setProgress(1, true);
-      window.setTimeout(back, 300);
-    });
-  }
-  useLayoutEffect(() => {
-    if (page) window.scrollTo(0, 0);
-    else if (restoreTo.current !== null) {
-      window.scrollTo(0, restoreTo.current);
-      restoreTo.current = null;
+    const pg = pageRef.current;
+    if (!pg) return;
+    const w = pg.offsetWidth || window.innerWidth;
+    const tr = animate ? `transform ${DUR}ms ${EASE}` : 'none';
+    pg.style.transition = tr;
+    pg.style.transform = p > 0 ? `translateX(${p * w}px)` : '';
+    for (const el of behind()) {
+      el.style.transition = tr;
+      el.style.transform = p >= 1 ? '' : `translateX(${-0.3 * w * (1 - p)}px)`;
     }
+    if (dimRef.current) {
+      dimRef.current.style.transition = animate ? `opacity ${DUR}ms ${EASE}` : 'none';
+      dimRef.current.style.opacity = String(1 - p);
+    }
+    pg.classList.toggle('page-dragging', p > 0 && p < 1);
+  }
+  /** Zurück: Seite gleitet hinaus, Liste rückt nach – erst wenn alles steht, wird die Seite entfernt. */
+  function slideBack() {
+    setProgress(1, true);
+    window.setTimeout(() => {
+      for (const el of behind()) {
+        el.style.transition = '';
+        el.style.transform = '';
+      }
+      back();
+    }, DUR + 20);
+  }
+  // Öffnen: Seite kommt von rechts, Liste weicht leicht nach links aus und wird dunkler.
+  useLayoutEffect(() => {
+    if (!page) return;
+    setProgress(1, false);
+    void pageRef.current?.offsetWidth;
+    requestAnimationFrame(() => setProgress(0, true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
+  // Verlässt man „Mehr“ mit offener Unterseite, bleibt nichts verschoben zurück.
+  useEffect(
+    () => () => {
+      for (const el of [document.querySelector<HTMLElement>('.app-header .large-title')]) {
+        if (el) {
+          el.style.transition = '';
+          el.style.transform = '';
+        }
+      }
+    },
+    [],
+  );
 
   // Wie in iOS: vom linken Rand nach rechts wischen. Die Seite folgt dem Finger, darunter schiebt
   // sich die Liste leicht versetzt und abgedunkelt herein. Weit genug oder schnell genug → zurück,
@@ -141,16 +156,8 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
       }
       start = null;
       const w = pageRef.current?.offsetWidth || window.innerWidth;
-      if (dx / w > 0.4 || last.v > 0.5) {
-        setProgress(1, true);
-        window.setTimeout(back, 300);
-      } else {
-        setProgress(0, true);
-        window.setTimeout(() => {
-          if (underRef.current) underRef.current.style.visibility = 'hidden';
-          pageRef.current?.classList.remove('page-dragging');
-        }, 320);
-      }
+      if (dx / w > 0.4 || last.v > 0.5) slideBack();
+      else setProgress(0, true);
     };
     document.addEventListener('touchstart', onStart, { passive: true });
     document.addEventListener('touchmove', onMove, { passive: false });
@@ -165,24 +172,10 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
-  // Auf- oder Zuklappen (iPhone Duo) bei offener Unterseite: Breite und Lage der Liste darunter
-  // neu nehmen, sonst läge sie beim Zurückwischen versetzt. Die Seite reicht 16 px über den Rand.
-  useEffect(() => {
-    if (!page) return;
-    const onResize = () => {
-      const r = pageRef.current?.getBoundingClientRect();
-      if (!r || !underRef.current) return;
-      listGeo.current = { ...listGeo.current, left: r.left + 16, width: r.width - 32 };
-      underRef.current.style.left = `${r.left + 16}px`;
-      underRef.current.style.width = `${r.width - 32}px`;
-    };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [page]);
-
   // Tipp auf „Mehr“ in der Tab-Leiste führt von einer Unterseite zurück zur Liste.
   useEffect(() => {
-    if (resetKey) setPageState(null);
+    if (resetKey && pageRef.current) slideBack();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey]);
 
   const waterContent = (
@@ -326,38 +319,30 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
     </div>
   );
 
-  if (page) {
-    const p = PAGES[page];
-    const g = listGeo.current;
-    return (
-      <div className="settings-stack">
-        {/* Die Liste liegt darunter bereit – sichtbar nur beim Zurückwischen. */}
-        <div
-          className="settings-under"
-          ref={underRef}
-          aria-hidden="true"
-          inert
-          style={{ top: g.titleTop, left: g.left, width: g.width }}
-        >
-          <h2 className="large-title">{t('nav.more')}</h2>
-          <div style={{ marginTop: g.gap }}>{listView}</div>
-        </div>
-        <div className="settings-page" ref={pageRef}>
-          <button className="settings-back" onClick={animateBack} aria-label={t('nav.more')}>
-            <svg viewBox="0 0 10 17" width="11" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M8.5 1.5 1.5 8.5l7 7" />
-            </svg>
-          </button>
-          <h2 className="large-title">{p.title}</h2>
-          <SettingsPageContext.Provider value={true}>
-            <div className="settings-page-body">{p.content}</div>
-          </SettingsPageContext.Provider>
-        </div>
-      </div>
-    );
-  }
-
-  return listView;
+  const p = page ? PAGES[page] : null;
+  return (
+    <>
+      {listView}
+      {p && (
+        <>
+          <div className="settings-dim" ref={dimRef} aria-hidden="true" />
+          <div className="settings-page" ref={pageRef} role="region" aria-label={p.title}>
+            <div className="settings-page-inner">
+              <button className="settings-back" onClick={slideBack} aria-label={t('nav.more')}>
+                <svg viewBox="0 0 10 17" width="11" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M8.5 1.5 1.5 8.5l7 7" />
+                </svg>
+              </button>
+              <h2 className="large-title">{p.title}</h2>
+              <SettingsPageContext.Provider value={true}>
+                <div className="settings-page-body">{p.content}</div>
+              </SettingsPageContext.Provider>
+            </div>
+          </div>
+        </>
+      )}
+    </>
+  );
 }
 
 /** Hinweise beim ersten Kontakt zurücksetzen (1.2). */

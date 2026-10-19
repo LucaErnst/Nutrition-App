@@ -61,6 +61,7 @@ test('Duo 1.3: Tab-Leiste bleibt beim Klappen unten, Markierung folgt', async ({
 test('Duo 1.3: Unterseite unter „Mehr“ übersteht das Klappen, Zurückwischen passt danach', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'Touch über CDP');
   await page.locator('.app-nav').getByRole('button', { name: 'More' }).click();
+  await page.evaluate(() => window.scrollTo(0, 300));
   await openSection(page, 'Units');
   for (const s of [INNER, INNER_LANDSCAPE]) {
     await page.setViewportSize(s);
@@ -68,22 +69,26 @@ test('Duo 1.3: Unterseite unter „Mehr“ übersteht das Klappen, Zurückwische
     await noHorizontalScroll(page, `Unterseite ${s.width}×${s.height}`);
   }
 
-  // Mitten im Wischen: Liste darunter so breit wie der Inhalt, nicht wie vor dem Aufklappen
+  // Scrollposition der Liste nach dem Klappen – sie muss beim Zurückwischen exakt bleiben
+  const before = await page.evaluate(() => window.scrollY);
+  // Mitten im Wischen: Seite deckt den Bildschirm bis ganz oben, die echte Liste liegt darunter
   const cdp = await page.context().newCDPSession(page);
   const touch = (type: string, x: number) =>
     cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y: 300 }] });
   await touch('touchStart', 8);
   for (const x of [30, 60, 90, 120]) await touch('touchMove', x);
   const geo = await page.evaluate(() => {
-    const under = document.querySelector<HTMLElement>('.settings-under')!.getBoundingClientRect();
-    const pg = document.querySelector<HTMLElement>('.settings-page')!.offsetWidth;
-    return { under: under.width, page: pg };
+    const pg = document.querySelector<HTMLElement>('.settings-page')!.getBoundingClientRect();
+    return { top: pg.top, height: pg.height, vh: innerHeight };
   });
-  expect(Math.abs(geo.under - (geo.page - 32))).toBeLessThanOrEqual(2);
+  expect(geo.top).toBe(0);
+  expect(geo.height).toBe(geo.vh);
   for (const x of [300, 500]) await touch('touchMove', x);
   await touch('touchEnd', 500);
   await expect(page.locator('.settings-page')).toHaveCount(0);
-  await expect(page.locator('.setting-row').first()).toBeVisible();
+  // Die Liste stand die ganze Zeit an ihrem Platz: gleiche Scrollposition, nichts verschoben
+  expect(await page.evaluate(() => window.scrollY)).toBe(before);
+  expect(await page.evaluate(() => document.querySelector<HTMLElement>('.goals.more')!.style.transform)).toBe('');
 });
 
 test('Duo 1.3: Wischen zum Löschen und Ring auf allen Displays', async ({ page }) => {

@@ -1,6 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 19.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (iOS-27-Look) liegt als Build 37 in TestFlight**, auf Branch `release-1.3`.
+Stand: 19.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (iOS-27-Look) liegt als Build 38 in TestFlight**, auf Branch `release-1.3`.
 Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll ohne Rückfragen
 weiterarbeiten können.
 
@@ -63,9 +63,11 @@ Entscheidung misst sich daran.
   - Mehr: wie iOS-Einstellungen – Pro-Karte (schlank, Goldrand), Phasen, Trainingstage, dann
     Gruppen Einstellungen / Daten / Rechtliches mit Symbol, Wert und Pfeil; Antippen öffnet eine
     Unterseite (runder Zurück-Knopf, Tipp auf „Mehr“ unten führt zurück, Liste behält die
-    Scrollposition). **Zurückwischen wie in iOS** (Build 35, nach Lucas Video): Seite folgt dem
-    Finger, die Liste liegt versetzt und abgedunkelt darunter (`.settings-under`, fixiert, Lage beim
-    Öffnen gemerkt in `listGeo`), ab 40 % oder schnellem Wisch zurück. Unterseiten nutzen
+    Scrollposition). **Zurückwischen wie in iOS** (Build 38): Die Unterseite ist eine eigene,
+    fixierte Ebene über der echten Liste (`.settings-page`, scrollt für sich, deckt bis unter die
+    Statusleiste). Beim Wischen folgt sie dem Finger, die echte Liste und der Titel rücken von −30 %
+    nach, `.settings-dim` dunkelt ab. Nichts wird getauscht oder neu gescrollt – kein Ruckler.
+    (Build 35–37 nutzten eine Kopie der Liste; die schaute oben durch und ruckelte am Ende.) Unterseiten nutzen
     `SettingsPageContext` in `CollapsibleCard.tsx`.
   - Paywall als Sheet von unten, goldene Kaufknöpfe.
   - Inhalt scrollt hinter Uhrzeit/Notch durch; `html` trägt die Hintergrundfarbe (keine weisse
@@ -238,4 +240,4 @@ LANG=en_US.UTF-8 npx cap sync ios
 
 Archiv und Upload stehen in `docs/NATIVE.md`; Build-Nummer `CURRENT_PROJECT_VERSION` an **vier**
 Stellen in `ios/App/App.xcodeproj/project.pbxproj` hochzählen (App und SeriousWidgets), sonst lehnt
-App Store Connect ab. Nächste freie Build-Nummer: **38**.
+App Store Connect ab. Nächste freie Build-Nummer: **39**.

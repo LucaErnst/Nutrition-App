@@ -188,3 +188,7 @@ Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eig
 - Lebensmittel als iOS-Liste: Stern links, Name mit Makros, kcal und Pfeil; Antippen öffnet das
   Bearbeiten, nach links wischen löscht (Rückfrage vor der Animation, `SwipeRow confirm`).
 - Paywall-Sheet: am Griff oder Kopf nach unten ziehen schliesst (kurz zieht zurück).
+
+## H. Build 38 (19.10.2026)
+- Zurückwischen unter „Mehr“ neu gebaut (Lucas Video): Unterseite als eigene Ebene über der echten
+  Liste, deckt bis ganz oben; am Ende kein Ruckler mehr (Bild nach der Animation pixelgleich geprüft).
