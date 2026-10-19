@@ -27,26 +27,25 @@ Entscheidung misst sich daran.
 ### App Store
 - **1.1 (Build 22) live** seit 12.10.2026. In-App-Kauf `pro_lifetime` CHF 15, Preisänderung auf
   **CHF 25 ab 01.02.2027** geplant. Pro für Nutzer von vor 1.1 geschenkt.
-- **1.2 (Build 27):** am 16./17.10. in App Store Connect angelegt und von Luca eingereicht
-  (17.10., 07:23). **Am 17.10. abgelehnt, Guideline 2.3.7:** Screenshot 1 sagte „No subscription.
+- **1.2 (Build 27) live seit 19.10.2026** (nach Korrektur angenommen, von Luca freigegeben).
+  Verlauf: am 16./17.10. angelegt und eingereicht. **Am 17.10. abgelehnt, Guideline 2.3.7:** Screenshot 1 sagte „No subscription.
   Free to use. Pro once“ / „Ohne Abo. Gratis nutzbar“ – Apple zählt auch „gratis“ und „ohne Abo“
   als Preisangabe. **Behoben:** Bild 1 heisst jetzt „Calories & macros. At a glance.“ / „Kalorien &
   Makros. Auf einen Blick.“, für iPhone (6,7") und iPhone Duo (innen) je DE/EN hochgeladen, altes
-  Bild aus der Version entfernt, Reihenfolge per API geprüft. **Offen: Luca klickt „Resubmit to
-  App Review“.** Freigabe steht auf **manuell** – nach Apples OK drückt Luca „Release“.
+  Bild aus der Version entfernt, Reihenfolge per API geprüft, neu eingereicht, angenommen.
   Eingetragen und zurückgelesen: Beschreibung, „Neu in dieser Version“, Werbetext (neu, war leer),
   Keywords EN, Review-Notizen (gekürzter Gesamttext 3'250 Zeichen, Limit 4'000), Build 27.
 - **Restrisiko Preisangabe:** Header und Suchbild sagen noch „No subscription. Free.“; die eigenen
   Produktseiten **TikTok** und **Instagram** (beide freigegeben) zeigen noch das alte Bild 1. Mit 1.3
-  ersetzen. Alte `01-diary`-Bilder in der Asset Library erst löschen, wenn 1.2 live ist und die
-  Produktseiten umgestellt sind (Luca löscht).
+  ersetzen. Alte `01-diary`-Bilder in der Asset Library erst löschen, wenn die Produktseiten
+  umgestellt sind (Luca löscht).
 - Bild 7 (offline) und der Duo-Satz sind seit 1.2 zugeordnet.
 
 ### Code
-- **`main`:** 1.2.0 Build 27 plus zwei lokale Commits (Screenshot-Fix 1.2, Planung 1.3).
+- **`main`:** 1.2.0 Build 27 (= live) plus zwei lokale Commits (Screenshot-Fix 1.2, Planung 1.3).
   **Nicht gepusht** – vor jedem Push fragen (die Web-Version deployt von dort).
-- **`release-1.3`** (13 Commits über `main`, **nicht gepusht**): 1.3.0, iOS-Builds 28–36 in TestFlight,
-  aktuell **Build 36**. Inhalt (Details in `docs/RELEASE-1.3.md`):
+- **`release-1.3`** (17 Commits über `main`, **nicht gepusht**): 1.3.0, iOS-Builds 28–38 in TestFlight,
+  aktuell **Build 38**. Inhalt (Details in `docs/RELEASE-1.3.md`):
   - neues Stylesheet `src/ios.css` über `index.css` (Farben, Karten, Segmente mit gleitender
     Markierung, iOS-Schalter, Wasserzeichen-Logo, Ränder)
   - Tab-Leiste Liquid Glass mit gleitender Markierung (`App.tsx`, `.nav-thumb`), grosse Titel
@@ -69,7 +68,9 @@ Entscheidung misst sich daran.
     nach, `.settings-dim` dunkelt ab. Nichts wird getauscht oder neu gescrollt – kein Ruckler.
     (Build 35–37 nutzten eine Kopie der Liste; die schaute oben durch und ruckelte am Ende.) Unterseiten nutzen
     `SettingsPageContext` in `CollapsibleCard.tsx`.
-  - Paywall als Sheet von unten, goldene Kaufknöpfe.
+  - Paywall als Sheet von unten, goldene Kaufknöpfe; am Griff nach unten ziehen schliesst (Build 37).
+  - Lebensmittel als iOS-Liste (Build 37): Stern, Name mit Makros, kcal, Pfeil; Antippen bearbeitet,
+    nach links wischen löscht (Rückfrage vor der Animation über `SwipeRow confirm`).
   - Inhalt scrollt hinter Uhrzeit/Notch durch; `html` trägt die Hintergrundfarbe (keine weisse
     Kante beim Herunterziehen).
   - **Widgets** (`ios/App/SeriousWidgets/SeriousWidgets.swift`): Kalorienring mit Farbverlauf,
@@ -128,7 +129,7 @@ Entscheidung misst sich daran.
 
 ---
 
-## 4. Was zuletzt passiert ist (16.–18.10.)
+## 4. Was zuletzt passiert ist (16.–19.10.)
 
 - iOS-27-Entwurf mit Luca in vielen Runden abgestimmt, gespeichert, Free-Ansicht mit Paywall.
 - 1.2 in App Store Connect angelegt und befüllt (per iris-API, siehe Punkt 5), eingereicht,
@@ -137,6 +138,10 @@ Entscheidung misst sich daran.
 - Akte 1.4 angelegt (Widgets, Duo mit Xcode 27.1), Content-Plan bis Ende Januar.
 - 18.10.: Store-Bilder und Launch-Inhalte für 1.3 erzeugt, Zurückwischen wie iOS, Duo-Prüfung
   (Bericht: alles Wesentliche vorhanden; Tab-Leiste, Markierung, Unterseiten beim Klappen behoben).
+- 19.10.: 1.2 live, Story dazu. Build 37 (Lebensmittel-Liste, Paywall ziehen), Entwürfe „Neu in
+  dieser Version“ 1.3 (`store/LISTING.md`) und Review-Notizen 1.3 (`docs/APP-REVIEW-NOTES.md`,
+  3'233 Zeichen). Build 38: Zurückwischen neu gebaut nach Lucas zweitem Video (oben schaute die
+  Liste durch, am Ende ruckelte es) – jetzt eigene Ebene über der echten Liste, pixelgleich geprüft.
 - **Erinnerung eingerichtet:** geplante Aufgabe `xcode-27-1-duo-check`, montags 09:05 (Auto-Modus,
   läuft nur bei offener App). Meldet, sobald Xcode 27.1 final ist → dann `docs/RELEASE-1.4.md` A7.
 
@@ -204,13 +209,14 @@ Entscheidung misst sich daran.
 1. **1.2 ist live (19.10.).** Story „Update 1.2 is live“ liegt in `marketing/instagram/out-1.2/`
    (`SET=1.2 node marketing/instagram/build.mjs`), Link-Sticker unter „Update now“. Alte `01-diary`-
    Bilder in der Asset Library erst löschen, wenn die eigenen Produktseiten mit 1.3 umgestellt sind.
-2. **1.3 testen** (Build 36): Zurückwischen unter Mehr (Liste darunter), Notch-Bereich, Pro-Karte,
-   Widgets im getönten Modus, Tippen aufs Widget (Ring/Wasser), Stück-Abfrage, Tab-Leiste beim
-   Auf-/Zuklappen. Rückmeldungen in `docs/RELEASE-1.3.md`.
+2. **1.3 testen** (Build 38): Zurückwischen unter Mehr, Lebensmittel-Liste (Wischen, Bearbeiten),
+   Paywall herunterziehen, Notch-Bereich, Pro-Karte, Widgets im getönten Modus, Tippen aufs Widget
+   (Ring/Wasser), Stück-Abfrage, Tab-Leiste beim Auf-/Zuklappen. Rückmeldungen in `docs/RELEASE-1.3.md`.
    Offene Frage an Luca: was genau „Widgets funktionieren nicht“ hiess (Text im Widget? Mehr →
    Diagnose → „Widgets:“).
-3. **Wenn 1.3 steht:** die schon erzeugten Store-Bilder hochladen und zuordnen (iPhone, Duo, Header,
-   Suchbild, beide eigenen Produktseiten), „Neu in dieser Version“, Review-Notizen, Branch
+3. **Wenn Luca 1.3 abnimmt:** Version 1.3 in App Store Connect anlegen, Texte aus den Entwürfen
+   (Luca liest sie vorher), die schon erzeugten Store-Bilder hochladen und zuordnen (iPhone, Duo,
+   Header, Suchbild, beide eigenen Produktseiten), Build wählen, Branch
    `release-1.3` nach `main`, **vor dem Push fragen**, 1.3 einreichen (nach 1.2). Falls sich der
    Look noch ändert: Bilder neu mit `node store/screenshots.mjs iphone duo-outer duo-inner`.
 4. **Content:** Launch-Woche nach `marketing/instagram/POSTING-1.3.md` am Tag, an dem 1.3 live ist.
