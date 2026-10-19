@@ -1,6 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 19.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (iOS-27-Look) liegt als Build 36 in TestFlight**, auf Branch `release-1.3`.
+Stand: 19.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (iOS-27-Look) liegt als Build 37 in TestFlight**, auf Branch `release-1.3`.
 Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll ohne Rückfragen
 weiterarbeiten können.
 
@@ -238,4 +238,4 @@ LANG=en_US.UTF-8 npx cap sync ios
 
 Archiv und Upload stehen in `docs/NATIVE.md`; Build-Nummer `CURRENT_PROJECT_VERSION` an **vier**
 Stellen in `ios/App/App.xcodeproj/project.pbxproj` hochzählen (App und SeriousWidgets), sonst lehnt
-App Store Connect ab. Nächste freie Build-Nummer: **37**.
+App Store Connect ab. Nächste freie Build-Nummer: **38**.

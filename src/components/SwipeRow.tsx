@@ -10,6 +10,8 @@ interface Props {
   /** Sichtbarer Text auf der roten Fläche */
   actionText: string;
   className?: string;
+  /** Rückfrage vor dem Löschen; false lässt die Zeile zurückfedern */
+  confirm?: () => boolean;
 }
 
 const ACTION_W = 88;
@@ -19,7 +21,7 @@ const EASE = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
  * Listenzeile wie in iOS: nach links wischen zeigt „Löschen“, weit wischen (über die halbe Breite)
  * löscht direkt. Senkrechtes Scrollen bleibt frei; erst eine klar waagrechte Bewegung greift.
  */
-export function SwipeRow({ children, onDelete, deleteLabel, actionText, className = '' }: Props) {
+export function SwipeRow({ children, onDelete, deleteLabel, actionText, className = '', confirm }: Props) {
   const liRef = useRef<HTMLLIElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
   const actRef = useRef<HTMLButtonElement>(null);
@@ -42,6 +44,11 @@ export function SwipeRow({ children, onDelete, deleteLabel, actionText, classNam
 
   function remove() {
     if (removing.current) return;
+    if (confirm && !confirm()) {
+      actRef.current?.classList.remove('armed');
+      setPos(0, true);
+      return;
+    }
     removing.current = true;
     const li = liRef.current;
     if (!li) return onDelete();

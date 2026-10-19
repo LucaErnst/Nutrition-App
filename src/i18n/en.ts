@@ -218,6 +218,8 @@ export const en = {
   'db.noneOwn': 'No foods of your own yet. Scan a barcode or add one – this is where what you actually eat will live.',
   'db.hint': 'Values per 100 g / ml · Changes apply to new entries; days already logged stay unchanged.',
   'db.none': 'Nothing found.',
+  'db.removeItem': 'Delete {name}',
+  'db.editItem': 'Edit {name}',
   'db.favorite': 'Favorite',
   'db.confirmRemove': 'Remove “{name}” from the database?',
   'db.source.reference': 'Reference',

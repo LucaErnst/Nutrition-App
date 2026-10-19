@@ -1295,3 +1295,84 @@ body {
 .app-native .app-header {
   display: block;
 }
+
+/* Lebensmittel als iOS-Liste: Stern, Name mit Makros, kcal, Pfeil; Antippen bearbeitet,
+   nach links wischen löscht (18.10.2026) */
+.db-list.card {
+  padding: 0;
+  overflow: hidden;
+}
+.db-item {
+  display: block;
+  padding: 0;
+  border-top: 0;
+}
+.db-item .swipe-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px 6px 6px;
+  min-height: 58px;
+}
+.db-item + .db-item .swipe-row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 48px;
+  right: 0;
+  border-top: 0.5px solid var(--border);
+}
+.db-item .star {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  font-size: 19px;
+  color: var(--text-3);
+}
+.db-item .star.on {
+  color: var(--orange);
+}
+.db-item-open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  padding: 4px 0;
+}
+.db-item-open:active {
+  scale: 1;
+  opacity: 0.6;
+}
+.db-item-open .db-item-main {
+  flex: 1;
+  min-width: 0;
+}
+.db-item-open .search-item-name {
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.db-item-meta {
+  font-size: 12.5px;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+.db-item-kcal {
+  font-size: 15px;
+  color: var(--text-2);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Paywall-Sheet: Griff und Kopf sind die Zieh-Fläche */
+.sheet-drag {
+  touch-action: none;
+  cursor: grab;
+  padding-top: 2px;
+}

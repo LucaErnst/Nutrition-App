@@ -128,6 +128,38 @@ Serious Nutrition Pro schaltet Vorlagen, Portionsgrössen, Gewichtsdiagramm, Wid
 
 Produktdaten © Open Food Facts Contributors (ODbL). Grundnahrungsmittel aus dem Bundeslebensmittelschlüssel 4.0, Max Rubner-Institut, CC BY 4.0, aus der Schweizer Nährwertdatenbank V 7.1 des Bundesamts für Lebensmittelsicherheit und Veterinärwesen BLV und aus USDA FoodData Central (gemeinfrei). Serious Nutrition ist ein Tracking-Werkzeug, keine medizinische Beratung.
 
+## Neu in dieser Version (1.3)
+
+Entwurf vom 19.10.2026, noch nicht eingetragen. Kein Preis, kein „gratis“, kein „Abo“ (Guideline 2.3.7).
+
+### Englisch
+
+A new look that feels like your iPhone – and a few things that make logging faster.
+
+• A calorie ring that fills up during the day: red at the start, green when you hit your target
+• Training day and rest day in one tap, each with its own colour
+• Swipe left to delete an entry – undo if you didn’t mean it
+• Tap + and your favorites and recently added foods are already there
+• Every food can be logged by the piece – the app asks the weight once and remembers it
+• Your week at a glance: green on target, violet below, red above
+• More works like the iOS Settings, with its own pages and swipe back
+• Widgets in the new style, ready for tinted and clear Home Screens; tap the ring for your diary or water to log a glass
+• Works on every iPhone display, including folding and unfolding
+
+### Deutsch
+
+Ein neuer Look, der sich wie dein iPhone anfühlt – und ein paar Dinge, die das Eintragen schneller machen.
+
+• Ein Kalorienring, der sich über den Tag füllt: rot am Anfang, grün, wenn du dein Ziel erreichst
+• Trainingstag und Ruhetag mit einem Tipp, jeder mit eigener Farbe
+• Einen Eintrag nach links wischen löscht ihn – mit Rückgängig, falls es ein Versehen war
+• Tippst du auf +, stehen deine Favoriten und zuletzt eingetragenen Lebensmittel schon da
+• Jedes Lebensmittel lässt sich in Stück eintragen – die App fragt einmal nach dem Gewicht und merkt es sich
+• Deine Woche auf einen Blick: grün im Ziel, violett darunter, rot darüber
+• „Mehr“ funktioniert wie die iOS-Einstellungen, mit eigenen Seiten und Zurückwischen
+• Widgets im neuen Stil, auch für getönte und durchsichtige Home-Bildschirme; Tipp auf den Ring öffnet das Tagebuch, auf Wasser die Wasserzeile
+• Läuft auf jedem iPhone-Display, auch beim Auf- und Zuklappen
+
 ## Neu in dieser Version (1.2)
 
 ### Englisch

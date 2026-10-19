@@ -9,6 +9,7 @@ import { ProductSearch } from './ProductSearch';
 import { offProductToFoodItem } from '../lib/openfoodfacts';
 import { rankFoods } from '../lib/foodRank';
 import { useT } from '../i18n';
+import { SwipeRow } from './SwipeRow';
 
 /**
  * Höchstens so viele Zeilen. Die mitgelieferte Tabelle hat über sechstausend Einträge; wer sie
@@ -45,7 +46,6 @@ export function FoodDatabase() {
   const results = useMemo(() => ranked.slice(0, MAX_ROWS), [ranked]);
 
   async function remove(item: FoodItem) {
-    if (!confirm(t('db.confirmRemove', { name: item.name }))) return;
     await deleteFoodItem(item.id!);
   }
 
@@ -75,33 +75,37 @@ export function FoodDatabase() {
       </p>
       <ul className="db-list card">
         {results.map((f) => (
-          <li key={f.id} className="db-item">
-            <div className="db-item-main">
-              <span className="search-item-name">{f.name}</span>
-              <span className="db-item-meta">
-                {f.brand && <>{f.brand} · </>}
-                {t(`db.source.${f.source}`)}
-                {f.unit_type === 'piece' && ` · ${t('db.perPiece', { n: fmt(f.piece_weight_g ?? 0) })}`}
+          <SwipeRow
+            key={f.id}
+            className="db-item"
+            onDelete={() => void remove(f)}
+            confirm={() => window.confirm(t('db.confirmRemove', { name: f.name }))}
+            deleteLabel={t('db.removeItem', { name: f.name })}
+            actionText={t('common.delete')}
+          >
+            <button
+              className={`btn-icon star ${f.favorite ? 'on' : ''}`}
+              onClick={() => void toggleFavorite(f)}
+              aria-pressed={!!f.favorite}
+              aria-label={f.favorite ? t('search.favRemove', { name: f.name }) : t('search.favAdd', { name: f.name })}
+            >
+              {f.favorite ? '★' : '☆'}
+            </button>
+            <button className="db-item-open" onClick={() => setEditing(f)} aria-label={t('db.editItem', { name: f.name })}>
+              <span className="db-item-main">
+                <span className="search-item-name">{f.name}</span>
+                <span className="db-item-meta">
+                  {f.brand && <>{f.brand} · </>}
+                  {t('macro.p')} {fmt(f.protein_per_100g, 1)} · {t('macro.f')} {fmt(f.fat_per_100g, 1)} · {t('macro.c')} {fmt(f.carbs_per_100g, 1)}
+                  {f.unit_type === 'piece' && ` · ${t('db.perPiece', { n: fmt(f.piece_weight_g ?? 0) })}`}
+                </span>
               </span>
-            </div>
-            <div className="db-item-macros">
-              <span className="entry-kcal">{fmt(f.kcal_per_100g)} kcal</span>
-              <span>{t('macro.p')} {fmt(f.protein_per_100g, 1)}</span>
-              <span>{t('macro.f')} {fmt(f.fat_per_100g, 1)}</span>
-              <span>{t('macro.c')} {fmt(f.carbs_per_100g, 1)}</span>
-            </div>
-            <div className="db-item-actions">
-              <button className={`btn-link star-text ${f.favorite ? 'on' : ''}`} onClick={() => void toggleFavorite(f)} aria-pressed={!!f.favorite}>
-                {f.favorite ? '★' : '☆'} {t('db.favorite')}
-              </button>
-              <button className="btn-link" onClick={() => setEditing(f)}>
-                {t('common.edit')}
-              </button>
-              <button className="btn-link danger" onClick={() => void remove(f)}>
-                {t('common.remove')}
-              </button>
-            </div>
-          </li>
+              <span className="db-item-kcal">{fmt(f.kcal_per_100g)} kcal</span>
+              <svg className="setting-chevron" viewBox="0 0 8 13" width="8" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M1.5 1.5 6.5 6.5l-5 5" />
+              </svg>
+            </button>
+          </SwipeRow>
         ))}
         {foods && results.length === 0 && (
           <li className="search-empty">{query.trim() ? t('db.none') : t('db.noneOwn')}</li>

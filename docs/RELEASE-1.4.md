@@ -65,8 +65,8 @@ Mit Xcode 27.1 zu tun:
 - [ ] Mit dem 27.1-SDK bauen und hochladen; Store-Bilder ggf. aus dem echten Simulator neu
 
 ## B. Aus 1.3 offen geblieben
-- Paywall-Sheet: nach unten ziehen zum Schliessen (heute nur ×).
-- Lebensmittel-Liste unter „Lebensmittel“ voll im Listen-Stil (Zeilen wie unter „Mehr“).
+- ~~Paywall-Sheet: nach unten ziehen zum Schliessen~~ – in 1.3 Build 37 erledigt.
+- ~~Lebensmittel-Liste im Listen-Stil~~ – in 1.3 Build 37 erledigt.
 - Store-Bilder und Header ohne Preis-, Gratis- oder Abo-Hinweise (siehe `docs/RELEASE-1.3.md` F).
 
 ## C. Vor dem Release

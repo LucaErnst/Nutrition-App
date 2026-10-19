@@ -124,3 +124,33 @@ EXTERNAL SERVICES - Open Food Facts over HTTPS only for products that are not bu
 
 Developer: Luca Ernst, Basel, Switzerland - beseriouscalisthenics@gmail.com
 ```
+
+
+# Entwurf für 1.3 (19.10.2026)
+
+Gesamttext fürs Feld „Notes“ (ersetzt den 1.2-Text, Limit 4'000 Zeichen):
+
+```
+Serious Nutrition is an offline calorie and macro tracker. No account, login or sign-in exists; all data is stored on the device. The screen recording attached to earlier versions shows the full flow (onboarding, adding food, barcode scan incl. camera prompt, water, week, weight, foods, settings, backup).
+
+PURPOSE - A calorie and macro diary for people who train with a goal (muscle gain, fat loss, maintenance), built by a calisthenics coach. Targets differ between training and rest days, protein is a minimum, fat a range, and the week is treated as a budget.
+
+SETUP - No login or sample files needed. First launch: onboarding suggests targets; "Skip" is available. Diary: "+ Add" on a meal > Search, Scan, Templates or Manual. Any retail barcode works for testing the scanner.
+
+IN-APP PURCHASE - One non-consumable, "Serious Nutrition Pro" (pro_lifetime): one-time, no subscription, no trial, no account. Validated through StoreKit via RevenueCat; "Restore purchases" is on the paywall and under More. Free stays free: diary, scanning, search, water, targets, week and weekly budget, reminders, backup. Pro unlocks Apple Health, the phase review, widgets, templates and "copy yesterday", portion sizes, the weight trend chart and CSV export. To see the paywall: More > Serious Nutrition Pro, or tap any item marked PRO. Users who had the app before 1.1 keep Pro for free; a fresh install sees the paywall (intended).
+
+WHAT'S NEW IN 1.3 - A redesign in the style of current iOS; no new data, no new permissions.
+- Diary: calorie ring, training/rest day switch, swipe left on an entry to delete (with Undo).
+- Add sheet: favorites and recently added foods appear before typing. Any food can be logged by the piece; the app asks the weight per piece once and stores it with the food.
+- More: works like the iOS Settings app - each row opens its own page; back via the round button or an edge swipe. The paywall opens from the Serious Nutrition Pro card at the top of More or from any item marked PRO.
+- Widgets: new style, support for tinted/clear Home Screens. Tapping the ring opens the diary, tapping water opens the diary at the water row (URL scheme seriousnutrition://).
+- Layout adapts live to any iPhone display size, including folding/unfolding.
+
+FROM 1.2 (unchanged) - About 290,000 Open Food Facts products bundled (ODbL) so scans and search work offline; about 6,300 USDA basic foods in English; Apple Health also reads steps (display only, part of Pro); needs calculator under More > Phases > "Calculate needs" (Mifflin-St Jeor, DGE factors, a starting point, not medical advice).
+
+DATA SOURCES - Bundled basic foods: German Nutrient Database (BLS 4.0, Max Rubner-Institut, CC BY 4.0), about 500 entries from the Swiss Food Composition Database V 7.1 (FSVO, written permission of 30 September 2026) and USDA FoodData Central. Bundled data, not services.
+
+EXTERNAL SERVICES - Open Food Facts over HTTPS only for products that are not bundled; Apple StoreKit via RevenueCat for the purchase. No analytics, no ads, no backend of our own. No regional differences besides UI language (English/German) and number formatting. Not a medical device.
+
+Developer: Luca Ernst, Basel, Switzerland - beseriouscalisthenics@gmail.com
+```

@@ -205,6 +205,8 @@ export const de: Record<MessageKey, string> = {
   'db.noneOwn': 'Noch keine eigenen Lebensmittel. Scanne einen Barcode oder lege eines an – hier steht dann, was du wirklich isst.',
   'db.hint': 'Werte pro 100 g / ml · Änderungen gelten für neue Einträge, bereits eingetragene Tage bleiben unverändert.',
   'db.none': 'Nichts gefunden.',
+  'db.removeItem': '{name} löschen',
+  'db.editItem': '{name} bearbeiten',
   'db.favorite': 'Favorit',
   'db.confirmRemove': '„{name}“ aus der Datenbank entfernen?',
   'db.source.reference': 'Referenz',

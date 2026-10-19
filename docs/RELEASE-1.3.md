@@ -158,7 +158,8 @@ Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eig
 - [ ] Widgets: wenn das Aussehen mitzieht, Widget-Bild in den Screenshots tauschen.
 
 ### F3. App Store – Texte
-- [ ] „Neu in dieser Version“ 1.3 DE/EN: neuer Look, Wischen zum Löschen mit
+- [x] Entwurf „Neu in dieser Version“ 1.3 DE/EN in `store/LISTING.md`, Review-Notizen-Entwurf in
+      `docs/APP-REVIEW-NOTES.md` (3'233 Zeichen). Ursprüngliche Stichworte: neuer Look, Wischen zum Löschen mit
       Rückgängig, farbiger Kalorienring, Wochenschnitt als Ring, Balkenfarben in der Woche.
 - [ ] Beschreibung: ein Satz zum Look nur, wenn er Nutzen beschreibt (z.B. „Swipe between days“).
 - [ ] **Werbetext** nennt den Einführungspreis bis 31. Januar → spätestens 31.01.2027 zurücksetzen.
@@ -182,3 +183,8 @@ Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eig
 - Termin für 1.3 (Bauzeit realistisch 1–2 Wochen inkl. Test auf Lucas iPhone).
 - Soll 1.3 vor Weihnachten live sein? Dann Einreichung spätestens ~10.12., weil Reviews um die
   Feiertage oft länger dauern.
+
+## G. Build 37 (19.10.2026)
+- Lebensmittel als iOS-Liste: Stern links, Name mit Makros, kcal und Pfeil; Antippen öffnet das
+  Bearbeiten, nach links wischen löscht (Rückfrage vor der Animation, `SwipeRow confirm`).
+- Paywall-Sheet: am Griff oder Kopf nach unten ziehen schliesst (kurz zieht zurück).
