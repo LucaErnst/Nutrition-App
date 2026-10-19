@@ -201,4 +201,10 @@ Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eig
 - Build 38 getestet: Zurückwischen unter Mehr sauber, Lebensmittel-Liste gut, Stück-Abfrage geht.
 - Paywall nicht prüfbar: Luca ist Early Adopter (Pro geschenkt), der Schalter „Als Free ansehen“
   in `ProSection.tsx` erscheint nur im Dev-Build (`import.meta.env.DEV`), also nicht in TestFlight.
-  Luca nimmt die Paywall aus dem Entwurf ab; kein versteckter Free-Schalter für TestFlight.
+  Luca nimmt die Paywall aus dem Entwurf ab; kein versteckter Free-Schalter für TestFlight.- Notch, Pro-Karte, Widget-Tipp: gut.
+
+## J. Build 39 (19.10.2026)
+
+- Tipp auf den offenen Tab gleitet sanft nach ganz oben (alle Tabs). Unter Mehr: Ist eine
+  Unterseite heruntergescrollt, gleitet erst sie nach oben; steht sie oben, führt der nächste Tipp
+  zurück zur Liste (an die alte Stelle). Wie in iOS. Tests in `e2e/more-pages.spec.ts`.

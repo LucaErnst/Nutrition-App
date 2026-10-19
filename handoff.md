@@ -1,6 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 19.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (iOS-27-Look) liegt als Build 38 in TestFlight**, auf Branch `release-1.3`.
+Stand: 19.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (iOS-27-Look) liegt als Build 39 in TestFlight**, auf Branch `release-1.3`.
 Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll ohne Rückfragen
 weiterarbeiten können.
 
@@ -45,7 +45,7 @@ Entscheidung misst sich daran.
 - **`main`:** 1.2.0 Build 27 (= live) plus zwei lokale Commits (Screenshot-Fix 1.2, Planung 1.3).
   **Nicht gepusht** – vor jedem Push fragen (die Web-Version deployt von dort).
 - **`release-1.3`** (17 Commits über `main`, **nicht gepusht**): 1.3.0, iOS-Builds 28–38 in TestFlight,
-  aktuell **Build 38**. Inhalt (Details in `docs/RELEASE-1.3.md`):
+  aktuell **Build 39** (Tipp auf offenen Tab → nach oben, auch auf Unterseiten unter Mehr). Inhalt (Details in `docs/RELEASE-1.3.md`):
   - neues Stylesheet `src/ios.css` über `index.css` (Farben, Karten, Segmente mit gleitender
     Markierung, iOS-Schalter, Wasserzeichen-Logo, Ränder)
   - Tab-Leiste Liquid Glass mit gleitender Markierung (`App.tsx`, `.nav-thumb`), grosse Titel
@@ -209,11 +209,11 @@ Entscheidung misst sich daran.
 1. **1.2 ist live (19.10.).** Story „Update 1.2 is live“ liegt in `marketing/instagram/out-1.2/`
    (`SET=1.2 node marketing/instagram/build.mjs`), Link-Sticker unter „Update now“. Alte `01-diary`-
    Bilder in der Asset Library erst löschen, wenn die eigenen Produktseiten mit 1.3 umgestellt sind.
-2. **1.3 testen** (Build 38): Zurückwischen, Lebensmittel-Liste, Stück-Abfrage und Widgets laut
-   Luca gut (19.10.). Paywall nimmt Luca aus dem Entwurf ab
-   (in TestFlight nicht sichtbar, Early Adopter; kein Free-Schalter einbauen). Offen: Notch-Bereich, Pro-Karte, Tippen aufs
-   Widget (Ring/Wasser), Tab-Leiste beim Auf-/Zuklappen. Rückmeldungen in `docs/RELEASE-1.3.md`. Widgets: laut Luca
-   (19.10.) gut, Frage erledigt.
+2. **1.3 testen:** Build 38 laut Luca gut (Zurückwischen, Lebensmittel-Liste, Stück, Widgets,
+   Notch, Pro-Karte; Paywall aus dem Entwurf abgenommen, kein Free-Schalter einbauen).
+   **Build 39** prüfen: Tipp auf offenen Tab gleitet nach oben, unter Mehr erst Unterseite nach
+   oben, dann zurück zur Liste. Danach Abnahme 1.3. Noch offen: Tab-Leiste beim
+   Auf-/Zuklappen (Duo). Rückmeldungen in `docs/RELEASE-1.3.md`.
 3. **Wenn Luca 1.3 abnimmt:** Version 1.3 in App Store Connect anlegen, Texte aus den Entwürfen
    (Luca liest sie vorher), die schon erzeugten Store-Bilder hochladen und zuordnen (iPhone, Duo,
    Header, Suchbild, beide eigenen Produktseiten), Build wählen, Branch
@@ -224,11 +224,13 @@ Entscheidung misst sich daran.
 5. **Xcode 27.1:** sobald die Erinnerung kommt (oder Luca es sagt) → `docs/RELEASE-1.4.md` A7
    (Duo-Simulator, Widgets, Build mit 27.1-SDK; Pflicht ab April 2027).
 6. **Kauftest** mit Lucas echtem Apple-Konto (nur Luca). Impressum/Rechtstexte auf beserious.ch (Luca).
-7. **31.01.2027:** Werbetext zurücksetzen (nennt den Einführungspreis). 01.02. Preis CHF 25,
+7. **In-App-Event „January Reset“** (Luca: ja, 19.10.): Texte und Bilder in
+   `docs/EVENT-JANUARY-RESET.md`, Bilder `store/event-january-reset/`. Nach 1.3-Freigabe in ASC
+   anlegen, Luca reicht bis ~17.12. ein.
+8. **31.01.2027:** Werbetext zurücksetzen (nennt den Einführungspreis). 01.02. Preis CHF 25,
    Deutschland und Österreich EUR 34.99 (eigener Preis, bis Ende Januar eintragen, Luca klickt).
 
 **Offene Entscheidungen von Luca**
-- In-App-Event „January Reset“ ja/nein (einreichen bis ~17.12.).
 - Ebook-Bündel über Offer Codes.
 - *Entschieden 19.10.:* Balkengrenzen 90–105 % bleiben; Preisplan bleibt, Deutschland und Österreich EUR 34.99.
 
@@ -247,4 +249,4 @@ LANG=en_US.UTF-8 npx cap sync ios
 
 Archiv und Upload stehen in `docs/NATIVE.md`; Build-Nummer `CURRENT_PROJECT_VERSION` an **vier**
 Stellen in `ios/App/App.xcodeproj/project.pbxproj` hochzählen (App und SeriousWidgets), sonst lehnt
-App Store Connect ab. Nächste freie Build-Nummer: **39**.
+App Store Connect ab. Nächste freie Build-Nummer: **40**.
