@@ -44,7 +44,7 @@ export const IconMore = (p: P) => (
   </svg>
 );
 
-export type SettingKind = 'reminders' | 'health' | 'backup' | 'units' | 'diag' | 'water' | 'tips' | 'language' | 'legal';
+export type SettingKind = 'reminders' | 'health' | 'backup' | 'units' | 'diag' | 'water' | 'tips' | 'language' | 'legal' | 'sources';
 
 const SETTING: Record<SettingKind, { bg: string; path: ReactNode }> = {
   reminders: { bg: '#ff3b30', path: <><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15Z" /><path d="M10 21h4" /></> },
@@ -55,6 +55,7 @@ const SETTING: Record<SettingKind, { bg: string; path: ReactNode }> = {
   water: { bg: '#0a9fdb', path: <path d="M12 3.5s6 6.4 6 10.7a6 6 0 0 1-12 0C6 9.9 12 3.5 12 3.5Z" fill="currentColor" stroke="none" /> },
   tips: { bg: '#af52de', path: <><circle cx="12" cy="12" r="8" /><path d="M12 11v5M12 8v.1" /></> },
   language: { bg: '#007aff', path: <><circle cx="12" cy="12" r="8" /><path d="M4 12h16M12 4c2.5 2.4 2.5 13.6 0 16M12 4c-2.5 2.4-2.5 13.6 0 16" /></> },
+  sources: { bg: '#007aff', path: <><path d="M5 5.5A1.5 1.5 0 0 1 6.5 4H11v15H6.5A1.5 1.5 0 0 0 5 20.5Z" /><path d="M19 5.5A1.5 1.5 0 0 0 17.5 4H13v15h4.5a1.5 1.5 0 0 1 1.5 1.5Z" /></> },
   legal: { bg: '#8e8e93', path: <><rect x="6" y="3.5" width="12" height="17" rx="2" /><path d="M9 8h6M9 12h6M9 16h3" /></> },
 };
 

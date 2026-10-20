@@ -15,11 +15,12 @@ import { useToast } from './Toast';
 import { SettingIcon, type SettingKind } from './Icons';
 import { usePro } from '../lib/pro';
 import { isNative } from '../lib/native';
+import { SourcesLink, SourcesList } from './Sources';
 
 /** Rechtstexte liegen auf der Web-Adresse – auch die native App verlinkt dorthin. */
 const LEGAL_BASE = 'https://lucaernst.github.io/Nutrition-App/legal/';
 
-type Page = 'reminders' | 'health' | 'units' | 'water' | 'language' | 'tips' | 'backup' | 'diag';
+type Page = 'reminders' | 'health' | 'units' | 'water' | 'language' | 'tips' | 'backup' | 'diag' | 'sources';
 
 const LANGS: { id: Language; label: string }[] = [
   { id: 'en', label: 'English' },
@@ -220,6 +221,7 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
           </button>
         ))}
       </div>
+      <SourcesLink topics={['water']} />
     </>
   );
 
@@ -265,6 +267,17 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
       content: <BackupSection />,
     },
     diag: { title: t('diag.title'), icon: 'diag', content: <DiagnosticsSection /> },
+    // Guideline 1.4.1: Belege für alle Gesundheitsangaben, leicht auffindbar.
+    sources: {
+      title: t('sources.title'),
+      icon: 'sources',
+      content: (
+        <>
+          <p className="search-hint">{t('sources.intro')}</p>
+          <SourcesList />
+        </>
+      ),
+    },
   };
 
   const row = (id: Page) => {
@@ -303,6 +316,7 @@ export function MoreView({ resetKey = 0 }: { resetKey?: number }) {
       <div className="settings-block">
         <h3 className="group-title">{t('more.legal')}</h3>
         <div className="settings-group">
+          {row('sources')}
           {(
             [
               ['privacy', t('more.privacy')],

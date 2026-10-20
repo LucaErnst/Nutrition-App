@@ -154,3 +154,32 @@ EXTERNAL SERVICES - Open Food Facts over HTTPS only for products that are not bu
 
 Developer: Luca Ernst, Basel, Switzerland - beseriouscalisthenics@gmail.com
 ```
+
+# Ablehnung 1.3 (20.10.2026) – Guideline 1.4.1 Safety: Physical Harm
+
+Apple: „The app includes medical information but does not include citations“ – Berechnungen und
+Empfehlungen ohne Quellen. Behoben in Build 42: Seite „Quellen“ unter Mehr → Rechtliches
+(`src/lib/sources.ts`, `src/components/Sources.tsx`), dazu aufklappbare „Quellen“ unter dem
+Rechner-Ergebnis (auch im Onboarding), in der Phasen-Auswertung und beim Wasserziel; Hinweis
+„kein Medizinprodukt“.
+
+Absatz für die Review-Notizen (vor „DATA SOURCES“ einfügen):
+
+```
+HEALTH SOURCES (Guideline 1.4.1, fixed in build 42) - Every health calculation and recommendation now cites its sources inside the app. More > Legal > Sources lists calorie needs (Mifflin-St Jeor 1990, German Nutrition Society DGE), protein and fat (ISSN position stand 2017, Morton 2018, Helms 2014, DGE, WHO), rate of weight change in the phase review (Helms 2014, Garthe 2011, Iraki 2019), water (EFSA 2010, DGE) and steps (Levine 2002), each with a link to the publication (DOI) or reference values. A "Sources" link also sits directly below the needs calculator result (More > Phases > Calculate needs, and at the end of onboarding), in the phase review and on the water goal page. A note states that the app is not a medical device.
+```
+
+Antwort an App Review (Luca sendet):
+
+```
+Hello,
+
+Thank you for the review. In build 42 every health calculation and recommendation now cites its sources inside the app:
+
+- More > Legal > Sources: calorie needs (Mifflin-St Jeor equation, German Nutrition Society reference values), protein and fat (ISSN position stand, Morton 2018, Helms 2014, DGE, WHO), rate of weight change in the phase review (Helms 2014, Garthe 2011, Iraki 2019), water (EFSA, DGE) and steps (Levine 2002). Each source links to the publication (DOI) or the official reference values.
+- A "Sources" link sits directly below the needs calculator result (More > Phases > Calculate needs, also at the end of onboarding), in the phase review and on the water goal page.
+- The Sources page also states that the app is not a medical device and does not replace medical advice.
+
+Best regards,
+Luca Ernst
+```

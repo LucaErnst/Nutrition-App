@@ -9,6 +9,7 @@ import { evaluatePhase, type PhaseReport } from '../lib/phase';
 import { scheduleReminderSync } from '../lib/remindersNative';
 import { phaseDisplayName, useT } from '../i18n';
 import { Modal } from './Modal';
+import { SourcesLink } from './Sources';
 
 interface Props {
   goal: DailyGoal;
@@ -131,6 +132,7 @@ export function PhaseReview({ goal, onClose }: Props) {
           {applied && <p className="form-ok">{t('phase.applied')}</p>}
 
           <blockquote className="phase-quote">{t(report.verdict === 'too_fast' && report.type === 'cut' ? 'phase.quote2' : report.verdict === 'on_track' ? 'phase.quote3' : 'phase.quote1')}</blockquote>
+          <SourcesLink topics={['rate', 'activity']} />
         </div>
       )}
     </Modal>

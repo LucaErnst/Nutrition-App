@@ -6,6 +6,7 @@ import { fmt } from '../lib/nutrition';
 import { withTrend } from '../lib/weight';
 import { suggestGoals, type GoalSuggestion, type Lifestyle, type Phase, type Sex } from '../lib/onboarding';
 import type { DailyGoal } from '../db/types';
+import { SourcesLink } from './Sources';
 
 /** Eingaben als Text, so wie sie im Formular stehen. */
 export interface BodyState {
@@ -168,6 +169,7 @@ export function NeedsBreakdown({ g, trainingDays, weightKg }: { g: GoalSuggestio
       {g.floored && <p className="search-hint">{t('ob.floored')}</p>}
       {g.reference_weight_kg < Math.round(weightKg) && <p className="search-hint">{t('ob.refWeight')}</p>}
       <p className="search-hint">{t('ob.startingPoint')}</p>
+      <SourcesLink topics={['needs', 'macros', 'water']} />
     </div>
   );
 }

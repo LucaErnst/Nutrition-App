@@ -1408,3 +1408,50 @@ body {
   from { opacity: 1; }
   to { opacity: 0; }
 }
+
+/* Quellen (Guideline 1.4.1): Seite unter „Mehr“ und aufklappbar bei Rechner, Phasen-Auswertung, Wasser. */
+.sources {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sources-topic h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.sources-topic p {
+  margin: 0 0 8px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+.sources-topic ul {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sources-topic li {
+  font-size: 13px;
+  line-height: 1.35;
+}
+.sources-topic a {
+  color: var(--accent, #0a84ff);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.sources-compact {
+  margin-top: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(127, 127, 127, 0.12);
+  text-align: left;
+}
+.sources-link {
+  margin-top: 6px;
+}
+.sources-note {
+  margin-top: 8px;
+}

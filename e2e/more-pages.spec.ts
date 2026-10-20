@@ -52,3 +52,12 @@ test('Tipp auf den offenen Tab gleitet nach ganz oben', async ({ page }) => {
   await page.locator('.app-nav').getByRole('button', { name: 'More' }).click();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
 });
+
+test('Mehr: Quellen-Seite listet Belege mit Links (Guideline 1.4.1)', async ({ page }) => {
+  await openSection(page, 'Sources');
+  const pg = page.locator('.settings-page');
+  await expect(pg.getByRole('heading', { name: 'Calorie needs' })).toBeVisible();
+  await expect(pg.locator('a[href="https://doi.org/10.1093/ajcn/51.2.241"]')).toBeVisible();
+  await expect(pg.locator('.sources-topic')).toHaveCount(5);
+  await expect(pg.getByText('not a medical device')).toBeVisible();
+});
