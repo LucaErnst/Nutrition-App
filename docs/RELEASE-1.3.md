@@ -231,3 +231,12 @@ Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eig
 - Bilder: iPhone 6,7" und Duo (innen) je 7 pro Sprache neu, Header und Suchbild DE/EN neu.
   Suchbild als 1920×1280 (App Store Connect nennt 5244×2950, 3840×2560, 1920×1280).
 - Offen: Einreichen (Luca). Eigene Produktseiten ab 23.11. umstellen.
+
+## N. Ablehnung 20.10.2026 – Guideline 1.4.1, Build 42
+
+- Apple: medizinische Angaben ohne Quellen (Rechner, Empfehlungen). Geprüft auf iPad Air 11".
+- Build 42: Seite „Quellen“ (Mehr → Rechtliches), 5 Themen mit 13 Belegen (alle DOIs geprüft),
+  aufklappbar unter Rechner-Ergebnis/Onboarding, Phasen-Auswertung, Wasserziel; Hinweis „kein
+  Medizinprodukt“. e2e-Test in `e2e/more-pages.spec.ts`.
+- Build 42 an 1.3 gehängt, Notizen ergänzt. Release-Termin 23.11. bleibt.
+- Wackeliger Test beobachtet: `e2e/units.spec.ts:31` (einmal rot im Gesamtlauf, einzeln 3× grün).

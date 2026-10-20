@@ -1,6 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 20.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (iOS-27-Look) liegt als Build 41 in TestFlight**, auf Branch `release-1.3`.
+Stand: 20.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (iOS-27-Look): Build 42 an Version 1.3, nach Ablehnung (1.4.1) bereit zum Neueinreichen**, auf Branch `release-1.3`.
 Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll ohne Rückfragen
 weiterarbeiten können.
 
@@ -183,6 +183,8 @@ Entscheidung misst sich daran.
   (Wurzel steht dort ohnehin auf 0.17.0).
 - Scan-Plugin (ML Kit) stellt den WebView-Hintergrund nach jedem Scan auf Weiss → `syncNativeBackground()`
   danach aufrufen; neue lokale Plugins in `MainViewController.swift` registrieren.
+- **Gesundheitsangaben brauchen Quellen in der App** (Ablehnung 1.3, 1.4.1). Neue Zahlen oder
+  Empfehlungen immer in `src/lib/sources.ts` belegen (DOI prüfen).
 - Widgets: `widgetAccentedRenderingMode` gibt es nur auf `Image` nach `.resizable()`.
 - **Git-Identität:** Seit 18.10. kann Git Name/Mail nicht mehr aus dem Rechnernamen ableiten
   (Netzwerkname geändert, keine `~/.gitconfig`). Committen mit
@@ -217,7 +219,11 @@ Entscheidung misst sich daran.
    oben, dann zurück zur Liste; nach dem Scannen kein weisser Schimmer (Build 40 laut Video ok);
    Scanner öffnet und schliesst ohne sichtbaren Rahmen über der App. Danach Abnahme 1.3. Noch offen: Tab-Leiste beim
    Auf-/Zuklappen (Duo). Rückmeldungen in `docs/RELEASE-1.3.md`.
-3. **1.3 in App Store Connect angelegt (20.10.)**, Status „Prepare for Submission“: Build 41,
+3. **1.3 in App Store Connect (20.10.)**: am 20.10. eingereicht und **abgelehnt, Guideline 1.4.1**
+   (Gesundheitsangaben ohne Quellen). Behoben in **Build 42** (Seite Mehr → Rechtliches → Quellen mit
+   DOI-Links, aufklappbare Quellen bei Rechner, Phasen-Auswertung, Wasser; `src/lib/sources.ts`).
+   Build 42 angehängt, Review-Notizen mit Abschnitt HEALTH SOURCES (3'973 Zeichen). **Luca: neu
+   einreichen und die Antwort aus `docs/APP-REVIEW-NOTES.md` senden.** Sonst unverändert:
    Veröffentlichung geplant **Mo 23.11.2026, 08:00** (frühestens, nach Freigabe), „Neu in dieser
    Version“ + Werbetext DE/EN, Review-Notizen 1.3, 7 iPhone- und 7 Duo-Bilder je Sprache (alte aus
    der Version entfernt, 1.2 unberührt), Header + Suchbild DE/EN neu (Suchbild auf 1920×1280
@@ -260,4 +266,4 @@ LANG=en_US.UTF-8 npx cap sync ios
 
 Archiv und Upload stehen in `docs/NATIVE.md`; Build-Nummer `CURRENT_PROJECT_VERSION` an **vier**
 Stellen in `ios/App/App.xcodeproj/project.pbxproj` hochzählen (App und SeriousWidgets), sonst lehnt
-App Store Connect ab. Nächste freie Build-Nummer: **42**.
+App Store Connect ab. Nächste freie Build-Nummer: **43**.
