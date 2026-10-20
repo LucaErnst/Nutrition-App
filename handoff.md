@@ -1,6 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 19.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (iOS-27-Look) liegt als Build 41 in TestFlight**, auf Branch `release-1.3`.
+Stand: 20.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (iOS-27-Look) liegt als Build 41 in TestFlight**, auf Branch `release-1.3`.
 Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll ohne Rückfragen
 weiterarbeiten können.
 
@@ -217,13 +217,21 @@ Entscheidung misst sich daran.
    oben, dann zurück zur Liste; nach dem Scannen kein weisser Schimmer (Build 40 laut Video ok);
    Scanner öffnet und schliesst ohne sichtbaren Rahmen über der App. Danach Abnahme 1.3. Noch offen: Tab-Leiste beim
    Auf-/Zuklappen (Duo). Rückmeldungen in `docs/RELEASE-1.3.md`.
-3. **Wenn Luca 1.3 abnimmt:** Version 1.3 in App Store Connect anlegen, Texte aus den Entwürfen
+3. **1.3 in App Store Connect angelegt (20.10.)**, Status „Prepare for Submission“: Build 41,
+   Veröffentlichung geplant **Mo 23.11.2026, 08:00** (frühestens, nach Freigabe), „Neu in dieser
+   Version“ + Werbetext DE/EN, Review-Notizen 1.3, 7 iPhone- und 7 Duo-Bilder je Sprache (alte aus
+   der Version entfernt, 1.2 unberührt), Header + Suchbild DE/EN neu (Suchbild auf 1920×1280
+   verkleinert – 2880×1920 ist keine erlaubte Grösse). **Offen: Luca klickt „Add for Review“ und
+   reicht ein.** Eigene Produktseiten TikTok/Instagram (je 6 EN-iPhone-Bilder, alt) erst **ab 23.11.**
+   auf 1.3-Bilder umstellen (neue Version der Seite, Luca reicht ein), danach alte `01-diary` in der
+   Asset Library löschen (Luca). Branch `release-1.3` → `main` und Push: vorher fragen.
+   Alter Ablauf zum Nachlesen: Version 1.3 in App Store Connect anlegen, Texte aus den Entwürfen
    (Luca liest sie vorher), die schon erzeugten Store-Bilder hochladen und zuordnen (iPhone, Duo,
    Header, Suchbild, beide eigenen Produktseiten), Build wählen, Branch
    `release-1.3` nach `main`, **vor dem Push fragen**, 1.3 einreichen (nach 1.2). Falls sich der
    Look noch ändert: Bilder neu mit `node store/screenshots.mjs iphone duo-outer duo-inner`.
-4. **Content:** Launch-Woche nach `marketing/instagram/POSTING-1.3.md` am Tag, an dem 1.3 live ist.
-   Drehtag A für die Talking-Head-Clips (`marketing/CONTENT-PLAN-1.3.md`). Instagram-Plan endet 01.11.
+4. **Content:** Drehplan mit Daten in `marketing/DREHPLAN-1.3.md` (Drehtag A bis Fr 30.10.,
+   B bis 04.12., C bis 28.12.). Launch-Woche nach `marketing/instagram/POSTING-1.3.md` ab 23.11. Instagram-Plan endet 01.11.
 5. **Xcode 27.1:** sobald die Erinnerung kommt (oder Luca es sagt) → `docs/RELEASE-1.4.md` A7
    (Duo-Simulator, Widgets, Build mit 27.1-SDK; Pflicht ab April 2027).
 6. **Kauftest** mit Lucas echtem Apple-Konto (nur Luca). Impressum/Rechtstexte auf beserious.ch (Luca).

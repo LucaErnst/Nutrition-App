@@ -134,6 +134,6 @@ Erscheinen als Karte im App Store und in der Suche, kostenlos:
 
 ## Offene Entscheidungen
 
-- 1.3-Termin festlegen → Phase 2 auf echte Daten schieben.
-- In-App-Event Januar ja/nein (Einreichung bis ~17.12.).
+- ~~1.3-Termin festlegen~~ → **Mo 23.11.2026** (in App Store Connect geplant, 20.10.). Daten pro Clip in `marketing/DREHPLAN-1.3.md`.
+- ~~In-App-Event Januar~~ → ja (19.10.), `docs/EVENT-JANUARY-RESET.md`.
 - Deutsche Fassungen: welche 5 Clips?

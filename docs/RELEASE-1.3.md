@@ -223,3 +223,11 @@ Hochladen erst, wenn Luca 1.3 auf dem iPhone abgenommen hat; dann auch beide eig
   kurz die App mit Rahmen, X und „Starting camera…“ – das Scan-Fenster des Plugins ist durchsichtig,
   bis das Kamerabild kommt. Jetzt blendet vor dem Start eine schwarze Fläche ein (`.scan-cover`,
   direkt am `<body>`), nach dem Scan (Treffer, Abbruch, Fehler) blendet sie in 220 ms aus.
+
+## M. App Store Connect (20.10.2026)
+
+- Version 1.3 angelegt, Build 41, `SCHEDULED` frühestens 23.11.2026 08:00 MEZ.
+- Texte: „Neu in dieser Version“ und Werbetext DE/EN, Review-Notizen 1.3 (3'233 Zeichen).
+- Bilder: iPhone 6,7" und Duo (innen) je 7 pro Sprache neu, Header und Suchbild DE/EN neu.
+  Suchbild als 1920×1280 (App Store Connect nennt 5244×2950, 3840×2560, 1920×1280).
+- Offen: Einreichen (Luca). Eigene Produktseiten ab 23.11. umstellen.
