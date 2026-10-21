@@ -222,8 +222,8 @@ Entscheidung misst sich daran.
 3. **1.3 in App Store Connect (20.10.)**: am 20.10. eingereicht und **abgelehnt, Guideline 1.4.1**
    (Gesundheitsangaben ohne Quellen). Behoben in **Build 42** (Seite Mehr → Rechtliches → Quellen mit
    DOI-Links, aufklappbare Quellen bei Rechner, Phasen-Auswertung, Wasser; `src/lib/sources.ts`).
-   Build 42 angehängt, Review-Notizen mit Abschnitt HEALTH SOURCES (3'973 Zeichen). **Luca: neu
-   einreichen und die Antwort aus `docs/APP-REVIEW-NOTES.md` senden.** Sonst unverändert:
+   Build 42 angehängt, Review-Notizen mit Abschnitt HEALTH SOURCES (3'973 Zeichen). **Antwort an Apple
+   gesendet (21.10., 06:46). Luca: neu einreichen („Resubmit to App Review“).** Sonst unverändert:
    Veröffentlichung geplant **Mo 23.11.2026, 08:00** (frühestens, nach Freigabe), „Neu in dieser
    Version“ + Werbetext DE/EN, Review-Notizen 1.3, 7 iPhone- und 7 Duo-Bilder je Sprache (alte aus
    der Version entfernt, 1.2 unberührt), Header + Suchbild DE/EN neu (Suchbild auf 1920×1280
