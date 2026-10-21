@@ -168,6 +168,9 @@ Entscheidung misst sich daran.
   `appScreenshots/{id}` aus der Version nehmen.
 - Datei-Upload: `HTMLInputElement.prototype.click` abfangen, dann `file_upload` auf das Input.
 - **Keine Preis-, Gratis- oder Abo-Hinweise** in Screenshots, Headern, Videos (Ablehnung 17.10.).
+- **Nach einer Ablehnung den Build per API tauschen** lässt den Eintrag der Einreichung auf
+  REJECTED, „Resubmit to App Review“ bleibt grau. Lösung: PATCH `reviewSubmissionItems/{id}`
+  mit `resolved: true` (Eintrag → READY_FOR_REVIEW), dann ist der Knopf frei.
 - Review-Notizen max. 4'000 Zeichen. Werbetext einer neuen Version startet leer.
 
 **1.3-Bau**
