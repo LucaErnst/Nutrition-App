@@ -92,6 +92,14 @@ Entscheidung misst sich daran.
   `marketing/launch/compose.mjs`, `marketing/instagram/APP-ACCOUNT.md`, Ordner
   `marketing/launch/talking/`. Nicht mit-committen ohne Rückfrage.
 
+### App-Check 21.10.2026
+- 163 Unit-Tests und 54 e2e grün, Lint 0 Fehler (28 alte Warnungen), Web-Build und iOS-Simulator-Build
+  ok, keine Konsolenfehler. 1.3 (Build 42) wartet auf Review, Release 23.11.
+- **Offen:** `off-products.tsv.gz` ist vom 15.10. (Stand 1.2), für 1.3 nicht neu erzeugt – mit 1.4
+  nachholen. 23 Pakete mit Updates (Patch: vite, react, Capacitor, RevenueCat; Major: TypeScript 7,
+  vite-plugin-pwa 2) – erst nach dem 1.3-Release. `npm audit`: 3 × moderat in `uuid` über
+  `@capacitor/cli` (nur Build-Werkzeug, nicht in der App).
+
 ### Daten (ab 1.2)
 - 6'906 Grundnahrungsmittel (BLS + 495 Schweiz), 6'304 USDA nur Englisch, **288'776 Markenprodukte**
   aus Open Food Facts mitgeliefert (`public/data/off-products.tsv.gz`, vor jedem Release mit
