@@ -125,6 +125,7 @@ Entscheidung misst sich daran.
 | Datei | Wofür |
 |---|---|
 | `docs/RELEASE-1.2.md` | 1.2: B3 erledigt bis auf Resubmit; Ablehnung und Fix dokumentiert |
+| `docs/NACH-FREIGABE-1.3.md` | **Checkliste, sobald Apple 1.3 annimmt** (Merge, Push am 23.11., Produktseiten, Daten, Pakete, Termine) |
 | `docs/RELEASE-1.3.md` | **1.3: alle Design-Entscheide (A–D), Free-Version, F = was im Store/Marketing neu muss** |
 | `docs/RELEASE-1.4.md` | **1.4: Akte** – Wasser im Kontrollzentrum/Aktionstaste, grosses Widget, konfigurierbar, Sperrbildschirm geschützt, Smart Stack, Offenes aus 1.3 |
 | `docs/APP-REVIEW-NOTES.md` | Review-Notizen; unten der 1.2-Gesamttext |
