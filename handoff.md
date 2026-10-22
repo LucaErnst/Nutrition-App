@@ -100,6 +100,20 @@ Entscheidung misst sich daran.
   vite-plugin-pwa 2) – erst nach dem 1.3-Release. `npm audit`: 3 × moderat in `uuid` über
   `@capacitor/cli` (nur Build-Werkzeug, nicht in der App).
 
+### Meta-Werbung (22.10.2026)
+- Werbekonto „Luca Ernst“ (ID 10208967918983979, CHF) über Windsor.ai verbunden (YouTube dafür
+  abgehängt, Gratis-Tarif = 1 Quelle). Facebook-Seite **Serious Nutrition** (ID 61595748689529,
+  App-Icon als Bild) angelegt und mit @seriousnutrition.app verknüpft, Business-Portfolio
+  „Serious Nutrition · Calorie Tracker“.
+- Kampagne `SN 1.3 Launch – DACH – Store-Klicks` (120261871647370586, Traffic) und Anzeigengruppe
+  `DACH 18–45` (120261871649080586): CHF 140 gesamt, 23.11. 08:00 – 07.12. 08:00, CH/DE/AT,
+  Advantage Audience aus, DSA Luca Ernst. **Beides pausiert, noch keine Anzeige.**
+- Offen: Anzeige. Reel `1.3-tour.mp4` ist veraltet (alte Lebensmittel-Liste, alter Zurück-Knopf) und
+  endet mit „Update now“ – für Neukunden ungeeignet. Video-Upload geht nur über eine öffentliche
+  URL oder den Werbeanzeigenmanager mit Facebook-Login (in Chrome ist Business Suite mit dem
+  Instagram-Login angemeldet, ohne Zugriff aufs Werbekonto).
+- Meta wollte für Lucas Facebook-Konto einen Passkey („Advanced Protection“) – Luca richtet ihn selbst ein.
+
 ### Daten (ab 1.2)
 - 6'906 Grundnahrungsmittel (BLS + 495 Schweiz), 6'304 USDA nur Englisch, **288'776 Markenprodukte**
   aus Open Food Facts mitgeliefert (`public/data/off-products.tsv.gz`, vor jedem Release mit
