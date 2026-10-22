@@ -125,7 +125,8 @@ async function png(file, body, transparent = true) {
   return file;
 }
 
-const top = (html, size = 120) => `<div class="t" style="top:${SAFE.y0 + 10}px;font-size:${size}px">${html}</div>`;
+// Mitte des Bildes (Luca, 22.10.): Block vertikal um y 960 zentriert, bleibt in der Safe Zone.
+const top = (html, size = 120) => `<div class="t" style="top:960px;transform:translateY(-50%);font-size:${size}px">${html}</div>`;
 const hook = await png(path.join(RAW, 'ad-hook.png'), top('Tracken fürs<br><span class="g">Training</span>', 150));
 const fav = await png(path.join(RAW, 'ad-fav.png'), top('Deine Lebensmittel.<br><span class="g">Schon da.</span>', 104));
 const ring = await png(path.join(RAW, 'ad-ring.png'), top('Ein Blick.<br><span class="g">Alles klar.</span>', 120));
@@ -173,6 +174,6 @@ const out = path.join(OUT, 'ad-1.3-dach.mp4');
 execFileSync('ffmpeg', ['-loglevel', 'error', '-y',
   '-ss', String(startSec), '-t', String(sceneDur), '-i', rawFile,
   '-i', hook, '-i', fav, '-i', ring, '-i', week, '-i', endCard, '-i', MUSIC,
-  '-filter_complex', fc, '-map', '[v]', '-map', '[a]', '-r', '30',
+  '-filter_complex', fc, '-map', '[v]', '-map', '[a]', '-map_chapters', '-1', '-map_metadata', '-1', '-dn', '-r', '30',
   '-c:v', 'libx264', '-preset', 'slow', '-crf', '18', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', '-shortest', out]);
 console.log(JSON.stringify({ out, sceneDur: +sceneDur.toFixed(2), total: +total.toFixed(2), drop, marks }));
