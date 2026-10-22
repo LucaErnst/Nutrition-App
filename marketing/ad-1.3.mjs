@@ -102,6 +102,8 @@ await ctx.close();
 await browser.close();
 const rawFile = path.join(RAW, 'ad-1.3-dach.webm');
 fs.renameSync(await video.path(), rawFile);
+// Für die Pro-Fassung (ad-1.3-pro.mjs): Aufnahme und Zeitmarken wiederverwenden
+fs.writeFileSync(path.join(RAW, 'ad-1.3-rec.json'), JSON.stringify({ rawFile, startSec, sceneDur, marks }));
 
 // ---------------------------------------------------------------- Texte als PNG
 const css = `@font-face{font-family:Bebas;src:url('file://${FONT}')}
