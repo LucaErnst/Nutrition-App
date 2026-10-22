@@ -108,10 +108,18 @@ Entscheidung misst sich daran.
 - Kampagne `SN 1.3 Launch – DACH – Store-Klicks` (120261871647370586, Traffic) und Anzeigengruppe
   `DACH 18–45` (120261871649080586): CHF 140 gesamt, 23.11. 08:00 – 07.12. 08:00, CH/DE/AT,
   Advantage Audience aus, DSA Luca Ernst. **Beides pausiert, noch keine Anzeige.**
-- Offen: Anzeige. Reel `1.3-tour.mp4` ist veraltet (alte Lebensmittel-Liste, alter Zurück-Knopf) und
-  endet mit „Update now“ – für Neukunden ungeeignet. Video-Upload geht nur über eine öffentliche
-  URL oder den Werbeanzeigenmanager mit Facebook-Login (in Chrome ist Business Suite mit dem
-  Instagram-Login angemeldet, ohne Zugriff aufs Werbekonto).
+- **Anzeige** `Store-Stil Video – Tracken fürs Training` (120261872000070586) veröffentlicht und **aus**
+  (in Prüfung bei Meta): Video `marketing/clips/ad-1.3-dach-pro.mp4` (Generator `marketing/ad-1.3-pro.mjs`,
+  Aufnahme aus `ad-1.3.mjs`), Seite Serious Nutrition (Page-ID 1432323896624545), Instagram
+  seriousnutrition.app, Ziel-URL **beserious.ch/serious-nutrition** (App-Store-Links nur in
+  App-Install-Kampagnen erlaubt, dafür bräuchte es eine Meta-Entwickler-App), Button „Herunterladen“,
+  Texte aus `~/Downloads/Serious Nutrition Anzeige 1.3/ad-1.3-dach_texte.md`. KI-Textvarianten,
+  Video-/Textoptimierung und Übersetzung ausgeschaltet.
+- **Offen vor dem 23.11.:** (1) Kreditkarte im Werbekonto abgelaufen – Luca aktualisiert unter
+  Abrechnung. (2) Kampagne, Anzeigengruppe und Anzeige stehen auf „aus“: nach Lucas Ja einschalten
+  (Start ist ohnehin erst 23.11. 08:00). (3) beserious.ch/serious-nutrition-Vorschau nennt „verfügbar ab
+  12.10.2026“ und „ohne Abo“ – Seitenbeschreibung (Open Graph) prüfen.
+- Werbeanzeigenmanager geht nur mit Facebook-Login bei business.facebook.com (nicht Instagram-Login).
 - Meta wollte für Lucas Facebook-Konto einen Passkey („Advanced Protection“) – Luca richtet ihn selbst ein.
 
 ### Daten (ab 1.2)
