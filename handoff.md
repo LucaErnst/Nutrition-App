@@ -1,6 +1,6 @@
 # Handoff – Serious Nutrition
 
-Stand: 20.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (iOS-27-Look): Build 42 an Version 1.3, nach Ablehnung (1.4.1) bereit zum Neueinreichen**, auf Branch `release-1.3`.
+Stand: 20.10.2026. **1.2 (Build 27) ist live** (angenommen und von Luca freigegeben am 19.10.). **1.3 (Build 42) am 22.10. von Apple angenommen**, Status „Pending Developer Release“, erscheint automatisch am 23.11. 08:00, auf Branch `release-1.3`.
 Diese Datei ist die Übergabe an die nächste Sitzung. Wer hier anfängt, soll ohne Rückfragen
 weiterarbeiten können.
 
