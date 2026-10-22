@@ -175,5 +175,6 @@ execFileSync('ffmpeg', ['-loglevel', 'error', '-y',
   '-ss', String(startSec), '-t', String(sceneDur), '-i', rawFile,
   '-i', hook, '-i', fav, '-i', ring, '-i', week, '-i', endCard, '-i', MUSIC,
   '-filter_complex', fc, '-map', '[v]', '-map', '[a]', '-map_chapters', '-1', '-map_metadata', '-1', '-dn', '-r', '30',
-  '-c:v', 'libx264', '-preset', 'slow', '-crf', '18', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', '-shortest', out]);
+  '-c:v', 'libx264', '-profile:v', 'high', '-level', '4.1', '-preset', 'slow', '-crf', '18', '-pix_fmt', 'yuv420p',
+  '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709', '-tag:v', 'avc1', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', '-shortest', out]);
 console.log(JSON.stringify({ out, sceneDur: +sceneDur.toFixed(2), total: +total.toFixed(2), drop, marks }));
