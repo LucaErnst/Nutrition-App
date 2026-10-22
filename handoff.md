@@ -115,9 +115,11 @@ Entscheidung misst sich daran.
   App-Install-Kampagnen erlaubt, dafür bräuchte es eine Meta-Entwickler-App), Button „Herunterladen“,
   Texte aus `~/Downloads/Serious Nutrition Anzeige 1.3/ad-1.3-dach_texte.md`. KI-Textvarianten,
   Video-/Textoptimierung und Übersetzung ausgeschaltet.
-- **Offen vor dem 23.11.:** (1) Kreditkarte im Werbekonto abgelaufen – Luca aktualisiert unter
-  Abrechnung. (2) Kampagne, Anzeigengruppe und Anzeige stehen auf „aus“: nach Lucas Ja einschalten
-  (Start ist ohnehin erst 23.11. 08:00). (3) beserious.ch/serious-nutrition-Vorschau nennt „verfügbar ab
+- **22.10.: Kampagne, Anzeigengruppe und Anzeige eingeschaltet** (Lucas Ja), Status „Geplant“, Start
+  23.11. 08:00, Ende 07.12. 08:00, max. CHF 140. Pausieren: Windsor `pause_campaign` 120261871647370586.
+- **Offen vor dem 23.11. (Luca):** (1) Kreditkarte im Werbekonto abgelaufen – unter Abrechnung
+  erneuern, sonst keine Auslieferung. (2) Meta meldet „Verifizierung kann bald erforderlich sein“ –
+  Werbetreibenden-Verifizierung im Werbeanzeigenmanager starten. (3) beserious.ch/serious-nutrition-Vorschau nennt „verfügbar ab
   12.10.2026“ und „ohne Abo“ – Seitenbeschreibung (Open Graph) prüfen.
 - Werbeanzeigenmanager geht nur mit Facebook-Login bei business.facebook.com (nicht Instagram-Login).
 - Meta wollte für Lucas Facebook-Konto einen Passkey („Advanced Protection“) – Luca richtet ihn selbst ein.
